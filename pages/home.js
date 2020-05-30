@@ -59,7 +59,7 @@ function Module(props){
                 </Grid>
                 <Grid item>
                     <Typography variant="body2" style={{ cursor: 'pointer' }}>
-                    Practice
+                    <a href = {`subject`} >practice</a>
                     </Typography>
                 </Grid>
                 </Grid>
@@ -72,7 +72,7 @@ function Module(props){
     )
 }
 
-const Login = () => {
+const Home = () => {
     const classes = useStyles();
     const idx = 0;
     const modules = [
@@ -116,4 +116,4 @@ const Login = () => {
     )
 }
 
-export default Login;
+export default Home;
