@@ -13,8 +13,14 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
     },
     search: {
-        borderColor: 'grey',
-        borderWidth: 1,
+        justifyContent: 'center',
+        display: 'flex',
+        marginBottom: 20,
+    },
+    searchIcon: {
+        alignSelf: 'center',
+        paddingLeft: 5,
+        paddingRight: 5
     },
     paper: {
       padding: theme.spacing(2),
@@ -89,17 +95,20 @@ const Login = () => {
     return(
     <NavBar>
         <div className={classes.search}>
-            <div className={classes.searchIcon}>
-                <SearchIcon />
+            <div style={{display: 'flex', borderStyle: 'ridge', borderRadius: 50}}>
+                <div className={classes.searchIcon}>
+                    <SearchIcon style={{fontSize: 20}} />
+                </div>
+                <InputBase
+                    placeholder="Cari Materi……"
+                    classes={{
+                        root: classes.inputRoot,
+                        input: classes.inputInput,
+                    }}
+                    inputProps={{ 'aria-label': 'search' }}
+                    onInput={(text)=> console.log(text.target.value)}
+                />
             </div>
-            <InputBase
-                placeholder="Search…"
-                classes={{
-                    root: classes.inputRoot,
-                    input: classes.inputInput,
-                }}
-                inputProps={{ 'aria-label': 'search' }}
-            />
         </div>
         <Grid container spacing={3}>
             <Grid item xs={12}>

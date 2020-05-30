@@ -1,9 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import clsx from 'clsx';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import Box from '@material-ui/core/Box';
+import {Drawer, Box, Button} from '@material-ui/core';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import List from '@material-ui/core/List';
@@ -18,10 +17,7 @@ import Link from '@material-ui/core/Link';
 import MenuIcon from '@material-ui/icons/Menu';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import { mainListItems, secondaryListItems } from './listItems';
-import Chart from './Chart';
-import Deposits from './Deposits';
-import Orders from './Orders';
+import {Menu, MenuItem, useMediaQuery} from '@material-ui/core';
 
 function Copyright() {
   return (
@@ -36,21 +32,28 @@ function Copyright() {
   );
 }
 
-const drawerWidth = 0;
-
-const useStyles = makeStyles((theme) => ({
+const useStyles = (theme) => ({
   root: {
     display: 'flex',
+  },
+  menuItemActive: {
+    color: '#fff'
+  },
+  menuItem:{
+    color: 'rgba(255,255,255,.5)'
   },
   toolbar: {
     paddingRight: 24, // keep right padding when drawer closed
   },
   toolbarIcon: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
+    ['@media (min-width:500px)']: { 
+      display: 'none'
+    }
+  },
+  navBar: {
+    ['@media (max-width:500px)']: { 
+      display: 'none'
+    }
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -60,8 +63,6 @@ const useStyles = makeStyles((theme) => ({
     }),
   },
   appBarShift: {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
     transition: theme.transitions.create(['width', 'margin'], {
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.enteringScreen,
@@ -75,15 +76,6 @@ const useStyles = makeStyles((theme) => ({
   },
   title: {
     flexGrow: 1,
-  },
-  drawerPaper: {
-    position: 'relative',
-    whiteSpace: 'nowrap',
-    width: drawerWidth,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
   },
   drawerPaperClose: {
     overflowX: 'hidden',
@@ -115,52 +107,75 @@ const useStyles = makeStyles((theme) => ({
   fixedHeight: {
     height: 240,
   },
-}));
+});
 
-const Dashboard = (props) => {
-  const {children} = props;
-  const classes = useStyles();
-  const [open, setOpen] = React.useState(true);
-  const handleDrawerOpen = () => {
-    setOpen(true);
-  };
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
-  const fixedHeightPaper = clsx(classes.paper, classes.fixedHeight);
+class Dashboard extends Component{
+  constructor(props){
+    super(props);
+    this.state={active: 0, anchorEl: null}
+    // this.onMenuClick = this.onMenuClick.bind(this);
+  }
 
-  return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <AppBar position="absolute" className={clsx(classes.appBar, open && classes.appBarShift)}>
-        <Toolbar className={classes.toolbar}>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="open drawer"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.menuButtonHidden)}
-          >
-            <MenuIcon />
-          </IconButton>
-          <Typography component="h1" variant="h6" color="inherit" noWrap className={classes.title}>
-            Dashboard
-          </Typography>
-          <IconButton color="inherit">
-            <Badge badgeContent={4} color="secondary">
-              <NotificationsIcon />
-            </Badge>
-          </IconButton>
-        </Toolbar>
-      </AppBar>
-      <main className={classes.content}>
-        <div className={classes.appBarSpacer} />
-        <Container maxWidth="lg" className={classes.container}>
-          {children}
-        </Container>
-      </main>
-    </div>
-  );
+  onMenuClick = (idx) => {
+    this.setState({active: idx});
+  }
+
+  handleClick = (event) => {
+    this.setState({anchorEl: event.currentTarget});
+  }
+
+  handleClose = () => {
+    this.setState({anchorEl: null})
+  }
+
+  render(){
+    const {children, classes} = this.props;
+    const {active, anchorEl} = this.state;
+
+    return (
+      <div className={classes.root}>
+        <CssBaseline />
+        <AppBar position="absolute" className={classes.appBar}>
+          <Toolbar className={classes.toolbar}>
+            <Grid className={classes.navBar} container spacing={5}>
+              <Grid item><Button onClick={() => this.onMenuClick(0)} className={active === 0 ? classes.menuItemActive : classes.menuItem}>Materi</Button></Grid>
+              <Grid item><Button onClick={() => this.onMenuClick(1)} className={active === 1 ? classes.menuItemActive : classes.menuItem}>Rapor</Button></Grid>
+              <Grid item><Button onClick={() => this.onMenuClick(2)} className={active === 2 ? classes.menuItemActive : classes.menuItem}>Hasil TO</Button></Grid>
+            </Grid>
+            <Grid className={classes.toolbarIcon} container>
+              <IconButton onClick={this.handleClick.bind(this)} style={{color: 'white'}} aria-label="menu">
+                <MenuIcon />
+              </IconButton>
+              <Menu
+                id="simple-menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={this.handleClose.bind(this)}
+              >
+                <MenuItem onClick={this.handleClose.bind(this)}>Materi</MenuItem>
+                <MenuItem onClick={this.handleClose.bind(this)}>Rapor</MenuItem>
+                <MenuItem onClick={this.handleClose.bind(this)}>Hasil TO</MenuItem>
+              </Menu>
+            </Grid>
+            <Grid>
+              <IconButton color="inherit">
+                <Badge badgeContent={4} color="secondary">
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Grid>
+          </Toolbar>
+        </AppBar>
+        <main className={classes.content}>
+          <div className={classes.appBarSpacer} />
+          <Container maxWidth="lg" className={classes.container}>
+            {children}
+          </Container>
+        </main>
+      </div>
+    );
+  }
 }
 
-export default Dashboard;
+export default withStyles(useStyles)(Dashboard);
