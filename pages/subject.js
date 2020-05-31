@@ -38,9 +38,9 @@ class Subject extends React.Component {
                 </Grid>
             </Grid>
             <ButtonGroup variant="text" color="primary" aria-label="text primary button group" style={{width: "100%", justifyContent : 'center', marginTop : 50}}>
-                <Button onClick={()=>this.setState({isOne: true, isTwo: false, isThree: false})}  style={{width: 200, backgroundColor : isOne ? 'grey' : 'white'}}>One</Button>
-                <Button onClick={()=>this.setState({isOne: false, isTwo: true, isThree: false})} style={{width: 200, backgroundColor : isTwo ? 'grey' : 'white'}}>Two</Button>
-                <Button onClick={()=>this.setState({isOne: false, isTwo: false, isThree: true})} style={{width: 200, backgroundColor : isThree ? 'grey' : 'white'}}>Three</Button>
+                <Button onClick={()=>this.setState({isOne: true, isTwo: false, isThree: false})}  style={{width: 200, backgroundColor : isOne ? 'pink' : 'white'}}>One</Button>
+                <Button onClick={()=>this.setState({isOne: false, isTwo: true, isThree: false})} style={{width: 200, backgroundColor : isTwo ? 'pink' : 'white'}}>Two</Button>
+                <Button onClick={()=>this.setState({isOne: false, isTwo: false, isThree: true})} style={{width: 200, backgroundColor : isThree ? 'pink' : 'white'}}>Three</Button>
             </ButtonGroup>
             <Grid container>
                 {this.state.isOne && <One />}

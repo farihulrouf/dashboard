@@ -53,7 +53,7 @@ function ContainedButtons() {
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
+        <div className={classes.rootButton}>
         <Button variant="contained" color="secondary">
             Start
         </Button>
