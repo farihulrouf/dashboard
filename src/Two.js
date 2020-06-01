@@ -61,7 +61,7 @@ const two = () => {
         {name : "gatau", prereq : ["males mikir"]},
     ]
     return(
-        <NavBar>
+        <React.Fragment>
             <Grid item>
                 <h1> PREREQUISITE</h1>
             </Grid>
@@ -76,7 +76,7 @@ const two = () => {
                     </Grid>
                 </Grid>
             </Grid>
-        </NavBar>
+        </React.Fragment>
     )
     
 }

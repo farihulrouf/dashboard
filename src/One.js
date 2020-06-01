@@ -1,4 +1,3 @@
-import NavBar from '../src/NavBar.js';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import {Card, CardHeader, CardMedia, CardContent,CardActions } from '@material-ui/core';
@@ -6,14 +5,13 @@ import Collapse from '@material-ui/core/Collapse';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import { red } from '@material-ui/core/colors';
+import { blue } from '@material-ui/core/colors';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import Grid from '@material-ui/core/Grid';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import OutlinedInput from '@material-ui/core/OutlinedInput';
 import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
@@ -42,7 +40,7 @@ const useStyles = makeStyles((theme) => ({
       transform: 'rotate(180deg)',
     },
     avatar: {
-      backgroundColor: red[500],
+      backgroundColor: blue[900],
     },
     root2: {
         display: 'flex',
@@ -64,7 +62,7 @@ function ContainedButtons() {
 
     return (
         <div className={classes.rootButton}>
-        <Button variant="contained" color="secondary">
+        <Button variant="contained" color="primary">
             Tanyakan
         </Button>
         </div>
@@ -172,9 +170,9 @@ const one = () => {
         {id : "5", name : "d", kodesoal : "kim-SMA-5", nomor : "24",question : "yu mari ditanya ditanya"}
     ]
     return(
-        <NavBar>
+        <React.Fragment>
             <Grid item justify="left">
-                <h1> ask your question here! </h1>
+                <h1 style = {{color : "navy"}}> ask your question here! </h1>
             </Grid>
             <Grid item justify="left">
                 <InputAdornments/>
@@ -189,7 +187,7 @@ const one = () => {
                         </Grid>
                     ))}
             </Grid>
-        </NavBar>
+        </React.Fragment>
     )
 }
 

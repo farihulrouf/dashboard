@@ -12,7 +12,8 @@ import Typography from '@material-ui/core/Typography';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-      width:400
+      width:400,
+      color : "green"
     },
     rootButton: {
         '& > *': {
@@ -159,7 +160,7 @@ const three = () => {
         {id: 6, name:"kali bagi", description: "buat nak sd juga", suitable: "SD"}
     ]
     return(
-        <NavBar>
+        <React.Fragment>
             <Grid container justify="space-around" spacing={2}>
                 <Grid item>
                     <SimpleSelect />
@@ -179,7 +180,7 @@ const three = () => {
                     </Grid>
                 </Grid>
             </Grid>
-        </NavBar>
+        </React.Fragment>
     )
 }
 
