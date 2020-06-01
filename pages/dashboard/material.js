@@ -1,12 +1,5 @@
-
-import NavBar from '../src/NavBar.js';
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import ButtonBase from '@material-ui/core/ButtonBase';
-import Typography from '@material-ui/core/Typography';
-import SearchIcon from '@material-ui/icons/Search';
-import InputBase from '@material-ui/core/InputBase';
+import {Grid, makeStyles, InputBase, Paper, ButtonBase, Typography} from '@material-ui/core';
+import {Search, AccountCircle} from '@material-ui/icons';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,6 +19,9 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(2),
       margin: 'auto',
       width: 350,
+      ['@media (max-width:400px)']: { 
+        width: '90%'
+      }
     },
     image: {
       width: 128,
@@ -78,9 +74,8 @@ function Module(props){
     )
 }
 
-const Home = () => {
+const MaterialPage = () => {
     const classes = useStyles();
-    const idx = 0;
     const modules = [
         {id: 1, name:"Matematika", description: "Kumpulan soal matematika", total_problems: 100, icon: 'data:image/jpeg;base64,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'},
         {id: 2, name:"Biologi", description: "Kumpulan soal biologi", total_problems: 150, icon: 'https://lh3.googleusercontent.com/proxy/hz0MDtzwfzkWWVlWfqUGwbLMvOynH_PQ3SktyN2sPRsjO5kq_1r8YshHBwuh_aSfy0_r1AgfPMgr0aKqOZe5M1t0GGz8-xdfkyOixfVmTH3hsWG4aq0_StisQA7x2uBHTc8jP3o'},
@@ -93,11 +88,11 @@ const Home = () => {
         
     ]
     return(
-    <NavBar>
+        <React.Fragment>
         <div className={classes.search}>
             <div style={{display: 'flex', borderStyle: 'ridge', borderRadius: 50}}>
                 <div className={classes.searchIcon}>
-                    <SearchIcon style={{fontSize: 20}} />
+                    <Search style={{fontSize: 20}} />
                 </div>
                 <InputBase
                     placeholder="Cari Materi……"
@@ -121,8 +116,8 @@ const Home = () => {
                 </Grid>
             </Grid>
         </Grid>
-    </NavBar>
+        </React.Fragment>    
     )
 }
 
-export default Home;
+export default MaterialPage;

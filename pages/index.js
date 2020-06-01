@@ -1,24 +1,30 @@
-import React from 'react';
-import Container from '@material-ui/core/Container';
-import Typography from '@material-ui/core/Typography';
-import Box from '@material-ui/core/Box';
-import ProTip from '../src/ProTip';
-import Link from '../src/Link';
-import Copyright from '../src/Copyright';
 
-export default function Index() {
-  return (
-    <Container maxWidth="sm">
-      <Box my={4}>
-        <Typography variant="h4" component="h1" gutterBottom>
-          Next.js example
-        </Typography>
-        <Link href="/about" color="secondary">
-          Go to the about page
-        </Link>
-        <ProTip />
-        <Copyright />
-      </Box>
-    </Container>
-  );
+import NavBar from '../src/NavBar.js';
+import { makeStyles } from '@material-ui/core/styles';
+import CONSTANTS from '../src/constant';
+import MaterialPage from './dashboard/material';
+import ReportPage from './dashboard/report';
+import TryOutPage from './dashboard/tryout';
+
+const Body = ({active}) => {
+  switch(active){
+    case CONSTANTS.DASHBOARD.MATERIAL:
+      return <MaterialPage/>
+    case CONSTANTS.DASHBOARD.REPORT:
+      return <ReportPage/>
+    case CONSTANTS.DASHBOARD.TRYOUT:
+      return <TryOutPage/>
+    default:
+      return <MaterialPage />
+  }
 }
+
+const Index = ({active}) => {
+    return(
+      <NavBar>
+        <Body />
+      </NavBar>
+    )
+}
+
+export default Index;

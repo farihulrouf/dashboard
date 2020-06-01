@@ -1,23 +1,13 @@
 import React, { Component } from 'react';
-import clsx from 'clsx';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import {Drawer, Box, Button} from '@material-ui/core';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import List from '@material-ui/core/List';
-import Typography from '@material-ui/core/Typography';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
-import Container from '@material-ui/core/Container';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import Link from '@material-ui/core/Link';
+import { withStyles } from '@material-ui/core/styles';
+import {
+  Button, AppBar, Toolbar, Typography, IconButton,
+  Badge, Container, Grid, CssBaseline, Menu, MenuItem
+} from '@material-ui/core';
+import CONSTANTS from '../src/constant';
 import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ProfileIcon from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import {Menu, MenuItem, useMediaQuery} from '@material-ui/core';
 
 function Copyright() {
   return (
@@ -43,15 +33,15 @@ const useStyles = (theme) => ({
     color: 'rgba(255,255,255,.5)'
   },
   toolbar: {
-    paddingRight: 24, // keep right padding when drawer closed
+    paddingRight: '2%', // keep right padding when drawer closed
   },
   toolbarIcon: {
-    ['@media (min-width:500px)']: { 
+    ['@media (min-width:800px)']: { 
       display: 'none'
     }
   },
   navBar: {
-    ['@media (max-width:500px)']: { 
+    ['@media (max-width:800px)']: { 
       display: 'none'
     }
   },
@@ -109,7 +99,7 @@ const useStyles = (theme) => ({
   },
 });
 
-class Dashboard extends Component{
+class NavBar extends Component{
   constructor(props){
     super(props);
     this.state={active: 0, anchorEl: null}
@@ -117,15 +107,22 @@ class Dashboard extends Component{
   }
 
   onMenuClick = (idx) => {
-    this.setState({active: idx});
+    this.setState({active: idx, anchorEl: null});
   }
 
   handleClick = (event) => {
     this.setState({anchorEl: event.currentTarget});
   }
 
-  handleClose = () => {
-    this.setState({anchorEl: null})
+  heading = (active) => {
+    switch(active){
+      case CONSTANTS.DASHBOARD.MATERIAL:
+        return "Dashboard";
+      case CONSTANTS.DASHBOARD.REPORT:
+        return "Rapor";
+      case CONSTANTS.DASHBOARD.TRYOUT:
+        return "Try Out"
+    }
   }
 
   render(){
@@ -138,9 +135,9 @@ class Dashboard extends Component{
         <AppBar position="absolute" className={classes.appBar}>
           <Toolbar className={classes.toolbar}>
             <Grid className={classes.navBar} container spacing={5}>
-              <Grid item><Button onClick={() => this.onMenuClick(0)} className={active === 0 ? classes.menuItemActive : classes.menuItem}>Materi</Button></Grid>
-              <Grid item><Button onClick={() => this.onMenuClick(1)} className={active === 1 ? classes.menuItemActive : classes.menuItem}>Rapor</Button></Grid>
-              <Grid item><Button onClick={() => this.onMenuClick(2)} className={active === 2 ? classes.menuItemActive : classes.menuItem}>Hasil TO</Button></Grid>
+              <Grid item><Button onClick={() => this.onMenuClick(CONSTANTS.DASHBOARD.MATERIAL)} className={active === 0 ? classes.menuItemActive : classes.menuItem}>Materi</Button></Grid>
+              <Grid item><Button onClick={() => this.onMenuClick(CONSTANTS.DASHBOARD.REPORT)} className={active === 1 ? classes.menuItemActive : classes.menuItem}>Rapor</Button></Grid>
+              <Grid item><Button onClick={() => this.onMenuClick(CONSTANTS.DASHBOARD.TRYOUT)} className={active === 2 ? classes.menuItemActive : classes.menuItem}>Hasil TO</Button></Grid>
             </Grid>
             <Grid className={classes.toolbarIcon} container>
               <IconButton onClick={this.handleClick.bind(this)} style={{color: 'white'}} aria-label="menu">
@@ -151,18 +148,23 @@ class Dashboard extends Component{
                 anchorEl={anchorEl}
                 keepMounted
                 open={Boolean(anchorEl)}
-                onClose={this.handleClose.bind(this)}
+                onClose={this.onMenuClick.bind(this)}
               >
-                <MenuItem onClick={this.handleClose.bind(this)}>Materi</MenuItem>
-                <MenuItem onClick={this.handleClose.bind(this)}>Rapor</MenuItem>
-                <MenuItem onClick={this.handleClose.bind(this)}>Hasil TO</MenuItem>
+                <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.MATERIAL)}>Materi</MenuItem>
+                <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.REPORT)}>Rapor</MenuItem>
+                <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.TRYOUT)}>Hasil TO</MenuItem>
               </Menu>
+              <h3>{this.heading(active)}</h3>
             </Grid>
-            <Grid>
+            <Grid container style={{justifyContent: 'flex-end'}}>
               <IconButton color="inherit">
-                <Badge badgeContent={4} color="secondary">
+                <Badge badgeContent={4} color="error">
                   <NotificationsIcon />
                 </Badge>
+              </IconButton>
+              <IconButton color="inherit">
+                <ProfileIcon style={{marginRight: 10}}/>
+                <span style={{fontSize: 10}}>Ramandika</span>
               </IconButton>
             </Grid>
           </Toolbar>
@@ -170,7 +172,7 @@ class Dashboard extends Component{
         <main className={classes.content}>
           <div className={classes.appBarSpacer} />
           <Container maxWidth="lg" className={classes.container}>
-            {children}
+            {React.cloneElement(children,{active: active})}
           </Container>
         </main>
       </div>
@@ -178,4 +180,4 @@ class Dashboard extends Component{
   }
 }
 
-export default withStyles(useStyles)(Dashboard);
+export default withStyles(useStyles)(NavBar);
