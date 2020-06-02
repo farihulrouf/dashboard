@@ -27,6 +27,10 @@ const styles = (theme => ({
         flexGrow: 1,
         borderRadius: 10,
         minHeight: 200
+    },
+    chip: {
+        margin: '5px',
+        marginLeft: 0
     }
 }));
 
@@ -125,10 +129,10 @@ class Subject extends React.Component {
         <NavBar>
             <React.Fragment>
             <Grid className={classes.root} container>
-                <Grid item style = {{marginRight : 30}}>
-                    <img width="250" src="https://cdn63.picsart.com/191275780000201.jpg" alt="complex" />
+                <Grid xs={12} sm={4} item style = {{textAlign: 'center'}}>
+                    <img style={{width: '100%'}} src="https://cdn63.picsart.com/191275780000201.jpg" alt="complex" />
                 </Grid>
-                <Grid item style={{maxWidth: '10%', backgroundColor: 'yellow'}}>
+                <Grid xs={12} sm={6} item>
                     <h1>Kalkulus IA</h1>
                     <p style={{lineHeight: 2}} >
                     Silabus ringkas: Sistem Bilangan Real, Pertaksamaan, Fungsi dan Limit, 
@@ -144,15 +148,15 @@ class Subject extends React.Component {
                             src="https://www.professoren.tum.de/fileadmin/w00bgr/www/pics/RixenDaniel_01.jpg" />
                     </Grid>
                 </Grid>
-                <Grid item>
-                    <Grid container style={{justifyContent: 'center',  alignItems: 'center', height: '75%'}}>
+                <Grid xs={12} sm={2} item>
+                    <Grid container style={{justifyContent: 'center',  alignItems: 'center', paddingTop: 20, paddingBottom: 20}}>
                         <div>
-                        <Chip label="Bilangan Real" variant="outlined" style={{margin: 5}} />
-                        <Chip label="Pertaksamaan" variant="outlined" style={{margin: 5}} />
-                        <Chip label="Fungsi dan Limit" variant="outlined" style={{margin: 5}} />
-                        <Chip label="Turunan" variant="outlined" style={{margin: 5}} />
-                        <Chip label="Reimann" variant="outlined" style={{margin: 5}} />
-                        <Chip label="Deret" variant="outlined" style={{margin: 5}} />
+                        <Chip label="Bilangan Real" variant="outlined" className={classes.chip} />
+                        <Chip label="Pertaksamaan" variant="outlined" className={classes.chip}  />
+                        <Chip label="Fungsi dan Limit" variant="outlined" className={classes.chip}  />
+                        <Chip label="Turunan" variant="outlined" className={classes.chip}  />
+                        <Chip label="Reimann" variant="outlined" className={classes.chip}  />
+                        <Chip label="Deret" variant="outlined" className={classes.chip}  />
                         </div>
                     </Grid>
                     <Grid container>
