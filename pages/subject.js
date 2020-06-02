@@ -1,9 +1,9 @@
 import React from "react";
 import NavBar from '../src/NavBar';
-import {makeStyles, ButtonBase, Grid, ButtonGroup, Button} from '@material-ui/core';
+import {makeStyles, ButtonBase, Grid, ButtonGroup, Button, Chip} from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 import PropTypes from "prop-types";
-import SwipeableViews from "react-swipeable-views";
+import SwipeableViews from 'react-swipeable-views';               
 import { useTheme } from "@material-ui/core/styles";
 import AppBar from "@material-ui/core/AppBar";
 import Tabs from "@material-ui/core/Tabs";
@@ -15,11 +15,17 @@ import Two from '../src/Two';
 import Three from '../src/Three';
 import {HelpIcon} from '@material-ui/icons/Help';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = (theme => ({
     root: {
-        backgroundColor: theme.palette.background.paper,
-        minHeight: 200,
-        flexGrow: 1,
+        backgroundColor: '#ffffff',
+        padding: 20,
+        paddingTop: '100vh',
+        marginTop: '-100vh',
+        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
+        // marginLeft: '-300vw',
+        // paddingLeft: '300vw',
+        // marginRight: '-300vw',
+        // paddingRight: '300vw',
     }
 }));
 
@@ -55,7 +61,7 @@ function a11yProps(index) {
 }
 
 function FloatingActionButtonZoom() {
-    const classes = useStyles();
+    const classes = makeStyles(useStyles);
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
   
@@ -69,16 +75,15 @@ function FloatingActionButtonZoom() {
   
     return (
       <div className={classes.root}>
-        <AppBar position="static" color="default">
+        <AppBar elevation={0} position="static" style={{ boxShadow: "0 6px 8px 0 rgba(0, 0, 0, 0.2)"}}>
             <Tabs
                 value={value}
                 onChange={handleChange}
                 indicatorColor="primary"
                 textColor="primary"
                 aria-label="action tabs example"
-                style = {{backgroundColor : "white"}}
+                style = {{backgroundColor : "#fff"}}
             >
-            {/* <HelpIcon /> */}
             <Tab label="Discussion" {...a11yProps(0)} />
             <Tab label="Prerequisite" {...a11yProps(1)} />
             <Tab label="Exercise" {...a11yProps(2)} />
@@ -115,22 +120,49 @@ class Subject extends React.Component {
         const {classes} = this.props;
         return(
         <NavBar>
-            <Grid container direction="row" style={{justifyContent: 'center'}} wrap = "nowrap">
+            <React.Fragment>
+            <Grid className={classes.root} container direction="row" wrap = "nowrap">
                 <Grid item style = {{marginRight : 30}}>
                     <img width="250" src="https://cdn63.picsart.com/191275780000201.jpg" alt="complex" />
                 </Grid>
-                <Grid item justify="right">
-                    <h1>Matematika</h1>
-                    <p style={{lineHeight: 2, width: "370px"}} >
-                        Avengers: Endgame is a 2019 American superhero film based on the Marvel Comics superhero team the Avengers, 
-                        produced by Marvel Studios and distributed by Walt Disney Studios Motion Pictures. 
-                        It is the direct sequel to Avengers: Infinity War (2018) and the 22nd film in the Marvel Cinematic Universe (MCU). 
+                <Grid item style={{maxWidth: '50%'}}>
+                    <h1>Kalkulus IA</h1>
+                    <p style={{lineHeight: 2}} >
+                    Silabus ringkas: Sistem Bilangan Real, Pertaksamaan, Fungsi dan Limit, 
+                    Turunan dan Penggunaannya, Integral dan Penggunaannya,
+                    Fungsi Transenden
                     </p>
+                    <Grid container>
+                        <img width="50"
+                            style={{marginRight: 10}}
+                            src="https://upload.wikimedia.org/wikipedia/en/thumb/8/85/Institut_Teknologi_Bandung_logo.svg/1200px-Institut_Teknologi_Bandung_logo.svg.png" />
+                        <img width="50" 
+                            style={{marginRight: 10, maxWidth: 50, maxHeight: 50, borderRadius: '50%'}}
+                            src="https://www.professoren.tum.de/fileadmin/w00bgr/www/pics/RixenDaniel_01.jpg" />
+                    </Grid>
+                </Grid>
+                <Grid item style={{width: '50%'}}>
+                    <Grid container style={{justifyContent: 'center',  alignItems: 'center', height: '75%'}}>
+                        <div>
+                        <Chip label="Bilangan Real" variant="outlined" style={{margin: 5}} />
+                        <Chip label="Pertaksamaan" variant="outlined" style={{margin: 5}} />
+                        <Chip label="Fungsi dan Limit" variant="outlined" style={{margin: 5}} />
+                        <Chip label="Turunan" variant="outlined" style={{margin: 5}} />
+                        <Chip label="Reimann" variant="outlined" style={{margin: 5}} />
+                        <Chip label="Deret" variant="outlined" style={{margin: 5}} />
+                        </div>
+                    </Grid>
+                    <Grid container>
+                    <Button variant="contained" color="primary">
+                    JOIN COURSE
+                    </Button>
+                    </Grid>
                 </Grid>
             </Grid>
             <Grid container>
-                <FloatingActionButtonZoom/>
+                <FloatingActionButtonZoom />
             </Grid>
+            </React.Fragment>
             {/* <ButtonGroup variant="text" color="primary" aria-label="text primary button group" style={{width: "100%", justifyContent : 'center', marginTop : 50}}>
                 <Button onClick={()=>this.setState({isOne: true, isTwo: false, isThree: false})}  style={{width: 200, backgroundColor : isOne ? 'pink' : 'white'}}>One</Button>
                 <Button onClick={()=>this.setState({isOne: false, isTwo: true, isThree: false})} style={{width: 200, backgroundColor : isTwo ? 'pink' : 'white'}}>Two</Button>
