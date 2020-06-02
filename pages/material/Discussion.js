@@ -19,7 +19,8 @@ import Button from '@material-ui/core/Button';
 
 const useStyles = makeStyles((theme) => ({
     root: {
-        Width: 200
+        width: '100%',
+        marginTop: 30
     },
     formControl: {
     },
@@ -109,45 +110,45 @@ function QuestionCard(props) {
 
     return (
         <Card className={classes.root}>
-        <CardHeader
-            avatar={
-            <Avatar aria-label="recipe" className={classes.avatar}>
-                {name}
-            </Avatar>
-            }
-            action={
-            <IconButton aria-label="settings">
-                <MoreVertIcon />
-            </IconButton>
-            }
-            title = {
-            <Typography variant="body2" color="textSecondary" component="p">
-                {kodesoal} / {nomor}
-            </Typography>
-            }
-            subheader= "19 mei 2020"
-        />
-        <CardContent style = {{width : 1000}}>
-            <Typography variant="body2" color="textSecondary" component="p">
-                {question}
-            </Typography>
-        </CardContent>
-        <CardActions disableSpacing>
-            <IconButton aria-label="add to favorites">
-                <FavoriteIcon />
-            </IconButton>
-            <IconButton
-                className={clsx(classes.expand, {
-                    [classes.expandOpen]: expanded,
-                })}
-                onClick={handleExpandClick}
-                aria-expanded={expanded}
-                aria-label="show more"
-                >
-            <ExpandMoreIcon />
-            </IconButton>
-        </CardActions>
-        <Collapse in={expanded} timeout="auto" unmountOnExit>
+            <CardHeader
+                avatar={
+                <Avatar aria-label="recipe" className={classes.avatar}>
+                    {name}
+                </Avatar>
+                }
+                action={
+                <IconButton aria-label="settings">
+                    <MoreVertIcon />
+                </IconButton>
+                }
+                title = {
+                <Typography variant="body2" color="textSecondary" component="p">
+                    {kodesoal} / {nomor}
+                </Typography>
+                }
+                subheader= "19 mei 2020"
+            />
+            <CardContent style = {{width : '100%'}}>
+                <Typography variant="body2" color="textSecondary" component="p">
+                    {question}
+                </Typography>
+            </CardContent>
+            <CardActions disableSpacing>
+                <IconButton aria-label="add to favorites">
+                    <FavoriteIcon />
+                </IconButton>
+                <IconButton
+                    className={clsx(classes.expand, {
+                        [classes.expandOpen]: expanded,
+                    })}
+                    onClick={handleExpandClick}
+                    aria-expanded={expanded}
+                    aria-label="show more"
+                    >
+                <ExpandMoreIcon />
+                </IconButton>
+            </CardActions>
+            <Collapse in={expanded} timeout="auto" unmountOnExit>
             <CardContent>
             <Typography paragraph>Jawaban Guru:</Typography>
             <Typography paragraph>
@@ -177,36 +178,34 @@ const Discussion = () => {
     return(
         <React.Fragment>
             <Grid container spacing={3} style={{alignItems: 'center', justifyContent: 'space-between'}}>
-                <Grid container style={{alignItems: 'center', maxWidth: 500}}>
-                    <h3 style={{marginRight: 20}}>Diskusi</h3>
-                    <FormControl variant="outlined" className={classes.formControl}>
-                        <InputLabel id="demo-simple-select-outlined-label">Oder By</InputLabel>
-                        <Select
-                        labelId="demo-simple-select-outlined-label"
-                        id="demo-simple-select-outlined"
-                        value={orderByValue}
-                        label="OrderBy"
-                        style={{height: 35}}
-                        onChange={handleChange}
-                        >
-                        <MenuItem value={"newest"}>Newest</MenuItem>
-                        <MenuItem value={"oldest"}>Oldest</MenuItem>
-                        <MenuItem value={"toppost"}>Top Post</MenuItem>
-                        </Select>
-                    </FormControl>
+                <Grid xs={12} sm={10} item>
+                    <Grid container style={{alignItems: 'center'}}>
+                        <h3 style={{marginRight: 20}}>Diskusi</h3>
+                        <FormControl variant="outlined" className={classes.formControl}>
+                            <InputLabel id="demo-simple-select-outlined-label">Oder By</InputLabel>
+                            <Select
+                            labelId="demo-simple-select-outlined-label"
+                            id="demo-simple-select-outlined"
+                            value={orderByValue}
+                            label="OrderBy"
+                            style={{height: 35}}
+                            onChange={handleChange}
+                            >
+                            <MenuItem value={"newest"}>Newest</MenuItem>
+                            <MenuItem value={"oldest"}>Oldest</MenuItem>
+                            <MenuItem value={"toppost"}>Top Post</MenuItem>
+                            </Select>
+                        </FormControl>
+                    </Grid>
                 </Grid>
-                <Grid item>
-                    <Button variant="contained" color="secondary">
+                <Grid xs={12} sm={2} item>
+                    <Button style={{width: '100%'}} variant="contained" color="secondary">
                         New Post
                     </Button>
                 </Grid>
             </Grid>
-            <Grid container justify="center" spacing={3}>
-                {questions.map((value) => (
-                        <Grid key={value.id} item>
-                            <QuestionCard data={value} />
-                        </Grid>
-                    ))}
+            <Grid container spacing={3}>
+                {questions.map((value) => (<QuestionCard key={value.id} data={value} />))}
             </Grid>
         </React.Fragment>
     )

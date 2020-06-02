@@ -129,10 +129,10 @@ class Subject extends React.Component {
         <NavBar>
             <React.Fragment>
             <Grid className={classes.root} container>
-                <Grid xs={12} sm={4} item style = {{textAlign: 'center'}}>
+                <Grid xs={12} sm={2} item style = {{textAlign: 'center'}}>
                     <img style={{width: '100%'}} src="https://cdn63.picsart.com/191275780000201.jpg" alt="complex" />
                 </Grid>
-                <Grid xs={12} sm={6} item>
+                <Grid xs={12} sm={6} item style={{padding: 20, paddingTop: 0}}>
                     <h1>Kalkulus IA</h1>
                     <p style={{lineHeight: 2}} >
                     Silabus ringkas: Sistem Bilangan Real, Pertaksamaan, Fungsi dan Limit, 
@@ -148,8 +148,8 @@ class Subject extends React.Component {
                             src="https://www.professoren.tum.de/fileadmin/w00bgr/www/pics/RixenDaniel_01.jpg" />
                     </Grid>
                 </Grid>
-                <Grid xs={12} sm={2} item>
-                    <Grid container style={{justifyContent: 'center',  alignItems: 'center', paddingTop: 20, paddingBottom: 20}}>
+                <Grid xs={12} sm={4} item>
+                    <Grid container style={{justifyContent: 'center',  alignItems: 'center', paddingTop: 20, paddingBottom: 20, height: '80%'}}>
                         <div>
                         <Chip label="Bilangan Real" variant="outlined" className={classes.chip} />
                         <Chip label="Pertaksamaan" variant="outlined" className={classes.chip}  />
@@ -159,8 +159,8 @@ class Subject extends React.Component {
                         <Chip label="Deret" variant="outlined" className={classes.chip}  />
                         </div>
                     </Grid>
-                    <Grid container>
-                        <Button variant="contained" color="primary">
+                    <Grid container justify="center" alignItems="flex-end">
+                        <Button style={{width: '70%', height: 50}} variant="contained" color="primary">
                             JOIN COURSE
                         </Button>
                     </Grid>
@@ -170,17 +170,6 @@ class Subject extends React.Component {
                 <FloatingActionButtonZoom />
             </Grid>
             </React.Fragment>
-            {/* <ButtonGroup variant="text" color="primary" aria-label="text primary button group" style={{width: "100%", justifyContent : 'center', marginTop : 50}}>
-                <Button onClick={()=>this.setState({isOne: true, isTwo: false, isThree: false})}  style={{width: 200, backgroundColor : isOne ? 'pink' : 'white'}}>One</Button>
-                <Button onClick={()=>this.setState({isOne: false, isTwo: true, isThree: false})} style={{width: 200, backgroundColor : isTwo ? 'pink' : 'white'}}>Two</Button>
-                <Button onClick={()=>this.setState({isOne: false, isTwo: false, isThree: true})} style={{width: 200, backgroundColor : isThree ? 'pink' : 'white'}}>Three</Button>
-            </ButtonGroup>
-            <Grid container>
-                {this.state.isOne && <One />}
-                {this.state.isTwo && <Two />}
-                {this.state.isThree && <Three />}
-            </Grid> */}
-            
         </NavBar>)
     }
 }
