@@ -1,5 +1,5 @@
 import React from "react";
-import NavBar from '../src/NavBar';
+import NavBar from '../components/NavBar';
 import {makeStyles, ButtonBase, Grid, ButtonGroup, Button, Chip} from '@material-ui/core';
 import { withStyles } from '@material-ui/styles';
 import PropTypes from "prop-types";
@@ -10,24 +10,27 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import One from '../src/One';
-import Two from '../src/Two';
-import Three from '../src/Three';
+import Discussion from './material/Discussion';
+import Prerequisite from './material/Prerequisite';
+import Exercise from './material/Exercise';
 import {HelpIcon} from '@material-ui/icons/Help';
 
-const useStyles = (theme => ({
+const styles = (theme => ({
     root: {
         backgroundColor: '#ffffff',
         padding: 20,
         paddingTop: '100vh',
         marginTop: '-100vh',
-        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
-        // marginLeft: '-300vw',
-        // paddingLeft: '300vw',
-        // marginRight: '-300vw',
-        // paddingRight: '300vw',
+        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)"
+    },
+    swipeableViews: {
+        flexGrow: 1,
+        borderRadius: 10,
+        minHeight: 200
     }
 }));
+
+const useStyles = makeStyles(styles);
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -61,7 +64,7 @@ function a11yProps(index) {
 }
 
 function FloatingActionButtonZoom() {
-    const classes = makeStyles(useStyles);
+    const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
   
@@ -74,7 +77,7 @@ function FloatingActionButtonZoom() {
     };
   
     return (
-      <div className={classes.root}>
+      <Grid container>
         <AppBar elevation={0} position="static" style={{ boxShadow: "0 6px 8px 0 rgba(0, 0, 0, 0.2)"}}>
             <Tabs
                 value={value}
@@ -84,28 +87,28 @@ function FloatingActionButtonZoom() {
                 aria-label="action tabs example"
                 style = {{backgroundColor : "#fff"}}
             >
-            <Tab label="Discussion" {...a11yProps(0)} />
-            <Tab label="Prerequisite" {...a11yProps(1)} />
-            <Tab label="Exercise" {...a11yProps(2)} />
+                <Tab label="Discussion" {...a11yProps(0)} />
+                <Tab label="Prerequisite" {...a11yProps(1)} />
+                <Tab label="Exercise" {...a11yProps(2)} />
             </Tabs>
         </AppBar>
         <SwipeableViews
           axis={theme.direction === "rtl" ? "x-reverse" : "x"}
           index={value}
           onChangeIndex={handleChangeIndex}
-          style={{backgroundColor: '#f5f5f5'}}
+          className={classes.swipeableViews}
         >
-          <TabPanel value={value} index={0} dir={theme.direction}>
-            <One />
-          </TabPanel>
-          <TabPanel value={value} index={1} dir={theme.direction}>
-            <Two/>
-          </TabPanel>
-          <TabPanel value={value} index={2} dir={theme.direction}>
-            <Three/>
-          </TabPanel>
+            <TabPanel value={value} index={0} dir={theme.direction}>
+                <Discussion />
+            </TabPanel>
+            <TabPanel value={value} index={1} dir={theme.direction}>
+                <span>Ini Prerequisite</span>{/* <Two/> */}
+            </TabPanel>
+            <TabPanel value={value} index={2} dir={theme.direction}>
+                <span>Ini latihan</span>{/* <Three/> */}
+            </TabPanel>
         </SwipeableViews>
-      </div>
+      </Grid>
     );
 }
 
@@ -121,11 +124,11 @@ class Subject extends React.Component {
         return(
         <NavBar>
             <React.Fragment>
-            <Grid className={classes.root} container direction="row" wrap = "nowrap">
+            <Grid className={classes.root} container>
                 <Grid item style = {{marginRight : 30}}>
                     <img width="250" src="https://cdn63.picsart.com/191275780000201.jpg" alt="complex" />
                 </Grid>
-                <Grid item style={{maxWidth: '50%'}}>
+                <Grid item style={{maxWidth: '10%', backgroundColor: 'yellow'}}>
                     <h1>Kalkulus IA</h1>
                     <p style={{lineHeight: 2}} >
                     Silabus ringkas: Sistem Bilangan Real, Pertaksamaan, Fungsi dan Limit, 
@@ -141,7 +144,7 @@ class Subject extends React.Component {
                             src="https://www.professoren.tum.de/fileadmin/w00bgr/www/pics/RixenDaniel_01.jpg" />
                     </Grid>
                 </Grid>
-                <Grid item style={{width: '50%'}}>
+                <Grid item>
                     <Grid container style={{justifyContent: 'center',  alignItems: 'center', height: '75%'}}>
                         <div>
                         <Chip label="Bilangan Real" variant="outlined" style={{margin: 5}} />
@@ -153,9 +156,9 @@ class Subject extends React.Component {
                         </div>
                     </Grid>
                     <Grid container>
-                    <Button variant="contained" color="primary">
-                    JOIN COURSE
-                    </Button>
+                        <Button variant="contained" color="primary">
+                            JOIN COURSE
+                        </Button>
                     </Grid>
                 </Grid>
             </Grid>
@@ -177,4 +180,4 @@ class Subject extends React.Component {
         </NavBar>)
     }
 }
-export default withStyles(useStyles)(Subject);
+export default withStyles(styles)(Subject);

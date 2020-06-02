@@ -1,4 +1,4 @@
-import NavBar from '../src/NavBar.js';
+import NavBar from '../../components/NavBar.js';
 import Grid from '@material-ui/core/Grid';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';

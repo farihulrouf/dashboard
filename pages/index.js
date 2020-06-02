@@ -1,7 +1,7 @@
 
-import NavBar from '../src/NavBar.js';
+import NavBar from '../components/NavBar.js';
 import { makeStyles } from '@material-ui/core/styles';
-import CONSTANTS from '../src/constant';
+import CONSTANTS from '../components/constant';
 import MaterialPage from './dashboard/material';
 import ReportPage from './dashboard/report';
 import TryOutPage from './dashboard/tryout';

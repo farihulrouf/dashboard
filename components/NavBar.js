@@ -4,7 +4,7 @@ import {
   Button, AppBar, Toolbar, Typography, IconButton,
   Badge, Container, Grid, CssBaseline, Menu, MenuItem
 } from '@material-ui/core';
-import CONSTANTS from '../src/constant';
+import CONSTANTS from './constant';
 import MenuIcon from '@material-ui/icons/Menu';
 import ProfileIcon from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
