@@ -31,6 +31,8 @@ const styles = (theme => ({
     chip: {
         margin: '5px',
         marginLeft: 0
+    },
+    tabPanel: {
     }
 }));
 
@@ -102,13 +104,13 @@ function FloatingActionButtonZoom() {
           onChangeIndex={handleChangeIndex}
           className={classes.swipeableViews}
         >
-            <TabPanel value={value} index={0} dir={theme.direction}>
+            <TabPanel value={value} index={0} className={classes.tabPanel} dir={theme.direction}>
                 <Home />
             </TabPanel>
-            <TabPanel value={value} index={1} dir={theme.direction}>
+            <TabPanel value={value} index={1} className={classes.tabPanel} dir={theme.direction}>
                 <Discussion />
             </TabPanel>
-            <TabPanel value={value} index={2} dir={theme.direction}>
+            <TabPanel value={value} index={2} className={classes.tabPanel} dir={theme.direction}>
                 <span>Ini latihan</span>{/* <Three/> */}
             </TabPanel>
         </SwipeableViews>
