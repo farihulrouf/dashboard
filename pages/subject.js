@@ -10,9 +10,9 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Discussion from './material/Discussion';
-import Prerequisite from './material/Prerequisite';
-import Exercise from './material/Exercise';
+import Discussion from '../components/material/Discussion';
+import Prerequisite from '../components/material/Prerequisite';
+import Exercise from '../components/material/Exercise';
 import {HelpIcon} from '@material-ui/icons/Help';
 
 const styles = (theme => ({
