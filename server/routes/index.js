@@ -20,6 +20,7 @@ router.post(
   authController.validateSignup,
   catchErrors(authController.signup)
 );
+
 router.post("/api/auth/signin", authController.signin);
 router.get("/api/auth/signout", authController.signout);
 module.exports = router;
