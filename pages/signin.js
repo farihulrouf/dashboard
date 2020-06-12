@@ -1,5 +1,6 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -14,6 +15,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {signInUser} from '../lib/auth';
+import Router from "next/router";
+
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Copyright() {
   return (
@@ -48,45 +55,39 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn() {
-  // const state = {
-  //   emeail: "",
-  //   password: "",
-  //   error: "",
-  //   isLoading: false
-  // };
-  const [email,setEmail] = React.useState("");
-  const [password,setPassword] = React.useState("");
-  const [loading,setLoading] = React.useState(false);
-  const [error,setErr] = React.useState("");
+  const[state,setState] = React.useState({email: "",password: "", loading : false, error:""})
   
   const handleChange = (event) => {
-    switch(event.target.name){
-      case 'email':
-        setEmail(event.target.value);
-        break;
-      case 'password':
-        setPassword(event.target.value);
-        break;
-    }
+    let newState = {...state,[event.target.name]: event.target.value}
+    setState(newState)
   }
 
   const handleSubmit = event => {
     event.preventDefault();
-    const user = { email, password };
-    setLoading(true);
-    setErr("")
+    const {email, password} = state;
+    const user = {email: email, password: password}
+    setState({...state,loading: true});
     signInUser(user)
       .then((response) => {
         Router.push("/"); 
       })
-      .catch((err) => setErr(err));
+      .catch((error) => {
+          let newState = {...state, error: (error.response && error.response.data)||error.message}
+          setState(newState)
+      });
   };
+
+  const handleClose = (event) =>{
+    let newState = {...state, error:""}
+    setState(newState)
+  }
 
   const classes = useStyles();
 
   return (
     //Andarias component="main" ini apa? Kalau mau liat semua property liatnya dimana?
     <Container component="main" maxWidth="xs">
+      {state.error && <Alert onClose={handleClose} severity="error">{state.error}</Alert>}
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -136,12 +137,12 @@ export default function SignIn() {
           <Grid container>
             <Grid item xs>
               <Link href="#">
-                Forgot password?
+                <a>Forgot password?</a>
               </Link>
             </Grid>
             <Grid item>
               <Link href="signup">
-                {"Don't have an account? Sign Up"}
+                <a>Don't have an account? Sign Up</a>
               </Link>
             </Grid>
           </Grid>

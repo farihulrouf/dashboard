@@ -1,5 +1,6 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
@@ -14,6 +15,12 @@ import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import {signupUser} from '../lib/auth';
+import Router from "next/router";
+
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Copyright() {
   return (
@@ -52,23 +59,34 @@ export default function SignUp() {
   isLoading: false, error: ""})
 
   const handleChange = (event) => {
-    state[event.target.name] = event.target.value
-    setState(state)
+    let newState = {...state,[event.target.name]: event.target.value}
+    setState(newState)
   }
   
   const handleSubmit = (event) => {
         event.preventDefault();
         const {name,email,password} = state;
         const user = {name: name, email: email, password: password}
-        state['isLoading'] = true
-        setState(state);
+        setState({...state,isLoading: true});
         signupUser(user)
-            .then(response=>console.log(response))
-            .catch(error=> console.log(error));
+            .then(response=>{
+              Router.push("/");
+            })
+            .catch(error=> {
+              console.log(error.response)
+              let newState = {...state, error: (error.response && error.response.data)||error.message}
+              setState(newState)
+            });
+  }
+
+  const handleClose = (event) =>{
+    let newState = {...state, error:""}
+    setState(newState)
   }
 
   return (
     <Container component="main" maxWidth="xs">
+      {state.error && <Alert onClose={handleClose} severity="error">{state.error}</Alert>}
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>

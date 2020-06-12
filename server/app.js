@@ -16,6 +16,7 @@ require("dotenv").config();
 require("./models/User");
 const routes = require("./routes");
 require("./passport");
+// require('./path/to/passport/config/file')(passport);
 
 const dev = process.env.NODE_ENV !== "production";
 const port = process.env.PORT || 3000;

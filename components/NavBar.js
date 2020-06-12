@@ -8,6 +8,7 @@ import CONSTANTS from './constant';
 import MenuIcon from '@material-ui/icons/Menu';
 import ProfileIcon from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import ListItemText from '@material-ui/core/ListItemText';
 
 function Copyright() {
   return (
@@ -101,19 +102,50 @@ const useStyles = (theme) => ({
   },
 });
 
+const StyledMenu = withStyles({
+  paper: {
+    border: '1px solid #d3d4d5',
+  },
+})((props) => (
+  <Menu
+    elevation={0}
+    getContentAnchorEl={null}
+    anchorOrigin={{
+      vertical: 'bottom',
+      horizontal: 'center',
+    }}
+    transformOrigin={{
+      vertical: 'top',
+      horizontal: 'center',
+    }}
+    {...props}
+  />
+));
+
+const StyledMenuItem = withStyles((theme) => ({
+  root: {
+    '&:focus': {
+      backgroundColor: theme.palette.primary.main,
+      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+        color: theme.palette.common.white,
+      },
+    },
+  },
+}))(MenuItem);
+
 class NavBar extends Component{
   constructor(props){
     super(props);
-    this.state={active: 0, anchorEl: null}
+    this.state={active: 0, menuElement: null, accountElement: null}
     // this.onMenuClick = this.onMenuClick.bind(this);
   }
 
   onMenuClick = (idx) => {
-    this.setState({active: idx, anchorEl: null});
+    this.setState({active: idx, menuElement: null});
   }
 
   handleClick = (event) => {
-    this.setState({anchorEl: event.currentTarget});
+    this.setState({[event.target.name]: event.currentTarget});
   }
 
   heading = (active) => {
@@ -127,9 +159,13 @@ class NavBar extends Component{
     }
   }
 
+  handleClose = () => {
+    this.setState({[event.target.name]: null})
+  };
+
   render(){
-    const {children, classes} = this.props;
-    const {active, anchorEl} = this.state;
+    const {children, classes, auth} = this.props;
+    const {active, menuElement, accountElement} = this.state;
 
     return (
       <div className={classes.root}>
@@ -147,9 +183,9 @@ class NavBar extends Component{
               </IconButton>
               <Menu
                 id="simple-menu"
-                anchorEl={anchorEl}
+                anchorEl={menuElement}
                 keepMounted
-                open={Boolean(anchorEl)}
+                open={Boolean(menuElement)}
                 onClose={this.onMenuClick.bind(this)}
               >
                 <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.MATERIAL)}>Materi</MenuItem>
@@ -164,10 +200,21 @@ class NavBar extends Component{
                   <NotificationsIcon />
                 </Badge>
               </IconButton>
-              <IconButton color="inherit">
+              <IconButton name="accountElement" color="inherit" onClick={this.handleClick.bind(this)}>
                 <ProfileIcon style={{marginRight: 10}}/>
-                <span style={{fontSize: 10}}>Ramandika</span>
+                <span style={{fontSize: 10}}>{auth.user.name}</span>
               </IconButton>
+              <StyledMenu
+                id="customized-menu"
+                anchorEl={accountElement}
+                keepMounted
+                open={Boolean(accountElement)}
+                onClose={this.handleClose}
+              >
+                <StyledMenuItem>
+                  <ListItemText primary="Sign out" />
+                </StyledMenuItem>
+              </StyledMenu>
             </Grid>
           </Toolbar>
         </AppBar>

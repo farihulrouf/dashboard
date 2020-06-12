@@ -5,6 +5,9 @@ import CONSTANTS from '../components/constant';
 import MaterialPage from './dashboard/material';
 import ReportPage from './dashboard/report';
 import TryOutPage from './dashboard/tryout';
+import { authInitialProps } from "../lib/auth";
+import Router from 'next/router';
+import Link from 'next/link'
 
 const Body = ({active}) => {
   switch(active){
@@ -19,12 +22,21 @@ const Body = ({active}) => {
   }
 }
 
-const Index = ({active}) => {
-    return(
-      <NavBar>
-        <Body />
-      </NavBar>
-    )
+const Index = ({auth, userId}) => {
+    if(auth.user)
+      return(
+        <NavBar auth={auth}>
+          <Body />
+        </NavBar>
+      )
+    else
+      return(
+        <span>
+          <Link href="./signin"><a>Sign in here</a></Link>
+        </span>
+      )
 }
+
+Index.getInitialProps = authInitialProps();
 
 export default Index;
