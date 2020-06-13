@@ -9,6 +9,7 @@ import MenuIcon from '@material-ui/icons/Menu';
 import ProfileIcon from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ListItemText from '@material-ui/core/ListItemText';
+import { signoutUser } from "../lib/auth";
 
 function Copyright() {
   return (
@@ -106,21 +107,25 @@ const StyledMenu = withStyles({
   paper: {
     border: '1px solid #d3d4d5',
   },
-})((props) => (
-  <Menu
-    elevation={0}
-    getContentAnchorEl={null}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'center',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'center',
-    }}
-    {...props}
-  />
-));
+})((props) => {
+  let newProps = {...props}
+  delete newProps.horizontalPosition;
+  return(
+    <Menu
+      elevation={0}
+      getContentAnchorEl={null}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: props.horizontalPosition,
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      {...newProps}
+    />
+  )
+});
 
 const StyledMenuItem = withStyles((theme) => ({
   root: {
@@ -144,8 +149,12 @@ class NavBar extends Component{
     this.setState({active: idx, menuElement: null});
   }
 
-  handleClick = (event) => {
-    this.setState({[event.target.name]: event.currentTarget});
+  handleClick = (element) => {
+    this.setState({[element]: this._appbar});
+  }
+
+  handleClose = (element) => {
+    this.setState({[element]: null})
   }
 
   heading = (active) => {
@@ -159,10 +168,6 @@ class NavBar extends Component{
     }
   }
 
-  handleClose = () => {
-    this.setState({[event.target.name]: null})
-  };
-
   render(){
     const {children, classes, auth} = this.props;
     const {active, menuElement, accountElement} = this.state;
@@ -170,7 +175,7 @@ class NavBar extends Component{
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="absolute" className={classes.appBar}>
+        <AppBar ref={appbar => this._appbar = appbar} position="absolute" className={classes.appBar}>
           <Toolbar className={classes.toolbar}>
             <Grid className={classes.navBar} container spacing={5}>
               <Grid item><Button onClick={() => this.onMenuClick(CONSTANTS.DASHBOARD.MATERIAL)} className={active === 0 ? classes.menuItemActive : classes.menuItem}>Materi</Button></Grid>
@@ -178,29 +183,29 @@ class NavBar extends Component{
               <Grid item><Button onClick={() => this.onMenuClick(CONSTANTS.DASHBOARD.TRYOUT)} className={active === 2 ? classes.menuItemActive : classes.menuItem}>Hasil TO</Button></Grid>
             </Grid>
             <Grid className={classes.toolbarIcon} container>
-              <IconButton onClick={this.handleClick.bind(this)} style={{color: 'white'}} aria-label="menu">
+              <IconButton onClick={this.handleClick.bind(this, "menuElement")} style={{color: 'white'}} aria-label="menu">
                 <MenuIcon />
               </IconButton>
-              <Menu
+              <StyledMenu
                 id="simple-menu"
+                horizontalPosition="left"
                 anchorEl={menuElement}
                 keepMounted
                 open={Boolean(menuElement)}
-                onClose={this.onMenuClick.bind(this)}
-              >
+                onClose={this.handleClose.bind(this,"menuElement")}>
                 <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.MATERIAL)}>Materi</MenuItem>
                 <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.REPORT)}>Rapor</MenuItem>
                 <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.TRYOUT)}>Hasil TO</MenuItem>
-              </Menu>
+              </StyledMenu>
               <h3>{this.heading(active)}</h3>
             </Grid>
             <Grid container style={{justifyContent: 'flex-end'}}>
               <IconButton color="inherit">
                 <Badge badgeContent={4} color="error">
                   <NotificationsIcon />
-                </Badge>
+                </Badge> 
               </IconButton>
-              <IconButton name="accountElement" color="inherit" onClick={this.handleClick.bind(this)}>
+              <IconButton color="inherit" onClick={this.handleClick.bind(this,"accountElement")}>
                 <ProfileIcon style={{marginRight: 10}}/>
                 <span style={{fontSize: 10}}>{auth.user.name}</span>
               </IconButton>
@@ -208,12 +213,12 @@ class NavBar extends Component{
                 id="customized-menu"
                 anchorEl={accountElement}
                 keepMounted
+                horizontalPosition="right"
                 open={Boolean(accountElement)}
-                onClose={this.handleClose}
+                onClose={this.handleClose.bind(this,"accountElement")}
               >
-                <StyledMenuItem>
-                  <ListItemText primary="Sign out" />
-                </StyledMenuItem>
+                <MenuItem>Profile</MenuItem>
+                <MenuItem onClick={signoutUser}>Sign Out</MenuItem>
               </StyledMenu>
             </Grid>
           </Toolbar>
