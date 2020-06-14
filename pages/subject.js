@@ -10,9 +10,10 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Discussion from '../components/material/Discussion';
-import Prerequisite from '../components/material/Prerequisite';
-import Exercise from '../components/material/Exercise';
+import Discussion from './material/Discussion';
+import Prerequisite from './material/Prerequisite';
+import Exercise from './material/Exercise';
+import ExerciseSetting from './material/ExerciseSetting';
 import {HelpIcon} from '@material-ui/icons/Help';
 import { authInitialProps } from "../lib/auth";
 
@@ -110,7 +111,7 @@ function FloatingActionButtonZoom() {
                 <span>Ini Prerequisite</span>{/* <Two/> */}
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-                <span>Ini latihan</span>{/* <Three/> */}
+                <ExerciseSetting/>
             </TabPanel>
         </SwipeableViews>
       </Grid>
