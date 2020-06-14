@@ -13,6 +13,7 @@ import Box from "@material-ui/core/Box";
 import Discussion from './material/Discussion';
 import Prerequisite from './material/Prerequisite';
 import Exercise from './material/Exercise';
+import ExerciseSetting from './material/ExerciseSetting';
 import {HelpIcon} from '@material-ui/icons/Help';
 
 const styles = (theme => ({
@@ -109,7 +110,7 @@ function FloatingActionButtonZoom() {
                 <span>Ini Prerequisite</span>{/* <Two/> */}
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-                <span>Ini latihan</span>{/* <Three/> */}
+                <ExerciseSetting/>
             </TabPanel>
         </SwipeableViews>
       </Grid>
