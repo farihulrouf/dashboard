@@ -1,25 +1,32 @@
 import React from 'react';
 import Avatar from '@material-ui/core/Avatar';
+import MuiAlert from '@material-ui/lab/Alert';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
-import Link from '@material-ui/core/Link';
+// import Link from '@material-ui/core/Link';
+import Link from 'next/link';
 import Grid from '@material-ui/core/Grid';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import {signInUser} from '../lib/auth';
+import Router from "next/router";
+
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function Copyright() {
   return (
     <Typography variant="body2" color="textSecondary" align="center">
       {'Copyright © '}
-      <Link color="inherit" href="https://material-ui.com/">
         Your Website
-      </Link>{' '}
       {new Date().getFullYear()}
       {'.'}
     </Typography>
@@ -47,12 +54,40 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login() {
+export default function SignIn() {
+  const[state,setState] = React.useState({email: "",password: "", loading : false, error:""})
+  
+  const handleChange = (event) => {
+    let newState = {...state,[event.target.name]: event.target.value}
+    setState(newState)
+  }
+
+  const handleSubmit = event => {
+    event.preventDefault();
+    const {email, password} = state;
+    const user = {email: email, password: password}
+    setState({...state,loading: true});
+    signInUser(user)
+      .then((response) => {
+        Router.push("/"); 
+      })
+      .catch((error) => {
+          let newState = {...state, error: (error.response && error.response.data)||error.message}
+          setState(newState)
+      });
+  };
+
+  const handleClose = (event) =>{
+    let newState = {...state, error:""}
+    setState(newState)
+  }
+
   const classes = useStyles();
 
   return (
     //Andarias component="main" ini apa? Kalau mau liat semua property liatnya dimana?
     <Container component="main" maxWidth="xs">
+      {state.error && <Alert onClose={handleClose} severity="error">{state.error}</Alert>}
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -61,7 +96,7 @@ export default function Login() {
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
-        <form className={classes.form} noValidate>
+        <form onSubmit ={handleSubmit} className={classes.form} noValidate>
           <TextField
             variant="outlined"
             margin="normal"
@@ -71,6 +106,7 @@ export default function Login() {
             label="Email Address"
             name="email"
             autoComplete="email"
+            onChange={handleChange}
             autoFocus
           />
           <TextField
@@ -82,6 +118,7 @@ export default function Login() {
             label="Password"
             type="password"
             id="password"
+            onChange={handleChange}
             autoComplete="current-password"
           />
           <FormControlLabel
@@ -99,13 +136,13 @@ export default function Login() {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
+              <Link href="#">
+                <a>Forgot password?</a>
               </Link>
             </Grid>
             <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
+              <Link href="signup">
+                <a>Don't have an account? Sign Up</a>
               </Link>
             </Grid>
           </Grid>

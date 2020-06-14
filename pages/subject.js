@@ -15,6 +15,7 @@ import Prerequisite from './material/Prerequisite';
 import Exercise from './material/Exercise';
 import ExerciseSetting from './material/ExerciseSetting';
 import {HelpIcon} from '@material-ui/icons/Help';
+import { authInitialProps } from "../lib/auth";
 
 const styles = (theme => ({
     root: {
@@ -127,7 +128,7 @@ class Subject extends React.Component {
     render(){
         const {classes} = this.props;
         return(
-        <NavBar>
+        <NavBar {...this.props}>
             <React.Fragment>
             <Grid className={classes.root} container>
                 <Grid xs={12} sm={2} item style = {{textAlign: 'center'}}>
@@ -174,4 +175,8 @@ class Subject extends React.Component {
         </NavBar>)
     }
 }
+
+
+Subject.getInitialProps = authInitialProps(true);
+
 export default withStyles(styles)(Subject);

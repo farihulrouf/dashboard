@@ -8,6 +8,8 @@ import CONSTANTS from './constant';
 import MenuIcon from '@material-ui/icons/Menu';
 import ProfileIcon from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import ListItemText from '@material-ui/core/ListItemText';
+import { signoutUser } from "../lib/auth";
 
 function Copyright() {
   return (
@@ -101,19 +103,58 @@ const useStyles = (theme) => ({
   },
 });
 
+const StyledMenu = withStyles({
+  paper: {
+    border: '1px solid #d3d4d5',
+  },
+})((props) => {
+  let newProps = {...props}
+  delete newProps.horizontalPosition;
+  return(
+    <Menu
+      elevation={0}
+      getContentAnchorEl={null}
+      anchorOrigin={{
+        vertical: 'bottom',
+        horizontal: props.horizontalPosition,
+      }}
+      transformOrigin={{
+        vertical: 'top',
+        horizontal: 'center',
+      }}
+      {...newProps}
+    />
+  )
+});
+
+const StyledMenuItem = withStyles((theme) => ({
+  root: {
+    '&:focus': {
+      backgroundColor: theme.palette.primary.main,
+      '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
+        color: theme.palette.common.white,
+      },
+    },
+  },
+}))(MenuItem);
+
 class NavBar extends Component{
   constructor(props){
     super(props);
-    this.state={active: 0, anchorEl: null}
+    this.state={active: 0, menuElement: null, accountElement: null}
     // this.onMenuClick = this.onMenuClick.bind(this);
   }
 
   onMenuClick = (idx) => {
-    this.setState({active: idx, anchorEl: null});
+    this.setState({active: idx, menuElement: null});
   }
 
-  handleClick = (event) => {
-    this.setState({anchorEl: event.currentTarget});
+  handleClick = (element) => {
+    this.setState({[element]: this._appbar});
+  }
+
+  handleClose = (element) => {
+    this.setState({[element]: null})
   }
 
   heading = (active) => {
@@ -128,13 +169,13 @@ class NavBar extends Component{
   }
 
   render(){
-    const {children, classes} = this.props;
-    const {active, anchorEl} = this.state;
+    const {children, classes, auth} = this.props;
+    const {active, menuElement, accountElement} = this.state;
 
     return (
       <div className={classes.root}>
         <CssBaseline />
-        <AppBar position="absolute" className={classes.appBar}>
+        <AppBar ref={appbar => this._appbar = appbar} position="absolute" className={classes.appBar}>
           <Toolbar className={classes.toolbar}>
             <Grid className={classes.navBar} container spacing={5}>
               <Grid item><Button onClick={() => this.onMenuClick(CONSTANTS.DASHBOARD.MATERIAL)} className={active === 0 ? classes.menuItemActive : classes.menuItem}>Materi</Button></Grid>
@@ -142,32 +183,43 @@ class NavBar extends Component{
               <Grid item><Button onClick={() => this.onMenuClick(CONSTANTS.DASHBOARD.TRYOUT)} className={active === 2 ? classes.menuItemActive : classes.menuItem}>Hasil TO</Button></Grid>
             </Grid>
             <Grid className={classes.toolbarIcon} container>
-              <IconButton onClick={this.handleClick.bind(this)} style={{color: 'white'}} aria-label="menu">
+              <IconButton onClick={this.handleClick.bind(this, "menuElement")} style={{color: 'white'}} aria-label="menu">
                 <MenuIcon />
               </IconButton>
-              <Menu
+              <StyledMenu
                 id="simple-menu"
-                anchorEl={anchorEl}
+                horizontalPosition="left"
+                anchorEl={menuElement}
                 keepMounted
-                open={Boolean(anchorEl)}
-                onClose={this.onMenuClick.bind(this)}
-              >
+                open={Boolean(menuElement)}
+                onClose={this.handleClose.bind(this,"menuElement")}>
                 <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.MATERIAL)}>Materi</MenuItem>
                 <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.REPORT)}>Rapor</MenuItem>
                 <MenuItem onClick={this.onMenuClick.bind(this,CONSTANTS.DASHBOARD.TRYOUT)}>Hasil TO</MenuItem>
-              </Menu>
+              </StyledMenu>
               <h3>{this.heading(active)}</h3>
             </Grid>
             <Grid container style={{justifyContent: 'flex-end'}}>
               <IconButton color="inherit">
                 <Badge badgeContent={4} color="error">
                   <NotificationsIcon />
-                </Badge>
+                </Badge> 
               </IconButton>
-              <IconButton color="inherit">
+              <IconButton color="inherit" onClick={this.handleClick.bind(this,"accountElement")}>
                 <ProfileIcon style={{marginRight: 10}}/>
-                <span style={{fontSize: 10}}>Ramandika</span>
+                <span style={{fontSize: 10}}>{auth.user.name}</span>
               </IconButton>
+              <StyledMenu
+                id="customized-menu"
+                anchorEl={accountElement}
+                keepMounted
+                horizontalPosition="right"
+                open={Boolean(accountElement)}
+                onClose={this.handleClose.bind(this,"accountElement")}
+              >
+                <MenuItem>Profile</MenuItem>
+                <MenuItem onClick={signoutUser}>Sign Out</MenuItem>
+              </StyledMenu>
             </Grid>
           </Toolbar>
         </AppBar>
