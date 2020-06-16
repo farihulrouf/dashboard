@@ -34,6 +34,7 @@
     "validator": "^13.0.0"
   },
   "scripts": {
+    "console": "node --experimental-repl-await ./console.js",
     "dev": "nodemon server/app.js --watch server",
     "start": "node server/app.js",
     "build": "next build",

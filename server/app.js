@@ -12,8 +12,9 @@ const compression = require("compression");
 /* Loads all variables from .env file to "process.env" */
 require("dotenv").config();
 /* Require our models here so we can use the mongoose.model() singleton to reference our models across our app */
-// require("./models/Post");
+require("./models/Course");
 require("./models/User");
+
 const routes = require("./routes");
 require("./passport");
 // require('./path/to/passport/config/file')(passport);

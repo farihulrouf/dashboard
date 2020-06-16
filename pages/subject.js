@@ -10,10 +10,9 @@ import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 import Typography from "@material-ui/core/Typography";
 import Box from "@material-ui/core/Box";
-import Discussion from './material/Discussion';
-import Prerequisite from './material/Prerequisite';
-import Exercise from './material/Exercise';
-import ExerciseSetting from './material/ExerciseSetting';
+import Discussion from './subject/Discussion';
+import Home from './subject/Home';
+import ExerciseSetting from './subject/ExerciseSetting';
 import {HelpIcon} from '@material-ui/icons/Help';
 import { authInitialProps } from "../lib/auth";
 
@@ -33,6 +32,8 @@ const styles = (theme => ({
     chip: {
         margin: '5px',
         marginLeft: 0
+    },
+    tabPanel: {
     }
 }));
 
@@ -93,8 +94,8 @@ function FloatingActionButtonZoom() {
                 aria-label="action tabs example"
                 style = {{backgroundColor : "#fff"}}
             >
-                <Tab label="Discussion" {...a11yProps(0)} />
-                <Tab label="Prerequisite" {...a11yProps(1)} />
+                <Tab label="Home" {...a11yProps(0)} />
+                <Tab label="Discussion" {...a11yProps(1)} />
                 <Tab label="Exercise" {...a11yProps(2)} />
             </Tabs>
         </AppBar>
@@ -104,11 +105,11 @@ function FloatingActionButtonZoom() {
           onChangeIndex={handleChangeIndex}
           className={classes.swipeableViews}
         >
-            <TabPanel value={value} index={0} dir={theme.direction}>
-                <Discussion />
+            <TabPanel value={value} index={0} className={classes.tabPanel} dir={theme.direction}>
+                <Home />
             </TabPanel>
-            <TabPanel value={value} index={1} dir={theme.direction}>
-                <span>Ini Prerequisite</span>{/* <Two/> */}
+            <TabPanel value={value} index={1} className={classes.tabPanel} dir={theme.direction}>
+                <Discussion />
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
                 <ExerciseSetting/>
