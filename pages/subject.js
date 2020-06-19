@@ -129,7 +129,7 @@ class Subject extends React.Component {
     render(){
         const {classes} = this.props;
         return(
-        <NavBar {...this.props}>
+        <NavBar auth={this.props.auth}>
             <React.Fragment>
             <Grid className={classes.root} container>
                 <Grid xs={12} sm={2} item style = {{textAlign: 'center'}}>
