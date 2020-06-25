@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const User = mongoose.model("Post");
+const Post = mongoose.model("Post");
 
 
 exports.addPost = async (req, res) => {
@@ -22,4 +22,12 @@ exports.getPostById = async (req,res,next,id) => {
       return next();
     }
     next();
+}
+
+exports.getPosts = async (req,res) => {
+  const course = req.course;
+  const posts = await Post.find({postedOn: course._id})
+                .sort({ createdAt : 'asc'})
+                .limit(10); // fetch first 10 post
+  res.json(posts);
 }

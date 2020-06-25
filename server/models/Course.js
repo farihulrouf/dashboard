@@ -34,8 +34,8 @@ const courseSchema = new mongoose.Schema(
 )
 
 const autoPopulate = function(next){
-    this.populate("instructors", "_id name avatar");
-    this.populate("participants","_id name avatar");
+    this.populate("instructors", "_id name avatar linkedIn");
+    this.populate("participants","_id name avatar linkedIn");
     next();
 }
 
