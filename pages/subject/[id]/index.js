@@ -72,7 +72,7 @@ function a11yProps(index) {
     };
 }
 
-function FloatingActionButtonZoom() {
+function FloatingActionButtonZoom(props) {
     const classes = useStyles();
     const theme = useTheme();
     const [value, setValue] = React.useState(0);
@@ -108,13 +108,13 @@ function FloatingActionButtonZoom() {
           className={classes.swipeableViews}
         >
             <TabPanel value={value} index={0} className={classes.tabPanel} dir={theme.direction}>
-                <Home />
+                <Home courseId={props.router.query.id} />
             </TabPanel>
             <TabPanel value={value} index={1} className={classes.tabPanel} dir={theme.direction}>
-                <Discussion />
+                <Discussion courseId={props.router.query.id} />
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-                <ExerciseSetting/>
+                <ExerciseSetting courseId={props.router.query.id} />
             </TabPanel>
         </SwipeableViews>
       </Grid>
@@ -176,7 +176,7 @@ class Subject extends React.Component {
                 </Grid>
             </Grid>
             <Grid container>
-                <FloatingActionButtonZoom />
+                <FloatingActionButtonZoom {...this.props} />
             </Grid>
             </React.Fragment>
         </NavBar>)

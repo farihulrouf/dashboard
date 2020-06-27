@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const Course = mongoose.model("Course");
+const Post = mongoose.model("Post");
 
 
 exports.getCourses = async (req,res) => {
-    const courses = await Course.find({});
+    const courses = await Course.find({},'_id logo name about price');
     res.json(courses);
 }
 
@@ -25,4 +26,19 @@ exports.getCourseById = async (req, res, next, id) => {
 
 exports.getCourse = async (req,res,next,id) => {
     res.json(!req.course ? {} : {isInstructor: !!req.isInstructor, course: req.course})
+}
+
+exports.getPosts = async (req,res) => {
+    const {courseId} = req.params;
+    const {page} = req.query;
+    const options = {
+        page: parseInt(page),
+        limit: 10,
+    }
+    const posts = await Post.paginate({postedOn: courseId},options)
+    if(req.user){
+        res.json({status: "ok", posts: posts.docs});
+    }else{
+        res.json({status: "error"})
+    }
 }

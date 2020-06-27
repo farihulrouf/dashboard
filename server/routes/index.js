@@ -29,6 +29,13 @@ router.get("/api/auth/signout", authController.signout);
  * COURSE ROUTES /api/courses
  */
 
+
+router.get(
+  "/api/courses/:courseId/posts",
+  authController.checkAuth,
+  catchErrors(courseController.getPosts)
+)
+
 router.param(
   "courseId",
   courseController.getCourseById
@@ -54,30 +61,24 @@ router.param(
   postController.getPostById
 );
 
-router.get(
-  "/api/posts/:courseId",
-  authController.checkAuth,
-  catchErrors(postController.getPosts)
-);
-
 router.put(
-  "/api/posts/like",
+  "/api/posts/:postId/like",
   authController.checkAuth,
-  catchErrors(postController.toggleLike)
+  catchErrors(postController.likeAPost)
 );
 
-router.put(
-  "/api/posts/unlike",
-  authController.checkAuth,
-  catchErrors(postController.toggleLike)
-);
-
-router.post(
-  "/api/posts/new/:userId",
-  authController.checkAuth
-  // postController.uploadImage,
-  // catchErrors(postController.resizeImage),
-  // catchErrors(postController.addPost)
-);
+// router.post(
+//   "/api/posts/:postId/comment",
+//   authController.checkAuth,
+//   postController.validateComment,
+//   catchErrors(postController.createComment)
+// )
+// router.post(
+//   "/api/posts/new/:userId",
+//   authController.checkAuth
+//   postController.uploadImage,
+//   catchErrors(postController.resizeImage),
+//   catchErrors(postController.addPost)
+// );
 
 module.exports = router;

@@ -1,5 +1,5 @@
 import NavBar from '../../components/NavBar.js';
-import { makeStyles } from '@material-ui/core/styles';;
+import { makeStyles, withStyles } from '@material-ui/core/styles';;
 import {Grid, List, ListItem, ListItemIcon, Checkbox, ListItemSecondaryAction, Avatar, ListItemText,
     Typography, Paper, Button, IconButton, InputBase, Divider, TextareaAutosize
 } from '@material-ui/core';
@@ -10,9 +10,8 @@ import AnnouncementIcon from '@material-ui/icons/AnnouncementOutlined';
 import ExamIcon from '@material-ui/icons/AssessmentOutlined'
 import ClassIcon from '@material-ui/icons/ClassOutlined'
 import ShareIcon from '@material-ui/icons/Share';
-import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions'
+import {getCoursePosts, likeAPost, postComment} from '../../lib/api';
 
 
 const styles = (theme) => ({
@@ -34,9 +33,9 @@ const useStyles = makeStyles(styles);
 
 const Item = (props) => {
     const classes = useStyles();
-    const {data} = props
     const [showComment,setShowCommnet] = React.useState(false);
-
+    const [data,setData] = React.useState(props.data);
+    
     const showCommentBox = (event) => {
        setShowCommnet(!showComment);
     }
@@ -45,7 +44,7 @@ const Item = (props) => {
         <Paper elevation={3} style={{marginBottom: 30, padding: 20}}>
             <Grid container spacing={2}>
                 <Grid item>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    <Avatar alt={data.postedBy.name} src="/static/images/avatar/1.jpg" />
                 </Grid>
                 <Grid item>
                     <Grid container><b>{data.title}</b></Grid>
@@ -57,7 +56,7 @@ const Item = (props) => {
                             className={classes.inline}
                             color="textPrimary"
                         >
-                            {`${data.sender} - ${data.date}`}
+                            {`${data.postedBy.name} - ${data.createdAt}`}
                         </Typography>
                         </React.Fragment>
                     </Grid>
@@ -73,7 +72,7 @@ const Item = (props) => {
                     style={{padding: 0, height: 20}}
                 />  */}
                     <ThumbUpIcon style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
-                    <span style={{fontSize: 12}}>232 Likes</span>
+                    <span style={{fontSize: 12}}>{data.likes.total} Likes</span>
             </Grid>
             <Grid container spacing={3} style={{marginTop: 10}}>
                 <Grid item>
@@ -83,6 +82,7 @@ const Item = (props) => {
                         size="small"
                         className={classes.button}
                         startIcon={<ThumbUpIcon />}
+                        onClick={likeAPost(data._id, setData)}
                     >
                         Like
                     </Button>
@@ -127,7 +127,7 @@ const Item = (props) => {
                         variant="outlined"
                         color="primary"
                     >
-                        <SendIcon style={{fontSize: 15}} />
+                        <SendIcon onClick={postComment(data._id,setData)} style={{fontSize: 15}} />
                     </Button>
                 </Grid>
             </Grid>}
@@ -202,80 +202,38 @@ const TagFilter = () => {
     );
 }
 
-const Home = () => {
-    const classes = useStyles();
-    const data = [
-        {
-            id: 1,
-            title: 'Ujian Kalkulus diundur',
-            body: `Dikarenakan satu dan lain hal ujian kalkulus IA akan diundur 
-            menjadi tanggal 20 Agustus 2020`,
-            sender: 'Yudistira',
-            date: '3 September 2020, 15:20'
-        },
-        {
-            id: 2,
-            title: 'Tugas Besar II',
-            body: `Tugas besar dua dirilis perhari ini, silahkan cek dokumen terlampir
-            untuk detail spesifikasi tugas besar II. Deadline tubes II ini 2 minggu dari
-            hari ini`,
-            sender: 'Agus Yodi',
-            date: '3 September 2020, 15:20'
-        },
-        {
-            id: 3,
-            title: 'Ujian Kalkulus diundur',
-            body: `Dikarenakan satu dan lain hal ujian kalkulus IA akan diundur 
-            menjadi tanggal 20 Agustus 2020`,
-            sender: 'Yudistira',
-            date: '3 September 2020, 15:20'
-        },
-        {
-            id: 4,
-            title: 'Tugas Besar II',
-            body: `Tugas besar dua dirilis perhari ini, silahkan cek dokumen terlampir
-            untuk detail spesifikasi tugas besar II. Deadline tubes II ini 2 minggu dari
-            hari ini`,
-            sender: 'Agus Yodi',
-            date: '3 September 2020, 15:20'
-        },
-        {
-            id: 5,
-            title: 'Ujian Kalkulus diundur',
-            body: `Dikarenakan satu dan lain hal ujian kalkulus IA akan diundur 
-            menjadi tanggal 20 Agustus 2020`,
-            sender: 'Yudistira',
-            date: '3 September 2020, 15:20'
-        },
-        {
-            id: 6,
-            title: 'Tugas Besar II',
-            body: `Tugas besar dua dirilis perhari ini, silahkan cek dokumen terlampir
-            untuk detail spesifikasi tugas besar II. Deadline tubes II ini 2 minggu dari
-            hari ini`,
-            sender: 'Agus Yodi',
-            date: '3 September 2020, 15:20'
-        }
-    ]
+class Home extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {posts: []}
+    }
 
-    return(
-        <React.Fragment>
-            <Grid container>
-                <Grid item xs={12} sm={3}>
-                    <SearchBar />
-                    <TagFilter />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                    <Grid container style={{justifyContent: 'center'}}>
-                        <List className={classes.root}>
-                            {data.map((value) => <Item key={value.id} data={value} />)}
-                        </List>
+    componentDidMount(){
+        const {courseId} = this.props;
+        getCoursePosts(courseId,1).then(posts => this.setState(posts))
+    }
+
+    render(){
+        const {classes} = this.props
+        const {posts} = this.state
+        return(
+            <React.Fragment>
+                <Grid container>
+                    <Grid item xs={12} sm={3}>
+                        <SearchBar />
+                        <TagFilter />
+                    </Grid>
+                    <Grid item xs={12} sm={9}>
+                        <Grid container style={{justifyContent: 'center'}}>
+                            <List className={classes.root}>
+                                {posts.map((value) => <Item key={value._id} data={value} />)}
+                            </List>
+                        </Grid>
                     </Grid>
                 </Grid>
-            </Grid>
-        </React.Fragment>
-    )
-    
+            </React.Fragment>
+        )
+    }
 }
 
-export default Home;
+export default withStyles(styles)(Home);

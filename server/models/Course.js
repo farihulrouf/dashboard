@@ -28,7 +28,9 @@ const courseSchema = new mongoose.Schema(
             validation: {validator: (price)=>price>=0, message: 'Price should not be less than 0'}
         },
         instructors: [{type: ObjectId, ref: "User"}],
-        participants: [{ type: ObjectId, ref: "User"}]
+        participants: [{ type: ObjectId, ref: "User"}],
+        posts: [{type: ObjectId, ref: "Post"}]
+
     },
     {timestamps: true}
 )
@@ -41,7 +43,6 @@ const autoPopulate = function(next){
 
 courseSchema
     .pre("findOne",autoPopulate)
-    .pre("find",autoPopulate)
 
 courseSchema.index({ instructors: 1});
 courseSchema.index({createdAt: 1 });
