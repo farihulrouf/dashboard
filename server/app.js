@@ -15,6 +15,7 @@ require("dotenv").config();
 require("./models/Course");
 require("./models/User");
 require("./models/Post");
+require("./models/Comment");
 
 const routes = require("./routes");
 require("./passport");

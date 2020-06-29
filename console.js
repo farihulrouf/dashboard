@@ -4,8 +4,7 @@ var replServer = repl.start({prompt: "Node Console > "});
 var User = require('./server/models/User');
 var Course = require('./server/models/Course');
 var Post = require('./server/models/Post');
-
-
+var Comment = require('./server/models/Comment');
 
 const addUser = (user,password)=> {
     return new Promise((resolve,reject)=>{
@@ -52,20 +51,21 @@ const seeds = async function(){
         await Course.updateOne({_id: element.postedOn},{$push: {posts: element._id}})
     });
 
-    // const commentsData = [
-    //     {postedBy: users[0]._id, body: "Sepertinya pertemuan hari ini tidak ada pada modul yang diberikan di sini Pak", postId: posts[0]._id},
-    //     {postedBy: users[1]._id, body: "Modul yang hari ini diberikan terpisah di kelas tadi", postId: posts[0]._id},
-    //     {postedBy: users[0]._id, body: "Quiznya susah banget Pak, untung bobotnya cuma 10%", postId: posts[1]._id},
-    //     {PostedBy: users[2]._id, body: "Ah masak sih, kan soal2nya sama seperti soal latihan yang sudah diberikan", postId: posts[1]._id}
-    // ]
-    // comments = await Comment.insertMany(commentsData);
+    const commentsData = [
+        {commentator: users[0]._id, content: "Sepertinya pertemuan hari ini tidak ada pada modul yang diberikan di sini Pak", postId: posts[0]._id},
+        {commentator: users[1]._id, content: "Modul yang hari ini diberikan terpisah di kelas tadi", postId: posts[0]._id},
+        {commentator: users[0]._id, content: "Quiznya susah banget Pak, untung bobotnya cuma 10%", postId: posts[1]._id},
+        {commentator: users[2]._id, content: "Ah masak sih, kan soal2nya sama seperti soal latihan yang sudah diberikan", postId: posts[1]._id}
+    ]
+    comments = await Comment.insertMany(commentsData);
 
-    // comments.forEach(async e => [
-    //     await Post.updateOne({_id: e.postId},{$push: {"comments.listComments": e._id}})
-    // ])
+    comments.forEach(async e => [
+        await Post.updateOne({_id: e.postId},{$inc: {"comments.total": 1}, $push: {"comments.listComments": e._id}})
+    ])
 }
 
 replServer.context.User = User;
 replServer.context.Course = Course;
 replServer.context.Post = Post;
+replServer.context.Comment = Comment;
 replServer.context.seeds = seeds;

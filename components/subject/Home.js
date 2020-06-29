@@ -31,7 +31,39 @@ const styles = (theme) => ({
 });
 const useStyles = makeStyles(styles);
 
-const Item = (props) => {
+const CommentItem = (props) => {
+    const classes = useStyles();
+    const[comment,setComment] = React.useState(props.data);
+    return(
+        <Grid container style={{margin: 10}}>
+            <Grid container spacing={2}>
+                <Grid item>
+                    <Avatar style={{width: 30, height: 30}} alt={comment.commentator.name} src="/static/images/avatar/1.jpg" />
+                </Grid>
+                <Grid item>
+                    <Grid container style={{fontSize: 12}}><b>{comment.commentator.name}</b></Grid>
+                    <Grid container>
+                        <React.Fragment>
+                        <Typography
+                            component="span"
+                            variant="body2"
+                            className={classes.inline}
+                            color="textPrimary"
+                        >
+                            {comment.createdAt}
+                        </Typography>
+                        </React.Fragment>
+                    </Grid>
+                </Grid>
+            </Grid>
+            <Grid container style={{marginTop: 10}}>
+                <span style={{fontSize: 12}}>{comment.content}</span>
+            </Grid>
+        </Grid>
+    )
+}
+
+const PostItem = (props) => {
     const classes = useStyles();
     const [showComment,setShowCommnet] = React.useState(false);
     const [data,setData] = React.useState(props.data);
@@ -112,25 +144,28 @@ const Item = (props) => {
                 </Grid>
             </Grid>
             <Divider style={{marginTop: 10}}/>
-            {showComment && <Grid container style={{marginTop: 10}}>
-                <Grid xs={12} sm={11} item>
-                    <TextareaAutosize
-                        placeholder="Write your comments"
-                        multiline="true"
-                        rowsMin={2}
-                        rowsMax={10}
-                        style={{width: '100%', borderRadius: 10}}
-                    />
+                <Grid Container>
+                    {data.comments.listComments.map((value) => <CommentItem key={value._id} data={value} />)}
                 </Grid>
-                <Grid xs={12} sm={1} item>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                    >
-                        <SendIcon onClick={postComment(data._id,setData)} style={{fontSize: 15}} />
-                    </Button>
-                </Grid>
-            </Grid>}
+                {showComment && <Grid container style={{marginTop: 10}}>
+                    <Grid xs={12} sm={11} item>
+                        <TextareaAutosize
+                            placeholder="Write your comments"
+                            multiline="true"
+                            rowsMin={2}
+                            rowsMax={10}
+                            style={{width: '100%', borderRadius: 10, resize: 'none'}}
+                        />
+                    </Grid>
+                    <Grid xs={12} sm={1} item>
+                        <Button
+                            variant="outlined"
+                            color="primary"
+                        >
+                            <SendIcon onClick={postComment(data._id,setData)} style={{fontSize: 15}} />
+                        </Button>
+                    </Grid>
+                </Grid>}
         </Paper>
     )
 }
@@ -226,7 +261,7 @@ class Home extends React.Component{
                     <Grid item xs={12} sm={9}>
                         <Grid container style={{justifyContent: 'center'}}>
                             <List className={classes.root}>
-                                {posts.map((value) => <Item key={value._id} data={value} />)}
+                                {posts.map((value) => <PostItem key={value._id} data={value} />)}
                             </List>
                         </Grid>
                     </Grid>
