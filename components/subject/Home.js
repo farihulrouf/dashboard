@@ -33,15 +33,15 @@ const useStyles = makeStyles(styles);
 
 const CommentItem = (props) => {
     const classes = useStyles();
-    const[comment,setComment] = React.useState(props.data);
+    const {data} = props;
     return(
         <Grid container style={{margin: 10}}>
             <Grid container spacing={2}>
                 <Grid item>
-                    <Avatar style={{width: 30, height: 30}} alt={comment.commentator.name} src="/static/images/avatar/1.jpg" />
+                    <Avatar style={{width: 30, height: 30}} alt={data.commentator.name} src="/static/images/avatar/1.jpg" />
                 </Grid>
                 <Grid item>
-                    <Grid container style={{fontSize: 12}}><b>{comment.commentator.name}</b></Grid>
+                    <Grid container style={{fontSize: 12}}><b>{data.commentator.name}</b></Grid>
                     <Grid container>
                         <React.Fragment>
                         <Typography
@@ -50,14 +50,14 @@ const CommentItem = (props) => {
                             className={classes.inline}
                             color="textPrimary"
                         >
-                            {comment.createdAt}
+                            {data.createdAt}
                         </Typography>
                         </React.Fragment>
                     </Grid>
                 </Grid>
             </Grid>
             <Grid container style={{marginTop: 10}}>
-                <span style={{fontSize: 12}}>{comment.content}</span>
+                <span style={{fontSize: 12}}>{data.content}</span>
             </Grid>
         </Grid>
     )
@@ -67,9 +67,15 @@ const PostItem = (props) => {
     const classes = useStyles();
     const [showComment,setShowCommnet] = React.useState(false);
     const [data,setData] = React.useState(props.data);
+    const [comment,setComment] = React.useState("");
     
     const showCommentBox = (event) => {
        setShowCommnet(!showComment);
+    }
+
+    const postCallback = (data) => {
+        setComment("");
+        setData(data);
     }
 
     return(
@@ -109,7 +115,7 @@ const PostItem = (props) => {
             <Grid container spacing={3} style={{marginTop: 10}}>
                 <Grid item>
                     <Button
-                        variant="outlined"
+                        variant={!!data.isLike?"contained" : "outlined"}
                         color="primary"
                         size="small"
                         className={classes.button}
@@ -144,7 +150,7 @@ const PostItem = (props) => {
                 </Grid>
             </Grid>
             <Divider style={{marginTop: 10}}/>
-                <Grid Container>
+                <Grid container>
                     {data.comments.listComments.map((value) => <CommentItem key={value._id} data={value} />)}
                 </Grid>
                 {showComment && <Grid container style={{marginTop: 10}}>
@@ -155,14 +161,17 @@ const PostItem = (props) => {
                             rowsMin={2}
                             rowsMax={10}
                             style={{width: '100%', borderRadius: 10, resize: 'none'}}
+                            value={comment}
+                            onChange={(e)=>setComment(e.target.value)}
                         />
                     </Grid>
                     <Grid xs={12} sm={1} item>
                         <Button
                             variant="outlined"
                             color="primary"
+                            onClick={postComment({postId: data._id,comment: comment},postCallback)}
                         >
-                            <SendIcon onClick={postComment(data._id,setData)} style={{fontSize: 15}} />
+                            <SendIcon style={{fontSize: 15}} />
                         </Button>
                     </Grid>
                 </Grid>}

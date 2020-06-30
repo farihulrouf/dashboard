@@ -67,12 +67,13 @@ router.put(
   catchErrors(postController.likeAPost)
 );
 
-// router.post(
-//   "/api/posts/:postId/comment",
-//   authController.checkAuth,
-//   postController.validateComment,
-//   catchErrors(postController.createComment)
-// )
+router.post(
+  "/api/posts/:postId/comment",
+  authController.checkAuth,
+  postController.validateComment,
+  catchErrors(postController.createComment)
+)
+
 // router.post(
 //   "/api/posts/new/:userId",
 //   authController.checkAuth

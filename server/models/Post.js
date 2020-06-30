@@ -33,6 +33,7 @@ const autoPopulate = function(next){
 postSchema
     .pre("findOne",autoPopulate)
     .pre("find",autoPopulate)
+    .post("findAndUpdateOne",autoPopulate)
     
 postSchema.index({ postedOn: 1, category: 1});
 

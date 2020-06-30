@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Post = mongoose.model("Post");
+const Comment = mongoose.model("Comment");
 
 
 exports.addPost = async (req, res) => {
@@ -32,34 +33,41 @@ exports.likeAPost = async (req,res) => {
     //Already like it, unlike it
     likes.total -= 1;
     delete likes.likedBy[idx]
+    isLike = false
   }else{
     likes.total += 1;
     likes.likedBy.push(req.user._id)
+    isLike = true;
   }
   post.save((err,post)=>{
-    if(!err) res.json({status: "ok", message: "like/unlike post success", post: post});
+    if(!err){
+      post._doc.isLike = isLike;
+      res.json({status: "ok", message: "like/unlike post success", post: post});
+    }
     else res.json({status: "error", message: "unable to like/unlike post"})
   })
 }
 
-// exports.validateComment = async (req,res,next,id) => {
-//   req.sanitizeBody("body");
-//   req
-//     .checkBody("body", "Content must be between 1 and 200 characters")
-//     .isLength({ min: 1, max: 200  });
-//   const errors = req.validationErrors();
-//   if (errors) {
-//     const firstError = errors.map(error => error.msg)[0];
-//     return res.json({status: "error", message: firstError});
-//   }
-//   next();
-// }
+exports.validateComment = (req,res,next) => {
+  req.sanitizeBody("content");
+  req
+    .checkBody("content", "Content must be between 1 and 200 characters")
+    .isLength({ min: 1, max: 200  });
+  const errors = req.validationErrors();
+  if (errors) {
+    const firstError = errors.map(error => error.msg)[0];
+    return res.json({status: "error", message: firstError});
+  }
+  next();
+}
 
-// exports.createComment = async (req,res) => {
-//   const {post} = req;
-//   if(post){
-//     const {comment} = Comment.new({body: req.body, postedBy: req.user._id, postedOn: post._id})
-//     post.comments.push(comment)
-//   }
-//   res.json({status: "ok", message: "comment is created successfully"})
-// }
+exports.createComment = async (req,res) => {
+  const {body,user,post} = req
+  comment = await new Comment({content: body.content, commentator: user, post: post}).save()
+  result = await post.update({$inc: {"comments.total": 1},$push: {"comments.listComments": comment}})
+  if(result.ok){
+    updatedPost = await Post.findOne({_id: post._id})
+    return res.json({status: "ok", message: "comment is created successfully", post: updatedPost})
+  }
+  res.json({status: "error", message: "unable to create comment", post: post})
+}

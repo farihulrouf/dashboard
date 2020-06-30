@@ -36,6 +36,10 @@ exports.getPosts = async (req,res) => {
         limit: 10,
     }
     const posts = await Post.paginate({postedOn: courseId},options)
+    posts.docs.forEach((post)=>{
+        idx = post.likes.likedBy.indexOf(req.user._id);
+        post._doc.isLike = idx>=0 ? true : false;
+    })
     if(req.user){
         res.json({status: "ok", posts: posts.docs});
     }else{

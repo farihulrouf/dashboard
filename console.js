@@ -30,38 +30,39 @@ const seeds = async function(){
 
     const coursesData = [
         {name: "Kalkulus IA", about: "ITB kalkulus series", prerequisites: ["Aljabar","Geometri"], 
-            price: 0, instructors: [users[0]._id, users[1]._id]},
+            price: 0, instructors: [users[0], users[1]]},
         {name: "Kalkulus IB", about: "ITB kalkulus series", prerequisites: ["Kalkulus IA","Aljabar","Geometri"], 
-            price: 0, instructors: users[1]._id},
+            price: 0, instructors: users[1]},
         {name: "Biologi X-1", about: "Materi biologi untuk kelas 10 SMA semester 1", prerequisites: ["Biologi SMP"],
-            price: 250000, instructors: [users[0]._id, users[2]._id]}
+            price: 250000, instructors: [users[0], users[2]]}
     ]
     courses = await Course.insertMany(coursesData);
 
     const postsData = [
         {title: "Sistem Bilangan Real", body: "Berikut terlampir modul sistem bilangan bulat untuk pertemuan kemarin dan 2 minggu ke depan",
-            category: "Materials", postedBy: users[2]._id, postedOn: courses[0]._id},
+            category: "Materials", postedBy: users[2], postedOn: courses[0]},
         {title: "Quiz I Kalkulus IA", body: "Quiz I Kalkulus IA akan diadakan senin depan, 1 jam mata pelajaran akan digunakan untuk kepentingan quiz.",
-            category: "Announcement", postedBy: users[2]._id, postedOn: courses[0]._id},
-        {title: "Problem Set Quiz I", body: "Terlampir soal quiz I beserta pembahasannya", category: "Materials", postedBy: users[2]._id, postedOn: courses[0]._id}
+            category: "Announcement", postedBy: users[2], postedOn: courses[0]},
+        {title: "Problem Set Quiz I", body: "Terlampir soal quiz I beserta pembahasannya", category: "Materials", postedBy: users[2], postedOn: courses[0]}
     ]
     posts = await Post.insertMany(postsData);
     
     posts.forEach(async element => {
-        await Course.updateOne({_id: element.postedOn},{$push: {posts: element._id}})
+        await Course.updateOne({_id: element.postedOn},{$push: {posts: element}})
     });
 
     const commentsData = [
-        {commentator: users[0]._id, content: "Sepertinya pertemuan hari ini tidak ada pada modul yang diberikan di sini Pak", postId: posts[0]._id},
-        {commentator: users[1]._id, content: "Modul yang hari ini diberikan terpisah di kelas tadi", postId: posts[0]._id},
-        {commentator: users[0]._id, content: "Quiznya susah banget Pak, untung bobotnya cuma 10%", postId: posts[1]._id},
-        {commentator: users[2]._id, content: "Ah masak sih, kan soal2nya sama seperti soal latihan yang sudah diberikan", postId: posts[1]._id}
+        {commentator: users[0], content: "Sepertinya pertemuan hari ini tidak ada pada modul yang diberikan di sini Pak", post: posts[0]},
+        {commentator: users[1], content: "Modul yang hari ini diberikan terpisah di kelas tadi", post: posts[0]},
+        {commentator: users[0], content: "Quiznya susah banget Pak, untung bobotnya cuma 10%", post: posts[1]},
+        {commentator: users[2], content: "Ah masak sih, kan soal2nya sama seperti soal latihan yang sudah diberikan", post: posts[1]}
     ]
     comments = await Comment.insertMany(commentsData);
 
-    comments.forEach(async e => [
-        await Post.updateOne({_id: e.postId},{$inc: {"comments.total": 1}, $push: {"comments.listComments": e._id}})
-    ])
+    comments.forEach(async e => {
+        result = await Post.updateOne({_id: e.post},{$inc: {"comments.total": 1}, $push: {"comments.listComments": e}})
+        console.log(result);
+    })
 }
 
 replServer.context.User = User;
