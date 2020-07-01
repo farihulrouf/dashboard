@@ -1,12 +1,9 @@
 const express = require("express");
 const authController = require("../controllers/authController");
-<<<<<<< HEAD
 const userController = require("../controllers/userController");
 const exerciseController = require("../controllers/exerciseController");
-=======
 const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
->>>>>>> origin/feature/post-api
 
 const router = express.Router();
 
