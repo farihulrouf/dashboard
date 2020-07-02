@@ -1,10 +1,29 @@
-require('./server/app.js')
+require("dotenv").config();
 var repl = require("repl");
 var replServer = repl.start({prompt: "Node Console > "});
 var User = require('./server/models/User');
 var Course = require('./server/models/Course');
 var Post = require('./server/models/Post');
 var Comment = require('./server/models/Comment');
+const mongoose = require("mongoose");
+
+const mongooseOptions = {
+    useNewUrlParser: true,
+    useCreateIndex: true,
+    useFindAndModify: false
+  };
+  
+mongoose.set('useUnifiedTopology', true);
+mongoose
+.connect(
+    process.env.MONGO_URI,
+    mongooseOptions
+)
+.then(() => console.log("DB connected"));
+
+mongoose.connection.on("error", err => {
+console.log(`DB connection error: ${err.message}`);
+});
 
 const addUser = (user,password)=> {
     return new Promise((resolve,reject)=>{
