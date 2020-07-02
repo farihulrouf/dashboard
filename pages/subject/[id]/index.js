@@ -108,13 +108,25 @@ function FloatingActionButtonZoom(props) {
           className={classes.swipeableViews}
         >
             <TabPanel value={value} index={0} className={classes.tabPanel} dir={theme.direction}>
-                <Home courseId={props.router.query.id} />
+                <Home
+                    auth = {props.auth} 
+                    courseId={props.router.query.id} 
+                    isInstructor = {props.isInstructor} 
+                />
             </TabPanel>
             <TabPanel value={value} index={1} className={classes.tabPanel} dir={theme.direction}>
-                <Discussion courseId={props.router.query.id} />
+                <Discussion
+                    auth = {props.auth}
+                    courseId={props.router.query.id} 
+                    isInstructor = {props.isInstructor} 
+                />
             </TabPanel>
             <TabPanel value={value} index={2} dir={theme.direction}>
-                <ExerciseSetting courseId={props.router.query.id} />
+                <ExerciseSetting
+                    auth = {props.auth}
+                    courseId={props.router.query.id} 
+                    isInstructor = {props.isInstructor} 
+                />
             </TabPanel>
         </SwipeableViews>
       </Grid>
@@ -135,7 +147,7 @@ class Subject extends React.Component {
 
     render(){
         const {classes} = this.props;
-        const {course, isInstructor, joinStatus} = this.state;
+        const {course, joinStatus} = this.state;
         return(
         <NavBar auth={this.props.auth}>
             <React.Fragment>
@@ -176,7 +188,7 @@ class Subject extends React.Component {
                 </Grid>
             </Grid>
             <Grid container>
-                <FloatingActionButtonZoom {...this.props} />
+                <FloatingActionButtonZoom isInstructor={course.isInstructor} {...this.props} />
             </Grid>
             </React.Fragment>
         </NavBar>)

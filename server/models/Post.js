@@ -20,7 +20,8 @@ var postSchema = mongoose.Schema({
     category: {type: String, enum: ["Announcement","Materials","Exam"], required: "Post category is required"},
     postedBy: {type: ObjectId, ref: "User"},
     postedOn: {type: ObjectId, ref: "Course"},
-    comments: {type: commentsSchema, default: {total: 0, listComments: []}}
+    comments: {type: commentsSchema, default: {total: 0, listComments: []}},
+    attachments: [String]
 }, {timestamps: true})
 postSchema.plugin(mongoosePaginate); //For example Post.paginate(conditions,{page: 0, limit: 2, offset: 2})
 

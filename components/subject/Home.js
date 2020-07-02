@@ -1,7 +1,7 @@
 import NavBar from '../../components/NavBar.js';
 import { makeStyles, withStyles } from '@material-ui/core/styles';;
 import {Grid, List, ListItem, ListItemIcon, Checkbox, ListItemSecondaryAction, Avatar, ListItemText,
-    Typography, Paper, Button, IconButton, InputBase, Divider, TextareaAutosize
+    Typography, Paper, Button, IconButton, InputBase, Divider, TextareaAutosize, Fab
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import SendIcon from '@material-ui/icons/Send';
@@ -11,7 +11,8 @@ import ExamIcon from '@material-ui/icons/AssessmentOutlined'
 import ClassIcon from '@material-ui/icons/ClassOutlined'
 import ShareIcon from '@material-ui/icons/Share';
 import SearchIcon from '@material-ui/icons/Search';
-import {getCoursePosts, likeAPost, postComment} from '../../lib/api';
+import AddIcon from '@material-ui/icons/AddCircleRounded'
+import {createCoursePost, getCoursePosts, likeAPost, postComment} from '../../lib/api';
 
 
 const styles = (theme) => ({
@@ -249,7 +250,9 @@ const TagFilter = () => {
 class Home extends React.Component{
     constructor(props){
         super(props);
-        this.state = {posts: []}
+        this.state = {posts: [], newPost: {files: []}}
+        this.onFileChange = this.onFileChange.bind(this)
+        this.onTextChange = this.onTextChange.bind(this)
     }
 
     componentDidMount(){
@@ -257,9 +260,31 @@ class Home extends React.Component{
         getCoursePosts(courseId,1).then(posts => this.setState(posts))
     }
 
+    onFileChange(e) {
+        this.state.newPost.files = e.target.files;
+        this.setState({ newPost: this.state.newPost })
+    }
+
+    onTextChange(e) {
+        this.state.newPost.body = e.target.value;
+        this.setState({newPost: this.state.newPost});
+    }
+
+    onSubmit = (e) => {
+        e.preventDefault()
+        let {newPost} = this.state;
+        formData = new FormData();
+        for (const key of Object.keys(newPost.files)) {
+            formData.append('imgCollection', newPost.files[key])
+        }
+        newPost.files = formData;
+        createCoursePost(courseId,newPost).then(posts=>{this.setState(posts)})
+    }
+
     render(){
-        const {classes} = this.props
+        const {classes, isInstructor, auth} = this.props
         const {posts} = this.state
+        console.log(auth);
         return(
             <React.Fragment>
                 <Grid container>
@@ -269,9 +294,45 @@ class Home extends React.Component{
                     </Grid>
                     <Grid item xs={12} sm={9}>
                         <Grid container style={{justifyContent: 'center'}}>
-                            <List className={classes.root}>
-                                {posts.map((value) => <PostItem key={value._id} data={value} />)}
-                            </List>
+                            {isInstructor && <Grid item xs={12}>
+                                <Paper elevation={5} style={{margin: '0 10% 0 10%', padding: 20}}>
+                                        <Grid container style={{marginBottom: 20}}>
+                                            <Grid item style={{marginRight: 10}}>
+                                                <Avatar style={{width: 30, height: 30}} alt={auth.user.name} src={auth.user.avatar} />
+                                            </Grid>
+                                            <Grid item>
+                                                <Grid container style={{fontSize: 20}}><b>{auth.user.name}</b></Grid>
+                                            </Grid>
+                                        </Grid>
+                                        <form onSubmit={this.onSubmit}>
+                                            <TextareaAutosize
+                                                placeholder="Write a Post"
+                                                multiline="true"
+                                                rowsMin={4}
+                                                rowsMax={10}
+                                                style={{width: '100%', padding: 5, resize: 'none'}}
+                                                value = {this.state.newPost.body}
+                                                onChange={this.onTextChange}
+                                            />
+                                            <label htmlFor="files">
+                                                <input style={{display: 'none'}} id="files" type="file" name="files" onChange={this.onFileChange} multiple />
+                                                <Fab color="primary" size="small" component="span" aria-label="add">
+                                                    <AddIcon />
+                                                </Fab>
+                                            </label>
+                                            <Grid container style={{justifyContent: 'flex-end'}}>
+                                                <Button type="submit" variant="contained" color="primary">
+                                                    Create Post
+                                                </Button>
+                                            </Grid>
+                                        </form>
+                                </Paper>
+                            </Grid>}
+                            <Grid item xs={12}>
+                                <List style={{padding: '10%', paddingTop: 20}}>
+                                    {posts.map((value) => <PostItem key={value._id} data={value} />)}
+                                </List>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

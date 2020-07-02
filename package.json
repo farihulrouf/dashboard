@@ -34,6 +34,7 @@
     "react": "latest",
     "react-dom": "latest",
     "react-swipeable-views": "^0.13.9",
+    "uuidv4": "^6.1.1",
     "validator": "^13.0.0"
   },
   "scripts": {

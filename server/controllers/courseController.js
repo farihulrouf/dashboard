@@ -16,7 +16,7 @@ exports.getCourseById = async (req, res, next, id) => {
         instructors.forEach((i)=> {
             const instructorId = mongoose.Types.ObjectId(i._id);
             if(instructorId.equals(req.user._id)){
-                req.isInstructor = true;
+                req.course._doc.isInstructor = true;
             }
         })
         return next();
@@ -24,8 +24,46 @@ exports.getCourseById = async (req, res, next, id) => {
     next();
 };
 
-exports.getCourse = async (req,res,next,id) => {
-    res.json(!req.course ? {} : {isInstructor: !!req.isInstructor, course: req.course})
+exports.getCourse = async (req,res) => {
+    res.json({course: req.course})
+}
+
+exports.validatePost = (req,res,next) => {
+    req.sanitizeBody("title");
+    req.sanitizeBody("body");
+    req.checkBody("title", "Post should have a title").notEmpty()
+    req.checkBody("body","Post should have a body").notEmpty();
+    req.checkBody("category","Post should have exactly one category").notEmpty();
+
+    const errors = req.validationErrors();
+    if(errors){
+        const firstError = errors.map(error => error.msg)[0];
+        return res.json({status: "error", message: firstError});
+    }
+    next();
+}
+
+exports.createCoursePost = async (req,res,next) => {
+    const {title,body,category} = req.body;
+    const reqFiles = [];
+    let post = new Post({
+        title: title, 
+        body: body, 
+        category: category, 
+        postedOn: req.course, 
+        postedBy: req.user
+    })
+    const url = req.protocol + '://' + req.get('host')
+    for (var i = 0; i < req.files.length; i++) {
+        reqFiles.push(url + '/static/documents/' + req.files[i].filename)
+    }
+    post.attachments = reqFiles;
+    post.save((err,savedPost)=>{
+        if(err){
+            return res.json({status: "error", message: err.message})
+        }
+        next();
+    })
 }
 
 exports.getPosts = async (req,res) => {
