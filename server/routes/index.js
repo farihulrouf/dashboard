@@ -4,6 +4,7 @@ const userController = require("../controllers/userController");
 const exerciseController = require("../controllers/exerciseController");
 const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
+const exerciseMaterialController = require("../controllers/exerciseMaterialController")
 
 const router = express.Router();
 
@@ -35,6 +36,14 @@ router.put("/api/exercises/:id", exerciseController.updateExercise);
 router.get("/api/exercises", exerciseController.fetchAllExercise);
 router.post("/api/exercises", exerciseController.addNewExercises);
 
+/** 
+ * EXERCISE MATERIALS ROUTES
+ */
+router.post("/api/exercise-materials", exerciseMaterialController.addNewExerciseMaterials)
+router.get("/api/exercise-materials", exerciseMaterialController.fetchAllExerciseSchema)
+router.get("/api/exercise-materials/:id", exerciseMaterialController.fetchSingleExerciseMaterial);
+router.put("/api/exercise-materials/:id", exerciseMaterialController.updateExerciseMaterial);
+
 /**
  * COURSE ROUTES /api/courses
  */
@@ -55,6 +64,7 @@ router.param(
 //Unregistered user can see courses and course info
 router.get(
   "/api/courses",
+  authController.checkAuth,
   catchErrors(courseController.getCourses)
 );
 
