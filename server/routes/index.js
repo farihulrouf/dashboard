@@ -64,6 +64,7 @@ router.param(
 //Unregistered user can see courses and course info
 router.get(
   "/api/courses",
+  authController.checkAuth,
   catchErrors(courseController.getCourses)
 );
 

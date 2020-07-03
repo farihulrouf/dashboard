@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const ExerciseMaterial = mongoose.model("ExerciseMaterial");
+const { ObjectId } = mongoose.Types;
+
 
 exports.fetchAllExerciseSchema = async (req, res) => {
   ExerciseMaterial.find()
@@ -11,11 +13,15 @@ exports.addNewExerciseMaterials = async (req, res) => {
   const difficultyLabel = req.body.difficultyLabel;
   const question = req.body.question;
   const multipleChoices = req.body.multipleChoices;
+  const post = ObjectId(req.body.post);
+  const course = ObjectId(req.body.course);
 
   const newExerciseMaterial = new ExerciseMaterial({
     difficultyLabel,
     question,
     multipleChoices,
+    post,
+    course
   });
 
   newExerciseMaterial
