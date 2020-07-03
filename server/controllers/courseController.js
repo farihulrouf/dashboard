@@ -55,7 +55,10 @@ exports.createCoursePost = async (req,res,next) => {
     })
     const url = req.protocol + '://' + req.get('host')
     for (var i = 0; i < req.files.length; i++) {
-        reqFiles.push(url + '/static/documents/' + req.files[i].filename)
+        file = req.files[i]
+        filePath = url + '/static/documents/' + file.filename
+        attachment = {fileName: file.originalname, size: file.size, path: filePath}
+        reqFiles.push(attachment);
     }
     post.attachments = reqFiles;
     post.save((err,savedPost)=>{

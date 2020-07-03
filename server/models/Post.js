@@ -12,6 +12,12 @@ const commentsSchema = new mongoose.Schema({
     listComments: [{type: ObjectId, ref: "Comment"}]
 })
 
+const attachmentSchema = new mongoose.Schema({
+    fileName: {type: String, required: "Attachment name should be declared"},
+    size: {type: Number, required: "Attachment size should be defined, default in (KB)"},
+    path: {type: String, required: "Attachment path is required"}
+})
+
   
 var postSchema = mongoose.Schema({
     title: {type: String, required: "Title is required", trim: true},
@@ -21,7 +27,7 @@ var postSchema = mongoose.Schema({
     postedBy: {type: ObjectId, ref: "User"},
     postedOn: {type: ObjectId, ref: "Course"},
     comments: {type: commentsSchema, default: {total: 0, listComments: []}},
-    attachments: [String]
+    attachments: [attachmentSchema]
 }, {timestamps: true})
 postSchema.plugin(mongoosePaginate); //For example Post.paginate(conditions,{page: 0, limit: 2, offset: 2})
 
