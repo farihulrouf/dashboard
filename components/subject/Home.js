@@ -1,7 +1,7 @@
 import NavBar from '../../components/NavBar.js';
 import { makeStyles, withStyles } from '@material-ui/core/styles';;
 import {Grid, List, ListItem, ListItemIcon, Checkbox, ListItemSecondaryAction, Avatar, ListItemText,
-    Typography, Paper, Button, IconButton, InputBase, Divider, TextareaAutosize, Fab
+    Typography, Paper, Button, IconButton, InputBase, Divider, TextareaAutosize, Fab, TextField
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import SendIcon from '@material-ui/icons/Send';
@@ -11,8 +11,10 @@ import ExamIcon from '@material-ui/icons/AssessmentOutlined'
 import ClassIcon from '@material-ui/icons/ClassOutlined'
 import ShareIcon from '@material-ui/icons/Share';
 import SearchIcon from '@material-ui/icons/Search';
+import AttachmentIcon from '@material-ui/icons/Attachment';
 import AddIcon from '@material-ui/icons/AddCircleRounded'
 import {createCoursePost, getCoursePosts, likeAPost, postComment} from '../../lib/api';
+import { Editor } from '@tinymce/tinymce-react';
 
 
 const styles = (theme) => ({
@@ -102,16 +104,11 @@ const PostItem = (props) => {
                 </Grid>
             </Grid>
             <Grid container style={{marginTop: 10}}>
-                <ListItemText primary={data.body} />
+                <div  dangerouslySetInnerHTML={{__html: data.body}} />
             </Grid>
             <Grid container style={{marginTop: 10}}>
-                {/* <Button 
-                    startIcon={<ThumbUpIcon style={{fontSize: 15}} />} color="primary" 
-                    variant="contained"
-                    style={{padding: 0, height: 20}}
-                />  */}
-                    <ThumbUpIcon style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
-                    <span style={{fontSize: 12}}>{data.likes.total} Likes</span>
+                <ThumbUpIcon style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
+                <span style={{fontSize: 12}}>{data.likes.total} Likes</span>
             </Grid>
             <Grid container spacing={3} style={{marginTop: 10}}>
                 <Grid item>
@@ -253,6 +250,7 @@ class Home extends React.Component{
         this.state = {posts: [], newPost: {files: []}}
         this.onFileChange = this.onFileChange.bind(this)
         this.onTextChange = this.onTextChange.bind(this)
+        this.handleEditorChange = this.handleEditorChange.bind(this)
     }
 
     componentDidMount(){
@@ -266,25 +264,31 @@ class Home extends React.Component{
     }
 
     onTextChange(e) {
-        this.state.newPost.body = e.target.value;
+        this.state.newPost[e.target.name] = e.target.value;
         this.setState({newPost: this.state.newPost});
     }
 
-    onSubmit = (e) => {
+    handleEditorChange(content,editor){
+        this.state.newPost.body = content;
+        this.setState({newPost: this.state.newPost})
+    }
+
+    onSubmit = (e,courseId) => {
         e.preventDefault()
         let {newPost} = this.state;
-        formData = new FormData();
+        let formData = new FormData();
+        formData.set("title",newPost.title);
+        formData.set("body",newPost.body);
+        formData.set("category","Announcement");
         for (const key of Object.keys(newPost.files)) {
-            formData.append('imgCollection', newPost.files[key])
+            formData.append('attachments', newPost.files[key])
         }
-        newPost.files = formData;
-        createCoursePost(courseId,newPost).then(posts=>{this.setState(posts)})
+        createCoursePost(courseId,formData).then(posts=>{this.setState(posts)})
     }
 
     render(){
         const {classes, isInstructor, auth} = this.props
         const {posts} = this.state
-        console.log(auth);
         return(
             <React.Fragment>
                 <Grid container>
@@ -304,22 +308,54 @@ class Home extends React.Component{
                                                 <Grid container style={{fontSize: 20}}><b>{auth.user.name}</b></Grid>
                                             </Grid>
                                         </Grid>
-                                        <form onSubmit={this.onSubmit}>
-                                            <TextareaAutosize
-                                                placeholder="Write a Post"
+                                        <form onSubmit={(e)=> this.onSubmit(e,this.props.courseId)}>
+                                            <TextareaAutosize rowsMax={1} 
+                                                placeholder="Post title" 
+                                                style={{width: '50%', padding: 5, resize: 'none'}}
+                                                onChange={this.onTextChange}
+                                                name="title"
+                                             />
+                                            {/* <TextareaAutosize
+                                                placeholder="......."
                                                 multiline="true"
                                                 rowsMin={4}
                                                 rowsMax={10}
                                                 style={{width: '100%', padding: 5, resize: 'none'}}
                                                 value = {this.state.newPost.body}
                                                 onChange={this.onTextChange}
+                                                name="body"
+                                            /> */}
+                                            <Editor
+                                                initialValue=""
+                                                init={{
+                                                height: 200,
+                                                menubar: false,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar:
+                                                    'undo redo | formatselect | bold italic backcolor | \
+                                                    alignleft aligncenter alignright alignjustify | \
+                                                    bullist numlist outdent indent | removeformat | help'
+                                                }}
+                                                value = {this.state.newPost.body}
+                                                onEditorChange={this.handleEditorChange}
+                                                apiKey={process.env.TINYMCE_APIKEY}
                                             />
                                             <label htmlFor="files">
                                                 <input style={{display: 'none'}} id="files" type="file" name="files" onChange={this.onFileChange} multiple />
-                                                <Fab color="primary" size="small" component="span" aria-label="add">
-                                                    <AddIcon />
-                                                </Fab>
+                                                <Button
+                                                    variant="outlined"
+                                                    color="primary"
+                                                    size="small"
+                                                    startIcon={<AttachmentIcon />}
+                                                >
+                                                    Add Attachments
+                                                </Button>
                                             </label>
+
                                             <Grid container style={{justifyContent: 'flex-end'}}>
                                                 <Button type="submit" variant="contained" color="primary">
                                                     Create Post

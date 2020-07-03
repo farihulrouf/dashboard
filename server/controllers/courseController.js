@@ -72,6 +72,7 @@ exports.getPosts = async (req,res) => {
     const options = {
         page: parseInt(page),
         limit: 10,
+        sort: {createdAt: -1}
     }
     const posts = await Post.paginate({postedOn: courseId},options)
     posts.docs.forEach((post)=>{

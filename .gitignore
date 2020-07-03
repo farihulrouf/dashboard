@@ -18,4 +18,5 @@ yarn-error.log*
 # Next.js
 /.next
 .env
+next.config.js
 static/documents/*
