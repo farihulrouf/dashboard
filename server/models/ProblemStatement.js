@@ -6,7 +6,7 @@ const { ObjectId } = mongoose.Schema;
 
 const participantSolutionsSchema = new mongoose.Schema({
     exerciseMaterialId: {type: ObjectId},
-    answer: {type: string}
+    answer: {type: String}
 })
 
 const problemStatementSchema = new Schema(
@@ -14,7 +14,7 @@ const problemStatementSchema = new Schema(
     participantId: {type: ObjectId, ref: "User"},
     dateStart : { type : Date },
     dateSubmission: {type: Date},
-    score: {type: Number},
+    score: {type: Number, default: 0},
     participantSolutions : [{type: participantSolutionsSchema}],
   },
   {
@@ -23,4 +23,4 @@ const problemStatementSchema = new Schema(
 );
 
 const ProblemStatement = mongoose.model("ProblemStatement", problemStatementSchema);
-module.exports = problemStatementSchema;
+module.exports = ProblemStatement;

@@ -18,6 +18,7 @@ require("./models/Exercise")
 require("./models/Post");
 require("./models/Comment");
 require("./models/ExerciseMaterial");
+require("./models/ProblemStatement")
 
 const routes = require("./routes");
 require("./passport");
