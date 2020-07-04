@@ -1,7 +1,9 @@
 import NavBar from '../../components/NavBar.js';
 import { makeStyles, withStyles } from '@material-ui/core/styles';;
 import {Grid, List, ListItem, ListItemIcon, Checkbox, ListItemSecondaryAction, Avatar, ListItemText,
-    Typography, Paper, Button, IconButton, InputBase, Divider, TextareaAutosize
+    Typography, Paper, Button, IconButton, InputBase, Divider, TextField, ListItemAvatar, InputLabel, Select, TextareaAutosize,
+    MenuItem,
+    FormControl
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
 import SendIcon from '@material-ui/icons/Send';
@@ -11,7 +13,12 @@ import ExamIcon from '@material-ui/icons/AssessmentOutlined'
 import ClassIcon from '@material-ui/icons/ClassOutlined'
 import ShareIcon from '@material-ui/icons/Share';
 import SearchIcon from '@material-ui/icons/Search';
-import {getCoursePosts, likeAPost, postComment} from '../../lib/api';
+import AttachmentIcon from '@material-ui/icons/Attachment';
+import DocumentIcon from '@material-ui/icons/Description';
+import DeleteIcon from '@material-ui/icons/Clear'
+import AddIcon from '@material-ui/icons/AddCircleRounded'
+import {createCoursePost, getCoursePosts, likeAPost, postComment} from '../../lib/api';
+import { Editor } from '@tinymce/tinymce-react';
 
 
 const styles = (theme) => ({
@@ -101,16 +108,14 @@ const PostItem = (props) => {
                 </Grid>
             </Grid>
             <Grid container style={{marginTop: 10}}>
-                <ListItemText primary={data.body} />
+                <div  dangerouslySetInnerHTML={{__html: data.body}} />
+            </Grid>
+            <Grid container spacing={2}>
+                {data.attachments.map((e,idx)=><Grid item><a href={e.path} style={{fontSize: 12}}>{e.fileName}</a></Grid>)}
             </Grid>
             <Grid container style={{marginTop: 10}}>
-                {/* <Button 
-                    startIcon={<ThumbUpIcon style={{fontSize: 15}} />} color="primary" 
-                    variant="contained"
-                    style={{padding: 0, height: 20}}
-                />  */}
-                    <ThumbUpIcon style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
-                    <span style={{fontSize: 12}}>{data.likes.total} Likes</span>
+                <ThumbUpIcon style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
+                <span style={{fontSize: 12}}>{data.likes.total} Likes</span>
             </Grid>
             <Grid container spacing={3} style={{marginTop: 10}}>
                 <Grid item>
@@ -187,7 +192,6 @@ const SearchBar = () => {
                 <SearchIcon />
             </IconButton>
             <InputBase
-            className={classes.input}
             placeholder="Search....."
             inputProps={{ 'aria-label': 'search google maps' }}
             />
@@ -246,10 +250,38 @@ const TagFilter = () => {
     );
 }
 
+const Attachments = (props) => {
+    const {data} = props
+    return(
+        <List dense={true} >
+            {data.map((e,idx)=> (
+                <ListItem key={idx}>
+                    <ListItemAvatar>
+                    <Avatar>
+                        <DocumentIcon />
+                    </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText
+                    primary={e.name}
+                    secondary={`${parseInt(e.size/1000)} kb`}
+                    />
+                    <ListItemSecondaryAction>
+                    <IconButton onClick={()=>props.removeFile(idx)} edge="end" aria-label="delete">
+                        <DeleteIcon />
+                    </IconButton>
+                    </ListItemSecondaryAction>
+                </ListItem>
+            ))}
+        </List>
+    )
+}
 class Home extends React.Component{
     constructor(props){
         super(props);
-        this.state = {posts: []}
+        this.state = {posts: [], newPost: {title: "", body: "", category: "", files: []}}
+        this.onFileChange = this.onFileChange.bind(this)
+        this.onTextChange = this.onTextChange.bind(this)
+        this.handleEditorChange = this.handleEditorChange.bind(this)
     }
 
     componentDidMount(){
@@ -257,21 +289,146 @@ class Home extends React.Component{
         getCoursePosts(courseId,1).then(posts => this.setState(posts))
     }
 
+    onFileChange(e) {
+        let newFiles = Array.from(e.target.files);
+        let {newPost} = this.state
+        this.state.newPost.files = newPost.files.concat(newFiles);
+        this.setState({ newPost: this.state.newPost })
+    }
+
+    onTextChange(e) {
+        this.state.newPost[e.target.name] = e.target.value;
+        this.setState({newPost: this.state.newPost});
+    }
+
+    handleEditorChange(content,editor){
+        this.state.newPost.body = content;
+        this.setState({newPost: this.state.newPost})
+    }
+
+    removeFile(e){
+        this.state.newPost.files.splice(e,1);
+        this.setState({newPost: this.state.newPost})
+    }
+
+    onSubmit = (e,courseId) => {
+        e.preventDefault()
+        let {newPost} = this.state;
+        let formData = new FormData();
+        formData.set("title",newPost.title);
+        formData.set("body",newPost.body);
+        formData.set("category",newPost.category);
+        for (const key of Object.keys(newPost.files)) {
+            formData.append('attachments', newPost.files[key])
+        }
+        createCoursePost(courseId,formData).then(result=>{
+            this.setState({posts: result.posts, newPost: {title: "",body: "",category: "",files: []}})
+        })
+    }
+
     render(){
-        const {classes} = this.props
-        const {posts} = this.state
+        const {classes, isInstructor, auth} = this.props
+        const {posts, newPost} = this.state
         return(
             <React.Fragment>
                 <Grid container>
-                    <Grid item xs={12} sm={3}>
+                    <Grid item xs={12} sm={4} style={{paddingRight: '5%'}}>
                         <SearchBar />
                         <TagFilter />
                     </Grid>
-                    <Grid item xs={12} sm={9}>
+                    <Grid item xs={12} sm={8}>
                         <Grid container style={{justifyContent: 'center'}}>
-                            <List className={classes.root}>
-                                {posts.map((value) => <PostItem key={value._id} data={value} />)}
-                            </List>
+                            {isInstructor && <Grid item xs={12}>
+                                <Paper elevation={5} style={{padding: 20}}>
+                                        <Grid container style={{marginBottom: 20}}>
+                                            <Grid item style={{marginRight: 10}}>
+                                                <Avatar style={{width: 30, height: 30}} alt={auth.user.name} src={auth.user.avatar} />
+                                            </Grid>
+                                            <Grid item>
+                                                <Grid container style={{fontSize: 20}}><b>{auth.user.name}</b></Grid>
+                                            </Grid>
+                                        </Grid>
+                                        <form onSubmit={(e)=> this.onSubmit(e,this.props.courseId)}>
+                                            {/* <TextareaAutosize rowsMax={1} 
+                                                placeholder="Post title" 
+                                                style={{width: '50%', padding: 5, resize: 'none'}}
+                                                onChange={this.onTextChange}
+                                                name="title"
+                                                value={newPost.title}
+                                             /> */}
+                                            {/* <TextareaAutosize
+                                                placeholder="......."
+                                                multiline="true"
+                                                rowsMin={4}
+                                                rowsMax={10}
+                                                style={{width: '100%', padding: 5, resize: 'none'}}
+                                                value = {this.state.newPost.body}
+                                                onChange={this.onTextChange}
+                                                name="body"
+                                            /> */}
+                                            <FormControl style={{width: '100%', marginBottom: 20}}>
+                                                <TextField onChange={this.onTextChange} name="title" value={newPost.title} id="outlined-basic" label="Title" />
+                                            </FormControl>
+                                            <FormControl style={{width: '100%', marginBottom: 20}}>
+                                                <InputLabel id="demo-simple-select-label">Category</InputLabel>
+                                                <Select
+                                                labelId="demo-simple-select-label"
+                                                id="demo-simple-select"
+                                                value={newPost.category}
+                                                name="category"
+                                                onChange={this.onTextChange}
+                                                >
+                                                    <MenuItem value={"Announcement"}>Berita</MenuItem>
+                                                    <MenuItem value={"Materials"}>Materi</MenuItem>
+                                                    <MenuItem value={"Exam"}>Ujian</MenuItem>
+                                                </Select>
+                                            </FormControl>
+                                            <Editor
+                                                initialValue=""
+                                                init={{
+                                                height: 200,
+                                                menubar: false,
+                                                plugins: [
+                                                    'advlist autolink lists link image charmap print preview anchor',
+                                                    'searchreplace visualblocks code fullscreen',
+                                                    'insertdatetime media table paste code help wordcount'
+                                                ],
+                                                toolbar:
+                                                    'undo redo | formatselect | bold italic backcolor | \
+                                                    alignleft aligncenter alignright alignjustify | \
+                                                    bullist numlist outdent indent | removeformat | help'
+                                                }}
+                                                value = {newPost.body}
+                                                onEditorChange={this.handleEditorChange}
+                                                apiKey={process.env.TINYMCE_APIKEY}
+                                            />
+                                            <Attachments removeFile={this.removeFile.bind(this)} data={newPost.files}/>
+                                            <label htmlFor="files">
+                                                <input style={{display: 'none'}} id="files" type="file" name="files" onChange={this.onFileChange} multiple />
+                                                <Button
+                                                    color="primary"
+                                                    size="small"
+                                                    component="span"
+                                                    aria-label="add"
+                                                    variant="outlined"
+                                                    style={{marginTop: 20}}
+                                                >
+                                                    <AttachmentIcon />Add Attachments
+                                                </Button>
+                                            </label>
+                                            <Grid container style={{justifyContent: 'flex-end'}}>
+                                                <Button type="submit" variant="contained" color="primary">
+                                                    Create Post
+                                                </Button>
+                                            </Grid>
+                                        </form>
+                                </Paper>
+                            </Grid>}
+                            <Grid item xs={12}>
+                                <List style={{paddingTop: 20}}>
+                                    {posts.map((value) => <PostItem key={value._id} data={value} />)}
+                                </List>
+                            </Grid>
                         </Grid>
                     </Grid>
                 </Grid>

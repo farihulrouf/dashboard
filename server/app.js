@@ -60,6 +60,8 @@ app.prepare().then(() => {
 
   /* Body Parser built-in to Express as of version 4.16 */
   server.use(express.json());
+  server.use(express.urlencoded({extended: true})); 
+  // server.use(express.static('static'))
   /* Express Validator will validate form data sent to the backend */
   server.use(expressValidator());
 
