@@ -4,7 +4,8 @@ const userController = require("../controllers/userController");
 const exerciseController = require("../controllers/exerciseController");
 const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
-const exerciseMaterialController = require("../controllers/exerciseMaterialController")
+const exerciseMaterialController = require("../controllers/exerciseMaterialController");
+const problemStatementController = require("../controllers/problemStatementController");
 
 const router = express.Router();
 
@@ -43,6 +44,12 @@ router.post("/api/exercise-materials", exerciseMaterialController.addNewExercise
 router.get("/api/exercise-materials", exerciseMaterialController.fetchAllExerciseSchema)
 router.get("/api/exercise-materials/:id", exerciseMaterialController.fetchSingleExerciseMaterial);
 router.put("/api/exercise-materials/:id", exerciseMaterialController.updateExerciseMaterial);
+
+/**
+ * PROBLEM STATEMENTS ROUTES
+ */
+router.put("/api/problem-statements/:id",problemStatementController.updateProblemStatement);
+router.get("/api/problem-statements/:id",problemStatementController.fetchSingleProblemStatement);
 
 /**
  * COURSE ROUTES /api/courses

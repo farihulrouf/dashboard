@@ -10,13 +10,9 @@ const exerciseMaterialSchema = new Schema(
     question: {type: String, required: true},
     post: {type: ObjectId, ref: "Post"},
     course: {type: ObjectId, ref: "Course"},
-    multipleChoices: {
-        a: {type: String, required: true},
-        b: {type: String, required: true},
-        c: {type: String, required: true},
-        d: {type: String, required: true},
-        e: {type: String}
-    },
+    multipleChoices: [{type: String, required: true}],
+    question: {type: String, required: true},
+    solution: {type: String, required: true},
   },
   {
     timestamps: true,
