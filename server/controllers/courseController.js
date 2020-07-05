@@ -71,13 +71,34 @@ exports.createCoursePost = async (req,res,next) => {
 
 exports.getPosts = async (req,res) => {
     const {courseId} = req.params;
-    const {page} = req.query;
+    let {category, content, page} = req.query;
     const options = {
         page: parseInt(page),
         limit: 10,
         sort: {createdAt: -1}
     }
-    const posts = await Post.paginate({postedOn: courseId},options)
+    const filters = [
+        {id: 1, name: 'Announcement'},
+        {id: 2, name: 'Materials'},
+        {id: 3, name: 'Exam'}
+    ]
+
+    let params = {}
+
+    if(content){
+        //Filter title
+        params = {$text: { $search: `"${content}"` }}
+    }
+
+    params.postedOn = courseId;
+
+    if(category){
+        //Filter category
+        category = typeof(category) == "string" ? [parseInt(category)] : category.map((e)=>parseInt(e));
+        params.category = {$in: filters.filter((e)=>category.includes(e.id)).map((e)=>e.name)};
+    }
+    
+    const posts = await Post.paginate(params,options)
     posts.docs.forEach((post)=>{
         idx = post.likes.likedBy.indexOf(req.user._id);
         post._doc.isLike = idx>=0 ? true : false;

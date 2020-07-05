@@ -111,7 +111,7 @@ const PostItem = (props) => {
                 <div  dangerouslySetInnerHTML={{__html: data.body}} />
             </Grid>
             <Grid container spacing={2} style={{marginTop: 10}}>
-                {data.attachments.map((e,idx)=><Grid item><a href={e.path} style={{fontSize: 12}}>{e.fileName}</a></Grid>)}
+                {data.attachments.map((e,idx)=><Grid key={e._id} item><a href={e.path} style={{fontSize: 12}}>{e.fileName}</a></Grid>)}
             </Grid>
             <Grid container style={{marginTop: 10}}>
                 <ThumbUpIcon style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
@@ -185,7 +185,7 @@ const PostItem = (props) => {
 }
 
 const PostFilter = (props) => {
-    const [query, setQuery] = React.useState({content: "",category: []})
+    const [query, setQuery] = React.useState({content: "",category: [],page: 1})
 
     const onQueryChange = (e) => {
         if(e.target.name == "content"){
@@ -198,12 +198,13 @@ const PostFilter = (props) => {
                 query.category.push(categoryId)
             }else query.category.splice(index,1)
         }
-        setQuery({content: query.content, category: query.category})
+        setQuery({...query})
+        props.onSearchQueryChange(query)
     }
 
     const filters = [
         {id: 1, name: 'Berita',icon: <AnnouncementIcon />},
-        {id: 2, name: 'Kelas', icon: <ClassIcon />},
+        {id: 2, name: 'Materi', icon: <ClassIcon />},
         {id: 3, name: 'Ujian', icon: <ExamIcon />}
     ]
     return(
@@ -281,8 +282,7 @@ class Home extends React.Component{
         super(props);
         this.state = {
             posts: [], 
-            newPost: {title: "", body: "", category: "", files: []}, 
-            searchQuery: {content: "",tag: ""}
+            newPost: {title: "", body: "", category: "", files: []}
         }
         this.onFileChange = this.onFileChange.bind(this)
         this.onTextChange = this.onTextChange.bind(this)
@@ -292,7 +292,7 @@ class Home extends React.Component{
 
     componentDidMount(){
         const {courseId} = this.props;
-        getCoursePosts(courseId,{},1).then(posts => this.setState(posts))
+        getCoursePosts(courseId,{page: 1}).then(posts => this.setState(posts))
     }
 
     onFileChange(e) {
@@ -307,9 +307,9 @@ class Home extends React.Component{
         this.setState({newPost: this.state.newPost});
     }
 
-    onSearchQueryChange(courseId,query,page){
-        //Trigger when search query/pagination info is modified (based on body content or category)
-        getCoursePosts(courseId,query,page).then(result => this.setState({posts: result.posts, query: query, page: result.page}));
+    onSearchQueryChange(query){
+        getCoursePosts(this.props.courseId,query)
+            .then(result => this.setState({posts: result.posts, query: query}));
     }
 
     handleEditorChange(content,editor){
@@ -339,12 +339,12 @@ class Home extends React.Component{
 
     render(){
         const {classes, isInstructor, auth} = this.props
-        const {posts, newPost, searchQuery} = this.state
+        const {posts, newPost} = this.state
         return(
             <React.Fragment>
                 <Grid container>
                     <Grid item xs={12} sm={4} style={{paddingRight: '5%'}}>
-                        <PostFilter onSearchQueryChange={() => this.onSearchQueryChange(this.props.courseId,this.state.query,this.state.page)} />
+                        <PostFilter onSearchQueryChange={this.onSearchQueryChange} />
                     </Grid>
                     <Grid item xs={12} sm={8}>
                         <Grid container style={{justifyContent: 'center'}}>

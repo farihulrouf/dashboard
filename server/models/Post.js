@@ -43,5 +43,6 @@ postSchema
     .post("findAndUpdateOne",autoPopulate)
     
 postSchema.index({ postedOn: 1, category: 1});
+postSchema.index({ title: "text", body: "text"})
 
 module.exports = mongoose.model("Post", postSchema);
