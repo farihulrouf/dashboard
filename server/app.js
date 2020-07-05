@@ -58,6 +58,18 @@ app.prepare().then(() => {
     server.use(compression());
   }
 
+  server.use((req, res, next) => {
+    if (process.env.NODE_ENV === 'production') {
+        // if (req.headers.host === 'your-app.herokuapp.com')
+        //     return res.redirect(301, 'https://www.your-custom-domain.com');
+        if (req.headers['x-forwarded-proto'] !== 'https')
+            return res.redirect('https://' + req.headers.host + req.url);
+        else
+            return next();
+    } else
+        return next();
+  });
+
   /* Body Parser built-in to Express as of version 4.16 */
   server.use(express.json());
   server.use(express.urlencoded({extended: true})); 
