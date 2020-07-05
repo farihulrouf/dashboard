@@ -8,11 +8,13 @@ const exerciseMaterialController = require("../controllers/exerciseMaterialContr
 const problemStatementController = require("../controllers/problemStatementController");
 const multer = require('multer');
 const {uuid} = require('uuidv4');
+const fs = require('fs');
 
 const router = express.Router();
 const DIR = 'static/documents/';
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+      if(!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true })
       cb(null, DIR);
   },
   filename: (req, file, cb) => {

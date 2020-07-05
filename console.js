@@ -6,6 +6,7 @@ var Course = require('./server/models/Course');
 var Post = require('./server/models/Post');
 var Comment = require('./server/models/Comment');
 const mongoose = require("mongoose");
+const fs = require('fs');
 
 const mongooseOptions = {
     useNewUrlParser: true,
