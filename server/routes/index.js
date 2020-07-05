@@ -1,7 +1,11 @@
 const express = require("express");
 const authController = require("../controllers/authController");
+const userController = require("../controllers/userController");
+const exerciseController = require("../controllers/exerciseController");
 const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
+const exerciseMaterialController = require("../controllers/exerciseMaterialController");
+const problemStatementController = require("../controllers/problemStatementController");
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 
@@ -50,6 +54,28 @@ router.post("/api/auth/signin", authController.signin);
 router.get("/api/auth/signout", authController.signout);
 
 /**
+ * EXERCISES ROUTES /api/exercises
+ */
+router.get("/api/exercises/:id", exerciseController.fetchSingleExercise);
+router.put("/api/exercises/:id", exerciseController.updateExercise);
+router.get("/api/exercises", exerciseController.fetchAllExercise);
+router.post("/api/exercises", exerciseController.addNewExercises);
+
+/** 
+ * EXERCISE MATERIALS ROUTES
+ */
+router.post("/api/exercise-materials", exerciseMaterialController.addNewExerciseMaterials)
+router.get("/api/exercise-materials", exerciseMaterialController.fetchAllExerciseSchema)
+router.get("/api/exercise-materials/:id", exerciseMaterialController.fetchSingleExerciseMaterial);
+router.put("/api/exercise-materials/:id", exerciseMaterialController.updateExerciseMaterial);
+
+/**
+ * PROBLEM STATEMENTS ROUTES
+ */
+router.put("/api/problem-statements/:id",problemStatementController.updateProblemStatement);
+router.get("/api/problem-statements/:id",problemStatementController.fetchSingleProblemStatement);
+
+/**
  * COURSE ROUTES /api/courses
  */
 
@@ -69,6 +95,7 @@ router.param(
 //Unregistered user can see courses and course info
 router.get(
   "/api/courses",
+  authController.checkAuth,
   catchErrors(courseController.getCourses)
 );
 
@@ -114,5 +141,4 @@ router.post(
 //   catchErrors(postController.resizeImage),
 //   catchErrors(postController.addPost)
 // );
-
 module.exports = router;

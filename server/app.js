@@ -14,8 +14,11 @@ require("dotenv").config();
 /* Require our models here so we can use the mongoose.model() singleton to reference our models across our app */
 require("./models/Course");
 require("./models/User");
+require("./models/Exercise")
 require("./models/Post");
 require("./models/Comment");
+require("./models/ExerciseMaterial");
+require("./models/ProblemStatement")
 
 const routes = require("./routes");
 require("./passport");
