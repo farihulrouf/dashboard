@@ -86,7 +86,7 @@ const PostItem = (props) => {
     }
 
     return(
-        <Paper elevation={3} style={{marginBottom: 30, padding: 20}}>
+        <Paper elevation={3} style={{marginBottom: 30, padding: 20, paddingTop: 0}}>
             <Grid container spacing={2}>
                 <Grid item>
                     <Avatar alt={data.postedBy.name} src="/static/images/avatar/1.jpg" />
@@ -110,7 +110,7 @@ const PostItem = (props) => {
             <Grid container style={{marginTop: 10}}>
                 <div  dangerouslySetInnerHTML={{__html: data.body}} />
             </Grid>
-            <Grid container spacing={2}>
+            <Grid container spacing={2} style={{marginTop: 10}}>
                 {data.attachments.map((e,idx)=><Grid item><a href={e.path} style={{fontSize: 12}}>{e.fileName}</a></Grid>)}
             </Grid>
             <Grid container style={{marginTop: 10}}>
@@ -184,70 +184,71 @@ const PostItem = (props) => {
     )
 }
 
-const SearchBar = () => {
-    const classes = useStyles();
-    return(
-        <Paper elevation={3} component="form" className={classes.searchRoot}>
-            <IconButton type="submit" className={classes.iconButton} aria-label="search">
-                <SearchIcon />
-            </IconButton>
-            <InputBase
-            placeholder="Search....."
-            inputProps={{ 'aria-label': 'search google maps' }}
-            />
-        </Paper>
-    )
-}
+const PostFilter = (props) => {
+    const [query, setQuery] = React.useState({content: "",category: []})
 
-const TagFilter = () => {
-    const classes = useStyles();
-    const [checked, setChecked] = React.useState([]);
-  
-    const handleToggle = (value) => () => {
-      const currentIndex = checked.indexOf(value);
-      const newChecked = [...checked];
-  
-      if (currentIndex === -1) {
-        newChecked.push(value);
-      } else {
-        newChecked.splice(currentIndex, 1);
-      }
-  
-      setChecked(newChecked);
-    };
+    const onQueryChange = (e) => {
+        if(e.target.name == "content"){
+            query.content=e.target.value;
+        }
+        if(e.target.name == "category"){
+            let categoryId = parseInt(e.target.value);
+            let index = query.category.indexOf(categoryId)
+            if(index == -1){
+                query.category.push(categoryId)
+            }else query.category.splice(index,1)
+        }
+        setQuery({content: query.content, category: query.category})
+    }
 
     const filters = [
         {id: 1, name: 'Berita',icon: <AnnouncementIcon />},
         {id: 2, name: 'Kelas', icon: <ClassIcon />},
         {id: 3, name: 'Ujian', icon: <ExamIcon />}
     ]
-    return (
-      <List>
-        {filters.map((value) => {
-          const labelId = `checkbox-list-label-${value.id}`;
-  
-          return (
-            <ListItem key={value.id} role={undefined} dense button onClick={handleToggle(value.id)}>
-              <ListItemIcon>
-                <Checkbox
-                  edge="start"
-                  checked={checked.indexOf(value.id) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ 'aria-labelledby': labelId }}
-                />
-              </ListItemIcon>
-              <ListItemText id={labelId} primary={value.name} />
-              <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="comments">
-                  {value.icon}
+    return(
+        <div>
+            <Paper elevation={3} component="form">
+                <IconButton type="submit" aria-label="search">
+                    <SearchIcon />
                 </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          );
-        })}
-      </List>
-    );
+                <InputBase
+                    placeholder="Search....."
+                    inputProps={{ 'aria-label': 'search google maps' }}
+                    onChange={onQueryChange}
+                    name="content"
+                />
+            </Paper>
+            <List>
+                {filters.map((value) => {
+                const labelId = `checkbox-list-label-${value.id}`;
+        
+                return (
+                    <ListItem key={value.id} role={undefined} dense>
+                        <ListItemIcon>
+                            <Checkbox
+                                edge="start"
+                                checked={query.category.indexOf(value.id) !== -1}
+                                tabIndex={-1}
+                                disableRipple
+                                value={value.id}
+                                name="category"
+                                onClick={onQueryChange}
+                                inputProps={{ 'aria-labelledby': labelId }}
+                            />
+                        </ListItemIcon>
+                        <ListItemText id={labelId} primary={value.name} />
+                        <ListItemSecondaryAction>
+                            <IconButton edge="end" aria-label="comments">
+                            {value.icon}    
+                            </IconButton>
+                        </ListItemSecondaryAction>
+                    </ListItem>
+                );
+                })}
+            </List>
+        </div>
+    )
 }
 
 const Attachments = (props) => {
@@ -278,15 +279,20 @@ const Attachments = (props) => {
 class Home extends React.Component{
     constructor(props){
         super(props);
-        this.state = {posts: [], newPost: {title: "", body: "", category: "", files: []}}
+        this.state = {
+            posts: [], 
+            newPost: {title: "", body: "", category: "", files: []}, 
+            searchQuery: {content: "",tag: ""}
+        }
         this.onFileChange = this.onFileChange.bind(this)
         this.onTextChange = this.onTextChange.bind(this)
         this.handleEditorChange = this.handleEditorChange.bind(this)
+        this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
     }
 
     componentDidMount(){
         const {courseId} = this.props;
-        getCoursePosts(courseId,1).then(posts => this.setState(posts))
+        getCoursePosts(courseId,{},1).then(posts => this.setState(posts))
     }
 
     onFileChange(e) {
@@ -299,6 +305,11 @@ class Home extends React.Component{
     onTextChange(e) {
         this.state.newPost[e.target.name] = e.target.value;
         this.setState({newPost: this.state.newPost});
+    }
+
+    onSearchQueryChange(courseId,query,page){
+        //Trigger when search query/pagination info is modified (based on body content or category)
+        getCoursePosts(courseId,query,page).then(result => this.setState({posts: result.posts, query: query, page: result.page}));
     }
 
     handleEditorChange(content,editor){
@@ -328,13 +339,12 @@ class Home extends React.Component{
 
     render(){
         const {classes, isInstructor, auth} = this.props
-        const {posts, newPost} = this.state
+        const {posts, newPost, searchQuery} = this.state
         return(
             <React.Fragment>
                 <Grid container>
                     <Grid item xs={12} sm={4} style={{paddingRight: '5%'}}>
-                        <SearchBar />
-                        <TagFilter />
+                        <PostFilter onSearchQueryChange={() => this.onSearchQueryChange(this.props.courseId,this.state.query,this.state.page)} />
                     </Grid>
                     <Grid item xs={12} sm={8}>
                         <Grid container style={{justifyContent: 'center'}}>
@@ -425,7 +435,7 @@ class Home extends React.Component{
                                 </Paper>
                             </Grid>}
                             <Grid item xs={12}>
-                                <List style={{paddingTop: 20}}>
+                                <List>
                                     {posts.map((value) => <PostItem key={value._id} data={value} />)}
                                 </List>
                             </Grid>
