@@ -7,10 +7,13 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
+import List from "@material-ui/core/List";
+import ListItem from "@material-ui/core/ListItem";
+import ListItemText from "@material-ui/core/ListItemText";
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    width: "100%",
+    width: "50%",
   },
   title: {
     fontSize: 20,
@@ -19,12 +22,14 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: 12,
   },
   chip_root: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
     '& > *': {
       margin: theme.spacing(0.5),
     },
+  },
+  list_root: {
+    width: "100%",
+    height : "90",
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 
@@ -35,9 +40,26 @@ function Chips(props) {
     return (
         <div className={classes.chip_root}>
             {topics.map((value) => (<Chip key={value.id} label={value} color="primary"/>))}
-            {/* <Chip label={topics} color="primary"/> */}
         </div>
     );
+}
+
+function RequestList(props) {
+  const classes = useStyles();
+  const {requests} = props.data
+
+  return (
+    <List dense className={classes.list_root}>
+      {requests.map((value) => (
+        <ListItem key={value} button>
+            <ListItemText key={value.id} primary={value} />
+            <Button variant="contained" color="primary" className={classes.button} size="small">
+              Accept
+            </Button>
+        </ListItem>
+      ))}
+    </List>
+  );
 }
 
 function CreatedCoursesCard(props) {
@@ -46,18 +68,28 @@ function CreatedCoursesCard(props) {
 
   return (
     <Card className={classes.root} variant="outlined">
-      <CardContent>
-        <Typography className={classes.title}>
-          {name}
-        </Typography>
-        <Typography className={classes.pos} color="textSecondary">
-          Created : {created_date}
-        </Typography>
-        <Typography className={classes.pos} color="textSecondary">
-          Taken by : {taken_by} students
-        </Typography>
-        <Chips {...props}/>
-      </CardContent>
+        <Grid container xs={12} justify="center">
+          <CardContent>
+            <Typography className={classes.title}>
+              {name}
+            </Typography>
+            <Typography className={classes.pos} color="textSecondary">
+              Created : {created_date}
+            </Typography>
+            <Typography className={classes.pos} color="textSecondary">
+              Taken by : {taken_by} students
+            </Typography>
+            <Chips {...props}/>
+          </CardContent>
+        </Grid>
+        <Grid container xs={12}>
+          <CardContent>
+            <Typography fontSize="15">
+              Course Requests
+            </Typography>
+            <RequestList {...props}/>
+          </CardContent>
+        </Grid>
       <CardActions>
         <Button size="small">Learn More</Button>
       </CardActions>
@@ -67,16 +99,18 @@ function CreatedCoursesCard(props) {
 
 export default function CreatedCourses(){
     const courses = [
-        {id : "1", name : "Matematika Diskrit", created_date : "2 April 2020", taken_by : "35",topics : ["matriks", "hamilton circuit", "tree", "graph"]},
-        {id : "2", name : "Kimia dasar", created_date : "11 maret 2020", taken_by : "2",topics : ["atom", "molekul", "reaksi kimia", "termokimia", "rantai karbon"]},
-        {id : "3", name : "Strategi Algoritma", created_date : "10 juni 2020", taken_by : "78",topics : ["Dynamic Programming", "greedy", "bruteforce", "backtracking", "Divide n conquer"]},
-        {id : "4", name : "Biologi", created_date : "30 januari 2020", taken_by : "41",topics : ["hewan", "tumbuhan", "pencernaan", "pernapasan"]},
-        {id : "5", name : "Fisika", created_date : "1 Februari 2020", taken_by : "55",topics : ["kecepatan", "percepatan"]}
+        {id : "1", name : "Matematika Diskrit", created_date : "2 April 2020", taken_by : "35",topics : ["matriks", "hamilton circuit", "tree", "graph"], requests: ["Kaos kaki", "emak item", "bujel", "belti", "mulan"]},
+        {id : "2", name : "Kimia dasar", created_date : "11 maret 2020", taken_by : "2",topics : ["atom", "molekul", "reaksi kimia", "termokimia", "rantai karbon"],  requests: ["Kaos kaki", "emak item", "emak bujel", "bleki", , "mulan"]},
+        {id : "3", name : "Strategi Algoritma", created_date : "10 juni 2020", taken_by : "78",topics : ["Dynamic Programming", "greedy", "bruteforce", "backtracking", "Divide n conquer"],  requests: ["Kaos kaki", "emak item", "emak bujel", "bleki", "bujel", "belti"]},
+        {id : "4", name : "Biologi", created_date : "30 januari 2020", taken_by : "41",topics : ["hewan", "tumbuhan", "pencernaan", "pernapasan"],  requests: ["Kaos kaki", "emak item", "emak bujel", "bleki", "bujel", "belti", "mulan"]},
+        {id : "5", name : "Fisika", created_date : "1 Februari 2020", taken_by : "55",topics : ["kecepatan", "percepatan"],  requests: ["emak item", "emak bujel", "bleki", "bujel", "belti", "mulan"]}
     ]
 
     return(
-        <Grid container xs={12} sm={6} spacing={3}>
+        <Grid container xs={12} spacing={3}>
+          <Grid container justify="center">
             {courses.map((value) => (<CreatedCoursesCard key={value.id} data={value} />))}
+          </Grid>
         </Grid>
     );
 }
