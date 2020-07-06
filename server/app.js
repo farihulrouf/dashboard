@@ -12,8 +12,14 @@ const compression = require("compression");
 /* Loads all variables from .env file to "process.env" */
 require("dotenv").config();
 /* Require our models here so we can use the mongoose.model() singleton to reference our models across our app */
-// require("./models/Post");
+require("./models/Course");
 require("./models/User");
+require("./models/Exercise")
+require("./models/Post");
+require("./models/Comment");
+require("./models/ExerciseMaterial");
+require("./models/ProblemStatement")
+
 const routes = require("./routes");
 require("./passport");
 // require('./path/to/passport/config/file')(passport);
@@ -52,8 +58,22 @@ app.prepare().then(() => {
     server.use(compression());
   }
 
+  server.use((req, res, next) => {
+    if (process.env.NODE_ENV === 'production') {
+        // if (req.headers.host === 'your-app.herokuapp.com')
+        //     return res.redirect(301, 'https://www.your-custom-domain.com');
+        if (req.headers['x-forwarded-proto'] !== 'https')
+            return res.redirect('https://' + req.headers.host + req.url);
+        else
+            return next();
+    } else
+        return next();
+  });
+
   /* Body Parser built-in to Express as of version 4.16 */
   server.use(express.json());
+  server.use(express.urlencoded({extended: true})); 
+  // server.use(express.static('static'))
   /* Express Validator will validate form data sent to the backend */
   server.use(expressValidator());
 

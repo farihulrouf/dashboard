@@ -9,16 +9,16 @@ import { authInitialProps } from "../lib/auth";
 import Router from 'next/router';
 import Link from 'next/link'
 
-const Body = ({active}) => {
+const Body = ({active, auth}) => {
   switch(active){
     case CONSTANTS.DASHBOARD.MATERIAL:
-      return <MaterialPage/>
+      return <MaterialPage auth />
     case CONSTANTS.DASHBOARD.REPORT:
-      return <ReportPage/>
+      return <ReportPage auth />
     case CONSTANTS.DASHBOARD.TRYOUT:
-      return <TryOutPage/>
+      return <TryOutPage auth />
     default:
-      return <MaterialPage />
+      return <MaterialPage auth/>
   }
 }
 
@@ -26,7 +26,7 @@ const Index = ({auth, userId}) => {
     if(auth.user)
       return(
         <NavBar auth={auth}>
-          <Body />
+          <Body auth={auth} />
         </NavBar>
       )
     else

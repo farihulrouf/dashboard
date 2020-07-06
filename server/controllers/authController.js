@@ -75,5 +75,7 @@ exports.checkAuth = (req, res, next) => {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.redirect("/signin");
+  contentType = req.headers['content-type']
+  if(!contentType || contentType.indexOf("application/json")) res.redirect("/signin");
+  else res.json({status: "error", message: "unauthorized"});
 };

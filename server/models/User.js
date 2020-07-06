@@ -29,6 +29,10 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    linkedIn: {
+      type: String,
+      trim: true
+    },
     /* we wrap 'following' and 'followers' in array so that when they are populated as objects, they are put in an array (to more easily iterate over them) */
     following: [{ type: ObjectId, ref: "User" }],
     followers: [{ type: ObjectId, ref: "User" }]
