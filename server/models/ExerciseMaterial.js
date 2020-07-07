@@ -7,9 +7,9 @@ const { ObjectId } = mongoose.Schema;
 const exerciseMaterialSchema = new Schema(
   {
     difficultyLabel: {type: String, required: true},
+    type: {type: String},
     question: {type: String, required: true},
-    post: {type: ObjectId, ref: "Post"},
-    course: {type: ObjectId, ref: "Course"},
+    courseId: {type: ObjectId, ref: "Course"},
     multipleChoices: [{type: String, required: true}],
     question: {type: String, required: true},
     solution: {type: String, required: true},

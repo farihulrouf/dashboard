@@ -1,18 +1,18 @@
 const mongoose = require("mongoose");
-const ProblemStatement = mongoose.model("ProblemStatement");
+const AnswerSheet = mongoose.model("AnswerSheet");
 const ExerciseMaterial = mongoose.model("ExerciseMaterial");
 mongoose.Promise = require("bluebird");
 
-exports.updateProblemStatement = async (req, res) => {
-  ProblemStatement.findById(req.params.id)
-    .then((problemStatement) => {
-      problemStatement.participantSolutions = req.body.participantSolutions;
+exports.updateAnswerSheet = async (req, res) => {
+  AnswerSheet.findById(req.params.id)
+    .then((answerSheet) => {
+      answerSheet.participantSolutions = req.body.participantSolutions;
 
-      problemStatement
+      answerSheet
         .save()
-        .then((problemStatement) => {
+        .then((answerSheet) => {
           var jobQueries = [];
-          problemStatement.participantSolutions.forEach(function (p) {
+          answerSheet.participantSolutions.forEach(function (p) {
             jobQueries.push(ExerciseMaterial.findById(p.exerciseMaterialId));
           });
           return Promise.all(jobQueries);
@@ -20,7 +20,7 @@ exports.updateProblemStatement = async (req, res) => {
         .then((listOfJobs) => {
           var score = 0;
           var listOfProblemsAndParticipantSolutions = []
-          const participantSolutions = problemStatement.participantSolutions;
+          const participantSolutions = answerSheet.participantSolutions;
           for (var i = 0; i < listOfJobs.length; i++) {
             listOfProblemsAndParticipantSolutions.push(
               {
@@ -42,12 +42,12 @@ exports.updateProblemStatement = async (req, res) => {
           return scoreProblemSolutions;
         })
         .then((scoreProblemSolutions) => {
-            problemStatement.score = scoreProblemSolutions.score;
-            problemStatement.problemWithParticipantAnswer = scoreProblemSolutions.listOfProblemsAndParticipantSolutions
-            problemStatement
+            answerSheet.score = scoreProblemSolutions.score;
+            answerSheet.problemWithParticipantAnswer = scoreProblemSolutions.listOfProblemsAndParticipantSolutions
+            answerSheet
             .save()
-            .then((problemStatement) => {
-                res.json(problemStatement)
+            .then((answerSheet) => {
+                res.json(answerSheet)
             })
             .catch((err) => res.Status(400).json("Error " + err));
         })
@@ -56,10 +56,10 @@ exports.updateProblemStatement = async (req, res) => {
     .catch((err) => res.Status(400).json("Error " + err));
 };
 
-exports.fetchSingleProblemStatement = async (req, res) => {
-  ProblemStatement.findById(req.params.id)
-    .then((problemStatement) => {
-      res.json(problemStatement);
+exports.fetchSingleAnswerSheet = async (req, res) => {
+  AnswerSheet.findById(req.params.id)
+    .then((answerSheet) => {
+      res.json(answerSheet);
     })
     .catch((err) => res.Status(400).json("Error " + err));
 };

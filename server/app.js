@@ -18,7 +18,7 @@ require("./models/Exercise")
 require("./models/Post");
 require("./models/Comment");
 require("./models/ExerciseMaterial");
-require("./models/ProblemStatement");
+require("./models/AnswerSheet");
 require("./models/Exam");
 
 const routes = require("./routes");
