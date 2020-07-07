@@ -16,9 +16,11 @@ exports.fetchAllExerciseSchema = async (req, res) => {
       .then((exerciseMaterials) => {
         var dateStart = Date.now();
         var dateSubmission = Date.now() + timeLimit * 60 * 1000;
+        var type = "exercise";
         const newProblemStatement = new ProblemStatement({
           dateStart,
           dateSubmission,
+          type,
         });
 
         newProblemStatement

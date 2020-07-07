@@ -19,17 +19,31 @@ exports.updateProblemStatement = async (req, res) => {
         })
         .then((listOfJobs) => {
           var score = 0;
+          var listOfProblemsAndParticipantSolutions = []
           const participantSolutions = problemStatement.participantSolutions;
           for (var i = 0; i < listOfJobs.length; i++) {
+            listOfProblemsAndParticipantSolutions.push(
+              {
+                exerciseMaterialId: listOfJobs[i]._id,
+                question: listOfJobs[i].question,
+                multipleChoices: listOfJobs[i].multipleChoices,
+                solution: listOfJobs[i].solution,
+                participantAnswer:participantSolutions[i].answer, 
+              }
+            );
             if (listOfJobs[i].solution == participantSolutions[i].answer) {
               score = score + 1;
             }
           }
-          return score;
+          var scoreProblemSolutions = {
+            score: score,
+            listOfProblemsAndParticipantSolutions:  listOfProblemsAndParticipantSolutions,
+          }
+          return scoreProblemSolutions;
         })
-        .then((score) => {
-            problemStatement.score = score;
-
+        .then((scoreProblemSolutions) => {
+            problemStatement.score = scoreProblemSolutions.score;
+            problemStatement.problemWithParticipantAnswer = scoreProblemSolutions.listOfProblemsAndParticipantSolutions
             problemStatement
             .save()
             .then((problemStatement) => {
