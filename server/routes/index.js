@@ -6,6 +6,7 @@ const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
 const exerciseMaterialController = require("../controllers/exerciseMaterialController");
 const problemStatementController = require("../controllers/problemStatementController");
+const fileController = require("../controllers/fileController")
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 
@@ -141,4 +142,21 @@ router.post(
 //   catchErrors(postController.resizeImage),
 //   catchErrors(postController.addPost)
 // );
+
+
+/**
+ * POST ROUTES /api/files
+ */
+router.post(
+  "/api/files/generate-get-url",
+  authController.checkAuth,
+  catchErrors(fileController.getPreSignedUrl)
+)
+
+router.post(
+  "/api/files/generate-put-url",
+  authController.checkAuth,
+  catchErrors(fileController.putPreSignedUrl)
+)
+
 module.exports = router;

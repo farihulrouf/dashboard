@@ -17,8 +17,9 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 import DocumentIcon from '@material-ui/icons/Description';
 import DeleteIcon from '@material-ui/icons/Clear'
 import AddIcon from '@material-ui/icons/AddCircleRounded'
-import {createCoursePost, getCoursePosts, likeAPost, postComment} from '../../lib/api';
+import {createCoursePost, getCoursePosts, likeAPost, postComment, generatePutUrl, uploadToS3} from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
+import axios from 'axios';
 
 
 const styles = (theme) => ({
@@ -295,11 +296,23 @@ class Home extends React.Component{
         getCoursePosts(courseId,{page: 1}).then(posts => this.setState(posts))
     }
 
+    progressCallback(){
+    }
+
     onFileChange(e) {
         let newFiles = Array.from(e.target.files);
         let {newPost} = this.state
         this.state.newPost.files = newPost.files.concat(newFiles);
         this.setState({ newPost: this.state.newPost })
+        newFiles.forEach(async (file) => {
+            let response = await generatePutUrl(file)
+            if(response.status == "ok"){
+                response = await uploadToS3(response.url,file,this.progressCallback);
+                console.log(response);
+            }else{
+                alert(response.message);
+            }
+        })
     }
 
     onTextChange(e) {
