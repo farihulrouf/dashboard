@@ -1,16 +1,14 @@
-import Grid from '@material-ui/core/Grid';
+import {Grid,Avatar,Typography,AppBar,Tabs,Tab,Box,List,ListItem,
+  ListItemText,ListItemIcon, TextField} from '@material-ui/core';
+import {Inbox, Drafts, AccountCircle, Star, Book} from '@material-ui/icons';
+import NavBar from '../components/NavBar';
 import { makeStyles } from '@material-ui/core/styles';
-import Avatar from '@material-ui/core/Avatar';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Paper from '@material-ui/core/Paper';
-import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
 import EditProfile from '../components/subject/editProfile'
-import JoinedCourses from '../components/subject/joinedCourses'
 import CreatedCourses from '../components/subject/createdCourses'
+import JoinedCourses from '../components/subject/joinedCourses'
+import { authInitialProps } from "../lib/auth"
+import Profile from '../components/settings/profile';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -90,28 +88,58 @@ function SimpleTabs() {
   );
 }
 
-export default function Profile() {
+const Content = (props) => {
+  return(
+    <React.Fragment>
+      {props.settingOption === 1 && <Profile />}
+      {props.settingOption === 2 && <div>Courses</div>}
+      {props.settingOption === 3 && <div>Stars</div>}
+    </React.Fragment>
+  )
+}
+export default function Settings(props) {
     const classes = useStyles();
+    const settingOptions = [
+      {id: 1, title: "Profile", icon: <AccountCircle />},
+      {id: 2, title: "Courses", icon: <Book />},
+      {id: 3, title: "Starred", icon: <Star />}
+    ]
+    const [selectedIndex,setSelectedIndex] = React.useState(1)
 
+    const handleListItemClick = (event, index) => {
+      setSelectedIndex(index);
+    };
+
+    console.log(props.auth);
+    
     return (
-            <Grid container className={classes.root} style={{backgroundColor:"#eeeeee"}}>
-              {/* <Grid container xs={12} justify="center" >
-              <Paper elevation={3}> */}
-                <Grid container xs={12} justify="center" >
-                        <Avatar 
-                            alt="Mogli" 
-                            img="https://www.google.com/url?sa=i&url=https://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/102348974/original/039aee69bface75f7440dbcefd24fe3a606f9f7c/create-profile-avatar-of-your-image.png://fiverr-res.cloudinary.com/images/q_auto,f_auto/gigs/102348974/original/039aee69bface75f7440dbcefd24fe3a606f9f7c/create-profile-avatar-of-your-image.png%3A%2F%2Fwww.freepik.com%2Fpremium-vector%2Fman-avatar-profile-round-icon_2652064.htm&psig=AOvVaw2626wFIEerSx9sWvPMaZoT&ust=1592291229170000&source=images&cd=vfe&ved=0CAIQjRxqFwoTCKiUsfWhg-oCFQAAAAAdAAAAABAD"
-                            className={classes.large}
-                        />
-                </Grid>
-                <Grid container justify="center" style = {{padding:15}}>
-                    <Typography variant="h4">Mojogoli Olio</Typography>
-                </Grid>
-              {/* </Paper>
-              </Grid> */}
-                <Grid container xs={12} style = {{padding:15}}>
-                  <SimpleTabs/>
-                </Grid>
-            </Grid>
+      <NavBar auth={props.auth}>
+        <Grid container>
+          <Grid item xs={12} sm={3}>
+            <div>
+              <List component="nav" aria-label="main mailbox folders">
+                {settingOptions.map((item,idx)=>
+                  <ListItem
+                    button
+                    key={item.id}
+                    selected={selectedIndex === item.id}
+                    onClick={(event) => handleListItemClick(event, item.id)}
+                  >
+                    <ListItemIcon>
+                      {item.icon}
+                    </ListItemIcon>
+                    <ListItemText primary={item.title} />
+                  </ListItem>
+                )}
+              </List>
+            </div>
+          </Grid>
+          <Grid item xs={12} sm={9}>
+              <Content settingOption={selectedIndex} />
+          </Grid>
+        </Grid>
+      </NavBar>
     );
 }
+
+Settings.getInitialProps = authInitialProps(true);
