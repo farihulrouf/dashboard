@@ -10,6 +10,8 @@ import Chip from '@material-ui/core/Chip';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
+import {getCourseByInstructor} from "../../lib/api"
+import { render } from 'react-dom';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -35,11 +37,11 @@ const useStyles = makeStyles((theme) => ({
 
 function Chips(props) {
     const classes = useStyles();
-    const {topics} = props.data
+    const {prerequisites} = props.data
 
     return (
         <div className={classes.chip_root}>
-            {topics.map((value) => (<Chip key={value.id} label={value} color="primary"/>))}
+            {prerequisites.map((value) => (<Chip key={value.id} label={value} color="primary"/>))}
         </div>
     );
 }
@@ -64,7 +66,7 @@ function RequestList(props) {
 
 function CreatedCoursesCard(props) {
   const classes = useStyles();
-  const {name, created_date, taken_by} = props.data
+  const {name, createdAt} = props.data
 
   return (
     <Card className={classes.root} variant="outlined">
@@ -74,10 +76,10 @@ function CreatedCoursesCard(props) {
               {name}
             </Typography>
             <Typography className={classes.pos} color="textSecondary">
-              Created : {created_date}
+              Created : {createdAt}
             </Typography>
             <Typography className={classes.pos} color="textSecondary">
-              Taken by : {taken_by} students
+              Taken by : 10 students
             </Typography>
             <Chips {...props}/>
           </CardContent>
@@ -87,7 +89,7 @@ function CreatedCoursesCard(props) {
             <Typography fontSize="15">
               Course Requests
             </Typography>
-            <RequestList {...props}/>
+            {/* <RequestList {...props}/> */}
           </CardContent>
         </Grid>
       <CardActions>
@@ -97,20 +99,26 @@ function CreatedCoursesCard(props) {
   );
 }
 
-export default function CreatedCourses(){
-    const courses = [
-        {id : "1", name : "Matematika Diskrit", created_date : "2 April 2020", taken_by : "35",topics : ["matriks", "hamilton circuit", "tree", "graph"], requests: ["Kaos kaki", "emak item", "bujel", "belti", "mulan"]},
-        {id : "2", name : "Kimia dasar", created_date : "11 maret 2020", taken_by : "2",topics : ["atom", "molekul", "reaksi kimia", "termokimia", "rantai karbon"],  requests: ["Kaos kaki", "emak item", "emak bujel", "bleki", , "mulan"]},
-        {id : "3", name : "Strategi Algoritma", created_date : "10 juni 2020", taken_by : "78",topics : ["Dynamic Programming", "greedy", "bruteforce", "backtracking", "Divide n conquer"],  requests: ["Kaos kaki", "emak item", "emak bujel", "bleki", "bujel", "belti"]},
-        {id : "4", name : "Biologi", created_date : "30 januari 2020", taken_by : "41",topics : ["hewan", "tumbuhan", "pencernaan", "pernapasan"],  requests: ["Kaos kaki", "emak item", "emak bujel", "bleki", "bujel", "belti", "mulan"]},
-        {id : "5", name : "Fisika", created_date : "1 Februari 2020", taken_by : "55",topics : ["kecepatan", "percepatan"],  requests: ["emak item", "emak bujel", "bleki", "bujel", "belti", "mulan"]}
-    ]
+class CreatedCourses extends React.Component{
+    constructor(props){
+      super(props)
+      this.state={courses: []}
+    }
 
-    return(
+    componentDidMount(){
+      getCourseByInstructor().then(courses => this.setState({courses: courses }));
+    }
+
+    render(){
+      console.log(this.state.courses)
+      return(
         <Grid container xs={12} spacing={3}>
           <Grid container justify="center">
-            {courses.map((value) => (<CreatedCoursesCard key={value.id} data={value} />))}
+            {this.state.courses.map((value) => (<CreatedCoursesCard key={value.id} data={value} />))}
           </Grid>
         </Grid>
-    );
+      )
+    }
 }
+
+export default CreatedCourses;

@@ -28,6 +28,16 @@ exports.getCourse = async (req,res) => {
     res.json({course: req.course})
 }
 
+exports.getCoursebyInstructor = async (req,res) => {
+    const instructor = req.user
+    const results = await Course.find({instructors: instructor._id})
+    res.json(results)
+}
+
+exports.getCourseRequests =async (req,res) => {
+    course = req.course
+}
+
 exports.validatePost = (req,res,next) => {
     req.sanitizeBody("title");
     req.sanitizeBody("body");

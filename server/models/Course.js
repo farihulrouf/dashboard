@@ -22,6 +22,11 @@ const courseSchema = new mongoose.Schema(
             required: 'Course must have prerequisite info',
             validation: {validator: (prerequisite) => prerequisite.length, message: 'Course must have prerequisite info'}
         },
+        materials:{
+            type: [String],
+            required: 'Course must have materials info',
+            validation: {validator: (materials) => materials.length, message: 'Course must have materials info'}
+        },
         price: {
             type: Number,
             required: 'Course should have price, input 0 for free courses',

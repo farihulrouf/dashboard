@@ -9,6 +9,7 @@ import CreatedCourses from '../components/subject/createdCourses'
 import JoinedCourses from '../components/subject/joinedCourses'
 import { authInitialProps } from "../lib/auth"
 import Profile from '../components/settings/profile';
+import createdCourses from '../components/subject/createdCourses'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -79,7 +80,7 @@ function SimpleTabs() {
         <EditProfile/>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <CreatedCourses/>
+        <Created/>
       </TabPanel>
       <TabPanel value={value} index={2}>
         <JoinedCourses/>
@@ -92,7 +93,7 @@ const Content = (props) => {
   return(
     <React.Fragment>
       {props.settingOption === 1 && <Profile />}
-      {props.settingOption === 2 && <div>Courses</div>}
+      {props.settingOption === 2 && <CreatedCourses />}
       {props.settingOption === 3 && <div>Stars</div>}
     </React.Fragment>
   )

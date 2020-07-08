@@ -102,8 +102,18 @@ router.get(
 );
 
 router.get(
+  "/api/courses/mycourses",
+  catchErrors(courseController.getCoursebyInstructor)
+);
+
+router.get(
   "/api/courses/:courseId",
   catchErrors(courseController.getCourse)
+);
+
+router.get(
+  "/api/courses/:courseId/requests",
+  catchErrors(courseController.getCourseRequests)
 );
 
 router.post(
