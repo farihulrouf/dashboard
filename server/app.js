@@ -19,6 +19,7 @@ require("./models/Post");
 require("./models/Comment");
 require("./models/ExerciseMaterial");
 require("./models/ProblemStatement")
+require("./models/courseRequest")
 
 const routes = require("./routes");
 require("./passport");

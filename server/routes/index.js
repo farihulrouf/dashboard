@@ -116,6 +116,16 @@ router.get(
   catchErrors(courseController.getCourseRequests)
 );
 
+router.param(
+  "cuserId",
+  userController.getUserById
+);
+
+router.put(
+  "/api/courses/:courseId/:userId/acceptrequest",
+  catchErrors(courseController.acceptCourseRequest)
+);
+
 router.post(
   "/api/courses/:courseId/posts/create",
   authController.checkAuth,
@@ -145,6 +155,11 @@ router.post(
   postController.validateComment,
   catchErrors(postController.createComment)
 )
+
+router.get(
+  "/api/:userId",
+  catchErrors(userController.getUserById)
+);
 
 // router.post(
 //   "/api/posts/new/:userId",

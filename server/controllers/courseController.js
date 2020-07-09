@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Course = mongoose.model("Course");
 const Post = mongoose.model("Post");
-
+const CourseRequest = mongoose.model("CourseRequest");
 
 exports.getCourses = async (req,res) => {
     const courses = await Course.find({},'_id logo name about price');
@@ -35,7 +35,26 @@ exports.getCoursebyInstructor = async (req,res) => {
 }
 
 exports.getCourseRequests =async (req,res) => {
-    course = req.course
+    const course = req.course
+    const {page} = req.params;
+    const options = {
+        page: parseInt(page),
+        limit: 10,
+        sort: {createdAt: 1}
+    }
+    const criteria = {course : course}
+    const requests = await CourseRequest.find(criteria)
+    // console.log(requests)
+    // const requests = CourseRequest.paginate(criteria,options)
+    res.json(requests)
+}
+
+exports.acceptCourseRequest = async(req,res) => {
+    const user = req.params.user
+    const course = req.params.course
+    const request = await CourseRequest.find({user: user, course: course})
+    request.status = "joined"
+    res.json(request)
 }
 
 exports.validatePost = (req,res,next) => {
