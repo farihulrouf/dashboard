@@ -27,9 +27,9 @@ class CreatedCourses extends React.Component{
     render(){
       console.log(this.state.courses)
       return(
-        <Grid container xs={12} spacing={3}>
+        <Grid item xs={12}>
           <Grid container justify="center">
-            {this.state.courses.map((value) => (<CreatedCoursesCard key={value.id} data={value} />))}
+            {this.state.courses.map((value) => (<CreatedCoursesCard key={value._id} data={value} />))}
           </Grid>
         </Grid>
       )

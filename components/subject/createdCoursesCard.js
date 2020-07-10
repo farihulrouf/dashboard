@@ -10,7 +10,7 @@ import Chip from '@material-ui/core/Chip';
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
-import {getCourseRequests} from "../../lib/api"
+import {getCourseRequests, acceptCourseRequest} from "../../lib/api"
 import { render } from 'react-dom';
 
 const styles = (theme) => ({
@@ -42,27 +42,36 @@ function Chips(props) {
 
     return (
         <div className={classes.chip_root}>
-            {prerequisites.map((value) => (<Chip key={value.id} label={value} color="primary"/>))}
+            {prerequisites.map((value, index) => (<Chip key={index} label={value} color="primary"/>))}
         </div>
     );
 }
 
 function RequestList(props) {
   const classes = useStyles();
-  const [data,setData] = React.useState(props.requests);
 
   return (
     <List dense className={classes.list_root}>
       {props.requests.map((value) => (
         <ListItem key={value._id} button>
             <ListItemText primary={value.user} />
-            <Button 
+            {value.status == 'pending' && 
+              <Button value={value._id} onClick={acceptCourseRequest} className={classes.button} size="small" variant="contained" color="primary">
+                  ACCEPT
+              </Button>
+            }
+            {value.status == 'joined' && 
+            <Button className={classes.button} size="small" variant="contained">
+                HAS JOINED
+            </Button>
+            }
+            {/* <Button 
             variant="contained" 
             color="primary" 
             className={classes.button} 
             size="small">
               Accept
-            </Button>
+            </Button> */}
         </ListItem>
       ))}
     </List>
@@ -78,16 +87,15 @@ class CreatedCoursesCard extends React.Component{
         }
     }
     componentDidMount(){
-        getCourseRequests(this.props.data._id).then(requests => this.setState({requests: requests}));
+        getCourseRequests(this.props.data._id, 1).then(data => this.setState({requests: data.requests}));
     }
+
     render(){
         const {name, createdAt} = this.props.data
-        // this.state.requests = getCourseRequests(this.props.data._id);
-        console.log(this.state.requests);
         
         return(
             <Card variant="outlined">
-                <Grid container xs={12} justify="center">
+                <Grid item xs={12}>
                     <CardContent>
                     <Typography>
                         {name}
@@ -101,7 +109,7 @@ class CreatedCoursesCard extends React.Component{
                     <Chips {...this.props}/>
                     </CardContent>
                 </Grid>
-                <Grid container xs={12}>
+                <Grid item xs={12}>
                     <CardContent>
                     <Typography fontSize="15">
                         Course Requests

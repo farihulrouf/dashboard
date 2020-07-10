@@ -122,7 +122,7 @@ router.param(
 );
 
 router.put(
-  "/api/courses/:courseId/:userId/acceptrequest",
+  "/api/courses/acceptrequest",
   catchErrors(courseController.acceptCourseRequest)
 );
 

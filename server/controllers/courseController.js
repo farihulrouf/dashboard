@@ -36,25 +36,34 @@ exports.getCoursebyInstructor = async (req,res) => {
 
 exports.getCourseRequests =async (req,res) => {
     const course = req.course
-    const {page} = req.params;
+    const {page} = req.query;
     const options = {
         page: parseInt(page),
         limit: 10,
         sort: {createdAt: 1}
     }
     const criteria = {course : course}
-    const requests = await CourseRequest.find(criteria)
+    // const requests = await CourseRequest.find(criteria)
     // console.log(requests)
-    // const requests = CourseRequest.paginate(criteria,options)
-    res.json(requests)
+    const requests = await CourseRequest.paginate(criteria,options)
+    if(requests.docs){
+        res.json({status: "ok", requests: requests.docs});
+        // console.log(requests)
+    }else{
+        res.json({status: "error"})
+    }
 }
 
 exports.acceptCourseRequest = async(req,res) => {
-    const user = req.params.user
-    const course = req.params.course
-    const request = await CourseRequest.find({user: user, course: course})
-    request.status = "joined"
-    res.json(request)
+    const {courseReqId} = req.body;
+    let courseReq = await CourseRequest.findOne({_id: courseReqId})
+    courseReq.status = "joined"
+    courseReq.save((err,request)=>{
+        if(!err){
+          res.json({status: "ok", request: request});
+        }
+        else res.json({status: "error"})
+      })
 }
 
 exports.validatePost = (req,res,next) => {
