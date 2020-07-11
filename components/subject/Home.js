@@ -361,7 +361,7 @@ class Home extends React.Component{
                     </Grid>
                     <Grid item xs={12} sm={8}>
                         <Grid container style={{justifyContent: 'center'}}>
-                            {isInstructor && <Grid item xs={12}>
+                            {isInstructor && <Grid item xs={12} style={{marginBottom: 50}}>
                                 <Paper elevation={5} style={{padding: 20}}>
                                         <Grid container style={{marginBottom: 20}}>
                                             <Grid item style={{marginRight: 10}}>

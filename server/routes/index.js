@@ -7,13 +7,16 @@ const courseController = require("../controllers/courseController");
 const exerciseMaterialController = require("../controllers/exerciseMaterialController");
 const problemStatementController = require("../controllers/problemStatementController");
 const fileController = require("../controllers/fileController")
+const examController = require("../controllers/examController")
 const multer = require('multer');
 const {uuid} = require('uuidv4');
+const fs = require('fs');
 
 const router = express.Router();
 const DIR = 'static/documents/';
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+      if(!fs.existsSync(DIR)) fs.mkdirSync(DIR, { recursive: true })
       cb(null, DIR);
   },
   filename: (req, file, cb) => {
@@ -75,6 +78,13 @@ router.put("/api/exercise-materials/:id", exerciseMaterialController.updateExerc
  */
 router.put("/api/problem-statements/:id",problemStatementController.updateProblemStatement);
 router.get("/api/problem-statements/:id",problemStatementController.fetchSingleProblemStatement);
+
+/**
+ * EXAM ROUTES
+ */
+router.post("/api/exams",examController.addNewExam);
+router.get("/api/exams/:id", examController.fetchSingleExam)
+
 
 /**
  * COURSE ROUTES /api/courses
