@@ -97,7 +97,7 @@ exports.getPosts = async (req,res) => {
         post._doc.isLike = idx>=0 ? true : false;
     })
     if(req.user){
-        res.json({status: "ok", posts: posts.docs});
+        res.json({status: "ok", posts: posts});
     }else{
         res.json({status: "error"})
     }
