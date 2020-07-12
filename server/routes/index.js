@@ -6,10 +6,11 @@ const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
 const exerciseMaterialController = require("../controllers/exerciseMaterialController");
 const answerSheetController = require("../controllers/answerSheetController");
-const examController = require("../controllers/examController");
-const multer = require("multer");
-const { uuid } = require("uuidv4");
-const fs = require("fs");
+const fileController = require("../controllers/fileController")
+const examController = require("../controllers/examController")
+const multer = require('multer');
+const {uuid} = require('uuidv4');
+const fs = require('fs');
 
 const router = express.Router();
 const DIR = "static/documents/";
@@ -134,7 +135,6 @@ router.get("/api/courses/:courseId", catchErrors(courseController.getCourse));
 router.post(
   "/api/courses/:courseId/posts/create",
   authController.checkAuth,
-  upload.array("attachments", 6),
   courseController.validatePost,
   catchErrors(courseController.createCoursePost),
   catchErrors(courseController.getPosts)
@@ -165,4 +165,22 @@ router.post(
 //   catchErrors(postController.resizeImage),
 //   catchErrors(postController.addPost)
 // );
+
+
+/**
+ * POST ROUTES /api/files
+ */
+
+router.get(
+  "/files/:filePath",
+  authController.checkAuth,
+  catchErrors(fileController.getPreSignedUrl)
+)
+
+router.post(
+  "/api/files/generate-put-url",
+  authController.checkAuth,
+  catchErrors(fileController.putPreSignedUrl)
+)
+
 module.exports = router;

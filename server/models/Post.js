@@ -13,9 +13,11 @@ const commentsSchema = new mongoose.Schema({
 })
 
 const attachmentSchema = new mongoose.Schema({
-    fileName: {type: String, required: "Attachment name should be declared"},
+    key: {type: String, required: "Attachment should has key"},
+    name: {type: String, required: "Attachment name should be declared"},
     size: {type: Number, required: "Attachment size should be defined, default in (KB)"},
-    path: {type: String, required: "Attachment path is required"}
+    type: {type: String, required: "Attachment should has type"},
+    url: {type: String, required: "Attachment path is required"}
 })
 
   

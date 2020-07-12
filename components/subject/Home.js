@@ -17,8 +17,9 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 import DocumentIcon from '@material-ui/icons/Description';
 import DeleteIcon from '@material-ui/icons/Clear'
 import AddIcon from '@material-ui/icons/AddCircleRounded'
-import {createCoursePost, getCoursePosts, likeAPost, postComment} from '../../lib/api';
+import {createCoursePost, getCoursePosts, likeAPost, postComment, generatePutUrl, uploadToS3} from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
+import axios from 'axios';
 
 
 const styles = (theme) => ({
@@ -111,7 +112,7 @@ const PostItem = (props) => {
                 <div  dangerouslySetInnerHTML={{__html: data.body}} />
             </Grid>
             <Grid container spacing={2} style={{marginTop: 10}}>
-                {data.attachments.map((e,idx)=><Grid key={e._id} item><a href={e.path} style={{fontSize: 12}}>{e.fileName}</a></Grid>)}
+                {data.attachments.map((e,idx)=><Grid key={e._id} item><a href={`/files/${encodeURIComponent(e.key)}`} style={{fontSize: 12}}>{e.name}</a></Grid>)}
             </Grid>
             <Grid container style={{marginTop: 10}}>
                 <ThumbUpIcon style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
@@ -265,7 +266,7 @@ const Attachments = (props) => {
                     </ListItemAvatar>
                     <ListItemText
                     primary={e.name}
-                    secondary={`${parseInt(e.size/1000)} kb`}
+                    secondary={`${parseInt(e.size/1000)} kb || upload progress: ${e.progress||0}%`}
                     />
                     <ListItemSecondaryAction>
                     <IconButton onClick={()=>props.removeFile(idx)} edge="end" aria-label="delete">
@@ -288,6 +289,7 @@ class Home extends React.Component{
         this.onTextChange = this.onTextChange.bind(this)
         this.handleEditorChange = this.handleEditorChange.bind(this)
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
+        this.progressCallback = this.progressCallback.bind(this);
     }
 
     componentDidMount(){
@@ -295,11 +297,34 @@ class Home extends React.Component{
         getCoursePosts(courseId,{page: 1}).then(posts => this.setState(posts))
     }
 
+    progressCallback(file){
+        const _this = this;
+        return function(completed){
+            let files = _this.state.newPost.files;
+            let targetFile = files.find((e)=>e.name == file.name)
+            if(!!targetFile){
+                targetFile.progress = completed;
+                _this.setState({newPost: _this.state.newPost});
+            }
+        }
+    }
+
     onFileChange(e) {
         let newFiles = Array.from(e.target.files);
         let {newPost} = this.state
         this.state.newPost.files = newPost.files.concat(newFiles);
         this.setState({ newPost: this.state.newPost })
+        newFiles.forEach(async (file) => {
+            let response = await generatePutUrl(file)
+            if(response.status == "ok"){
+                const {url, key} = response.file;
+                file.url = url;
+                file.key = key;
+                response = await uploadToS3(file,this.progressCallback(file));
+            }else{
+                alert(response.message);
+            }
+        })
     }
 
     onTextChange(e) {
@@ -325,16 +350,19 @@ class Home extends React.Component{
     onSubmit = (e,courseId) => {
         e.preventDefault()
         let {newPost} = this.state;
-        let formData = new FormData();
-        formData.set("title",newPost.title);
-        formData.set("body",newPost.body);
-        formData.set("category",newPost.category);
-        for (const key of Object.keys(newPost.files)) {
-            formData.append('attachments', newPost.files[key])
-        }
-        createCoursePost(courseId,formData).then(result=>{
+        createCoursePost(courseId, newPost).then(result=>{
             this.setState({posts: result.posts, newPost: {title: "",body: "",category: "",files: []}})
         })
+        // let formData = new FormData();
+        // formData.set("title",newPost.title);
+        // formData.set("body",newPost.body);
+        // formData.set("category",newPost.category);
+        // for (const key of Object.keys(newPost.files)) {
+        //     formData.append('attachments', newPost.files[key])
+        // }
+        // createCoursePost(courseId,formData).then(result=>{
+        //     this.setState({posts: result.posts, newPost: {title: "",body: "",category: "",files: []}})
+        // })
     }
 
     render(){
@@ -414,7 +442,7 @@ class Home extends React.Component{
                                             />
                                             <Attachments removeFile={this.removeFile.bind(this)} data={newPost.files}/>
                                             <label htmlFor="files">
-                                                <input style={{display: 'none'}} id="files" type="file" name="files" onChange={this.onFileChange} multiple />
+                                                <input style={{display: 'none'}} files={this.state.newPost.files} id="files" type="file" name="files" onChange={this.onFileChange} multiple />
                                                 <Button
                                                     color="primary"
                                                     size="small"
