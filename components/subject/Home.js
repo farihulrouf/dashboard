@@ -19,6 +19,7 @@ import DeleteIcon from '@material-ui/icons/Clear'
 import AddIcon from '@material-ui/icons/AddCircleRounded'
 import {createCoursePost, getCoursePosts, likeAPost, postComment, generatePutUrl, uploadToS3} from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
+import Pagination from '@material-ui/lab/Pagination';
 import axios from 'axios';
 
 
@@ -282,14 +283,20 @@ class Home extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            posts: [], 
-            newPost: {title: "", body: "", category: "", files: []}
+            posts: {limit: 10, page: 1, pages: 1, total: 3, docs: []}, 
+            newPost: {title: "", body: "", category: "", files: []},
+            query: {}
         }
         this.onFileChange = this.onFileChange.bind(this)
         this.onTextChange = this.onTextChange.bind(this)
         this.handleEditorChange = this.handleEditorChange.bind(this)
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
         this.progressCallback = this.progressCallback.bind(this);
+        this.handlePaginationChange = this.handlePaginationChange.bind(this)
+    }
+
+    handlePaginationChange(event,page){
+        getCoursePosts(this.props.courseId,{...this.state.query, page: page}).then(posts=>this.setState(posts));
     }
 
     componentDidMount(){
@@ -353,16 +360,6 @@ class Home extends React.Component{
         createCoursePost(courseId, newPost).then(result=>{
             this.setState({posts: result.posts, newPost: {title: "",body: "",category: "",files: []}})
         })
-        // let formData = new FormData();
-        // formData.set("title",newPost.title);
-        // formData.set("body",newPost.body);
-        // formData.set("category",newPost.category);
-        // for (const key of Object.keys(newPost.files)) {
-        //     formData.append('attachments', newPost.files[key])
-        // }
-        // createCoursePost(courseId,formData).then(result=>{
-        //     this.setState({posts: result.posts, newPost: {title: "",body: "",category: "",files: []}})
-        // })
     }
 
     render(){
@@ -462,9 +459,12 @@ class Home extends React.Component{
                                         </form>
                                 </Paper>
                             </Grid>}
+                            <Grid item sx={12} style={{marginBottom: 30}}>
+                                <Pagination count={posts.pages} color="primary" onChange={this.handlePaginationChange} />
+                            </Grid>
                             <Grid item xs={12}>
                                 <List>
-                                    {posts.map((value) => <PostItem key={value._id} data={value} />)}
+                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} />)}
                                 </List>
                             </Grid>
                         </Grid>
