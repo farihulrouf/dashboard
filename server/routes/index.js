@@ -109,6 +109,8 @@ router.get(
  */
 router.post("/api/exams", examController.addNewExam);
 router.get("/api/exams/:id", examController.fetchSingleExam);
+router.post("/api/exams/:id/question-pools", examController.addExerciseMaterialToExam)
+router.get("/api/exams/:id/start", examController.startExam)
 
 /**
  * COURSE ROUTES /api/courses
