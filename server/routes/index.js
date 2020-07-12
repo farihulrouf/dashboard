@@ -118,7 +118,6 @@ router.get(
 router.post(
   "/api/courses/:courseId/posts/create",
   authController.checkAuth,
-  upload.array('attachments',6),
   courseController.validatePost,
   catchErrors(courseController.createCoursePost),
   catchErrors(courseController.getPosts)
@@ -157,8 +156,9 @@ router.post(
 /**
  * POST ROUTES /api/files
  */
-router.post(
-  "/api/files/generate-get-url",
+
+router.get(
+  "/files/:filePath",
   authController.checkAuth,
   catchErrors(fileController.getPreSignedUrl)
 )

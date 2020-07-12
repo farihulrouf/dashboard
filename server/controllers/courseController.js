@@ -44,8 +44,7 @@ exports.validatePost = (req,res,next) => {
 }
 
 exports.createCoursePost = async (req,res,next) => {
-    const {title,body,category} = req.body;
-    const reqFiles = [];
+    const {title,body,category,files} = req.body;
     let post = new Post({
         title: title, 
         body: body, 
@@ -53,14 +52,8 @@ exports.createCoursePost = async (req,res,next) => {
         postedOn: req.course, 
         postedBy: req.user
     })
-    const url = req.protocol + '://' + req.get('host')
-    for (var i = 0; i < req.files.length; i++) {
-        file = req.files[i]
-        filePath = url + '/static/documents/' + file.filename
-        attachment = {fileName: file.originalname, size: file.size, path: filePath}
-        reqFiles.push(attachment);
-    }
-    post.attachments = reqFiles;
+
+    post.attachments = files;
     post.save((err,savedPost)=>{
         if(err){
             return res.json({status: "error", message: err.message})

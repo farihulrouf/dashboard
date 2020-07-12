@@ -12,7 +12,7 @@ const s3 = new AWS.S3();
 const Bucket = process.env.BUCKET_NAME;
 
 exports.getPreSignedUrl = async (req,res) => {
-    const { Key } = req.body;
+    const Key = req.params.filePath;
     const params = {
         Bucket,
         Key,
@@ -23,14 +23,15 @@ exports.getPreSignedUrl = async (req,res) => {
         if (err) {
           res.send(err);
         } else {
-          res.send(url);
+          res.redirect(url);
         }
     });
 }
 
 exports.putPreSignedUrl = async (req,res) => {
     // Note Bucket is retrieved from the env variable above.
-    const {Key, ContentType} = req.body;
+    const {FileName, ContentType} = req.body;
+    const Key = `${req.user.id}/${FileName}`;
     const params = { Bucket, Key, ContentType };
     // Note operation in this case is putObject
     s3.getSignedUrl('putObject', params, function(err, url) {
@@ -38,6 +39,7 @@ exports.putPreSignedUrl = async (req,res) => {
         res.json({status: "error", message: err});
       }
       // If there is no errors we can send back the pre-signed PUT URL
-      res.json({status: "ok", url: url});
+      const file = {url: url, key: Key};
+      res.json({status: "ok", file: file});
     });
 }
