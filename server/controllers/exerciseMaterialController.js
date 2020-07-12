@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const ExerciseMaterial = mongoose.model("ExerciseMaterial");
-const ProblemStatement = mongoose.model("ProblemStatement");
+const AnswerSheet = mongoose.model("AnswerSheet");
 const { ObjectId } = mongoose.Types;
 
 exports.fetchAllExerciseSchema = async (req, res) => {
@@ -17,18 +17,20 @@ exports.fetchAllExerciseSchema = async (req, res) => {
         var dateStart = Date.now();
         var dateSubmission = Date.now() + timeLimit * 60 * 1000;
         var type = "exercise";
-        const newProblemStatement = new ProblemStatement({
+        var participantId = req.user.id;
+        const newAnswerSheet = new AnswerSheet({
           dateStart,
           dateSubmission,
           type,
+          participantId,
         });
 
-        newProblemStatement
+        newAnswerSheet
           .save()
           .then((result) =>
             res.json({
               exerciseMaterials: exerciseMaterials,
-              problemStatement: result,
+              answerSheet: result,
             })
           )
           .catch((err) => res.Status(400).json("Error: " + err));
@@ -46,23 +48,23 @@ exports.addNewExerciseMaterials = async (req, res) => {
   const difficultyLabel = req.body.difficultyLabel;
   const question = req.body.question;
   const multipleChoices = req.body.multipleChoices;
-  const post = ObjectId(req.body.post);
-  const course = ObjectId(req.body.course);
+  const courseId = ObjectId(req.body.course);
   const solution = req.body.solution;
+  const type = req.body.type;
 
   const newExerciseMaterial = new ExerciseMaterial({
     difficultyLabel,
     question,
     multipleChoices,
-    post,
-    course,
+    courseId,
     solution,
+    type,
   });
 
   newExerciseMaterial
     .save()
     .then((result) => res.json(result))
-    .catch((err) => res.Status(400).json("Error: " + err));
+    // .catch((err) => res.Status(400).json("Error: " + err));
 };
 
 exports.fetchSingleExerciseMaterial = async (req, res) => {

@@ -16,7 +16,7 @@ const problemWithParticipantAnswerSchema = new mongoose.Schema({
   participantAnswer: {type: String},
 })
 
-const problemStatementSchema = new Schema(
+const answerSheetSchema = new Schema(
   {
     participantId: {type: ObjectId, ref: "User"},
     dateStart : { type : Date },
@@ -31,5 +31,5 @@ const problemStatementSchema = new Schema(
   }
 );
 
-const ProblemStatement = mongoose.model("ProblemStatement", problemStatementSchema);
-module.exports = ProblemStatement;
+const AnswerSheet = mongoose.model("AnswerSheet", answerSheetSchema);
+module.exports = AnswerSheet;

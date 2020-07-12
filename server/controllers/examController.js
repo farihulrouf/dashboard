@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Exam = mongoose.model("Exam");
-const ProblemStatement = mongoose.model("ProblemStatement");
+const AnswerSheet = mongoose.model("AnswerSheet");
 
 
 exports.addNewExam = async (req, res) => {
@@ -28,18 +28,18 @@ exports.fetchSingleExam = async (req, res) => {
         var dateStart = Date.now();
         var dateSubmission = Date.now() + exam.duration * 60 * 1000;
         var type = "exam";
-        const newProblemStatement = new ProblemStatement({
+        const newAnswerSheet = new AnswerSheet({
           dateStart,
           dateSubmission,
           type,
         });
 
-        newProblemStatement
+        newAnswerSheet
           .save()
           .then((result) =>
             res.json({
               exam: exam,
-              problemStatement: result,
+              answerSheet: result,
             })
           )
           .catch((err) => res.Status(400).json("Error: " + err));
