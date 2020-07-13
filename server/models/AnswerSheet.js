@@ -4,12 +4,12 @@ const { ObjectId } = mongoose.Schema;
 
 
 const participantSolutionsSchema = new mongoose.Schema({
-    exerciseMaterialId: {type: ObjectId},
+    questionPoolId: {type: ObjectId},
     answer: {type: String}
 })
 
 const problemWithParticipantAnswerSchema = new mongoose.Schema({
-  exerciseMaterialId: {type: ObjectId},
+  questionPoolId: {type: ObjectId},
   question: {type: String},
   multipleChoices: [{type: String}],
   solution: {type: String},

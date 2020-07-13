@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const AnswerSheet = mongoose.model("AnswerSheet");
-const ExerciseMaterial = mongoose.model("ExerciseMaterial");
+const QuestionPool = mongoose.model("QuestionPool");
 mongoose.Promise = require("bluebird");
 
 exports.updateAnswerSheet = async (req, res) => {
@@ -13,7 +13,7 @@ exports.updateAnswerSheet = async (req, res) => {
         .then((answerSheet) => {
           var jobQueries = [];
           answerSheet.participantSolutions.forEach(function (p) {
-            jobQueries.push(ExerciseMaterial.findById(p.exerciseMaterialId));
+            jobQueries.push(QuestionPool.findById(p.questionPoolId));
           });
           return Promise.all(jobQueries);
         })
@@ -24,7 +24,7 @@ exports.updateAnswerSheet = async (req, res) => {
           for (var i = 0; i < listOfJobs.length; i++) {
             listOfProblemsAndParticipantSolutions.push(
               {
-                exerciseMaterialId: listOfJobs[i]._id,
+                questionPoolId: listOfJobs[i]._id,
                 question: listOfJobs[i].question,
                 multipleChoices: listOfJobs[i].multipleChoices,
                 solution: listOfJobs[i].solution,
@@ -51,7 +51,7 @@ exports.updateAnswerSheet = async (req, res) => {
             })
             .catch((err) => res.Status(400).json("Error " + err));
         })
-        .catch((err) => res.Status(400).json("Error " + err));
+        // .catch((err) => res.Status(400).json("Error " + err));
     })
     .catch((err) => res.Status(400).json("Error " + err));
 };

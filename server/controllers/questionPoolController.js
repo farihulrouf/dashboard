@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const ExerciseMaterial = mongoose.model("ExerciseMaterial");
+const QuestionPool = mongoose.model("QuestionPool");
 const AnswerSheet = mongoose.model("AnswerSheet");
 const { ObjectId } = mongoose.Types;
 
@@ -8,12 +8,12 @@ exports.fetchAllExerciseSchema = async (req, res) => {
   const size = Number(req.query.size);
   const timeLimit = req.query.timeLimit;
   if (size != null) {
-    ExerciseMaterial.aggregate([
+    QuestionPool.aggregate([
       { $match: { difficultyLabel: difficultyLabel } },
       { $sample: { size: size } },
       { $unset: "solution" },
     ])
-      .then((exerciseMaterials) => {
+      .then((questionPools) => {
         var dateStart = Date.now();
         var dateSubmission = Date.now() + timeLimit * 60 * 1000;
         var type = "exercise";
@@ -29,7 +29,7 @@ exports.fetchAllExerciseSchema = async (req, res) => {
           .save()
           .then((result) =>
             res.json({
-              exerciseMaterials: exerciseMaterials,
+              questionPools: questionPools,
               answerSheet: result,
             })
           )
@@ -38,13 +38,13 @@ exports.fetchAllExerciseSchema = async (req, res) => {
       .catch((err) => res.Status(400).json("Error :" + err));
     return;
   }
-  ExerciseMaterial.find({ difficultyLabel: difficultyLabel })
+  QuestionPool.find({ difficultyLabel: difficultyLabel })
     .select("-solution")
-    .then((exerciseMaterials) => res.json(exerciseMaterials))
+    .then((questionPools) => res.json(questionPools))
     .catch((err) => res.Status(400).json("Error :" + err));
 };
 
-exports.addNewExerciseMaterials = async (req, res) => {
+exports.addNewQuestionPools = async (req, res) => {
   const difficultyLabel = req.body.difficultyLabel;
   const question = req.body.question;
   const multipleChoices = req.body.multipleChoices;
@@ -52,7 +52,7 @@ exports.addNewExerciseMaterials = async (req, res) => {
   const solution = req.body.solution;
   const type = req.body.type;
 
-  const newExerciseMaterial = new ExerciseMaterial({
+  const newQuestionPool = new QuestionPool({
     difficultyLabel,
     question,
     multipleChoices,
@@ -61,26 +61,26 @@ exports.addNewExerciseMaterials = async (req, res) => {
     type,
   });
 
-  newExerciseMaterial
+  newQuestionPool
     .save()
     .then((result) => res.json(result))
     // .catch((err) => res.Status(400).json("Error: " + err));
 };
 
-exports.fetchSingleExerciseMaterial = async (req, res) => {
-  ExerciseMaterial.findById(req.params.id)
+exports.fetchSingleQuestionPool = async (req, res) => {
+  QuestionPool.findById(req.params.id)
     .then((exercise) => res.json(exercise))
     .catch((err) => res.Status(400).json("Error " + err));
 };
 
-exports.deleteExerciseMaterial = async (req, res) => {
-  ExerciseMaterial.findByIdAndDelete(req.params.id)
+exports.deleteQuestionPool = async (req, res) => {
+  QuestionPool.findByIdAndDelete(req.params.id)
     .then((exercise) => res.json(exercise))
     .catch((err) => res.Status(400).json("Error " + err));
 };
 
-exports.updateExerciseMaterial = async (req, res) => {
-  ExerciseMaterial.findById(req.params.id)
+exports.updateQuestionPool = async (req, res) => {
+  QuestionPool.findById(req.params.id)
     .then((exercise) => {
       exercise.difficultyLabel = req.body.difficultyLabel;
       exercise.question = req.body.question;

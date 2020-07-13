@@ -4,7 +4,7 @@ const userController = require("../controllers/userController");
 const exerciseController = require("../controllers/exerciseController");
 const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
-const exerciseMaterialController = require("../controllers/exerciseMaterialController");
+const questionPoolController = require("../controllers/questionPoolController");
 const answerSheetController = require("../controllers/answerSheetController");
 const fileController = require("../controllers/fileController")
 const examController = require("../controllers/examController")
@@ -73,24 +73,24 @@ router.post("/api/exercises", exerciseController.addNewExercises);
  * EXERCISE MATERIALS ROUTES
  */
 router.post(
-  "/api/exercise-materials",
+  "/api/question-pools",
   authController.checkAuth,
-  exerciseMaterialController.addNewExerciseMaterials
+  questionPoolController.addNewQuestionPools
 );
 router.get(
-  "/api/exercise-materials",
+  "/api/question-pools",
   authController.checkAuth,
-  exerciseMaterialController.fetchAllExerciseSchema
+  questionPoolController.fetchAllExerciseSchema
 );
 router.get(
-  "/api/exercise-materials/:id",
+  "/api/question-pools/:id",
   authController.checkAuth,
-  exerciseMaterialController.fetchSingleExerciseMaterial
+  questionPoolController.fetchSingleQuestionPool
 );
 router.put(
-  "/api/exercise-materials/:id",
+  "/api/question-pools/:id",
   authController.checkAuth,
-  exerciseMaterialController.updateExerciseMaterial
+  questionPoolController.updateQuestionPool
 );
 
 /**
@@ -110,7 +110,7 @@ router.get(
  */
 router.post("/api/exams", examController.addNewExam);
 router.get("/api/exams/:id", examController.fetchSingleExam);
-router.post("/api/exams/:id/question-pools", examController.addExerciseMaterialToExam)
+router.post("/api/exams/:id/question-pools", examController.addQuestionPoolToExam)
 router.get("/api/exams/:id/start", examController.startExam)
 
 /**
