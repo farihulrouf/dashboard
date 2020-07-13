@@ -285,7 +285,8 @@ class Home extends React.Component{
         this.state = {
             posts: {limit: 10, page: 1, pages: 1, total: 3, docs: []}, 
             newPost: {title: "", body: "", category: "", files: []},
-            query: {}
+            query: {},
+            createStatus: true
         }
         this.onFileChange = this.onFileChange.bind(this)
         this.onTextChange = this.onTextChange.bind(this)
@@ -311,7 +312,10 @@ class Home extends React.Component{
             let targetFile = files.find((e)=>e.name == file.name)
             if(!!targetFile){
                 targetFile.progress = completed;
-                _this.setState({newPost: _this.state.newPost});
+                let createStatus = files.reduce((acc,current)=> {
+                    return acc && (current.progress == 100)
+                }, true)
+                _this.setState({newPost: _this.state.newPost, createStatus: createStatus});
             }
         }
     }
@@ -327,6 +331,7 @@ class Home extends React.Component{
                 const {url, key} = response.file;
                 file.url = url;
                 file.key = key;
+                file.source = axios.CancelToken.source();
                 response = await uploadToS3(file,this.progressCallback(file));
             }else{
                 alert(response.message);
@@ -350,7 +355,9 @@ class Home extends React.Component{
     }
 
     removeFile(e){
-        this.state.newPost.files.splice(e,1);
+        let {files} = this.state.newPost;
+        files[e].source.cancel(`${files[e].name} is removed`);
+        files.splice(e,1);
         this.setState({newPost: this.state.newPost})
     }
 
@@ -439,7 +446,7 @@ class Home extends React.Component{
                                             />
                                             <Attachments removeFile={this.removeFile.bind(this)} data={newPost.files}/>
                                             <label htmlFor="files">
-                                                <input style={{display: 'none'}} files={this.state.newPost.files} id="files" type="file" name="files" onChange={this.onFileChange} multiple />
+                                                <input style={{display: 'none'}} value="" id="files" type="file" name="files" onChange={this.onFileChange} multiple />
                                                 <Button
                                                     color="primary"
                                                     size="small"
@@ -452,9 +459,12 @@ class Home extends React.Component{
                                                 </Button>
                                             </label>
                                             <Grid container style={{justifyContent: 'flex-end'}}>
-                                                <Button type="submit" variant="contained" color="primary">
+                                                {!!this.state.createStatus && <Button type="submit" variant="contained" color="primary">
                                                     Create Post
-                                                </Button>
+                                                </Button>}
+                                                {!this.state.createStatus && <Button disabled type="submit" variant="contained" color="primary">
+                                                    Create Post
+                                                </Button>}
                                             </Grid>
                                         </form>
                                 </Paper>
