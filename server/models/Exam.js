@@ -4,7 +4,7 @@ const { ObjectId } = mongoose.Schema;
 
 const examSchema = new Schema(
   {
-    exerciseMaterials: [{ type: ObjectId, ref: "ExerciseMaterial" }],
+    questionPools: [{ type: ObjectId, ref: "QuestionPool" }],
     name: { type: String },
     duration: { type: Number },
     startTime: {type: Date},
@@ -16,7 +16,7 @@ const examSchema = new Schema(
 );
 
 const autoPopulate = function (next) {
-  this.populate("exerciseMaterials", "_id question multipleChoices question");
+  this.populate("questionPools", "_id question multipleChoices question");
   next();
 };
 

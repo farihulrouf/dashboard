@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const { diff } = require("jimp");
 const Exam = mongoose.model("Exam");
 const AnswerSheet = mongoose.model("AnswerSheet");
-const ExerciseMaterial = mongoose.model("ExerciseMaterial");
+const QuestionPool = mongoose.model("QuestionPool");
 const { ObjectId } = mongoose.Types;
 
 exports.addNewExam = async (req, res) => {
-  const exerciseMaterials = req.body.exerciseMaterials;
+  const questionPools = req.body.questionPools;
   const numberOfProblems = req.body.numberOfProblems;
   const name = req.body.name;
   const duration = Number(req.body.duration);
@@ -14,7 +14,7 @@ exports.addNewExam = async (req, res) => {
   const endTime = req.body.endTime;
 
   const exam = new Exam({
-    exerciseMaterials,
+    questionPools,
     numberOfProblems,
     name,
     duration,
@@ -53,7 +53,7 @@ exports.fetchSingleExam = async (req, res) => {
     .catch((err) => res.Status(400).json("Error " + err));
 };
 
-exports.addExerciseMaterialToExam = async (req, res) => {
+exports.addQuestionPoolToExam = async (req, res) => {
   const difficultyLabel = req.body.difficultyLabel;
   const question = req.body.question;
   const multipleChoices = req.body.multipleChoices;
@@ -63,7 +63,7 @@ exports.addExerciseMaterialToExam = async (req, res) => {
 
   Exam.findById(req.params.id)
     .then((exam) => {
-      const newExerciseMaterial = new ExerciseMaterial({
+      const newQuestionPool = new QuestionPool({
         difficultyLabel,
         question,
         multipleChoices,
@@ -72,10 +72,10 @@ exports.addExerciseMaterialToExam = async (req, res) => {
         type,
       });
 
-      newExerciseMaterial.save().then((exerciseMaterial) => {
-        exerciseMaterials = exam.exerciseMaterials;
-        exerciseMaterials.push(exerciseMaterial.id);
-        exam.exerciseMaterials = exerciseMaterials;
+      newQuestionPool.save().then((questionPool) => {
+        questionPools = exam.questionPools;
+        questionPools.push(questionPool.id);
+        exam.questionPools = questionPools;
 
         exam
           .save()
