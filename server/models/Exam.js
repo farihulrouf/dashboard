@@ -5,9 +5,10 @@ const { ObjectId } = mongoose.Schema;
 const examSchema = new Schema(
   {
     exerciseMaterials: [{ type: ObjectId, ref: "ExerciseMaterial" }],
-    numberOfProblems: { type: Number },
     name: { type: String },
     duration: { type: Number },
+    startTime: {type: Date},
+    endTime: {type: Date},
   },
   {
     timestamps: true,
