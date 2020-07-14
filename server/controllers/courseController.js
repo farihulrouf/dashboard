@@ -63,7 +63,7 @@ exports.createCoursePost = async (req,res,next) => {
 }
 
 exports.getPosts = async (req,res) => {
-    const {courseId} = req.params;
+    const courseId = req.params.courseId || req.post.postedOn;
     let {category, content, page} = req.query;
     const options = {
         page: parseInt(page),
@@ -95,6 +95,7 @@ exports.getPosts = async (req,res) => {
     posts.docs.forEach((post)=>{
         idx = post.likes.likedBy.indexOf(req.user._id);
         post._doc.isLike = idx>=0 ? true : false;
+        post._doc.owned = (post.postedBy.id == req.user.id)
     })
     if(req.user){
         res.json({status: "ok", posts: posts});

@@ -153,6 +153,13 @@ router.put(
   catchErrors(postController.likeAPost)
 );
 
+router.delete(
+  "/api/posts/:postId",
+  authController.checkAuth,
+  catchErrors(postController.deletePost),
+  catchErrors(courseController.getPosts)
+)
+
 router.post(
   "/api/posts/:postId/comment",
   authController.checkAuth,

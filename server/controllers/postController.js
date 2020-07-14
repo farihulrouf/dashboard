@@ -13,6 +13,20 @@ exports.addPost = async (req, res) => {
     res.json(post);
 };
 
+
+exports.deletePost = async (req,res,next)=>{
+  if(req.isPoster){
+    //Can delete only if creator
+    try{
+      const deletedPost = await req.post.remove();
+      return next();
+    }catch(err){
+      res.json({status: "error", message: "unable to delete post"});
+    }
+  }
+  res.json({status: "error", message: "unauthorized to delete this post"});
+}
+
 exports.getPostById = async (req,res,next,id) => {
     const post = await Post.findOne({ _id: id });
     req.post = post;

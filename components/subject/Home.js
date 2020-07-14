@@ -2,7 +2,7 @@ import NavBar from '../../components/NavBar.js';
 import { makeStyles, withStyles } from '@material-ui/core/styles';;
 import {Grid, List, ListItem, ListItemIcon, Checkbox, ListItemSecondaryAction, Avatar, ListItemText,
     Typography, Paper, Button, IconButton, InputBase, Divider, TextField, ListItemAvatar, InputLabel, Select, TextareaAutosize,
-    MenuItem,
+    MenuItem, Popper, ButtonGroup,
     FormControl
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -17,10 +17,13 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 import DocumentIcon from '@material-ui/icons/Description';
 import DeleteIcon from '@material-ui/icons/Clear'
 import AddIcon from '@material-ui/icons/AddCircleRounded'
-import {createCoursePost, getCoursePosts, likeAPost, postComment, generatePutUrl, uploadToS3} from '../../lib/api';
+import {createCoursePost, getCoursePosts, likeAPost, 
+    postComment, generatePutUrl, uploadToS3, deletePost} from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
 import Pagination from '@material-ui/lab/Pagination';
 import axios from 'axios';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import FormDialog from './FormDialog';
 
 
 const styles = (theme) => ({
@@ -36,7 +39,12 @@ const styles = (theme) => ({
     },
     input: {
         width: '80%'
-    }
+    },
+    paper: {
+        border: '1px solid',
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+    },
 });
 const useStyles = makeStyles(styles);
 
@@ -77,6 +85,15 @@ const PostItem = (props) => {
     const [showComment,setShowCommnet] = React.useState(false);
     const [data,setData] = React.useState(props.data);
     const [comment,setComment] = React.useState("");
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    
+    
+    const handleClick = (event) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+      };
+    
+      const open = Boolean(anchorEl);
+      const id = open ? 'simple-popper' : undefined;
     
     const showCommentBox = (event) => {
        setShowCommnet(!showComment);
@@ -90,23 +107,45 @@ const PostItem = (props) => {
     return(
         <Paper elevation={3} style={{marginBottom: 30, padding: 20, paddingTop: 0}}>
             <Grid container spacing={2}>
-                <Grid item>
-                    <Avatar alt={data.postedBy.name} src="/static/images/avatar/1.jpg" />
+                <Grid item xs={2} sm={1} style={{alignSelf: 'center'}}>
+                    {data.category == "Announcement" && <AnnouncementIcon style={{width: '100%', height: 'auto'}} />}
+                    {data.category == "Materials" && <ClassIcon style={{width: '100%', height: 'auto'}} />}
+                    {data.category == "Exam" && <ExamIcon style={{width: '100%', height: 'auto'}} />}
                 </Grid>
-                <Grid item>
+                <Grid item xs={8} sm={10}>
                     <Grid container><b>{data.title}</b></Grid>
                     <Grid container>
                         <React.Fragment>
-                        <Typography
-                            component="span"
-                            variant="body2"
-                            className={classes.inline}
-                            color="textPrimary"
-                        >
-                            {`${data.postedBy.name} - ${data.createdAt}`}
-                        </Typography>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                className={classes.inline}
+                                color="textPrimary"
+                            >
+                                {`${data.postedBy.name} - ${data.createdAt}`}
+                            </Typography>
                         </React.Fragment>
                     </Grid>
+                </Grid>
+                <Grid item xs={2} sm={1}>
+                    {data.owned && 
+                    <React.Fragment>
+                    <Button color="primary" style={{right: 0, position: 'relative'}} onClick={handleClick}>
+                            <MoreVertIcon />
+                    </Button>
+                    <Popper id={id} open={open} anchorEl={anchorEl}>
+                        <ButtonGroup
+                            orientation="vertical"
+                            color="primary"
+                            aria-label="vertical outlined primary button group"
+                            style={{marginRight: 50}}
+                        >
+                            <Button variant="contained">Edit</Button>
+                            <Button variant="contained" value={data._id} onClick={props.openDeleteDialog}>Delete</Button>
+                        </ButtonGroup>
+                    </Popper>
+                    </React.Fragment>
+                    }
                 </Grid>
             </Grid>
             <Grid container style={{marginTop: 10}}>
@@ -283,9 +322,11 @@ class Home extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            posts: {limit: 10, page: 1, pages: 1, total: 3, docs: []}, 
+            posts: {limit: 0, page: 1, pages: 1, total: 0, docs: []}, 
             newPost: {title: "", body: "", category: "", files: []},
-            query: {}
+            query: {page: 1},
+            createStatus: true,
+            deleteDialogOpen: false
         }
         this.onFileChange = this.onFileChange.bind(this)
         this.onTextChange = this.onTextChange.bind(this)
@@ -293,6 +334,10 @@ class Home extends React.Component{
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
         this.progressCallback = this.progressCallback.bind(this);
         this.handlePaginationChange = this.handlePaginationChange.bind(this)
+        this.deletePost = this.deletePost.bind(this);
+        this.uploadImage = this.uploadImage.bind(this);
+        this.deleteDialogOnClose = this.deleteDialogOnClose.bind(this);
+        this.openDeleteDialog = this.openDeleteDialog.bind(this);
     }
 
     handlePaginationChange(event,page){
@@ -301,7 +346,7 @@ class Home extends React.Component{
 
     componentDidMount(){
         const {courseId} = this.props;
-        getCoursePosts(courseId,{page: 1}).then(posts => this.setState(posts))
+        getCoursePosts(courseId,this.state.query).then(posts => this.setState(posts))
     }
 
     progressCallback(file){
@@ -311,7 +356,10 @@ class Home extends React.Component{
             let targetFile = files.find((e)=>e.name == file.name)
             if(!!targetFile){
                 targetFile.progress = completed;
-                _this.setState({newPost: _this.state.newPost});
+                let createStatus = files.reduce((acc,current)=> {
+                    return acc && (current.progress == 100)
+                }, true)
+                _this.setState({newPost: _this.state.newPost, createStatus: createStatus});
             }
         }
     }
@@ -327,6 +375,7 @@ class Home extends React.Component{
                 const {url, key} = response.file;
                 file.url = url;
                 file.key = key;
+                file.source = axios.CancelToken.source();
                 response = await uploadToS3(file,this.progressCallback(file));
             }else{
                 alert(response.message);
@@ -350,7 +399,9 @@ class Home extends React.Component{
     }
 
     removeFile(e){
-        this.state.newPost.files.splice(e,1);
+        let {files} = this.state.newPost;
+        files[e].source.cancel(`${files[e].name} is removed`);
+        files.splice(e,1);
         this.setState({newPost: this.state.newPost})
     }
 
@@ -362,11 +413,44 @@ class Home extends React.Component{
         })
     }
 
+    uploadImage = async (blobInfo,success,failure) => {
+        try {
+            let file = blobInfo.blob();
+            let response = await generatePutUrl(file);
+            if(response.status == "ok"){
+                const {url, key} = response.file;
+                file.url = url;
+                file.key = key;
+                file.source = axios.CancelToken.source();
+                response = await uploadToS3(file,this.progressCallback(file));
+                success(`/files/${encodeURIComponent(file.key)}`);
+            }else{
+                alert(response.message);
+            }
+        } catch (error) {
+            alert(error);
+        }
+    }
+
+    openDeleteDialog = (event)=>{
+        this.setState({deleteDialogOpen: true, postToDelete: event.currentTarget.value});
+    }
+
+    deleteDialogOnClose = () => {
+        this.setState({deleteDialogOpen: false});
+    }
+
+    deletePost = () => {
+        const {postToDelete, query} = this.state;
+        deletePost(postToDelete, query).then(result=> this.setState({posts: result.posts, deleteDialogOpen: false}))
+    }
+
     render(){
         const {classes, isInstructor, auth} = this.props
-        const {posts, newPost} = this.state
+        const {posts, newPost, deleteDialogOpen} = this.state
         return(
             <React.Fragment>
+                <FormDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
                 <Grid container>
                     <Grid item xs={12} sm={4} style={{paddingRight: '5%'}}>
                         <PostFilter onSearchQueryChange={this.onSearchQueryChange} />
@@ -384,23 +468,6 @@ class Home extends React.Component{
                                             </Grid>
                                         </Grid>
                                         <form onSubmit={(e)=> this.onSubmit(e,this.props.courseId)}>
-                                            {/* <TextareaAutosize rowsMax={1} 
-                                                placeholder="Post title" 
-                                                style={{width: '50%', padding: 5, resize: 'none'}}
-                                                onChange={this.onTextChange}
-                                                name="title"
-                                                value={newPost.title}
-                                             /> */}
-                                            {/* <TextareaAutosize
-                                                placeholder="......."
-                                                multiline="true"
-                                                rowsMin={4}
-                                                rowsMax={10}
-                                                style={{width: '100%', padding: 5, resize: 'none'}}
-                                                value = {this.state.newPost.body}
-                                                onChange={this.onTextChange}
-                                                name="body"
-                                            /> */}
                                             <FormControl style={{width: '100%', marginBottom: 20}}>
                                                 <TextField onChange={this.onTextChange} name="title" value={newPost.title} id="outlined-basic" label="Title" />
                                             </FormControl>
@@ -423,15 +490,17 @@ class Home extends React.Component{
                                                 init={{
                                                 height: 200,
                                                 menubar: false,
+                                                file_picker_types: "file image media",
+                                                images_upload_handler: this.uploadImage,
                                                 plugins: [
                                                     'advlist autolink lists link image charmap print preview anchor',
                                                     'searchreplace visualblocks code fullscreen',
-                                                    'insertdatetime media table paste code help wordcount'
+                                                    'insertdatetime media table paste table code help image wordcount'
                                                 ],
                                                 toolbar:
                                                     'undo redo | formatselect | bold italic backcolor | \
                                                     alignleft aligncenter alignright alignjustify | \
-                                                    bullist numlist outdent indent | removeformat | help'
+                                                    bullist numlist outdent indent | removeformat | table | image | help'
                                                 }}
                                                 value = {newPost.body}
                                                 onEditorChange={this.handleEditorChange}
@@ -439,7 +508,7 @@ class Home extends React.Component{
                                             />
                                             <Attachments removeFile={this.removeFile.bind(this)} data={newPost.files}/>
                                             <label htmlFor="files">
-                                                <input style={{display: 'none'}} files={this.state.newPost.files} id="files" type="file" name="files" onChange={this.onFileChange} multiple />
+                                                <input style={{display: 'none'}} value="" id="files" type="file" name="files" onChange={this.onFileChange} multiple />
                                                 <Button
                                                     color="primary"
                                                     size="small"
@@ -452,9 +521,12 @@ class Home extends React.Component{
                                                 </Button>
                                             </label>
                                             <Grid container style={{justifyContent: 'flex-end'}}>
-                                                <Button type="submit" variant="contained" color="primary">
+                                                {!!this.state.createStatus && <Button type="submit" variant="contained" color="primary">
                                                     Create Post
-                                                </Button>
+                                                </Button>}
+                                                {!this.state.createStatus && <Button disabled type="submit" variant="contained" color="primary">
+                                                    Create Post
+                                                </Button>}
                                             </Grid>
                                         </form>
                                 </Paper>
@@ -464,7 +536,7 @@ class Home extends React.Component{
                             </Grid>
                             <Grid item xs={12}>
                                 <List>
-                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} />)}
+                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} openDeleteDialog={this.openDeleteDialog} />)}
                                 </List>
                             </Grid>
                         </Grid>
