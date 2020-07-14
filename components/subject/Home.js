@@ -23,6 +23,7 @@ import { Editor } from '@tinymce/tinymce-react';
 import Pagination from '@material-ui/lab/Pagination';
 import axios from 'axios';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import FormDialog from './FormDialog';
 
 
 const styles = (theme) => ({
@@ -140,7 +141,7 @@ const PostItem = (props) => {
                             style={{marginRight: 50}}
                         >
                             <Button variant="contained">Edit</Button>
-                            <Button variant="contained" value={data._id} onClick={props.deletePost}>Delete</Button>
+                            <Button variant="contained" value={data._id} onClick={props.openDeleteDialog}>Delete</Button>
                         </ButtonGroup>
                     </Popper>
                     </React.Fragment>
@@ -324,7 +325,8 @@ class Home extends React.Component{
             posts: {limit: 0, page: 1, pages: 1, total: 0, docs: []}, 
             newPost: {title: "", body: "", category: "", files: []},
             query: {page: 1},
-            createStatus: true
+            createStatus: true,
+            deleteDialogOpen: false
         }
         this.onFileChange = this.onFileChange.bind(this)
         this.onTextChange = this.onTextChange.bind(this)
@@ -334,6 +336,8 @@ class Home extends React.Component{
         this.handlePaginationChange = this.handlePaginationChange.bind(this)
         this.deletePost = this.deletePost.bind(this);
         this.uploadImage = this.uploadImage.bind(this);
+        this.deleteDialogOnClose = this.deleteDialogOnClose.bind(this);
+        this.openDeleteDialog = this.openDeleteDialog.bind(this);
     }
 
     handlePaginationChange(event,page){
@@ -409,12 +413,6 @@ class Home extends React.Component{
         })
     }
 
-    deletePost = (event)=>{
-        const {value} = event.currentTarget;
-        const {query} = this.state;
-        deletePost(value, query).then(result=> this.setState({posts: result.posts}))
-    }
-
     uploadImage = async (blobInfo,success,failure) => {
         try {
             let file = blobInfo.blob();
@@ -434,11 +432,25 @@ class Home extends React.Component{
         }
     }
 
+    openDeleteDialog = (event)=>{
+        this.setState({deleteDialogOpen: true, postToDelete: event.currentTarget.value});
+    }
+
+    deleteDialogOnClose = () => {
+        this.setState({deleteDialogOpen: false});
+    }
+
+    deletePost = () => {
+        const {postToDelete, query} = this.state;
+        deletePost(postToDelete, query).then(result=> this.setState({posts: result.posts, deleteDialogOpen: false}))
+    }
+
     render(){
         const {classes, isInstructor, auth} = this.props
-        const {posts, newPost} = this.state
+        const {posts, newPost, deleteDialogOpen} = this.state
         return(
             <React.Fragment>
+                <FormDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
                 <Grid container>
                     <Grid item xs={12} sm={4} style={{paddingRight: '5%'}}>
                         <PostFilter onSearchQueryChange={this.onSearchQueryChange} />
@@ -524,7 +536,7 @@ class Home extends React.Component{
                             </Grid>
                             <Grid item xs={12}>
                                 <List>
-                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} deletePost={this.deletePost} />)}
+                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} openDeleteDialog={this.openDeleteDialog} />)}
                                 </List>
                             </Grid>
                         </Grid>
