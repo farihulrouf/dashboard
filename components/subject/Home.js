@@ -106,8 +106,10 @@ const PostItem = (props) => {
     return(
         <Paper elevation={3} style={{marginBottom: 30, padding: 20, paddingTop: 0}}>
             <Grid container spacing={2}>
-                <Grid item xs={2} sm={1}>
-                    <Avatar alt={data.postedBy.name} src="/static/images/avatar/1.jpg" />
+                <Grid item xs={2} sm={1} style={{alignSelf: 'center'}}>
+                    {data.category == "Announcement" && <AnnouncementIcon style={{width: '100%', height: 'auto'}} />}
+                    {data.category == "Materials" && <ClassIcon style={{width: '100%', height: 'auto'}} />}
+                    {data.category == "Exam" && <ExamIcon style={{width: '100%', height: 'auto'}} />}
                 </Grid>
                 <Grid item xs={8} sm={10}>
                     <Grid container><b>{data.title}</b></Grid>
