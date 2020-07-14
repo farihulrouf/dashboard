@@ -2,7 +2,7 @@ import NavBar from '../../components/NavBar.js';
 import { makeStyles, withStyles } from '@material-ui/core/styles';;
 import {Grid, List, ListItem, ListItemIcon, Checkbox, ListItemSecondaryAction, Avatar, ListItemText,
     Typography, Paper, Button, IconButton, InputBase, Divider, TextField, ListItemAvatar, InputLabel, Select, TextareaAutosize,
-    MenuItem,
+    MenuItem, Popper, ButtonGroup,
     FormControl
 } from '@material-ui/core';
 import ThumbUpIcon from '@material-ui/icons/ThumbUp';
@@ -17,10 +17,12 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 import DocumentIcon from '@material-ui/icons/Description';
 import DeleteIcon from '@material-ui/icons/Clear'
 import AddIcon from '@material-ui/icons/AddCircleRounded'
-import {createCoursePost, getCoursePosts, likeAPost, postComment, generatePutUrl, uploadToS3} from '../../lib/api';
+import {createCoursePost, getCoursePosts, likeAPost, 
+    postComment, generatePutUrl, uploadToS3, deletePost} from '../../lib/api';
 import { Editor } from '@tinymce/tinymce-react';
 import Pagination from '@material-ui/lab/Pagination';
 import axios from 'axios';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 
 const styles = (theme) => ({
@@ -36,7 +38,12 @@ const styles = (theme) => ({
     },
     input: {
         width: '80%'
-    }
+    },
+    paper: {
+        border: '1px solid',
+        padding: theme.spacing(1),
+        backgroundColor: theme.palette.background.paper,
+    },
 });
 const useStyles = makeStyles(styles);
 
@@ -77,6 +84,15 @@ const PostItem = (props) => {
     const [showComment,setShowCommnet] = React.useState(false);
     const [data,setData] = React.useState(props.data);
     const [comment,setComment] = React.useState("");
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    
+    
+    const handleClick = (event) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+      };
+    
+      const open = Boolean(anchorEl);
+      const id = open ? 'simple-popper' : undefined;
     
     const showCommentBox = (event) => {
        setShowCommnet(!showComment);
@@ -90,23 +106,43 @@ const PostItem = (props) => {
     return(
         <Paper elevation={3} style={{marginBottom: 30, padding: 20, paddingTop: 0}}>
             <Grid container spacing={2}>
-                <Grid item>
+                <Grid item xs={2} sm={1}>
                     <Avatar alt={data.postedBy.name} src="/static/images/avatar/1.jpg" />
                 </Grid>
-                <Grid item>
+                <Grid item xs={8} sm={10}>
                     <Grid container><b>{data.title}</b></Grid>
                     <Grid container>
                         <React.Fragment>
-                        <Typography
-                            component="span"
-                            variant="body2"
-                            className={classes.inline}
-                            color="textPrimary"
-                        >
-                            {`${data.postedBy.name} - ${data.createdAt}`}
-                        </Typography>
+                            <Typography
+                                component="span"
+                                variant="body2"
+                                className={classes.inline}
+                                color="textPrimary"
+                            >
+                                {`${data.postedBy.name} - ${data.createdAt}`}
+                            </Typography>
                         </React.Fragment>
                     </Grid>
+                </Grid>
+                <Grid item xs={2} sm={1}>
+                    {data.owned && 
+                    <React.Fragment>
+                    <Button color="primary" style={{right: 0, position: 'relative'}} onClick={handleClick}>
+                            <MoreVertIcon />
+                    </Button>
+                    <Popper id={id} open={open} anchorEl={anchorEl}>
+                        <ButtonGroup
+                            orientation="vertical"
+                            color="primary"
+                            aria-label="vertical outlined primary button group"
+                            style={{marginRight: 50}}
+                        >
+                            <Button>Update</Button>
+                            <Button value={data._id} onClick={props.deletePost}>Delete</Button>
+                        </ButtonGroup>
+                    </Popper>
+                    </React.Fragment>
+                    }
                 </Grid>
             </Grid>
             <Grid container style={{marginTop: 10}}>
@@ -283,9 +319,9 @@ class Home extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            posts: {limit: 10, page: 1, pages: 1, total: 3, docs: []}, 
+            posts: {limit: 0, page: 1, pages: 1, total: 0, docs: []}, 
             newPost: {title: "", body: "", category: "", files: []},
-            query: {},
+            query: {page: 1},
             createStatus: true
         }
         this.onFileChange = this.onFileChange.bind(this)
@@ -294,6 +330,7 @@ class Home extends React.Component{
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
         this.progressCallback = this.progressCallback.bind(this);
         this.handlePaginationChange = this.handlePaginationChange.bind(this)
+        this.deletePost = this.deletePost.bind(this);
     }
 
     handlePaginationChange(event,page){
@@ -302,7 +339,7 @@ class Home extends React.Component{
 
     componentDidMount(){
         const {courseId} = this.props;
-        getCoursePosts(courseId,{page: 1}).then(posts => this.setState(posts))
+        getCoursePosts(courseId,this.state.query).then(posts => this.setState(posts))
     }
 
     progressCallback(file){
@@ -369,6 +406,12 @@ class Home extends React.Component{
         })
     }
 
+    deletePost = (event)=>{
+        const {value} = event.currentTarget;
+        const {query} = this.state;
+        deletePost(value, query).then(result=> this.setState({posts: result.posts}))
+    }
+
     render(){
         const {classes, isInstructor, auth} = this.props
         const {posts, newPost} = this.state
@@ -433,12 +476,12 @@ class Home extends React.Component{
                                                 plugins: [
                                                     'advlist autolink lists link image charmap print preview anchor',
                                                     'searchreplace visualblocks code fullscreen',
-                                                    'insertdatetime media table paste code help wordcount'
+                                                    'insertdatetime media table paste code help image wordcount'
                                                 ],
                                                 toolbar:
                                                     'undo redo | formatselect | bold italic backcolor | \
                                                     alignleft aligncenter alignright alignjustify | \
-                                                    bullist numlist outdent indent | removeformat | help'
+                                                    bullist numlist outdent indent | removeformat | image | help'
                                                 }}
                                                 value = {newPost.body}
                                                 onEditorChange={this.handleEditorChange}
@@ -474,7 +517,7 @@ class Home extends React.Component{
                             </Grid>
                             <Grid item xs={12}>
                                 <List>
-                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} />)}
+                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} deletePost={this.deletePost} />)}
                                 </List>
                             </Grid>
                         </Grid>
