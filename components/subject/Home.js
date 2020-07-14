@@ -139,8 +139,8 @@ const PostItem = (props) => {
                             aria-label="vertical outlined primary button group"
                             style={{marginRight: 50}}
                         >
-                            <Button>Update</Button>
-                            <Button value={data._id} onClick={props.deletePost}>Delete</Button>
+                            <Button variant="contained">Edit</Button>
+                            <Button variant="contained" value={data._id} onClick={props.deletePost}>Delete</Button>
                         </ButtonGroup>
                     </Popper>
                     </React.Fragment>
@@ -333,6 +333,7 @@ class Home extends React.Component{
         this.progressCallback = this.progressCallback.bind(this);
         this.handlePaginationChange = this.handlePaginationChange.bind(this)
         this.deletePost = this.deletePost.bind(this);
+        this.uploadImage = this.uploadImage.bind(this);
     }
 
     handlePaginationChange(event,page){
@@ -414,6 +415,25 @@ class Home extends React.Component{
         deletePost(value, query).then(result=> this.setState({posts: result.posts}))
     }
 
+    uploadImage = async (blobInfo,success,failure) => {
+        try {
+            let file = blobInfo.blob();
+            let response = await generatePutUrl(file);
+            if(response.status == "ok"){
+                const {url, key} = response.file;
+                file.url = url;
+                file.key = key;
+                file.source = axios.CancelToken.source();
+                response = await uploadToS3(file,this.progressCallback(file));
+                success(`/files/${encodeURIComponent(file.key)}`);
+            }else{
+                alert(response.message);
+            }
+        } catch (error) {
+            alert(error);
+        }
+    }
+
     render(){
         const {classes, isInstructor, auth} = this.props
         const {posts, newPost} = this.state
@@ -436,23 +456,6 @@ class Home extends React.Component{
                                             </Grid>
                                         </Grid>
                                         <form onSubmit={(e)=> this.onSubmit(e,this.props.courseId)}>
-                                            {/* <TextareaAutosize rowsMax={1} 
-                                                placeholder="Post title" 
-                                                style={{width: '50%', padding: 5, resize: 'none'}}
-                                                onChange={this.onTextChange}
-                                                name="title"
-                                                value={newPost.title}
-                                             /> */}
-                                            {/* <TextareaAutosize
-                                                placeholder="......."
-                                                multiline="true"
-                                                rowsMin={4}
-                                                rowsMax={10}
-                                                style={{width: '100%', padding: 5, resize: 'none'}}
-                                                value = {this.state.newPost.body}
-                                                onChange={this.onTextChange}
-                                                name="body"
-                                            /> */}
                                             <FormControl style={{width: '100%', marginBottom: 20}}>
                                                 <TextField onChange={this.onTextChange} name="title" value={newPost.title} id="outlined-basic" label="Title" />
                                             </FormControl>
@@ -475,15 +478,17 @@ class Home extends React.Component{
                                                 init={{
                                                 height: 200,
                                                 menubar: false,
+                                                file_picker_types: "file image media",
+                                                images_upload_handler: this.uploadImage,
                                                 plugins: [
                                                     'advlist autolink lists link image charmap print preview anchor',
                                                     'searchreplace visualblocks code fullscreen',
-                                                    'insertdatetime media table paste code help image wordcount'
+                                                    'insertdatetime media table paste table code help image wordcount'
                                                 ],
                                                 toolbar:
                                                     'undo redo | formatselect | bold italic backcolor | \
                                                     alignleft aligncenter alignright alignjustify | \
-                                                    bullist numlist outdent indent | removeformat | image | help'
+                                                    bullist numlist outdent indent | removeformat | table | image | help'
                                                 }}
                                                 value = {newPost.body}
                                                 onEditorChange={this.handleEditorChange}
