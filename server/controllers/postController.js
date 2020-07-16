@@ -62,6 +62,35 @@ exports.likeAPost = async (req,res) => {
   })
 }
 
+exports.validatePost = (req,res,next) => {
+  req.sanitizeBody("title");
+  req.sanitizeBody("body");
+  req.checkBody("title", "Post should have a title").notEmpty()
+  req.checkBody("body","Post should have a body").notEmpty();
+  req.checkBody("category","Post should have exactly one category").notEmpty();
+
+  const errors = req.validationErrors();
+  if(errors){
+      const firstError = errors.map(error => error.msg)[0];
+      return res.json({status: "error", message: firstError});
+  }
+  next();
+}
+
+exports.updatePost = async (req,res) => {
+  if(req.isPoster){
+    //Only poster can edit his own post
+    const {title, category, body, attachments} = req.body;
+    let {post} = req;
+    post.title = title, post.category = category, post.body = body, post.attachments = attachments;
+    let updatedPost = await post.save()
+    updatedPost._doc.owned = true;
+    return res.json({status: "ok", message: "post is updated", post: updatedPost})
+  }
+  res.json({status: "error", message: "unauthorized"});
+}
+
+
 exports.validateComment = (req,res,next) => {
   req.sanitizeBody("content");
   req
