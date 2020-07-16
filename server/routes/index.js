@@ -137,6 +137,12 @@ router.put(
   catchErrors(postController.likeAPost)
 );
 
+router.get(
+  "/api/posts/:postId",
+  authController.checkAuth,
+  catchErrors(authController.checkPostAuth)
+)
+
 router.put(
   "/api/posts/:postId",
   authController.checkAuth,

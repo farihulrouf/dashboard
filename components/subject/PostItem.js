@@ -3,11 +3,15 @@ import {ThumbUp, Send, Comment, Share, MoreVert, AssessmentOutlined, Announcemen
 import {likeAPost, postComment} from '../../lib/api';
 import CommentItem from './CommentItem';
 import PostForm from './PostForm';
+import Link from 'next/link'
 
 
 const styles = (theme) => ({
     inline: {
         display: 'inline',
+    },
+    link: {
+        backgroundColor: 'black'
     }
 });
 const useStyles = makeStyles(styles);
@@ -56,7 +60,7 @@ const PostItem = (props) => {
                         {data.category == "Exam" && <AssessmentOutlined style={{width: '100%', height: 'auto'}} />}
                     </Grid>
                     <Grid item xs={8} sm={10}>
-                        <Grid container><b>{data.title}</b></Grid>
+                        <Grid container><Link href={`/posts/${data._id}`}>{data.title}</Link></Grid>
                         <Grid container>
                             <React.Fragment>
                                 <Typography
