@@ -28,23 +28,8 @@ exports.getCourse = async (req,res) => {
     res.json({course: req.course})
 }
 
-exports.validatePost = (req,res,next) => {
-    req.sanitizeBody("title");
-    req.sanitizeBody("body");
-    req.checkBody("title", "Post should have a title").notEmpty()
-    req.checkBody("body","Post should have a body").notEmpty();
-    req.checkBody("category","Post should have exactly one category").notEmpty();
-
-    const errors = req.validationErrors();
-    if(errors){
-        const firstError = errors.map(error => error.msg)[0];
-        return res.json({status: "error", message: firstError});
-    }
-    next();
-}
-
 exports.createCoursePost = async (req,res,next) => {
-    const {title,body,category,files} = req.body;
+    const {title,body,category,attachments} = req.body;
     let post = new Post({
         title: title, 
         body: body, 
@@ -53,7 +38,7 @@ exports.createCoursePost = async (req,res,next) => {
         postedBy: req.user
     })
 
-    post.attachments = files;
+    post.attachments = attachments;
     post.save((err,savedPost)=>{
         if(err){
             return res.json({status: "error", message: err.message})

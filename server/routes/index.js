@@ -118,7 +118,7 @@ router.get(
 router.post(
   "/api/courses/:courseId/posts/create",
   authController.checkAuth,
-  courseController.validatePost,
+  postController.validatePost,
   catchErrors(courseController.createCoursePost),
   catchErrors(courseController.getPosts)
 )
@@ -136,6 +136,13 @@ router.put(
   authController.checkAuth,
   catchErrors(postController.likeAPost)
 );
+
+router.put(
+  "/api/posts/:postId",
+  authController.checkAuth,
+  postController.validatePost,
+  catchErrors(postController.updatePost)
+)
 
 router.delete(
   "/api/posts/:postId",
