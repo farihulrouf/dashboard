@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const passport = require("passport");
+const Course = mongoose.model("Course");
 
 exports.validateSignup = (req, res, next) => {
   req.sanitizeBody("name");
@@ -79,3 +80,14 @@ exports.checkAuth = (req, res, next) => {
   if(!contentType || contentType.indexOf("application/json")) res.redirect("/signin");
   else res.json({status: "error", message: "unauthorized"});
 };
+
+exports.checkPostAuth = async (req,res) => {
+  //Is req.user allowed to see post ?
+  const {user} = req;
+  const {postedOn} = req.post;
+  const course = await Course.findOne({_id: postedOn}) //instructors: {$in: [user._id]}, participants: {$in: [user._id]}
+  if(course){
+    return res.json({status: "ok", post: req.post})
+  }
+  else res.redirect("/")
+}

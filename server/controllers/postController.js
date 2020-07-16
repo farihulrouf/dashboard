@@ -15,7 +15,7 @@ exports.addPost = async (req, res) => {
 
 
 exports.deletePost = async (req,res,next)=>{
-  if(req.isPoster){
+  if(req.post._doc.owned){
     //Can delete only if creator
     try{
       const deletedPost = await req.post.remove();
@@ -31,9 +31,11 @@ exports.getPostById = async (req,res,next,id) => {
     const post = await Post.findOne({ _id: id });
     req.post = post;
 
-    const posterId = mongoose.Types.ObjectId(req.post.postedBy._id);
-    if (req.user && posterId.equals(req.user._id)) {
-      req.isPoster = true;
+    const posterId = mongoose.Types.ObjectId(req.post.postedBy._id)
+    if (req.user) {
+      post._doc.owned = posterId.equals(req.user._id);
+      idx = post.likes.likedBy.indexOf(req.user._id);
+      post._doc.isLike = idx>=0;
       return next();
     }
     next();
@@ -78,7 +80,7 @@ exports.validatePost = (req,res,next) => {
 }
 
 exports.updatePost = async (req,res) => {
-  if(req.isPoster){
+  if(req.post._doc.owned){
     //Only poster can edit his own post
     const {title, category, body, attachments} = req.body;
     let {post} = req;

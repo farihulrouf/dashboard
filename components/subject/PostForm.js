@@ -12,7 +12,7 @@ class Attachments extends React.Component{
     }
 
     render(){
-        const {data} = this.props
+        const {data,removeFile} = this.props
         return(
             <List dense={true} >
                 {data.map((e,idx)=> (
@@ -24,10 +24,10 @@ class Attachments extends React.Component{
                         </ListItemAvatar>
                         <ListItemText
                         primary={e.name}
-                        secondary={`${parseInt(e.size/1000)} kb || upload progress: ${e._id ? 100 : e.progress||0}%`}
+                        secondary={`${parseInt(e.size/1000)} kb || upload progress: ${e.progress}%`}
                         />
                         <ListItemSecondaryAction>
-                        <IconButton onClick={()=>props.removeFile(idx)} edge="end" aria-label="delete">
+                        <IconButton onClick={()=>removeFile(idx)} edge="end" aria-label="delete">
                             <Clear />
                         </IconButton>
                         </ListItemSecondaryAction>
@@ -43,7 +43,7 @@ class PostForm extends React.Component{
         super(props);
         const {_id, title, body, category, attachments} = props.post || {};
         this.state = {
-            newPost: {_id: (_id || null), title: (title || ""), body: (body || ""), category: (category || ""), attachments: (attachments || [])},
+            newPost: {_id: (_id || null), title: (title || ""), body: (body || ""), category: (category || ""), attachments: (attachments || []).map(e=>{e.progress=100; return e})},
             createStatus: true
         }
         this.onTextChange = this.onTextChange.bind(this);
