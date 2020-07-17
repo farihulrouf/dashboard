@@ -174,7 +174,7 @@ class PostForm extends React.Component{
                     file_picker_types: "file image media",
                     images_upload_handler: this.uploadImage,
                     external_plugins: {
-                        'tiny_mce_wiris' : 'http://yourjavascript.com/07513425701/plugin-min.js'
+                        'tiny_mce_wiris' : '/static/js/plugin.min.js'
                     },
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
