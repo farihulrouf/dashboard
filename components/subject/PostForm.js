@@ -173,13 +173,16 @@ class PostForm extends React.Component{
                     menubar: false,
                     file_picker_types: "file image media",
                     images_upload_handler: this.uploadImage,
+                    external_plugins: {
+                        'tiny_mce_wiris' : 'http://yourjavascript.com/07513425701/plugin-min.js'
+                    },
                     plugins: [
                         'advlist autolink lists link image charmap print preview anchor',
                         'searchreplace visualblocks code fullscreen',
                         'insertdatetime media table paste table code help image wordcount'
                     ],
                     toolbar:
-                        'undo redo | formatselect | bold italic backcolor | \
+                        'tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| undo redo | formatselect | bold italic backcolor | \
                         alignleft aligncenter alignright alignjustify | \
                         bullist numlist outdent indent | removeformat | table | image | help'
                     }}

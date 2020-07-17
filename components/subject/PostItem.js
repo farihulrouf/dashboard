@@ -4,7 +4,8 @@ import {likeAPost, postComment} from '../../lib/api';
 import CommentItem from './CommentItem';
 import PostForm from './PostForm';
 import Link from 'next/link'
-
+// import MathJax from "mathjax3-react";
+import MathJax from 'react-mathjax-preview'
 
 const styles = (theme) => ({
     inline: {
@@ -96,7 +97,7 @@ const PostItem = (props) => {
                     </Grid>
                 </Grid>
                 <Grid container style={{marginTop: 10}}>
-                    <div  dangerouslySetInnerHTML={{__html: data.body}} />
+                    <MathJax math={data.body} />
                 </Grid>
                 <Grid container spacing={2} style={{marginTop: 10}}>
                     {data.attachments.map((e,idx)=><Grid key={e._id} item><a href={`/files/${encodeURIComponent(e.key)}`} style={{fontSize: 12}}>{e.name}</a></Grid>)}
