@@ -64,7 +64,7 @@ function Module(props){
                         </Typography>
                     </Grid>
                     <Grid item>
-                        <Button size="small" variant="outlined" color="primary" naked href={`/subject/${_id}`}>
+                        <Button size="small" variant="outlined" color="primary" naked href={`/subjects/${_id}`}>
                             GO TO COURSE
                         </Button>
                     </Grid>

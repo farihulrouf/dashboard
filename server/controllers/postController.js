@@ -13,13 +13,29 @@ exports.addPost = async (req, res) => {
     res.json(post);
 };
 
+
+exports.deletePost = async (req,res,next)=>{
+  if(req.post._doc.owned){
+    //Can delete only if creator
+    try{
+      const deletedPost = await req.post.remove();
+      return next();
+    }catch(err){
+      res.json({status: "error", message: "unable to delete post"});
+    }
+  }
+  res.json({status: "error", message: "unauthorized to delete this post"});
+}
+
 exports.getPostById = async (req,res,next,id) => {
     const post = await Post.findOne({ _id: id });
     req.post = post;
 
-    const posterId = mongoose.Types.ObjectId(req.post.postedBy._id);
-    if (req.user && posterId.equals(req.user._id)) {
-      req.isPoster = true;
+    const posterId = mongoose.Types.ObjectId(req.post.postedBy._id)
+    if (req.user) {
+      post._doc.owned = posterId.equals(req.user._id);
+      idx = post.likes.likedBy.indexOf(req.user._id);
+      post._doc.isLike = idx>=0;
       return next();
     }
     next();
@@ -47,6 +63,35 @@ exports.likeAPost = async (req,res) => {
     else res.json({status: "error", message: "unable to like/unlike post"})
   })
 }
+
+exports.validatePost = (req,res,next) => {
+  req.sanitizeBody("title");
+  req.sanitizeBody("body");
+  req.checkBody("title", "Post should have a title").notEmpty()
+  req.checkBody("body","Post should have a body").notEmpty();
+  req.checkBody("category","Post should have exactly one category").notEmpty();
+
+  const errors = req.validationErrors();
+  if(errors){
+      const firstError = errors.map(error => error.msg)[0];
+      return res.json({status: "error", message: firstError});
+  }
+  next();
+}
+
+exports.updatePost = async (req,res) => {
+  if(req.post._doc.owned){
+    //Only poster can edit his own post
+    const {title, category, body, attachments} = req.body;
+    let {post} = req;
+    post.title = title, post.category = category, post.body = body, post.attachments = attachments;
+    let updatedPost = await post.save()
+    updatedPost._doc.owned = true;
+    return res.json({status: "ok", message: "post is updated", post: updatedPost})
+  }
+  res.json({status: "error", message: "unauthorized"});
+}
+
 
 exports.validateComment = (req,res,next) => {
   req.sanitizeBody("content");

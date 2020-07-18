@@ -8,6 +8,7 @@ const expressValidator = require("express-validator");
 const passport = require("passport");
 const helmet = require("helmet");
 const compression = require("compression");
+const cors = require("cors");
 
 /* Loads all variables from .env file to "process.env" */
 require("dotenv").config();
@@ -19,7 +20,10 @@ require("./models/Post");
 require("./models/Comment");
 require("./models/ExerciseMaterial");
 require("./models/ProblemStatement")
-require("./models/courseRequest")
+require("./models/CourseRequest")
+require("./models/QuestionPool");
+require("./models/AnswerSheet");
+require("./models/Exam");
 
 const routes = require("./routes");
 require("./passport");
@@ -77,6 +81,7 @@ app.prepare().then(() => {
   // server.use(express.static('static'))
   /* Express Validator will validate form data sent to the backend */
   server.use(expressValidator());
+  server.use(cors());
 
   /* give all Next.js's requests to Next.js server */
   server.get("/_next/*", (req, res) => {

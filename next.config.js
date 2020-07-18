@@ -11,8 +11,8 @@
 //     },
 //   }
 
-  module.exports = {
-    env: {
-        TINYMCE_APIKEY: process.env.TINYMCE_APIKEY
-    },
-  }
+module.exports = {
+  env: {
+      TINYMCE_APIKEY: process.env.TINYMCE_APIKEY
+  },
+}

@@ -76,24 +76,23 @@ exports.getJoinedCourse = async(req,res) => {
     res.json(courses)
 }
 
-exports.validatePost = (req,res,next) => {
-    req.sanitizeBody("title");
-    req.sanitizeBody("body");
-    req.checkBody("title", "Post should have a title").notEmpty()
-    req.checkBody("body","Post should have a body").notEmpty();
-    req.checkBody("category","Post should have exactly one category").notEmpty();
+// exports.validatePost = (req,res,next) => {
+//     req.sanitizeBody("title");
+//     req.sanitizeBody("body");
+//     req.checkBody("title", "Post should have a title").notEmpty()
+//     req.checkBody("body","Post should have a body").notEmpty();
+//     req.checkBody("category","Post should have exactly one category").notEmpty();
 
-    const errors = req.validationErrors();
-    if(errors){
-        const firstError = errors.map(error => error.msg)[0];
-        return res.json({status: "error", message: firstError});
-    }
-    next();
-}
+//     const errors = req.validationErrors();
+//     if(errors){
+//         const firstError = errors.map(error => error.msg)[0];
+//         return res.json({status: "error", message: firstError});
+//     }
+//     next();
+// }
 
 exports.createCoursePost = async (req,res,next) => {
-    const {title,body,category} = req.body;
-    const reqFiles = [];
+    const {title,body,category,attachments} = req.body;
     let post = new Post({
         title: title, 
         body: body, 
@@ -101,14 +100,8 @@ exports.createCoursePost = async (req,res,next) => {
         postedOn: req.course, 
         postedBy: req.user
     })
-    const url = req.protocol + '://' + req.get('host')
-    for (var i = 0; i < req.files.length; i++) {
-        file = req.files[i]
-        filePath = url + '/static/documents/' + file.filename
-        attachment = {fileName: file.originalname, size: file.size, path: filePath}
-        reqFiles.push(attachment);
-    }
-    post.attachments = reqFiles;
+
+    post.attachments = attachments;
     post.save((err,savedPost)=>{
         if(err){
             return res.json({status: "error", message: err.message})
@@ -118,7 +111,7 @@ exports.createCoursePost = async (req,res,next) => {
 }
 
 exports.getPosts = async (req,res) => {
-    const {courseId} = req.params;
+    const courseId = req.params.courseId || req.post.postedOn;
     let {category, content, page} = req.query;
     const options = {
         page: parseInt(page),
@@ -150,9 +143,10 @@ exports.getPosts = async (req,res) => {
     posts.docs.forEach((post)=>{
         idx = post.likes.likedBy.indexOf(req.user._id);
         post._doc.isLike = idx>=0 ? true : false;
+        post._doc.owned = (post.postedBy.id == req.user.id)
     })
     if(req.user){
-        res.json({status: "ok", posts: posts.docs});
+        res.json({status: "ok", posts: posts});
     }else{
         res.json({status: "error"})
     }
