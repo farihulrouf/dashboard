@@ -97,7 +97,7 @@ const PostItem = (props) => {
                     </Grid>
                 </Grid>
                 <Grid container style={{marginTop: 10}}>
-                    <MathJax math={data.body} />
+                    <MathJax math={data.body} style={{width: '100%'}} />
                 </Grid>
                 <Grid container spacing={2} style={{marginTop: 10}}>
                     {data.attachments.map((e,idx)=><Grid key={e._id} item><a href={`/files/${encodeURIComponent(e.key)}`} style={{fontSize: 12}}>{e.name}</a></Grid>)}
