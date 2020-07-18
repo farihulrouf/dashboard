@@ -11,9 +11,11 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import {getCourseRequests, acceptCourseRequest} from "../../lib/api"
+import { withStyles } from '@material-ui/styles';
 import { render } from 'react-dom';
+import PropTypes from 'prop-types';
 
-const styles = (theme) => ({
+const useStyles = (theme) => ({
     root: {
       width: "50%",
     },
@@ -23,18 +25,17 @@ const styles = (theme) => ({
     pos: {
       marginBottom: 12,
     },
-    chip_root: {
-      '& > *': {
-        margin: theme.spacing(0.5),
-      },
-    },
-    list_root: {
-      width: "100%",
-      height : "90",
-      backgroundColor: theme.palette.background.paper,
-    },
+    // chip_root: {
+    //   '& > *': {
+    //     margin: theme.spacing(0.5),
+    //   },
+    // },
+    // list_root: {
+    //   width: "100%",
+    //   height : "90",
+    //   backgroundColor: theme.palette.background.paper,
+    // },
   });
-const useStyles = makeStyles(styles);  
 
 function Chips(props) {
     const classes = useStyles();
@@ -56,7 +57,7 @@ function RequestList(props) {
         <ListItem key={value._id} button>
             <ListItemText primary={value.user} />
             {value.status == 'pending' && 
-              <Button value={value._id} onClick={acceptCourseRequest} className={classes.button} size="small" variant="contained" color="primary">
+              <Button value={value._id} onClick={acceptCourseRequest.bind(this)} className={classes.button} size="small" variant="contained" color="primary">
                   ACCEPT
               </Button>
             }
@@ -92,18 +93,19 @@ class CreatedCoursesCard extends React.Component{
 
     render(){
         const {name, createdAt} = this.props.data
-        
+        const { classes } = this.props;
+
         return(
-            <Card variant="outlined">
+            <Card variant="outlined"className={classes.root} >
                 <Grid item xs={12}>
                     <CardContent>
-                    <Typography>
+                    <Typography className={classes.title}>
                         {name}
                     </Typography>
-                    <Typography color="textSecondary">
+                    <Typography className={classes.pos} color="textSecondary">
                         Created : {createdAt}
                     </Typography>
-                    <Typography color="textSecondary">
+                    <Typography className={classes.pos} color="textSecondary">
                         Taken by : 10 students
                     </Typography>
                     <Chips {...this.props}/>
@@ -125,4 +127,8 @@ class CreatedCoursesCard extends React.Component{
     }
 }
 
-export default CreatedCoursesCard;
+CreatedCoursesCard.propTypes = {
+  classes: PropTypes.object.isRequired,
+};
+
+export default withStyles(useStyles)(CreatedCoursesCard);

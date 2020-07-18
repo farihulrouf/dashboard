@@ -58,12 +58,22 @@ exports.acceptCourseRequest = async(req,res) => {
     const {courseReqId} = req.body;
     let courseReq = await CourseRequest.findOne({_id: courseReqId})
     courseReq.status = "joined"
+    let course = await Course.findOne({_id: courseReqId})
+    // course.participants.concat()
     courseReq.save((err,request)=>{
         if(!err){
           res.json({status: "ok", request: request});
         }
         else res.json({status: "error"})
-      })
+    })
+}
+
+exports.getJoinedCourse = async(req,res) => {
+    const user = req.user;
+    // participants: user
+    const courses = await Course.find({participants: user})
+    console.log(courses)
+    res.json(courses)
 }
 
 exports.validatePost = (req,res,next) => {

@@ -4,12 +4,11 @@ import {Inbox, Drafts, AccountCircle, Star, Book} from '@material-ui/icons';
 import NavBar from '../components/NavBar';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import EditProfile from '../components/subject/editProfile'
 import CreatedCourses from '../components/subject/createdCourses'
 import JoinedCourses from '../components/subject/joinedCourses'
 import { authInitialProps } from "../lib/auth"
 import Profile from '../components/settings/profile';
-import createdCourses from '../components/subject/createdCourses'
+import MyCourses from '../components/subject/myCourses'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -77,10 +76,10 @@ function SimpleTabs() {
         </Tabs>
       </AppBar>
       <TabPanel value={value} index={0} >
-        <EditProfile/>
+        <Profile/>
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <Created/>
+        <MyCourses/>
       </TabPanel>
       <TabPanel value={value} index={2}>
         <JoinedCourses/>
@@ -93,7 +92,7 @@ const Content = (props) => {
   return(
     <React.Fragment>
       {props.settingOption === 1 && <Profile />}
-      {props.settingOption === 2 && <CreatedCourses />}
+      {props.settingOption === 2 && <MyCourses />}
       {props.settingOption === 3 && <div>Stars</div>}
     </React.Fragment>
   )
@@ -111,7 +110,7 @@ export default function Settings(props) {
       setSelectedIndex(index);
     };
 
-    console.log(props.auth);
+    // console.log(props.auth);
     
     return (
       <NavBar auth={props.auth}>

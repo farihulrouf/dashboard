@@ -107,6 +107,11 @@ router.get(
 );
 
 router.get(
+  "/api/courses/joinedcourses",
+  catchErrors(courseController.getJoinedCourse)
+);
+
+router.get(
   "/api/courses/:courseId",
   catchErrors(courseController.getCourse)
 );
@@ -117,7 +122,7 @@ router.get(
 );
 
 router.param(
-  "cuserId",
+  "userId",
   userController.getUserById
 );
 
@@ -156,11 +161,6 @@ router.post(
   catchErrors(postController.createComment)
 )
 
-router.get(
-  "/api/:userId",
-  catchErrors(userController.getUserById)
-);
-
 // router.post(
 //   "/api/posts/new/:userId",
 //   authController.checkAuth
@@ -168,4 +168,26 @@ router.get(
 //   catchErrors(postController.resizeImage),
 //   catchErrors(postController.addPost)
 // );
+
+/**
+ * USER ROUTES: /api/user
+ */
+
+router.get(
+  "/api/user",
+  catchErrors(userController.getUser)
+);
+
+router.put(
+  "/api/user/updateprofile",
+  catchErrors(userController.updateUser)
+);
+
+router.get(
+  "/api/:userId",
+  catchErrors(userController.getUserById)
+);
+
+
+
 module.exports = router;

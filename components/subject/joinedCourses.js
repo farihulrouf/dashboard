@@ -7,6 +7,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import Chip from '@material-ui/core/Chip';
+import {getJoinedCourse} from "../../lib/api"
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,18 +49,15 @@ function JoinedCoursesCard(props) {
     <Card className={classes.root} variant="outlined">
       <CardContent>
         <Typography className={classes.title}>
-          {name}
+          Matematika Diskrit
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          Taken : {join_date}
+          Taken : 20 januari 2020
         </Typography>
         <Typography className={classes.pos} color="textSecondary">
-          Time : {time} minutes
+          Time : 30 minutes
         </Typography>
         <Chips {...props}/>
-        {/* <Grid container spacing={3}>
-            {topics.map((value) => (<Chips label={value.id} data={value} />))}
-        </Grid> */}
       </CardContent>
       <CardActions>
         <Button size="small">Review</Button>
@@ -68,18 +66,24 @@ function JoinedCoursesCard(props) {
   );
 }
 
-export default function JoinedCourses(){
-    const courses = [
-        {id : "1", name : "Matematika Diskrit", join_date : "2 April 2020", time : "120",topics : ["matriks", "hamilton circuit", "tree", "graph"]},
-        {id : "2", name : "Kimia dasar", join_date : "11 maret 2020", time : "90",topics : ["atom", "molekul", "reaksi kimia", "termokimia", "rantai karbon"]},
-        {id : "3", name : "Strategi Algoritma", join_date : "10 juni 2020", time : "60",topics : ["Dynamic Programming", "greedy", "bruteforce", "backtracking", "Divide n conquer"]},
-        {id : "4", name : "Biologi", join_date : "30 januari 2020", time : "60",topics : ["hewan", "tumbuhan", "pencernaan", "pernapasan"]},
-        {id : "5", name : "Fisika", join_date : "1 Februari 2020", time : "120",topics : ["kecepatan", "percepatan"]}
-    ]
+class JoinedCourses extends React.Component{
+  constructor(props){
+    super(props)
+    this.state={courses: []}
+  }
+
+  componentDidMount(){
+    getJoinedCourse().then(data => this.setState({courses: data}));
+  }
+    
+  render(){
+    console.log(this.state.courses)
     return(
-        <Grid container xs={12} sm={6} spacing={3}>
-            {courses.map((value) => (<JoinedCoursesCard key={value.id} data={value} />))}
-        </Grid>
-        // <JoinedCoursesCard />
+      <Grid item xs={12} sm={6}>
+          {this.state.courses.map((value) => (<JoinedCoursesCard key={value._id} data={value} />))}
+      </Grid>
     );
+  }
 }
+
+export default JoinedCourses;
