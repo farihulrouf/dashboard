@@ -16,7 +16,7 @@ const examSchema = new Schema(
 );
 
 const autoPopulate = function (next) {
-  this.populate("questionPools", "_id question multipleChoices question");
+  this.populate("questionPools", "_id question multipleChoices question attachments");
   next();
 };
 
