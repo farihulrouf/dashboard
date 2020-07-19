@@ -19,14 +19,14 @@ exports.fetchAllExerciseSchema = async (req, res) => {
   const difficultyLabel = req.query.difficultyLabel;
   const size = Number(req.query.size);
   const timeLimit = req.query.timeLimit;
+  const courseId = ObjectId(req.params.courseId);
   if (size != null) {
     QuestionPool.aggregate([
-      { $match: { difficultyLabel: difficultyLabel } },
+      { $match: {$and: [{ difficultyLabel: difficultyLabel}, {courseId: courseId}]} },
       { $sample: { size: size } },
       { $unset: "solution" },
     ])
       .then((questionPools) => {
-        
         questionPools.forEach(function (q) {
           var attachmentJobQueries = [];
           if (q.attachments) {
@@ -53,6 +53,7 @@ exports.fetchAllExerciseSchema = async (req, res) => {
           dateSubmission,
           type,
           participantId,
+          courseId
         });
         newAnswerSheet
           .save()
@@ -73,14 +74,15 @@ exports.fetchAllExerciseSchema = async (req, res) => {
     .catch((err) => res.Status(400).json("Error :" + err));
 };
 
-exports.addNewQuestionPools = async (req, res) => {
+exports.addNewQuestionPools = async (req, res, next) => {
   const difficultyLabel = req.body.difficultyLabel;
   const question = req.body.question;
   const multipleChoices = req.body.multipleChoices;
-  const courseId = ObjectId(req.body.course);
+  const courseId = ObjectId(req.params.courseId);
   const solution = req.body.solution;
   const type = req.body.type;
   const attachments = req.body.attachments;
+  const tag = req.body.tag;
 
   const newQuestionPool = new QuestionPool({
     difficultyLabel,
@@ -90,12 +92,13 @@ exports.addNewQuestionPools = async (req, res) => {
     solution,
     type,
     attachments,
+    tag
   });
 
   newQuestionPool
     .save()
     .then((result) => res.json(result))
-    .catch((err) => res.Status(400).json("Error: " + err));
+    .catch((err) => next(err ));
 };
 
 exports.fetchSingleQuestionPool = async (req, res) => {

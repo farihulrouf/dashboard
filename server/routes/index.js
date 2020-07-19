@@ -62,23 +62,15 @@ router.post("/api/auth/signin", authController.signin);
 router.get("/api/auth/signout", authController.signout);
 
 /**
- * EXERCISES ROUTES /api/exercises
- */
-router.get("/api/exercises/:id", exerciseController.fetchSingleExercise);
-router.put("/api/exercises/:id", exerciseController.updateExercise);
-router.get("/api/exercises", exerciseController.fetchAllExercise);
-router.post("/api/exercises", exerciseController.addNewExercises);
-
-/**
  * EXERCISE MATERIALS ROUTES
  */
 router.post(
-  "/api/question-pools",
+  "/api/courses/:courseId/question-pools",
   authController.checkAuth,
   questionPoolController.addNewQuestionPools
 );
 router.get(
-  "/api/question-pools",
+  "/api/courses/:courseId/question-pools",
   authController.checkAuth,
   questionPoolController.fetchAllExerciseSchema
 );
@@ -97,7 +89,7 @@ router.put(
  * PROBLEM STATEMENTS ROUTES
  */
 router.put(
-  "/api/answer-sheets/:id",
+  "/api/courses/:courseId/answer-sheets/:id",
   answerSheetController.updateAnswerSheet
 );
 router.get(
@@ -108,10 +100,10 @@ router.get(
 /**
  * EXAM ROUTES
  */
-router.post("/api/exams", examController.addNewExam);
+router.post("/api/courses/:courseId/exams", examController.addNewExam);
 router.get("/api/exams/:id", examController.fetchSingleExam);
-router.post("/api/exams/:id/question-pools", examController.addQuestionPoolToExam)
-router.get("/api/exams/:id/start", examController.startExam)
+router.post("/api/courses/:courseId/exams/:id/question-pools", examController.addQuestionPoolToExam)
+router.get("/api/courses/:courseId/exams/:id/start", examController.startExam)
 
 /**
  * COURSE ROUTES /api/courses
