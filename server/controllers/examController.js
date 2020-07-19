@@ -24,6 +24,7 @@ exports.addNewExam = async (req, res) => {
   const duration = Number(req.body.duration);
   const startTime = req.body.startTime;
   const endTime = req.body.endTime;
+  const courseId = req.params.courseId;
 
   const exam = new Exam({
     questionPools,
@@ -32,6 +33,7 @@ exports.addNewExam = async (req, res) => {
     duration,
     startTime,
     endTime,
+    courseId,
   });
 
   exam
@@ -69,10 +71,11 @@ exports.addQuestionPoolToExam = async (req, res) => {
   const difficultyLabel = req.body.difficultyLabel;
   const question = req.body.question;
   const multipleChoices = req.body.multipleChoices;
-  const courseId = ObjectId(req.body.course);
+  const courseId = ObjectId(req.params.courseId);
   const solution = req.body.solution;
   const type = req.body.type;
   const attachments = req.body.attachments;
+  const tag = req.body.tag; 
 
   Exam.findById(req.params.id)
     .then((exam) => {
@@ -84,6 +87,7 @@ exports.addQuestionPoolToExam = async (req, res) => {
         solution,
         type,
         attachments,
+        tag,
       });
 
       newQuestionPool.save().then((questionPool) => {
@@ -123,13 +127,16 @@ exports.startExam = async (req, res) => {
           var dateSubmission = exam.endTime;
           var type = "exam";
           var participantId = req.user.id;
+          var examId = exam._id;
+          var courseId = ObjectId(req.params.courseId)
           const newAnswerSheet = new AnswerSheet({
             dateStart,
             dateSubmission,
             type,
             participantId,
+            examId,
+            courseId,
           });
-          // res.json(exam);
           newAnswerSheet
             .save()
             .then((result) => {
@@ -145,11 +152,15 @@ exports.startExam = async (req, res) => {
           var dateSubmission = Date.now() + exam.duration * 60 * 1000;
           var type = "exam";
           var participantId = req.user.id;
+          var examId = exam._id;
+          var courseId = ObjectId(req.params.courseId)
           const newAnswerSheet = new AnswerSheet({
             dateStart,
             dateSubmission,
             type,
             participantId,
+            examId,
+            courseId,
           });
 
           newAnswerSheet

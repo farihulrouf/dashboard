@@ -19,6 +19,7 @@ const questionPoolSchema = new Schema(
     multipleChoices: [{type: String, required: true}],
     question: {type: String, required: true},
     solution: {type: String, required: true},
+    tag: [{type: String, required: true}],
     attachments: [attachmentSchema]
   },
   {
