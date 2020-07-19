@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema(
     avatar: {
       type: String,
       required: "Avatar image is required",
-      default: "/static/images/profile-image.jpg"
+      default: ""
     },
     about: {
       type: String,
@@ -33,6 +33,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true
     },
+    organization: {type: Boolean, default: false, required: "Organization field is required"},
     /* we wrap 'following' and 'followers' in array so that when they are populated as objects, they are put in an array (to more easily iterate over them) */
     following: [{ type: ObjectId, ref: "User" }],
     followers: [{ type: ObjectId, ref: "User" }]

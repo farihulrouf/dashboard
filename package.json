@@ -36,6 +36,7 @@
     "passport-local-mongoose": "^6.0.1",
     "prop-types": "latest",
     "react": "latest",
+    "react-avatar-editor": "11.0.9",
     "react-dom": "latest",
     "react-mathjax-preview": "^2.0.2",
     "react-swipeable-views": "^0.13.9",

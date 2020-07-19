@@ -18,8 +18,6 @@ require("./models/User");
 require("./models/Exercise")
 require("./models/Post");
 require("./models/Comment");
-require("./models/ExerciseMaterial");
-require("./models/ProblemStatement")
 require("./models/CourseRequest")
 require("./models/QuestionPool");
 require("./models/AnswerSheet");
