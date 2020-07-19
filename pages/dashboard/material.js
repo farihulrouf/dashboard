@@ -1,8 +1,8 @@
 import {Grid, makeStyles, withStyles, InputBase, Paper, ButtonBase, Typography,
         Button} from '@material-ui/core';
-import {Search, AccountCircle} from '@material-ui/icons';
+import {Search} from '@material-ui/icons';
 import {getCourses} from '../../lib/api';
-import Link from "next/link";
+import StarRatings from 'react-star-ratings';
 
 const styles = ((theme) => ({
     root: {
@@ -40,7 +40,7 @@ const styles = ((theme) => ({
 const useStyles = makeStyles(styles);
 
 function Module(props){
-    const {_id, name, about, total_problems, logo, price} = props.data;
+    const {_id, name, about, total_problems, logo, price, rating} = props.data;
     const classes = useStyles();
     return(
         <Paper className={classes.paper}>
@@ -50,28 +50,31 @@ function Module(props){
                 <img className={classes.img} src={logo} alt="complex" />
                 </ButtonBase>
             </Grid>
-            <Grid item xs={12} sm container>
-                <Grid item xs container direction="column" spacing={2}>
-                    <Grid item xs>
-                        <Typography gutterBottom variant="subtitle1">
-                        {name}
-                        </Typography>
-                        <Typography variant="body2" gutterBottom>
-                        {about}
-                        </Typography>
-                        <Typography variant="body2" color="textSecondary">
-                        {`total problems: ${0}`}
-                        </Typography>
-                    </Grid>
-                    <Grid item>
-                        <Button size="small" variant="outlined" color="primary" naked href={`/subjects/${_id}`}>
-                            GO TO COURSE
-                        </Button>
-                    </Grid>
-                </Grid>
-                <Grid item>
-                    <Typography variant="subtitle1">${price}</Typography>
-                </Grid>
+            <Grid item>
+                <b style={{fontSize: 20}}>{name}</b>
+                <div>
+                    <StarRatings
+                    rating={rating}
+                    starRatedColor="#F9A602"
+                    starDimension="20px"
+                    starSpacing="1px"
+                    name='rating'
+                    size={5}
+                    />
+                </div>
+                <div>
+                    {`${new Intl.NumberFormat('ind', {
+                        style: 'currency',
+                        currency: 'IDR',
+                        minimumFractionDigits: 2
+                        }).format(price)}`
+                    }
+                </div>
+                <div style={{marginTop: 10}}>
+                    <Button size="small" variant="outlined" color="primary" href={`/subjects/${_id}`}>
+                        GO TO COURSE
+                    </Button>
+                </div>
             </Grid>
             </Grid>
         </Paper>    
@@ -116,7 +119,7 @@ class MaterialPage extends React.Component{
                 <Grid item xs={12}>
                     <Grid container justify="center" spacing={3}>
                         {modules.map((value) => (
-                            <Grid key={value.id} item>
+                            <Grid key={value._id} item>
                                 <Module data={value} />
                             </Grid>
                         ))}

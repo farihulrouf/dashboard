@@ -39,6 +39,7 @@
     "react-avatar-editor": "11.0.9",
     "react-dom": "latest",
     "react-mathjax-preview": "^2.0.2",
+    "react-star-ratings": "^2.3.0",
     "react-swipeable-views": "^0.13.9",
     "uuidv4": "^6.1.1",
     "validator": "^13.0.0"

@@ -32,6 +32,11 @@ const courseSchema = new mongoose.Schema(
             required: 'Course should have price, input 0 for free courses',
             validation: {validator: (price)=>price>=0, message: 'Price should not be less than 0'}
         },
+        rating: {
+            type: Number,
+            required: "Course rating is required",
+            default: 0
+        },
         instructors: [{type: ObjectId, ref: "User"}],
         participants: [{ type: ObjectId, ref: "User"}],
         posts: [{type: ObjectId, ref: "Post"}]

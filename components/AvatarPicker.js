@@ -50,6 +50,7 @@ class AvatarPicker extends React.Component {
         const {onCrop, onScaleChange} = this;
         const {scaleValue} = this.state;
         const {image, callback} = this.props;
+        console.log(image);
         return (
         <Grid container style={{marginBottom: 20}}>
             <Grid container justify="center">

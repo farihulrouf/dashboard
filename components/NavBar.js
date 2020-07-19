@@ -10,6 +10,7 @@ import ProfileIcon from '@material-ui/icons/AccountCircle';
 import NotificationsIcon from '@material-ui/icons/Notifications';
 import ListItemText from '@material-ui/core/ListItemText';
 import { signoutUser } from "../lib/auth";
+import Link from "next/link";
 
 function Copyright() {
   return (
@@ -217,7 +218,7 @@ class NavBar extends Component{
                 open={Boolean(accountElement)}
                 onClose={this.handleClose.bind(this,"accountElement")}
               >
-                <MenuItem>Profile</MenuItem>
+                <MenuItem><Link href="/settings"><a>Profile</a></Link></MenuItem>
                 <MenuItem onClick={signoutUser}>Sign Out</MenuItem>
               </StyledMenu>
             </Grid>

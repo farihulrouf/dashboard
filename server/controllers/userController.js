@@ -17,16 +17,13 @@ exports.getUserById = async (req, res, next, id) => {
 };
 
 exports.updateUser = async (req,res) => {
-    const { name, about, linkedIn } = req.body;
-    let user = await User.findOne({_id : req.user});
-    user.name = name
-    user.about = about
-    user.linkedIn = linkedIn
-    // console.log(user)
-    user.save((err,user)=>{
+    const {user} = req;
+    const {name, about, linkedIn, avatar} = req.body;
+    user.name = name, user.about = about, user.linkedIn = linkedIn, user.avatar = avatar;
+    user.save((err,response)=>{
         if(!err){
-          res.json({status: "ok", user: user});
+          res.json({status: "ok", user: response});
         }
-        else res.json({status: "error"})
+        else res.json({status: "error", message: err})
     })
 }

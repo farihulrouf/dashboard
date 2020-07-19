@@ -22,7 +22,7 @@ class Profile extends React.Component{
     }
 
     onButtonSubmit = () => {
-        const user = this.state;
+        const {user} = this.state;
         updateUserProfile(user).then(result=>console.log(result));
     }
 
@@ -31,8 +31,8 @@ class Profile extends React.Component{
     }
 
     handleChange = (event) => {
-        let newState = {...this.state,[event.target.name]: event.target.value}
-        this.setState(newState)
+        const user = {...this.state.user, [event.target.name]: event.target.value}
+        this.setState({user})
     }
 
     avatarPickerCallback = (file) => {
@@ -42,12 +42,11 @@ class Profile extends React.Component{
 
     render(){
         const {showCropper, user, avatarChosen} = this.state;
-        console.log(user)
         return(
             <Grid alignItems="center" direction="column" container>
                 <form noValidate autoComplete="off" style={{width: '80%'}}>
                     {!!showCropper && <AvatarPicker callback={this.avatarPickerCallback} image={avatarChosen || user.avatar} />}
-                    {!showCropper && <Grid justify="center" container>
+                    {!showCropper && <Grid justify="center" container>`
                         <label htmlFor="file">
                             <input style={{display: 'none'}} value="" id="file" type="file" name="file" onChange={this.onProfileImageClick}  />
                             <Button

@@ -229,6 +229,7 @@ router.get(
 
 router.put(
   "/api/user/updateprofile",
+  authController.checkAuth,
   catchErrors(userController.updateUser)
 );
 
