@@ -218,7 +218,7 @@ class NavBar extends Component{
                 open={Boolean(accountElement)}
                 onClose={this.handleClose.bind(this,"accountElement")}
               >
-                <MenuItem><Link href="/settings"><a>Profile</a></Link></MenuItem>
+                <MenuItem><a href="/settings">Profile</a></MenuItem>
                 <MenuItem onClick={signoutUser}>Sign Out</MenuItem>
               </StyledMenu>
             </Grid>
