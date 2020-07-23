@@ -70,7 +70,7 @@ export default function SignUp() {
         setState({...state,isLoading: true});
         signupUser(user)
             .then(response=>{
-              Router.push("/");
+              Router.push("/signin");
             })
             .catch(error=> {
               console.log(error.response)
@@ -129,6 +129,8 @@ export default function SignUp() {
                 id="password"
                 label="Password"
                 name="password"
+                type="password"
+                autoComplete="new-password"
                 onChange={handleChange}
               />
             </Grid>
@@ -137,10 +139,11 @@ export default function SignUp() {
                 variant="outlined"
                 required
                 fullWidth
-                name="confPass"
+                name="confpass"
                 label="Confirmation Password"
-                type="confirmation password"
-                id="password"
+                type="password"
+                autoComplete="new-password"
+                id="confpass"
                 onChange={handleChange}
               />
             </Grid>
@@ -163,7 +166,7 @@ export default function SignUp() {
           <Grid container justify="flex-end">
             <Grid item>
               <Link href="signin">
-                Already have an account? Sign in
+                <a>Already have an account? Sign in</a>
               </Link>
             </Grid>
           </Grid>

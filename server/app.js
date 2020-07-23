@@ -18,6 +18,7 @@ require("./models/User");
 require("./models/Exercise")
 require("./models/Post");
 require("./models/Comment");
+require("./models/CourseRequest")
 require("./models/QuestionPool");
 require("./models/AnswerSheet");
 require("./models/Exam");

@@ -31,7 +31,7 @@ exports.getPreSignedUrl = async (req,res) => {
 exports.putPreSignedUrl = async (req,res) => {
     // Note Bucket is retrieved from the env variable above.
     const {FileName, ContentType} = req.body;
-    const Key = `${req.user.id}/${FileName}`;
+    const Key = `${req.user.id}/${Date.now()}-${FileName}`;
     const params = { Bucket, Key, ContentType };
     // Note operation in this case is putObject
     s3.getSignedUrl('putObject', params, function(err, url) {

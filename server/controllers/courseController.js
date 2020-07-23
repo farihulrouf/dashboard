@@ -1,24 +1,33 @@
 const mongoose = require("mongoose");
 const Course = mongoose.model("Course");
 const Post = mongoose.model("Post");
-
+const CourseRequest = mongoose.model("CourseRequest");
 
 exports.getCourses = async (req,res) => {
-    const courses = await Course.find({},'_id logo name about price');
+    const courses = await Course.find({},'_id logo name about price rating');
     res.json(courses);
+}
+
+exports.createCourse = async (req,res, next) => {
+    const {user} = req;
+    if(user.canCreateCourse){
+        let course = new Course({...req.body, creator: user})
+        course.save((err,savedCourse)=>{
+            if(err){
+                return res.json({status: "error", message: err});
+            }
+            return next();
+        })
+    }else{
+        res.json({status: "error", message: "unahtorized to create course"});
+    }
 }
 
 exports.getCourseById = async (req, res, next, id) => {
     const course = await Course.findOne({_id: id});
     req.course = course
     if(req.course && req.user){
-        const {instructors} = req.course
-        instructors.forEach((i)=> {
-            const instructorId = mongoose.Types.ObjectId(i._id);
-            if(instructorId.equals(req.user._id)){
-                req.course._doc.isInstructor = true;
-            }
-        })
+        req.course._doc.isInstructor = req.user.isInstructor(course);
         return next();
     }
     next();
@@ -27,6 +36,69 @@ exports.getCourseById = async (req, res, next, id) => {
 exports.getCourse = async (req,res) => {
     res.json({course: req.course})
 }
+
+exports.getMyCourses = async (req,res) => {
+    const {user} = req;
+    const results = await Course.find({$or: [{creator: user},{instructors: user}]})
+    return res.json({status: "ok", courses: results})
+}
+
+exports.getCourseRequests =async (req,res) => {
+    const course = req.course
+    const {page} = req.query;
+    const options = {
+        page: parseInt(page),
+        limit: 10,
+        sort: {createdAt: 1}
+    }
+    const criteria = {course : course}
+    // const requests = await CourseRequest.find(criteria)
+    // console.log(requests)
+    const requests = await CourseRequest.paginate(criteria,options)
+    if(requests.docs){
+        res.json({status: "ok", requests: requests.docs});
+        // console.log(requests)
+    }else{
+        res.json({status: "error"})
+    }
+}
+
+exports.acceptCourseRequest = async(req,res) => {
+    const {courseReqId} = req.body;
+    let courseReq = await CourseRequest.findOne({_id: courseReqId})
+    courseReq.status = "joined"
+    let course = await Course.findOne({_id: courseReqId})
+    // course.participants.concat()
+    courseReq.save((err,request)=>{
+        if(!err){
+          res.json({status: "ok", request: request});
+        }
+        else res.json({status: "error"})
+    })
+}
+
+exports.getJoinedCourse = async(req,res) => {
+    const user = req.user;
+    // participants: user
+    const courses = await Course.find({participants: user})
+    console.log(courses)
+    res.json(courses)
+}
+
+// exports.validatePost = (req,res,next) => {
+//     req.sanitizeBody("title");
+//     req.sanitizeBody("body");
+//     req.checkBody("title", "Post should have a title").notEmpty()
+//     req.checkBody("body","Post should have a body").notEmpty();
+//     req.checkBody("category","Post should have exactly one category").notEmpty();
+
+//     const errors = req.validationErrors();
+//     if(errors){
+//         const firstError = errors.map(error => error.msg)[0];
+//         return res.json({status: "error", message: firstError});
+//     }
+//     next();
+// }
 
 exports.createCoursePost = async (req,res,next) => {
     const {title,body,category,attachments} = req.body;

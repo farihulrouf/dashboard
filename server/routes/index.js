@@ -118,13 +118,57 @@ router.get(
 router.param("courseId", courseController.getCourseById);
 
 //Unregistered user can see courses and course info
+router.post(
+  "/api/courses/create",
+  authController.checkAuth,
+  catchErrors(courseController.createCourse),
+  catchErrors(courseController.getMyCourses)
+);
+
+// router.put(
+//   "/api/courses/:courseId",
+//   authController,
+//   catchErrors(courseController.updateCourse)
+// )
+
 router.get(
   "/api/courses",
   authController.checkAuth,
   catchErrors(courseController.getCourses)
 );
 
+router.get(
+  "/api/courses/mycourses",
+  authController.checkAuth,
+  catchErrors(courseController.getMyCourses)
+);
+
+router.get(
+  "/api/courses/joinedcourses",
+  catchErrors(courseController.getJoinedCourse)
+);
+
+router.get(
+  "/api/courses/:courseId",
+  catchErrors(courseController.getCourse)
+);
+
 router.get("/api/courses/:courseId", catchErrors(courseController.getCourse));
+
+router.get(
+  "/api/courses/:courseId/requests",
+  catchErrors(courseController.getCourseRequests)
+);
+
+router.param(
+  "userId",
+  userController.getUserById
+);
+
+router.put(
+  "/api/courses/acceptrequest",
+  catchErrors(courseController.acceptCourseRequest)
+);
 
 router.post(
   "/api/courses/:courseId/posts/create",
@@ -180,6 +224,29 @@ router.post(
 //   catchErrors(postController.addPost)
 // );
 
+/**
+ * USER ROUTES: /api/user
+ */
+
+router.get(
+  "/api/user",
+  catchErrors(userController.getUser)
+);
+
+router.put(
+  "/api/user/updateprofile",
+  authController.checkAuth,
+  catchErrors(userController.updateUser)
+);
+
+router.get(
+  "/api/:userId",
+  catchErrors(userController.getUserById)
+);
+
+
+
+module.exports = router;
 
 /**
  * POST ROUTES /api/files

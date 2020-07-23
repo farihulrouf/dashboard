@@ -23,7 +23,7 @@ const Body = ({active, auth}) => {
 }
 
 const Index = ({auth, userId}) => {
-    if(auth.user)
+    if(!!auth.user && Object.keys(auth.user).length !== 0 && auth.constructor === Object)
       return(
         <NavBar auth={auth}>
           <Body auth={auth} />
