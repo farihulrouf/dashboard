@@ -1,7 +1,7 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import {getMyCourses} from "../../lib/api"
-import CreatedCoursesCard from "./createdCoursesCard"
+import CreatedCoursesCard from "./CreatedCoursesCard"
 import { render } from 'react-dom';
 
 class CreatedCourses extends React.Component{

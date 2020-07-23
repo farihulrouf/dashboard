@@ -4,11 +4,11 @@ import {Inbox, Drafts, AccountCircle, Star, Book, Person} from '@material-ui/ico
 import NavBar from '../components/NavBar';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import CreatedCourses from '../components/settings/createdCourses'
-import JoinedCourses from '../components/settings/joinedCourses'
+import CreatedCourses from '../components/settings/CreatedCourses'
+import JoinedCourses from '../components/settings/JoinedCourses'
 import { authInitialProps } from "../lib/auth"
 import Profile from '../components/settings/profile';
-import MyCourses from '../components/settings/myCourses'
+import MyCourses from '../components/settings/MyCourses'
 
 const useStyles = makeStyles((theme) => ({
     root: {
