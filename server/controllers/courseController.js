@@ -27,13 +27,7 @@ exports.getCourseById = async (req, res, next, id) => {
     const course = await Course.findOne({_id: id});
     req.course = course
     if(req.course && req.user){
-        const {instructors} = req.course
-        instructors.forEach((i)=> {
-            const instructorId = mongoose.Types.ObjectId(i._id);
-            if(instructorId.equals(req.user._id)){
-                req.course._doc.isInstructor = true;
-            }
-        })
+        req.course._doc.isInstructor = req.user.isInstructor(course);
         return next();
     }
     next();

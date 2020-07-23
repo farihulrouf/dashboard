@@ -52,6 +52,12 @@ userSchema.methods.canCreateCourse = function () {
   return this.isAnOrganization || this.organization.length==0;
 };
 
+userSchema.methods.isInstructor = function (course) {
+  //isInstructor is true if user is a creator or an instructor of a given course
+  const {creator, instructors} = course;
+  return mongoose.Types.ObjectId(creator).equals(this._id) || instructors.find(e=> mongoose.Types.ObjectId(e._id).equals(this._id));
+}
+
 userSchema.pre("findOne", autoPopulateFollowingAndFollowers);
 
 /* passportLocalMongoose takes our User schema and sets up a passport "local" authentication strategy using our email as the username field */

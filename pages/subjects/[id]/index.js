@@ -166,7 +166,7 @@ class Subject extends React.Component {
                         )}
                     </Grid>
                 </Grid>
-                <Grid xs={12} sm={4} item>
+                <Grid xs={12} sm={4} item style={{marginBottom: 10}}>
                     <Grid container style={{justifyContent: 'center',  alignItems: 'center', paddingTop: 20, paddingBottom: 20, height: '80%'}}>
                         <div>
                             {course.prerequisites && course.prerequisites.map((prereq,idx) => (
