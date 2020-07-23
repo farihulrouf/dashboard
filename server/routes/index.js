@@ -126,6 +126,19 @@ router.get(
 router.param("courseId", courseController.getCourseById);
 
 //Unregistered user can see courses and course info
+router.post(
+  "/api/courses/create",
+  authController.checkAuth,
+  catchErrors(courseController.createCourse),
+  catchErrors(courseController.getMyCourses)
+);
+
+// router.put(
+//   "/api/courses/:courseId",
+//   authController,
+//   catchErrors(courseController.updateCourse)
+// )
+
 router.get(
   "/api/courses",
   authController.checkAuth,
@@ -134,7 +147,8 @@ router.get(
 
 router.get(
   "/api/courses/mycourses",
-  catchErrors(courseController.getCoursebyInstructor)
+  authController.checkAuth,
+  catchErrors(courseController.getMyCourses)
 );
 
 router.get(

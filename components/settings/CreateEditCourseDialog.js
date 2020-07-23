@@ -6,6 +6,7 @@ import {Grid, TextField, IconButton, Typography, DialogActions,
 import ChipInput from 'material-ui-chip-input';
 import CurrencyTextField from '@unicef/material-ui-currency-textfield';
 import TeacherField from './TeacherField';
+import {createCourse} from '../../lib/api';
 
 
 const styles = (theme) => ({
@@ -51,12 +52,9 @@ const MyDialogActions = withStyles((theme) => ({
 }))(DialogActions);
 
 export default function CreateEditCourseDialog(props) {
+  const [course,setCourse] = React.useState({prereqs: [], materials: [], instructors: []})
   const [open, setOpen] = React.useState(true);
-  const [prereqs, setPrereqs] = React.useState([]);
-  const [materials, setMaterials] = React.useState([])
-  const [price,setPrice] = React.useState("")
   const {title, onDialogClose} = props;
-  const [instructors, setInstructors] = React.useState([])
 
   const handleClose = () => {
     setOpen(false);
@@ -64,23 +62,33 @@ export default function CreateEditCourseDialog(props) {
   };
 
   const handleAddPrereq = (prereq) => {
-    setPrereqs(prereqs.concat(prereq))
+    let updatedCourse = {...course};
+    updatedCourse.prereqs = course.prereqs.concat(prereq);
+    setCourse(updatedCourse)
   }
 
   const handleDeletePrereq = (prereq,index) => {
-    let newPrereqs = [...prereqs];
+    let newPrereqs = course.prereqs;
     newPrereqs.splice(index,1)
-    setPrereqs(newPrereqs)
+    setCourse({...course,newPrereqs})
   }
 
   const handleAddMaterial = (material) => {
-    setMaterials(materials.concat(material))
+    let updatedCourse = {...course};
+    updatedCourse.materials = course.materials.concat(material)
+    setCourse(updatedCourse)
   }
 
   const handleDeleteMaterial = (material,index) => {
-    let newMaterials = [...materials];
+    let newMaterials = course.materials;
     newMaterials.splice(index,1)
-    setMaterials(newMaterials);
+    setCourse({...course, newMaterials});
+  }
+
+  const onButtonClick = ()=> {
+    createCourse(course).then((response)=>{
+      props.onCourseCreated(response);
+    })
   }
 
   return (
@@ -113,6 +121,7 @@ export default function CreateEditCourseDialog(props) {
                 id="courseName"
                 name="courseName"
                 label="Course Name"
+                onChange={(event)=>setCourse({...course,name: event.target.value})}
                 fullWidth
               />
             </Grid>
@@ -122,13 +131,14 @@ export default function CreateEditCourseDialog(props) {
                 id="courseDescription"
                 name="courseDescription"
                 label="Course Description"
+                onChange={(event)=>setCourse({...course,about: event.target.value})}
                 fullWidth
                 multiline
               />
             </Grid>
             <Grid item xs={12}>
               <ChipInput
-                value={prereqs}
+                value={course.prereqs}
                 onAdd={(prereq) => handleAddPrereq(prereq)}
                 onDelete={(prereq, index) => handleDeletePrereq(prereq, index)}
                 label="Course Prerequisites"
@@ -137,7 +147,7 @@ export default function CreateEditCourseDialog(props) {
             </Grid>
             <Grid item xs={12}>
               <ChipInput
-                value={materials}
+                value={course.materials}
                 onAdd={(material) => handleAddMaterial(material)}
                 onDelete={(material, index) => handleDeleteMaterial(material, index)}
                 label="Course Materials"
@@ -148,19 +158,19 @@ export default function CreateEditCourseDialog(props) {
               <CurrencyTextField
                   label="Course Price"
                   variant="standard"
-                  value={price}
+                  value={course.price}
                   currencySymbol="Rp"
                   outputFormat="string"
-                  onChange={(event, price)=> setPrice(price)}
+                  onChange={(event, price)=> setCourse({...course,price})}
               />
             </Grid>
             <Grid item xs={12}>
-              <TeacherField setInstructors={setInstructors} />
+              <TeacherField course={course} setCourse={setCourse} />
             </Grid>
           </Grid>
         </MyDialogContent>
         <MyDialogActions>
-          <Button autoFocus onClick={handleClose} color="primary">
+          <Button onClick={onButtonClick} autoFocus color="primary">
             Create
           </Button>
         </MyDialogActions>

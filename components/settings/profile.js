@@ -18,7 +18,9 @@ class Profile extends React.Component{
     }
 
     componentDidMount(){
-        getUser().then(data => this.setState({user: data}));
+        getUser().then(response => {
+            this.setState({user: response.user})
+        });
     }
 
     onButtonSubmit = () => {
@@ -41,11 +43,12 @@ class Profile extends React.Component{
     }
 
     render(){
-        const {showCropper, user, avatarChosen} = this.state;
+        const {showCropper, avatarChosen} = this.state;
+        const {avatar, name, email, linkedIn, about} = this.state.user;
         return(
             <Grid alignItems="center" direction="column" container>
                 <form noValidate autoComplete="off" style={{width: '80%'}}>
-                    {!!showCropper && <AvatarPicker callback={this.avatarPickerCallback} image={avatarChosen || user.avatar} />}
+                    {!!showCropper && <AvatarPicker callback={this.avatarPickerCallback} image={avatarChosen || avatar} />}
                     {!showCropper && <Grid justify="center" container>`
                         <label htmlFor="file">
                             <input style={{display: 'none'}} value="" id="file" type="file" name="file" onChange={this.onProfileImageClick}  />
@@ -55,7 +58,7 @@ class Profile extends React.Component{
                                 aria-label="add"
                             >
                                 <Avatar 
-                                src={user.avatar} 
+                                src={avatar} 
                                 style={{
                                     margin: "10px",
                                     width: "120px",
@@ -67,27 +70,27 @@ class Profile extends React.Component{
                     </label>
                     </Grid>}
                     <TextField 
-                        id="outlined" 
+                        id="email" 
                         name="email" 
                         type="text" disabled 
                         label="Alamat Email" 
-                        value={user.email} 
+                        value={email} 
                         variant="outlined" style={{width: '100%', marginBottom: 20}}
                     />
                     <TextField 
-                        id="outlined" 
+                        id="name" 
                         name="name" 
                         label="Nama" 
-                        value={user.name} 
+                        value={name} 
                         variant="outlined" 
                         style={{width: '100%', marginBottom: 20}} 
                         onChange={this.handleChange}
                     />
                     <TextField 
-                        id="outlined-basic" 
+                        id="linkedIn" 
                         name="linkedIn" 
                         label="linkedIn"
-                        value={user.linkedIn} 
+                        value={linkedIn} 
                         variant="outlined" 
                         style={{width: '100%', marginBottom: 20}} 
                         onChange={this.handleChange}
@@ -96,7 +99,7 @@ class Profile extends React.Component{
                         id="outlined-basic" 
                         name="about" 
                         label="Tentang saya" 
-                        value={user.about}
+                        value={about}
                         variant="outlined" 
                         style={{width: '100%', marginBottom: 20}} 
                         onChange={this.handleChange}

@@ -127,6 +127,9 @@ const Listbox = styled('ul')`
 `;
 
 export default function CustomizedHook(props) {
+  const {course, setCourse} = props;
+  const {instructors} = React.useState(course.instructors);
+
   const {
     getRootProps,
     getInputLabelProps,
@@ -140,17 +143,19 @@ export default function CustomizedHook(props) {
     setAnchorEl,
   } = useAutocomplete({
     id: 'customized-hook-demo',
-    defaultValue: [],
+    defaultValue: instructors,
     multiple: true,
     options: teachers,
     getOptionLabel: (option) => option.name,
+    onChange: (e,o,r) => updateInstructors(o)
   });
 
-  const {setInstructors} = props;
-
-  React.useEffect(()=>{
-    setInstructors(value)
-  })
+  const updateInstructors = (ins) => {
+    // console.log(value);
+    let newCourse = {...course};
+    newCourse.instructors = ins;
+    setCourse(newCourse)
+  }
 
   return (
     <NoSsr>

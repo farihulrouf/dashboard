@@ -4,7 +4,7 @@ const passport = require("passport");
 
 exports.getUser = async (req,res) => {
     const user = await User.findOne({_id : req.user});
-    res.json(user);
+    res.json({status: "ok", user: user});
 }
 
 exports.getUserById = async (req, res, next, id) => {

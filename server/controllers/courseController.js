@@ -8,6 +8,21 @@ exports.getCourses = async (req,res) => {
     res.json(courses);
 }
 
+exports.createCourse = async (req,res, next) => {
+    const {user} = req;
+    if(user.canCreateCourse){
+        let course = new Course({...req.body, creator: user})
+        course.save((err,savedCourse)=>{
+            if(err){
+                return res.json({status: "error", message: err});
+            }
+            return next();
+        })
+    }else{
+        res.json({status: "error", message: "unahtorized to create course"});
+    }
+}
+
 exports.getCourseById = async (req, res, next, id) => {
     const course = await Course.findOne({_id: id});
     req.course = course
@@ -28,10 +43,10 @@ exports.getCourse = async (req,res) => {
     res.json({course: req.course})
 }
 
-exports.getCoursebyInstructor = async (req,res) => {
-    const instructor = req.user
-    const results = await Course.find({instructors: instructor._id})
-    res.json(results)
+exports.getMyCourses = async (req,res) => {
+    const {user} = req;
+    const results = await Course.find({$or: [{creator: user},{instructors: user}]})
+    return res.json({status: "ok", courses: results})
 }
 
 exports.getCourseRequests =async (req,res) => {

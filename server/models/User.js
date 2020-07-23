@@ -16,24 +16,23 @@ const userSchema = new mongoose.Schema(
       type: String,
       trim: true,
       unique: true,
-      minlength: 4,
-      maxlength: 10,
       required: "Name is required"
     },
     avatar: {
-      type: String,
-      required: "Avatar image is required",
-      default: ""
+      type: String
     },
     about: {
       type: String,
-      trim: true
+      trim: true,
+      default: "",
     },
     linkedIn: {
       type: String,
-      trim: true
+      trim: true,
+      default: ""
     },
-    organization: {type: Boolean, default: false, required: "Organization field is required"},
+    isAnOrganization: {type: Boolean, default: false, required: "Organization field is required"},
+    organization: [{ type: ObjectId, ref: "User" }],
     /* we wrap 'following' and 'followers' in array so that when they are populated as objects, they are put in an array (to more easily iterate over them) */
     following: [{ type: ObjectId, ref: "User" }],
     followers: [{ type: ObjectId, ref: "User" }]
@@ -46,6 +45,11 @@ const autoPopulateFollowingAndFollowers = function(next) {
   this.populate("following", "_id name avatar");
   this.populate("followers", "_id name avatar");
   next();
+};
+
+userSchema.methods.canCreateCourse = function () {
+  //A organization or a user without any organization
+  return this.isAnOrganization || this.organization.length==0;
 };
 
 userSchema.pre("findOne", autoPopulateFollowingAndFollowers);

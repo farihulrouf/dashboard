@@ -61,8 +61,8 @@ function TabPanel(props) {
 const Content = (props) => {
   return(
     <React.Fragment>
-      {props.settingOption === 1 && <Profile />}
-      {props.settingOption === 2 && <MyCourses />}
+      {props.settingOption === 1 && <Profile auth={props.auth} />}
+      {props.settingOption === 2 && <MyCourses auth={props.auth} />}
       {props.settingOption === 3 && <div>Teachers</div>}
       {props.settingOption === 4 && <div>Stars</div>}
     </React.Fragment>
@@ -108,7 +108,7 @@ export default function Settings(props) {
             </div>
           </Grid>
           <Grid item xs={12} sm={9}>
-              <Content settingOption={selectedIndex} />
+              <Content auth={props.auth} settingOption={selectedIndex} />
           </Grid>
         </Grid>
       </NavBar>

@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
-import {getCourseByInstructor} from "../../lib/api"
+import {getMyCourses} from "../../lib/api"
 import CreatedCoursesCard from "./createdCoursesCard"
 import { render } from 'react-dom';
 
@@ -11,7 +11,7 @@ class CreatedCourses extends React.Component{
     }
 
     componentDidMount(){
-      getCourseByInstructor().then(courses => this.setState({courses: courses }));
+      getMyCourses().then(response => this.setState({courses: response.courses }));
     }
 
     render(){
