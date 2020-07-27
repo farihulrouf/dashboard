@@ -25,6 +25,7 @@
     "install": "^0.13.0",
     "jimp": "^0.13.0",
     "material-ui-chip-input": "^2.0.0-beta.2",
+    "material-ui-search-bar": "^1.0.0-beta.14",
     "mongoose": "^5.9.18",
     "mongoose-mongodb-errors": "0.0.2",
     "mongoose-paginate": "^5.0.3",

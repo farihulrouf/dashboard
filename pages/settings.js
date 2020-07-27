@@ -1,14 +1,16 @@
 import {Grid,Avatar,Typography,AppBar,Tabs,Tab,Box,List,ListItem,
   ListItemText,ListItemIcon, TextField} from '@material-ui/core';
-import {Inbox, Drafts, AccountCircle, Star, Book, Person} from '@material-ui/icons';
+import {Inbox, Drafts, AccountCircle, Star, Book, Person, Business} from '@material-ui/icons';
 import NavBar from '../components/NavBar';
 import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import CreatedCourses from '../components/settings/CreatedCourses'
 import JoinedCourses from '../components/settings/JoinedCourses'
 import { authInitialProps } from "../lib/auth"
-import Profile from '../components/settings/profile';
-import MyCourses from '../components/settings/MyCourses'
+import MyProfile from '../components/settings/MyProfile';
+import MyCourses from '../components/settings/MyCourses';
+import MyTeachers from '../components/settings/MyTeachers';
+import MyOrganizations from '../components/settings/MyOrganizations';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -59,32 +61,42 @@ function TabPanel(props) {
 }
 
 const Content = (props) => {
+  const {auth} = props;
+
   return(
     <React.Fragment>
-      {props.settingOption === 1 && <Profile auth={props.auth} />}
+      {props.settingOption === 1 && <MyProfile auth={props.auth} />}
       {props.settingOption === 2 && <MyCourses auth={props.auth} />}
-      {props.settingOption === 3 && <div>Teachers</div>}
-      {props.settingOption === 4 && <div>Stars</div>}
+      {props.settingOption === 3 && <MyTeachers auth={props.auth} />}
+      {props.settingOption === 4 && <MyOrganizations auth={props.auth} />}
+      {props.settingOption === 5 && <div>Stars</div>}
     </React.Fragment>
   )
 }
 export default function Settings(props) {
     const classes = useStyles();
-    const settingOptions = [
+    
+    const filterOptions = (options) => {
+      const {auth} = props;
+      if(!auth.user.isAnOrganization) options.splice(2,1);
+      if(auth.user.isAnOrganization) options.splice(3,1);
+      return options;
+    }
+
+    const settingOptions = filterOptions([
       {id: 1, title: "Profile", icon: <AccountCircle />},
       {id: 2, title: "Courses", icon: <Book />},
       {id: 3, title: "Teachers", icon: <Person />},
-      {id: 4, title: "Starred", icon: <Star />}
-    ]
+      {id: 4, title: "Organizations", icon: <Business />},
+      {id: 5, title: "Starred", icon: <Star />}
+    ])
+    
     const [selectedIndex,setSelectedIndex] = React.useState(1)
 
     const handleListItemClick = (event, index) => {
       setSelectedIndex(index);
     };
 
-    
-    // console.log(props.auth);
-    
     return (
       <NavBar auth={props.auth}>
         <Grid container>

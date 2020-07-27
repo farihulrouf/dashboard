@@ -32,8 +32,8 @@ const userSchema = new mongoose.Schema(
       default: ""
     },
     isAnOrganization: {type: Boolean, default: false, required: "Organization field is required"},
+    teachers: [{type: ObjectId, ref: "User"}],
     organization: [{ type: ObjectId, ref: "User" }],
-    /* we wrap 'following' and 'followers' in array so that when they are populated as objects, they are put in an array (to more easily iterate over them) */
     following: [{ type: ObjectId, ref: "User" }],
     followers: [{ type: ObjectId, ref: "User" }]
   },

@@ -5,6 +5,7 @@ var User = require('./server/models/User');
 var Course = require('./server/models/Course');
 var Post = require('./server/models/Post');
 var Comment = require('./server/models/Comment');
+var TeacherApplication = require('./server/models/TeacherApplication');
 const mongoose = require("mongoose");
 const fs = require('fs');
 

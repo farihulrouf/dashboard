@@ -8,10 +8,12 @@ const questionPoolController = require("../controllers/questionPoolController");
 const answerSheetController = require("../controllers/answerSheetController");
 const fileController = require("../controllers/fileController")
 const examController = require("../controllers/examController")
+const applicationController = require("../controllers/applicationController");
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 const fs = require('fs');
 
+const app = express();
 const router = express.Router();
 const DIR = "static/documents/";
 const storage = multer.diskStorage({
@@ -160,11 +162,6 @@ router.get(
   catchErrors(courseController.getCourseRequests)
 );
 
-router.param(
-  "userId",
-  userController.getUserById
-);
-
 router.put(
   "/api/courses/acceptrequest",
   catchErrors(courseController.acceptCourseRequest)
@@ -225,28 +222,51 @@ router.post(
 // );
 
 /**
- * USER ROUTES: /api/user
+ * USER ROUTES: /api/users
  */
 
+
+router.get("/api/users/me", (req,res)=>{
+  res.json({status: "oke", user: req.user});
+});
+
+router.param("userId", userController.getUserById);
+
+router.get("/api/users/:userId", (req,res)=>{
+  res.json({status: "ok", user: req.profile})
+});
+
 router.get(
-  "/api/user",
-  catchErrors(userController.getUser)
-);
+  "/api/users",
+  authController.checkAuth,
+  catchErrors(userController.getUsers)
+)
 
 router.put(
-  "/api/user/updateprofile",
+  "/api/users/updateprofile",
   authController.checkAuth,
   catchErrors(userController.updateUser)
 );
 
-router.get(
-  "/api/:userId",
-  catchErrors(userController.getUserById)
-);
+/**
+ * Teacher Application Routes: /api/teacher-application
+ */
 
+router.param("applicationId",applicationController.getApplicationById);
 
+router.post(
+  "/api/teacher-applications/create",
+  authController.checkAuth,
+  catchErrors(applicationController.createApplication),
+  catchErrors(userController.getUsers)
+)
 
-module.exports = router;
+router.delete(
+  "/api/teacher-applications/:applicationId",
+  authController.checkAuth,
+  catchErrors(applicationController.cancelApplication),
+  catchErrors(userController.getUsers)
+)
 
 /**
  * POST ROUTES /api/files

@@ -1,9 +1,9 @@
 import {TextField, Grid, IconButton, Avatar, Button} from '@material-ui/core';
 import {CameraAlt} from '@material-ui/icons'
-import {getUser, updateUserProfile} from "../../lib/api"
+import {getMyProfile, updateUserProfile} from "../../lib/api"
 import AvatarPicker from "../AvatarPicker";
 
-class Profile extends React.Component{
+class MyProfile extends React.Component{
     constructor(props){
         super(props);
         this.state = ({
@@ -18,7 +18,7 @@ class Profile extends React.Component{
     }
 
     componentDidMount(){
-        getUser().then(response => {
+        getMyProfile().then(response => {
             this.setState({user: response.user})
         });
     }
@@ -113,4 +113,4 @@ class Profile extends React.Component{
     }
 }
 
-export default Profile;
+export default MyProfile;
