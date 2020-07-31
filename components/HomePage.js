@@ -1,22 +1,10 @@
-import {Grid, AppBar, Toolbar, Button, Paper, withStyles, Avatar} from "@material-ui/core";
+import {Grid, Container, Button, Paper, withStyles, Avatar} from "@material-ui/core";
 import { makeStyles } from '@material-ui/core/styles';
 import {Assignment, SupervisorAccount, PeopleAlt, Business, Star, ArrowRightAlt, FormatQuote} from "@material-ui/icons";
-import Menu from "./Menu";
+import Link from "next/link";
 
 
 const useStyles = (theme) => ({
-    root: {
-      flexGrow: 1,
-    },
-    appBar: {
-        backgroundColor: '#ffffffff', 
-        boxShadow: 'none',
-        borderBottom: '1px solid #eeeeee',
-    },
-    logo: {
-        width: 120,
-        height: 32
-    },
     toolbar: {
         margin: '0 auto',
         padding: '0 16',
@@ -27,11 +15,10 @@ const useStyles = (theme) => ({
         borderBottom: '1px solid #eeeeee',
         width: '100%'
     },
-    body: {
-        margin: '0 auto',
-        padding: '0 16',
-        width: '100%',
-        maxWidth: 1100
+    container: {
+        margin: '0px auto',
+        padding: '0 16px',
+        width: '100%'
     },
     paper: {
         padding: '48px 24px',
@@ -161,31 +148,8 @@ class HomePage extends React.Component{
         const {classes} = this.props;
         return(
         <React.Fragment>
-            <AppBar position="static" className={classes.appBar}>
-                <Toolbar className={classes.toolbar}>
-                    <Grid container justify="space-between" alignItems="center">
-                        <Grid item className={classes.logo}>
-                            <img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo.svg" />
-                        </Grid>
-                        <Grid item>
-                            <Grid container spacing={2}>
-                                <Grid item>
-                                    <Menu name="Landings" />
-                                </Grid>
-                                <Grid item>
-                                    <Menu name="Pages" />
-                                </Grid>
-                                <Grid item>
-                                    <Menu name="Account" />
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Toolbar>
-            </AppBar>
-            <Grid container>
                 <div className={classes.divider}>
-                    <div className={classes.body}>
+                    <Container maxWidth="lg" className={classes.body}>
                         <section style={{padding: '96px 16px'}}>
                             <h2 style={{padding: 30, paddingBottom: 0, margin: 0, fontWeight: 'bold', color: '#121037', fontSize: '3.75rem', textAlign: 'center', fontFamily: 'Lato', lineHeight: 1.2}}>
                                 A platform where you can study anything <br />
@@ -194,17 +158,17 @@ class HomePage extends React.Component{
                             </h2>
                             <Grid justify="center" container spacing={2}>
                                 <Grid item>
-                                    <Button style={{fontSize: 18}} variant="contained" color="primary">SignUp</Button>
+                                    <Link href="./signup"><a style={{textDecoration: 'none'}}><Button style={{fontSize: 18}} variant="contained" color="primary">SignUp</Button></a></Link>
                                 </Grid>
                                 <Grid item>
                                     <Button style={{fontSize: 18}} variant="outlined" color="primary">Learn More</Button>
                                 </Grid>
                             </Grid>
                         </section>
-                    </div>
+                    </Container>
                 </div>
                 <div style={{width: '100%', backgroundColor: 'rgb(247, 249, 250)'}}>
-                    <div className={classes.body}>
+                    <Container maxWidth="lg" className={classes.body}>
                         <section style={{padding: '96px 16px'}}>
                             <h4 style={{fontWeight: 'bold', color: '#121037', textAlign: 'center', fontSize: '2rem', fontFamily: 'Lato', lineHeight: 1.2}}>
                                 <span>Our global class is open <span style={{color: "#3f51b5"}}>for All</span></span><br/>
@@ -216,10 +180,10 @@ class HomePage extends React.Component{
                                 )}
                             </Grid>
                         </section>
-                    </div>
+                    </Container>
                 </div>
                 <div style={{width: '100%'}}>
-                    <div className={classes.body}>
+                    <Container maxWidth="lg" className={classes.body}>
                         <section style={{padding: '96px 16px'}}>
                             <h4 style={{fontWeight: 'bold', color: '#121037', textAlign: 'center', fontSize: '2rem', fontFamily: 'Lato', lineHeight: 1.2}}>
                                 <span>Browse our <span style={{color: "#f9b934"}}>popular courses</span></span><br/>
@@ -229,25 +193,26 @@ class HomePage extends React.Component{
                                 {[1,2,3,4,5].map((val) => <Grid key={val} item><Course /></Grid>)}
                             </Grid>
                         </section>
-                    </div>
+                    </Container>
                 </div>
                 <div style={{width: '100%', backgroundColor: 'rgb(247, 249, 250)'}}>
-                    <section style={{padding: '96px 16px'}}>
-                        <div style={{textAlign: 'center'}}>
-                            <img width="100" src="https://thefront.maccarianagency.com/images/illustrations/rated-by-our-customer.png" />
-                        </div>
-                        <h4 style={{marginTop: 0, fontWeight: 'bold', color: '#121037', textAlign: 'center', fontSize: '2rem', fontFamily: 'Lato', lineHeight: 1.2}}>
-                            <span style={{fontWeight: 'bold', color: '#121037', fontSize: '2rem'}}><span style={{color: '#3f51b5'}}>Rated 5 out of 5</span> stars by our users</span><br/>
-                            <span style={{color: "#546e7a", fontSize: '1.25rem', fontWeight: 500, lineHeight: 1.6}}>Educators and students have a great experiences using Edupedia, Here is what they have to say</span>
-                        </h4>
-                        <Grid container justify="space-evenly">
-                            {this.testimonies.map((t)=> (
-                                <Grid item><Testimoni {...t} /></Grid>
-                            ))}
-                        </Grid>
-                    </section>
+                    <Container maxWidth="lg" className={classes.body}>
+                        <section style={{padding: '96px 16px'}}>
+                            <div style={{textAlign: 'center'}}>
+                                <img width="100" src="https://thefront.maccarianagency.com/images/illustrations/rated-by-our-customer.png" />
+                            </div>
+                            <h4 style={{marginTop: 0, fontWeight: 'bold', color: '#121037', textAlign: 'center', fontSize: '2rem', fontFamily: 'Lato', lineHeight: 1.2}}>
+                                <span style={{fontWeight: 'bold', color: '#121037', fontSize: '2rem'}}><span style={{color: '#3f51b5'}}>Rated 5 out of 5</span> stars by our users</span><br/>
+                                <span style={{color: "#546e7a", fontSize: '1.25rem', fontWeight: 500, lineHeight: 1.6}}>Educators and students have a great experiences using Edupedia, Here is what they have to say</span>
+                            </h4>
+                            <Grid container justify="space-evenly">
+                                {this.testimonies.map((t)=> (
+                                    <Grid item><Testimoni {...t} /></Grid>
+                                ))}
+                            </Grid>
+                        </section>
+                    </Container>
                 </div>
-            </Grid>
         </React.Fragment>
         )
     }

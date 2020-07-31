@@ -1,156 +1,83 @@
 import React from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import MuiAlert from '@material-ui/lab/Alert';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
-// import Link from '@material-ui/core/Link';
-import Link from 'next/link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import {signInUser} from '../lib/auth';
-import Router from "next/router";
+import {Container, Grid, IconButton, Button, TextField} from "@material-ui/core";
+import {ArrowRightAlt} from "@material-ui/icons";
+import NavBar from "../components/NavBar";
+import Link from "next/link";
 
+class SignIn extends React.Component{
+    constructor(props){
+        super(props);
+    }
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
+    render(){
+        return(
+            <NavBar onlyLogo={true}>
+                <Container maxWidth="lg" style={{height: '90vh'}}>
+                    <Grid justify="center" alignItems="center" container style={{height: '100%'}}>
+                        <Container maxWidth="sm">
+                            <Grid container style={{marginBottom: 30}}>
+                                <Grid xs={12} style={{padding: 5}} item>
+                                    <h3 style={{margin: 0, padding: 0, textAlign: 'center', fontWeight: 'bold', color: '#121037', fontSize: '3rem', lineHeight: 1}}>Sign in</h3>
+                                </Grid>
+                                <Grid xs={12} style={{padding: 5}} item>
+                                    <h6 style={{margin: 0, padding: 0, textAlign: 'center', fontWeight: 500, color: '#546e7a', fontSize: '1.5rem', lineHeight: 1.6}}>
+                                        Don't have account ? <Link href="./signup"><a style={{textDecoration: 'none', color: '#3f51b5'}}>
+                                        Sign up.
+                                        <IconButton style={{color: '#3f51b5', height: 20, width: 20}}>
+                                            <ArrowRightAlt />
+                                        </IconButton>
+                                        </a></Link>
+                                    </h6>
+                                </Grid>
+                            </Grid>
+                            <Grid container spacing={2}>
+                                <Grid xs={12} item>
+                                    <TextField
+                                    id="outlined-email-input"
+                                    label="Email*"
+                                    type="text"
+                                    autoComplete="current-email"
+                                    variant="outlined"
+                                    style={{width: '100%'}}
+                                    />
+                                </Grid>
+                                <Grid xs={12} item>
+                                    <TextField
+                                    id="outlined-password-input"
+                                    label="Password*"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    variant="outlined"
+                                    style={{width: '100%'}}
+                                    />
+                                </Grid>
+                                <Grid xs={12} item>
+                                    <h6 style={{margin: 0, padding: 0, fontSize: '0.875rem', fontWeight: 500, lineHeight: 1.5}}>
+                                        Fields that are marked with * signed is required
+                                    </h6>
+                                </Grid>
+                                <Grid xs={12} item>
+                                    <Button variant="contained" size="large" style={{width: '100%', color: 'white', backgroundColor: '#3f51b5'}}>Send</Button>
+                                </Grid>
+                                <Grid xs={12} item>
+                                    <h6 style={{textAlign: 'center', color: '#546e7a', margin: 0, padding: 0, fontSize: '1rem', fontWeight: 400, lineHeight: 1.75}}>
+                                        Forgot Your Password? <Link href="./forget">
+                                        <a style={{color: '#3f51b5', fontWeight: 'bold', textDecoration: 'none'}}>
+                                            Reset Password
+                                            <IconButton style={{color: '#3f51b5', height: 20, width: 20}}>
+                                                <ArrowRightAlt />
+                                            </IconButton>
+                                        </a>
+                                        </Link>
+                                    </h6>
+                                </Grid>
+                            </Grid>
+                        </Container>
+                    </Grid>
+                </Container>
+            </NavBar>
+        )
+    }
 }
 
-function Copyright() {
-  return (
-    <Typography variant="body2" color="textSecondary" align="center">
-      {'Copyright © '}
-        Your Website
-      {new Date().getFullYear()}
-      {'.'}
-    </Typography>
-  );
-}
-
-//Andarias apa ini theme? Referensinya dimana?
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
-
-export default function SignIn() {
-  const[state,setState] = React.useState({email: "",password: "", loading : false, error:""})
-  
-  const handleChange = (event) => {
-    let newState = {...state,[event.target.name]: event.target.value}
-    setState(newState)
-  }
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    const {email, password} = state;
-    const user = {email: email, password: password}
-    setState({...state,loading: true});
-    signInUser(user)
-      .then((response) => {
-        Router.push("/"); 
-      })
-      .catch((error) => {
-          let newState = {...state, error: (error.response && error.response.data)||error.message}
-          setState(newState)
-      });
-  };
-
-  const handleClose = (event) =>{
-    let newState = {...state, error:""}
-    setState(newState)
-  }
-
-  const classes = useStyles();
-
-  return (
-    //Andarias component="main" ini apa? Kalau mau liat semua property liatnya dimana?
-    <Container component="main" maxWidth="xs">
-      {state.error && <Alert onClose={handleClose} severity="error">{state.error}</Alert>}
-      <CssBaseline />
-      <div className={classes.paper}>
-        <Avatar className={classes.avatar}>
-          <LockOutlinedIcon />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
-        </Typography>
-        <form onSubmit ={handleSubmit} className={classes.form} noValidate>
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            onChange={handleChange}
-            autoFocus
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            onChange={handleChange}
-            autoComplete="current-password"
-          />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            className={classes.submit}
-          >
-            Sign In
-          </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#">
-                <a>Forgot password?</a>
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="signup">
-                <a>Don't have an account? Sign Up</a>
-              </Link>
-            </Grid>
-          </Grid>
-        </form>
-      </div>
-      <Box mt={8}>
-        <Copyright />
-      </Box>
-    </Container>
-  );
-}
+export default SignIn;
