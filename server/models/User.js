@@ -3,6 +3,12 @@ const { ObjectId } = mongoose.Schema;
 const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passportLocalMongoose = require("passport-local-mongoose");
 
+
+const emailValidator = (v) => {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(v).toLowerCase());
+}
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -10,13 +16,20 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
       unique: true,
-      required: "Email is required"
+      required: "Email is required",
+      validate: {
+        validator: emailValidator,
+        message: props => `${props.value} is not a valid email!`
+      }
     },
     name: {
       type: String,
       trim: true,
-      unique: true,
-      required: "Name is required"
+      required: "Name is required",
+      validate: {
+        validator: (v) => {return (v.length>4 && v.length<15)},
+        message: props => `${props.value} should be > 4 and <15 chars`
+      }
     },
     avatar: {
       type: String
@@ -65,5 +78,6 @@ userSchema.plugin(passportLocalMongoose, { usernameField: "email" });
 
 /* The MongoDBErrorHandler plugin gives us a better 'unique' error, rather than: "11000 duplicate key" */
 userSchema.plugin(mongodbErrorHandler);
+
 
 module.exports = mongoose.model("User", userSchema);

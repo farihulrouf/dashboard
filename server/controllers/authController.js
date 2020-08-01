@@ -34,12 +34,18 @@ exports.validateSignup = (req, res, next) => {
 exports.signup = async (req, res) => {
   const { name, email, password } = req.body;
   const user = await new User({ name, email, password });
-  await User.register(user, password, (err, user) => {
-    if (err) {
-      return res.status(500).send(err.message);
+  User.findOne({email: user.email}).then((result)=>{
+    if(!result){
+      User.register(user, password, (err, user) => {
+        if (err) {
+          return res.status(500).send(err.message);
+        }
+        res.json(user);
+      });
+    }else{
+      return res.status(409).send("Email is already taken")
     }
-    res.json(user);
-  });
+  })
 };
 
 exports.signin = (req, res, next) => {

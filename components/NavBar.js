@@ -21,7 +21,7 @@ const useStyles = (theme) => ({
 class NavBar extends React.Component{
     constructor(props){
         super(props);
-        this.state={active: false}
+        this.state={active: ""}
     }
     render(){
         const {classes, children, onlyLogo, auth} = this.props;
