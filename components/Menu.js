@@ -1,5 +1,5 @@
 import React from 'react';
-import Button from '@material-ui/core/Button';
+import {Button, createMuiTheme} from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
@@ -11,21 +11,13 @@ import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    display: 'flex',
-    color: '#546e7a',
-    fontFamily: 'Lato',
-    fontWeight: 400,
-    lineHeight: 1.5
+    display: 'flex'
   },
   paper: {
     marginRight: theme.spacing(2),
   },
   menuText: {
-    color: '#546e7a',
-    fontWeight: 400,
-    lineHeight: 1.5,
-    fontFamily: 'Lato',
-    fontSize: '1rem'
+    textTransform: 'none'
   }
 }));
 
