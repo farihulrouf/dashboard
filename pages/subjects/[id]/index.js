@@ -1,45 +1,19 @@
 import React from "react";
-import NavBar from '../../../components/NavBar';
-import {makeStyles, Grid, Avatar, Button, Chip} from '@material-ui/core';
-import { withStyles } from '@material-ui/styles';
-import PropTypes from "prop-types";
-import SwipeableViews from 'react-swipeable-views';               
-import { useTheme } from "@material-ui/core/styles";
-import AppBar from "@material-ui/core/AppBar";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import Typography from "@material-ui/core/Typography";
-import Box from "@material-ui/core/Box";
-import Discussion from '../../../components/subject/Discussion'
-import Home from '../../../components/subject/Home';
-import ExerciseSetting from '../../../components/subject/ExerciseSetting';
-import {HelpIcon} from '@material-ui/icons/Help';
-import { authInitialProps } from "../../../lib/auth"
 import {withRouter} from 'next/router'
-import {getCourseById} from '../../../lib/api';
+import {withStyles, Container, Grid, Avatar, Tabs, Tab, Paper, IconButton, Typography, Box, InputBase, Button} from "@material-ui/core";
+import {Star, FilterList} from "@material-ui/icons";
+import { authInitialProps } from "../../../lib/auth"
+import NavBar from "../../../components/NavBar";
+import Home from "../../../components/subject/Home";
+import Discussion from "../../../components/subject/Discussion";
+import ExerciseSetting from "../../../components/subject/ExerciseSetting";
 
-const styles = (theme => ({
-    root: {
-        backgroundColor: '#ffffff',
-        padding: 20,
-        paddingTop: '100vh',
-        marginTop: '-100vh',
-        boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)"
-    },
-    swipeableViews: {
-        flexGrow: 1,
-        borderRadius: 10,
-        minHeight: 200
-    },
-    chip: {
-        margin: '5px',
-        marginLeft: 0
-    },
-    tabPanel: {
+const styles = (theme) => ({
+    indicator: {
+        backgroundColor: "rgb(27, 22, 66)"
     }
-}));
+})
 
-const useStyles = makeStyles(styles);
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -53,18 +27,11 @@ function TabPanel(props) {
         aria-labelledby={`action-tab-${index}`}
         {...other}
         >
-        {value === index && <Box p={3}>{children}</Box>}
+            {value === index && <Box p={1}>{children}</Box>}
         </Typography>
-        // <span>TabPanel yo</span>
     );
-  }
-  
-TabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.any.isRequired,
-    value: PropTypes.any.isRequired
-};
-  
+}
+
 function a11yProps(index) {
     return {
         id: `action-tab-${index}`,
@@ -72,130 +39,80 @@ function a11yProps(index) {
     };
 }
 
-function FloatingActionButtonZoom(props) {
-    const classes = useStyles();
-    const theme = useTheme();
-    const [value, setValue] = React.useState(0);
-  
-    const handleChange = (event, newValue) => {
-      setValue(newValue);
-    };
-  
-    const handleChangeIndex = index => {
-      setValue(index);
-    };
-  
-    return (
-      <Grid container>
-        <AppBar elevation={0} position="static" style={{ boxShadow: "0 6px 8px 0 rgba(0, 0, 0, 0.2)"}}>
-            <Tabs
-                value={value}
-                onChange={handleChange}
-                indicatorColor="primary"
-                textColor="primary"
-                aria-label="action tabs example"
-                style = {{backgroundColor : "#fff"}}
-            >
-                <Tab label="Home" {...a11yProps(0)} />
-                <Tab label="Discussion" {...a11yProps(1)} />
-                <Tab label="Exercise" {...a11yProps(2)} />
-            </Tabs>
-        </AppBar>
-        <SwipeableViews
-          axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-          index={value}
-          onChangeIndex={handleChangeIndex}
-          className={classes.swipeableViews}
-        >
-            <TabPanel value={value} index={0} className={classes.tabPanel} dir={theme.direction}>
-                <Home
-                    auth = {props.auth} 
-                    courseId={props.router.query.id} 
-                    isInstructor = {props.isInstructor} 
-                />
-            </TabPanel>
-            <TabPanel value={value} index={1} className={classes.tabPanel} dir={theme.direction}>
-                <Discussion
-                    auth = {props.auth}
-                    courseId={props.router.query.id} 
-                    isInstructor = {props.isInstructor} 
-                />
-            </TabPanel>
-            <TabPanel value={value} index={2} dir={theme.direction}>
-                <ExerciseSetting
-                    auth = {props.auth}
-                    courseId={props.router.query.id} 
-                    isInstructor = {props.isInstructor} 
-                />
-            </TabPanel>
-        </SwipeableViews>
-      </Grid>
-    );
-}
-
-
-class Subject extends React.Component {
+class Subject extends React.Component{
     constructor(props){
-        super(props)
-        this.state={isOne: true, isTwo: false, isThree: false, course: {}};
-    }
-
-    componentDidMount(){
-        const {id} = this.props.router.query;
-        getCourseById(id).then(course => this.setState(course))
+        super(props);
+        this.state={tabIndex: 0}
     }
 
     render(){
-        const {classes} = this.props;
-        const {course, joinStatus} = this.state;
+        const {auth, classes, router} = this.props;
+        const {tabIndex} = this.state;
         return(
-        <NavBar auth={this.props.auth}>
-            <React.Fragment>
-            <Grid className={classes.root} container>
-                <Grid xs={12} sm={2} item style = {{textAlign: 'center'}}>
-                    <img style={{width: '100%'}} src={course.logo} alt="complex" />
-                </Grid>
-                <Grid xs={12} sm={6} item style={{padding: 20, paddingTop: 0}}>
-                    <h1>{course.name}</h1>
-                    <p style={{lineHeight: 2}} >{course.about}</p>
-                    <Grid container spacing={2}>
-                        {course.instructors && course.instructors.map((ins,idx)=>
-                            <Grid key={idx} item>
-                                <Avatar alt={ins.name} src={ins.avatar} />
+            <NavBar auth={auth}>
+                <Container style={{backgroundColor: 'white', padding: '20px 48px'}}>
+                    <Grid name="course-header" container>
+                        <Grid xs={12} sm={8} item style={{padding: 16}}>
+                            <Grid container spacing={2}>
+                                <Grid item xs={12}>
+                                    <h3 style={{margin: 0, fontWeight: 'bold', color: '#121037', textAlign: 'left', fontSize: '3rem', fontFamily: 'Lato', lineHeight: 1.2}}>Machine Learning</h3>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <h6 style={{margin: 0, color: '#546e7a', textAlign: 'left', fontWeight: 500, fontSize: '1.25rem', lineHeight: 1.6, fontFamily: 'Lato'}}>Learn how to build a machine learning model from scratch with a lot of practice examples and comprehensive materials from expert instructors.</h6>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <div style={{display: "flex", backgroundColor: 'white'}}>
+                                        <div style={{display: "block"}}><Avatar src="https://thefront.maccarianagency.com/images/photos/people/veronica-adams.jpg" width="40" height="40" style={{border: '3px solid white'}} /></div>
+                                        <div style={{display: "block"}}><Avatar src="https://thefront.maccarianagency.com/images/photos/people/akachi-luccini.jpg" width="40" height="40" style={{border: '3px solid white'}} /></div>
+                                        <div style={{display: "flex", justifyContent: "flex-end", alignSelf: "center", backgroundColor: "white", flexGrow: 1}}>
+                                            <Star style={{color: '#f9a825'}} />
+                                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>5.0</span>
+                                            <span style={{marginLeft: 8, color: '#546e7a', fontWeight: 400, fontSize: '0.875rem', lineHeight: 1.43}}>(28 reviews)</span>
+                                        </div>
+                                    </div>
+                                </Grid>
                             </Grid>
-                        )}
+                        </Grid>
+                        <Grid xs={12} sm={4} item>
+                            <span height="auto" width="auto">
+                                <img src="https://thefront.maccarianagency.com/images/illustrations/mobiles.svg" height="100%" width="100%" />
+                            </span>
+                        </Grid>
                     </Grid>
-                </Grid>
-                <Grid xs={12} sm={4} item style={{marginBottom: 10}}>
-                    <Grid container style={{justifyContent: 'center',  alignItems: 'center', paddingTop: 20, paddingBottom: 20, height: '80%'}}>
-                        <div>
-                            {course.prerequisites && course.prerequisites.map((prereq,idx) => (
-                                <Chip key={idx} label={prereq} variant="outlined" className={classes.chip} />
-                            ))}
-                        </div>
-                    </Grid>
-                    <Grid container justify="center" alignItems="flex-end">
-                        {!joinStatus && <Button style={{width: '70%', height: 50}} variant="contained" color="primary">
-                            JOIN COURSE
-                        </Button>}
-                        {joinStatus == 'pending' && <Button style={{width: '70%', height: 50}} variant="contained" color="primary">
-                            JOIN REQUEST SENT
-                        </Button>}
-                        {joinStatus == 'joined' && <Button style={{width: '70%', height: 50}} variant="contained" color="primary">
-                            EXIT COURSE
-                        </Button>}
-                    </Grid>
-                </Grid>
-            </Grid>
-            <Grid container>
-                <FloatingActionButtonZoom isInstructor={course.isInstructor} {...this.props} />
-            </Grid>
-            </React.Fragment>
-        </NavBar>)
+                    <Tabs classes={{indicator: classes.indicator}} value={tabIndex} onChange={(e,value)=>{this.setState({tabIndex: value})}} aria-label="simple tabs example">
+                        <Tab label="Home" {...a11yProps(0)}  />
+                        <Tab label="Discussion" {...a11yProps(1)}  />
+                        <Tab label="Exercise" {...a11yProps(2)}/>
+                    </Tabs>
+                    <React.Fragment>
+                        <TabPanel value={tabIndex} index={0} className={classes.tabPanel}>
+                            <Home
+                                auth = {auth} 
+                                courseId={router.query.id} 
+                                isInstructor = {this.props.isInstructor} 
+                            />
+                        </TabPanel>
+                        <TabPanel value={tabIndex} index={1} className={classes.tabPanel}>
+                            <Discussion
+                                auth = {auth}
+                                courseId={router.query.id} 
+                                isInstructor = {this.props.isInstructor} 
+                            />
+                        </TabPanel>
+                        <TabPanel value={tabIndex} index={2}>
+                            <ExerciseSetting
+                                auth = {auth}
+                                courseId={router.query.id} 
+                                isInstructor = {this.props.isInstructor} 
+                            />
+                        </TabPanel>
+                    </React.Fragment>
+                </Container>
+            </NavBar>
+        )
     }
 }
 
-
 Subject.getInitialProps = authInitialProps(true);
 
-export default withStyles(styles)(withRouter(Subject));
+export default withRouter(withStyles(styles)(Subject));

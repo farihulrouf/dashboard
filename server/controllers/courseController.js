@@ -4,7 +4,7 @@ const Post = mongoose.model("Post");
 const CourseRequest = mongoose.model("CourseRequest");
 
 exports.getCourses = async (req,res) => {
-    const courses = await Course.find({},'_id logo name about price rating');
+    const courses = await Course.find({},'_id logo name about price rating creator');
     res.json(courses);
 }
 

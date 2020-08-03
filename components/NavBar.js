@@ -17,6 +17,9 @@ const useStyles = (theme) => ({
     },
     container: {
         padding: 0
+    },
+    content: {
+        minHeight: 'calc(100vh - 64px - 370px)'
     }
 })
 
@@ -72,7 +75,7 @@ class NavBar extends React.Component{
                     {React.cloneElement(children,{active: active})}
                 </Container>
             </main>
-            <Container maxWidth="none" name="footer" style={{color: 'white', backgroundColor: '#1b1642',marginTop: 50, padding: '48px 0px'}}>
+            <Container maxWidth={false} name="footer" style={{color: 'white', backgroundColor: '#1b1642',marginTop: 50, padding: '48px 0px'}}>
                 <Container maxWidth="lg">
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={2} style={{padding: 16}}>

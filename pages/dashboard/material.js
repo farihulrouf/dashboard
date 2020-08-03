@@ -4,6 +4,8 @@ import {Container, Paper, Grid, Button,
     IconButton, InputBase, withStyles} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
 import {Star, ArrowRightAlt} from "@material-ui/icons";
+import {getCourses} from '../../lib/api';
+import Link from "next/link";
 
 const styles = (theme) => ({
     iconButton: {
@@ -16,16 +18,27 @@ const styles = (theme) => ({
 })
 
 
-const Course = () => {
+const Course = (props) => {
+    const {_id, name, about, creator, total_problems, logo, price, rating} = props.data;
+    console.log(props);
     return(
         <Paper elevation={3} style={{borderRadius: 10}}>
             <div style={{padding: '32px 16px'}}>
                 <Grid container>
-                    <Grid xs={12} item style={{padding: 4}}><h6 style={{margin: 0, fontWeight: 700, color: '#121037', textAlign: 'left', fontSize: '1.25rem', lineHeight: 1.6}}>Data Science</h6></Grid>
-                    <Grid xs={12} item style={{padding: 4}}><p style={{color: '#546e7a', fontWeight: 400, fontSize: '1rem', lineHeight: 1.5, margin: 0}}>Oleh: Delta Wira</p></Grid>
-                    <div>
-                        <p>A statement is a basic fact or opinion</p>
-                    </div>
+                    <Grid item xs={12} sm={8}>
+                        <Grid container>
+                            <Grid xs={12} item style={{padding: 4}}><h6 style={{margin: 0, fontWeight: 700, color: '#121037', textAlign: 'left', fontSize: '1.25rem', lineHeight: 1.6}}>{name}</h6></Grid>
+                            <Grid xs={12} item style={{padding: 4}}><p style={{color: '#546e7a', fontWeight: 400, fontSize: '1rem', lineHeight: 1.5, margin: 0}}>{`Oleh: ${creator.name}`}</p></Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <div style={{margin: 0, padding: 8, borderRadius: 8, backgroundColor: '#3f51b5'}}>
+                            <p style={{ textAlign: 'center', margin: 0, fontWeight: 700, color: 'white', fontFamily: 'Lato', fontSize: '1rem', lineHeight: 1.5}}>{price === 0 ? `FREE` : `IDR ${price}`}</p>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <p>{about}</p>
+                    </Grid>
                 </Grid>
                 <Grid alignItems="center" container>
                     <Grid xs={6} item>
@@ -38,13 +51,15 @@ const Course = () => {
                     </Grid>
                     <Grid xs={6} item>
                         <Grid container justify="flex-end"><Star style={{color: '#f9a825'}} />
-                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>5.0</span>
+                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>{rating}</span>
                             <span style={{marginLeft: 8, color: '#546e7a', fontWeight: 400, fontSize: '0.875rem', lineHeight: 1.43}}>(28 reviews)</span>
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid container alignItems="center">
-                        <p style={{color: '#3f51b5', fontSize: '1rem', fontWeight: 'bold', lineHeight: 1.5}}>Join Course </p><ArrowRightAlt style={{color: '#3f51b5'}}/>
+                <Grid container alignItems="center" style={{paddingTop: 10}}>
+                    <Button size="small" variant="outlined" color="primary" href={`/subjects/${_id}`} endIcon={<ArrowRightAlt />}>
+                        GO TO COURSE
+                    </Button>
                 </Grid>
             </div>
         </Paper>
@@ -55,12 +70,19 @@ class Material extends React.Component{
     
     constructor(props){
         super(props)
+        this.state = {modules: []}
+    }
+
+    componentDidMount(){
+        const { auth } = this.props;
+        getCourses(auth.user).then(courses => this.setState({modules: courses }));
     }
 
     render(){
         const {classes} = this.props;
+        const {modules} = this.state;
         return(
-            <Container maxWidth="lg" style={{padding: '20px 48px'}}>
+            <Container style={{padding: '20px 48px'}}>
                 <Paper elevation={3} style={{height: '5em', display: 'flex', alignItems: 'center'}}>
                     <IconButton className={classes.iconButton} aria-label="menu">
                         <Menu />
@@ -79,7 +101,7 @@ class Material extends React.Component{
                     </Button>
                 </Grid>
                 <Grid container justify="center" spacing={5} style={{padding: 0, marginTop: 5}}>
-                    {[1,2,3,4,5].map((v,i)=> <Grid xs={12} sm={6} key={i} item><Course /></Grid>)}
+                    {modules.map((v,i)=> <Grid xs={12} sm={4} key={i} item><Course data={v} /></Grid>)}
                 </Grid>
             </Container>
         )
