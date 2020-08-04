@@ -24,8 +24,8 @@ exports.createCourse = async (req,res, next) => {
 }
 
 exports.getCourseById = async (req, res, next, id) => {
-    const course = await Course.findOne({_id: id});
-    req.course = course
+    const course = await Course.findById(id);
+    req.course = course;
     if(req.course && req.user){
         req.course._doc.isInstructor = req.user.isInstructor(course);
         return next();

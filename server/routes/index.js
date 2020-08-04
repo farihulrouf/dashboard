@@ -155,8 +155,6 @@ router.get(
   catchErrors(courseController.getCourse)
 );
 
-router.get("/api/courses/:courseId", catchErrors(courseController.getCourse));
-
 router.get(
   "/api/courses/:courseId/requests",
   catchErrors(courseController.getCourseRequests)

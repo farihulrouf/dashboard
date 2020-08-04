@@ -1,6 +1,6 @@
 import React from "react";
 import {Container, Paper, Grid, Button,
-    Avatar,
+    Avatar, makeStyles,
     IconButton, InputBase, withStyles} from "@material-ui/core";
 import {Menu} from "@material-ui/icons";
 import {Star, ArrowRightAlt} from "@material-ui/icons";
@@ -14,15 +14,31 @@ const styles = (theme) => ({
     input: {
         marginLeft: theme.spacing(1),
         flex: 1,
+    },
+    container: {
+        ['@media (min-width:800px)']: { 
+            padding: '20px 48px'
+        },
+        ['@media (max-width:800px)']: { 
+            padding: '20px 0px'
+        },
+    },
+    paper: {
+        ['@media (min-width:800px)']: { 
+            borderRadius: 10,
+        },
+        ['@media (max-width:800px)']: { 
+            borderRadius: 0
+        },
     }
 })
 
 
 const Course = (props) => {
     const {_id, name, about, creator, total_problems, logo, price, rating} = props.data;
-    console.log(props);
+    const classes = makeStyles(styles);
     return(
-        <Paper elevation={3} style={{borderRadius: 10}}>
+        <Paper elevation={3} className={classes.paper}>
             <div style={{padding: '32px 16px'}}>
                 <Grid container>
                     <Grid item xs={12} sm={8}>
@@ -37,7 +53,7 @@ const Course = (props) => {
                         </div>
                     </Grid>
                     <Grid item xs={12}>
-                        <p>{about}</p>
+                        <p style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: "ellipsis"}}>{about}</p>
                     </Grid>
                 </Grid>
                 <Grid alignItems="center" container>
@@ -81,8 +97,9 @@ class Material extends React.Component{
     render(){
         const {classes} = this.props;
         const {modules} = this.state;
+
         return(
-            <Container style={{padding: '20px 48px'}}>
+            <Container className={classes.container}>
                 <Paper elevation={3} style={{height: '5em', display: 'flex', alignItems: 'center'}}>
                     <IconButton className={classes.iconButton} aria-label="menu">
                         <Menu />
@@ -91,7 +108,7 @@ class Material extends React.Component{
                         className={classes.input}
                         placeholder="Search Courses"
                     />
-                    <Button size="large" variant="contained" color="primary" style={{margin: '0px 20px'}}>
+                    <Button size="small" variant="contained" color="primary" style={{margin: '0px 20px'}}>
                         Search
                     </Button>
                 </Paper>

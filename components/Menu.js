@@ -1,12 +1,14 @@
 import React from 'react';
-import {Button, createMuiTheme} from '@material-ui/core';
+import {Button, IconButton} from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
+import {Settings, Lock} from "@material-ui/icons";
 import { makeStyles } from '@material-ui/core/styles';
+import { signoutUser } from "../lib/auth";
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 
 const useStyles = makeStyles((theme) => ({
@@ -77,9 +79,21 @@ export default function MenuListComposition(props) {
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={handleClose}>Logout</MenuItem>
+                    {name === "Account" &&
+                      [{id: 1, name: "Settings", icon: <Settings />, action: () => {}}, {id: 2, name: "Log Out", icon: <Lock />, action: signoutUser}].map(item=> (
+                        <MenuItem onClick={item.action} key={item.id}>
+                          <IconButton style={{padding: 0, marginRight: 10}} aria-label="settings">
+                            {item.icon}
+                          </IconButton>
+                          {item.name}
+                        </MenuItem>
+                      ))
+                    }
+                    {name === "Pages" &&
+                      [{id: 1, name: "Home", action: () => {}}, {id: 2, name: "Rapor", action: () => {}}].map(item=> (
+                        <MenuItem onClick={item.action} key={item.id}>{item.name}</MenuItem>
+                      ))
+                    }
                   </MenuList>
                 </ClickAwayListener>
               </Paper>

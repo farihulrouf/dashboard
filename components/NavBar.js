@@ -1,7 +1,7 @@
 import React from 'react';
 import {AppBar, Toolbar, List, ListItem, ListItemIcon, ListItemText, IconButton,
      Grid, Button, Container, withStyles} from "@material-ui/core";
-import {Facebook, Pinterest, Twitter, Instagram} from "@material-ui/icons";
+import {Facebook, Pinterest, Twitter, Instagram, Menu} from "@material-ui/icons";
 import Link from "next/link";
 import MenuItem from "./Menu";
 
@@ -20,6 +20,18 @@ const useStyles = (theme) => ({
     },
     content: {
         minHeight: 'calc(100vh - 64px - 370px)'
+    },
+    toolbarIcon: {
+      ['@media (min-width:800px)']: { 
+        display: 'none'
+      },
+      flexGrow: 1
+    },
+    navBar: {
+      ['@media (max-width:800px)']: { 
+        display: 'none'
+      },
+      flexGrow: 1
     }
 })
 
@@ -36,12 +48,12 @@ class NavBar extends React.Component{
             <AppBar position="static" className={classes.appBar}>
                 <Container maxWidth="lg">
                     <Toolbar className={classes.toolbar}>
-                        <Grid container justify="space-between" alignItems="center">
+                        <Grid container alignItems="center">
                             <Grid item className={classes.logo}>
                                 <Link href="/"><a style={{textDecoration: 'none'}}><img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo.svg" /></a></Link>
                             </Grid>
-                            <Grid item>
-                                {!onlyLogo && <Grid container spacing={2}>
+                            <Grid item className={classes.navBar}>
+                                {!onlyLogo && <Grid container justify="flex-end" spacing={2}>
                                     {!auth && <React.Fragment>
                                     <Grid item>
                                         <MenuItem name="Landings" />
@@ -65,6 +77,15 @@ class NavBar extends React.Component{
                                         </Grid>
                                     </React.Fragment>}
                                 </Grid>}
+                            </Grid>
+                            <Grid item className={classes.toolbarIcon}>
+                              <Grid container justify="flex-end">
+                                <Grid item>
+                                  <IconButton style={{padding: 0}} aria-label="menu">
+                                    <Menu />
+                                  </IconButton>
+                                </Grid>
+                              </Grid>
                             </Grid>
                         </Grid>
                     </Toolbar>

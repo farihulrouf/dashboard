@@ -19,7 +19,7 @@ class Home extends React.Component{
         super(props);
         this.state = {
             posts: {limit: 0, page: 1, pages: 1, total: 0, docs: []}, 
-            query: {page: 1},
+            query: {content: "", category: [], page: 1},
             deleteDialogOpen: false
         }
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
@@ -68,18 +68,7 @@ class Home extends React.Component{
         return(
             <React.Fragment>
                 <FormDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
-                <Paper elevation={3} style={{height: '5em', display: 'flex', alignItems: 'center', marginTop: 20}}>
-                    <IconButton className={classes.iconButton} aria-label="menu">
-                        <FilterList />
-                    </IconButton>
-                    <InputBase
-                        className={classes.input}
-                        placeholder="Search For Something?"
-                    />
-                    <Button size="large" variant="contained" color="primary" style={{margin: '0px 20px'}}>
-                        Search
-                    </Button>
-                </Paper>
+                <PostFilter query={this.state.query} onSearchQueryChange={this.onSearchQueryChange} />
                 <Grid container style={{marginTop: 20}}>
                     <Grid item xs={12}>
                         <Grid container style={{justifyContent: 'center'}}>

@@ -1,16 +1,26 @@
 import React from "react";
 import {withRouter} from 'next/router'
 import {withStyles, Container, Grid, Avatar, Tabs, Tab, Paper, IconButton, Typography, Box, InputBase, Button} from "@material-ui/core";
-import {Star, FilterList} from "@material-ui/icons";
+import {Star} from "@material-ui/icons";
 import { authInitialProps } from "../../../lib/auth"
 import NavBar from "../../../components/NavBar";
 import Home from "../../../components/subject/Home";
 import Discussion from "../../../components/subject/Discussion";
 import ExerciseSetting from "../../../components/subject/ExerciseSetting";
+import { getCourseById } from "../../../lib/api";
 
 const styles = (theme) => ({
     indicator: {
         backgroundColor: "rgb(27, 22, 66)"
+    },
+    container: {
+        backgroundColor: 'white', 
+        ['@media (min-width:800px)']: { 
+            padding: '20px 48px'
+        },
+        ['@media (max-width:800px)']: { 
+            padding: '20px 9px'
+        }
     }
 })
 
@@ -42,23 +52,29 @@ function a11yProps(index) {
 class Subject extends React.Component{
     constructor(props){
         super(props);
-        this.state={tabIndex: 0}
+        this.state={tabIndex: 0, course: {}}
+    }
+
+    componentDidMount(){
+        const {id} = this.props.router.query;
+        getCourseById(id).then(course=>this.setState(course));
     }
 
     render(){
         const {auth, classes, router} = this.props;
-        const {tabIndex} = this.state;
+        const {tabIndex, course} = this.state;
+
         return(
             <NavBar auth={auth}>
-                <Container style={{backgroundColor: 'white', padding: '20px 48px'}}>
+                <Container className={classes.container}>
                     <Grid name="course-header" container>
                         <Grid xs={12} sm={8} item style={{padding: 16}}>
                             <Grid container spacing={2}>
                                 <Grid item xs={12}>
-                                    <h3 style={{margin: 0, fontWeight: 'bold', color: '#121037', textAlign: 'left', fontSize: '3rem', fontFamily: 'Lato', lineHeight: 1.2}}>Machine Learning</h3>
+                                    <h3 style={{margin: 0, fontWeight: 'bold', color: '#121037', textAlign: 'left', fontSize: '3rem', fontFamily: 'Lato', lineHeight: 1.2}}>{course.name}</h3>
                                 </Grid>
                                 <Grid item xs={12}>
-                                    <h6 style={{margin: 0, color: '#546e7a', textAlign: 'left', fontWeight: 500, fontSize: '1.25rem', lineHeight: 1.6, fontFamily: 'Lato'}}>Learn how to build a machine learning model from scratch with a lot of practice examples and comprehensive materials from expert instructors.</h6>
+                                    <h6 style={{margin: 0, color: '#546e7a', textAlign: 'left', fontWeight: 500, fontSize: '1.25rem', lineHeight: 1.6, fontFamily: 'Lato'}}>{course.about}</h6>
                                 </Grid>
                                 <Grid item xs={12}>
                                     <div style={{display: "flex", backgroundColor: 'white'}}>
@@ -66,7 +82,7 @@ class Subject extends React.Component{
                                         <div style={{display: "block"}}><Avatar src="https://thefront.maccarianagency.com/images/photos/people/akachi-luccini.jpg" width="40" height="40" style={{border: '3px solid white'}} /></div>
                                         <div style={{display: "flex", justifyContent: "flex-end", alignSelf: "center", backgroundColor: "white", flexGrow: 1}}>
                                             <Star style={{color: '#f9a825'}} />
-                                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>5.0</span>
+                                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>{course.rating}</span>
                                             <span style={{marginLeft: 8, color: '#546e7a', fontWeight: 400, fontSize: '0.875rem', lineHeight: 1.43}}>(28 reviews)</span>
                                         </div>
                                     </div>
