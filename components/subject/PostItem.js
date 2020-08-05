@@ -98,9 +98,9 @@ const PostItem = (props) => {
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={1} style={{alignSelf: 'center'}}>
                         <Grid container justify="center">
-                            {data.category == "Announcement" && <AnnouncementOutlined style={{width: '100%', maxWidth: '50px', height: 'auto'}} />}
-                            {data.category == "Materials" && <ClassOutlined style={{width: '100%', maxWidth: '50px', height: 'auto'}} />}
-                            {data.category == "Exam" && <AssessmentOutlined style={{width: '100%', maxWidth: '50px', height: 'auto'}} />}
+                            {data.category == "Announcement" && <AnnouncementOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
+                            {data.category == "Materials" && <ClassOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
+                            {data.category == "Exam" && <AssessmentOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
                         </Grid>
                     </Grid>
                     <Grid item xs={12} sm={11}>
@@ -117,7 +117,7 @@ const PostItem = (props) => {
                         </Grid>
                     </Grid>
                 </Grid>
-                <Grid container style={{marginTop: 10}}>
+                <Grid container style={{margin: '1em 0px'}}>
                     <MathJax math={data.body} className={classes.body}  />
                 </Grid>
                 <Grid container spacing={2} style={{marginTop: 10}}>

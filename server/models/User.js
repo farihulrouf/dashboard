@@ -68,7 +68,7 @@ userSchema.methods.canCreateCourse = function () {
 userSchema.methods.isInstructor = function (course) {
   //isInstructor is true if user is a creator or an instructor of a given course
   const {creator, instructors} = course;
-  return creator.equals(this._id) || instructors.find(e=> e._id.equals(this._id));
+  return !!(creator._id.equals(this._id) || instructors.find(e=> e._id.equals(this._id)));
 }
 
 userSchema.pre("findOne", autoPopulateFollowingAndFollowers);

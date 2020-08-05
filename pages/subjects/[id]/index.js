@@ -105,21 +105,21 @@ class Subject extends React.Component{
                             <Home
                                 auth = {auth} 
                                 courseId={router.query.id} 
-                                isInstructor = {this.props.isInstructor} 
+                                isInstructor = {course.isInstructor} 
                             />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={1} className={classes.tabPanel}>
                             <Discussion
                                 auth = {auth}
                                 courseId={router.query.id} 
-                                isInstructor = {this.props.isInstructor} 
+                                isInstructor = {course.isInstructor} 
                             />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={2}>
                             <ExerciseSetting
                                 auth = {auth}
                                 courseId={router.query.id} 
-                                isInstructor = {this.props.isInstructor} 
+                                isInstructor = {course.isInstructor} 
                             />
                         </TabPanel>
                     </React.Fragment>

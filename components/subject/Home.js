@@ -2,7 +2,7 @@ import {Grid, List, Avatar, Paper, IconButton, withStyles, InputBase, Button} fr
 import {FilterList} from "@material-ui/icons";
 import {getCoursePosts, deletePost} from '../../lib/api';
 import Pagination from '@material-ui/lab/Pagination';
-import FormDialog from './FormDialog';
+import DeleteDialog from './DeleteDialog';
 import PostForm from './PostForm';
 import PostItem from './PostItem';
 import PostFilter from './PostFilter';
@@ -67,7 +67,7 @@ class Home extends React.Component{
         const {posts, deleteDialogOpen} = this.state
         return(
             <React.Fragment>
-                <FormDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
+                <DeleteDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
                 <PostFilter query={this.state.query} onSearchQueryChange={this.onSearchQueryChange} />
                 <Grid container style={{marginTop: 20}}>
                     <Grid item xs={12}>
