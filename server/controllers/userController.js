@@ -1,20 +1,37 @@
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
+const TeacherApplication = mongoose.model("TeacherApplication");
 const passport = require("passport");
 
-exports.getUser = async (req,res) => {
-    const user = await User.findOne({_id : req.user});
-    res.json({status: "ok", user: user});
+exports.getUsers = async (req,res) => {
+    const {type} = req.query
+    const {user} = req;
+    const users = await User.find({isAnOrganization: type=="org" })    
+    if(type === "org"){
+        //user is an organization
+        const organizations = {}
+        users.forEach((u)=> organizations[u._id]=u)
+        const application = await TeacherApplication.find({organization: Object.keys(organizations), teacher: user})
+        application.forEach((app)=> {
+            let org = organizations[app.organization.id]
+            if(org){
+                org._doc.status = app.status;
+                org._doc.applicationId = app.id
+            }
+        })
+    }
+    res.json({status: "ok", users: users})
 }
 
 exports.getUserById = async (req, res, next, id) => {
-    const user = await User.findOne({_id: id});
-    req.user = user
-    if(req.user){
-        return next();
-    }
+    const profile = await User.findOne({_id: id});
+    req.profile = profile //don't use req.user, it will override passport user
     next();
 };
+
+exports.getCurrentUser = async (req,res) => {
+    res.json({status: "ok", user: req.user})
+}
 
 exports.updateUser = async (req,res) => {
     const {user} = req;

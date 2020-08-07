@@ -25,6 +25,8 @@ const answerSheetSchema = new Schema(
     participantSolutions : [{type: participantSolutionsSchema}],
     type: {type: String},
     problemWithParticipantAnswer: [{type: problemWithParticipantAnswerSchema}],
+    courseId: {type: ObjectId, ref: "Course"},
+    examId: {type: ObjectId, ref: "Exam"}
   },
   {
     timestamps: true,

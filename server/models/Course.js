@@ -49,11 +49,13 @@ const courseSchema = new mongoose.Schema(
 const autoPopulate = function(next){
     this.populate("instructors", "_id name avatar linkedIn");
     this.populate("participants","_id name avatar linkedIn");
+    this.populate("creator","_id name avatar linkedIn");
     next();
 }
 
 courseSchema
     .pre("findOne",autoPopulate)
+    .pre("find",autoPopulate)
 
 courseSchema.index({ instructors: 1});
 courseSchema.index({createdAt: 1 });

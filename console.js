@@ -5,6 +5,7 @@ var User = require('./server/models/User');
 var Course = require('./server/models/Course');
 var Post = require('./server/models/Post');
 var Comment = require('./server/models/Comment');
+var TeacherApplication = require('./server/models/TeacherApplication');
 const mongoose = require("mongoose");
 const fs = require('fs');
 
@@ -50,11 +51,11 @@ const seeds = async function(){
 
     const coursesData = [
         {name: "Kalkulus IA", about: "ITB kalkulus series", prerequisites: ["Aljabar","Geometri"], 
-            price: 0, instructors: [users[0], users[1]]},
+            price: 0, creator: users[0], instructors: [users[0], users[1]]},
         {name: "Kalkulus IB", about: "ITB kalkulus series", prerequisites: ["Kalkulus IA","Aljabar","Geometri"], 
-            price: 0, instructors: users[1]},
+            price: 0, creator: users[1], instructors: users[1]},
         {name: "Biologi X-1", about: "Materi biologi untuk kelas 10 SMA semester 1", prerequisites: ["Biologi SMP"],
-            price: 250000, instructors: [users[0], users[2]]}
+            price: 250000, creator: users[0], instructors: [users[0], users[2]]}
     ]
     courses = await Course.insertMany(coursesData);
 

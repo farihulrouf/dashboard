@@ -1,12 +1,23 @@
-import {List, ListItem, ListItemIcon, Checkbox, ListItemSecondaryAction, 
-    ListItemText, Paper, IconButton, InputBase
-} from '@material-ui/core';
-import {AnnouncementOutlined, AssessmentOutlined, ClassOutlined, Search} from '@material-ui/icons';
+import {Paper, IconButton, InputBase, Button, withStyles, Popper} from '@material-ui/core';
+import {FilterList} from '@material-ui/icons';
+import FilterDialog from './FilterDialog';
 
-const PostFilter = (props) => {
-    const [query, setQuery] = React.useState({content: "",category: [],page: 1})
+const styles = (theme) => ({
+    input: {flex: 1}
+})
 
-    const onQueryChange = (e) => {
+class PostFilter extends React.Component{
+    constructor(props){
+        super(props)
+        this.state = {query: this.props.query, showFilter: false}
+        this.onQueryChange = this.onQueryChange.bind(this);
+        this.onCloseFilter = this.onCloseFilter.bind(this);
+        this.onClearFilters = this.onClearFilters.bind(this);
+    }
+
+
+    onQueryChange = (e) => {
+        let {query} = this.state;
         if(e.target.name == "content"){
             query.content=e.target.value;
         }
@@ -17,57 +28,52 @@ const PostFilter = (props) => {
                 query.category.push(categoryId)
             }else query.category.splice(index,1)
         }
-        setQuery({...query})
-        props.onSearchQueryChange(query)
+        query.page = 1;
+        this.props.onSearchQueryChange(query)
     }
 
-    const filters = [
-        {id: 1, name: 'Berita',icon: <AnnouncementOutlined />},
-        {id: 2, name: 'Materi', icon: <ClassOutlined />},
-        {id: 3, name: 'Ujian', icon: <AssessmentOutlined />}
-    ]
-    return(
-        <div>
-            <Paper elevation={3} component="form">
-                <IconButton type="submit" aria-label="search">
-                    <Search />
+    showFilter = () => {
+        this.setState({showFilter: true})
+    }
+
+    onCloseFilter = () => {
+        this.setState({showFilter: false})
+    }
+
+    onClearFilters = () => {
+        const {query} = this.state;
+        const newQuery = {content: query.content, category: [], page: 1};
+        this.props.onSearchQueryChange(newQuery);
+    }
+
+    render(){
+        const {classes, query} = this.props;
+        const {showFilter} = this.state;
+
+        return(
+            <Paper elevation={3} style={{height: '5em', display: 'flex', alignItems: 'center', marginTop: 20}}>
+                <IconButton onClick={this.showFilter} className={classes.iconButton} aria-label="menu">
+                    <FilterList />
                 </IconButton>
                 <InputBase
-                    placeholder="Search....."
-                    inputProps={{ 'aria-label': 'search google maps' }}
-                    onChange={onQueryChange}
+                    className={classes.input}
+                    placeholder="Cari Apa?"
                     name="content"
+                    onChange={this.onQueryChange}
+                />
+                <Button size="small" variant="contained" color="primary" style={{margin: '0px 20px'}}>
+                    Search
+                </Button>
+                <FilterDialog 
+                    open={showFilter}
+                    query={query}
+                    onClearFilters={this.onClearFilters}
+                    onFilterChange={this.onQueryChange} 
+                    onCloseFilter={this.onCloseFilter}
                 />
             </Paper>
-            <List>
-                {filters.map((value) => {
-                const labelId = `checkbox-list-label-${value.id}`;
-        
-                return (
-                    <ListItem key={value.id} role={undefined} dense>
-                        <ListItemIcon>
-                            <Checkbox
-                                edge="start"
-                                checked={query.category.indexOf(value.id) !== -1}
-                                tabIndex={-1}
-                                disableRipple
-                                value={value.id}
-                                name="category"
-                                onClick={onQueryChange}
-                                inputProps={{ 'aria-labelledby': labelId }}
-                            />
-                        </ListItemIcon>
-                        <ListItemText id={labelId} primary={value.name} />
-                        <ListItemSecondaryAction>
-                            <IconButton edge="end" aria-label="comments">
-                            {value.icon}    
-                            </IconButton>
-                        </ListItemSecondaryAction>
-                    </ListItem>
-                );
-                })}
-            </List>
-        </div>
-    )
+        )
+    }
 }
-export default PostFilter;
+
+export default withStyles(styles)(PostFilter);

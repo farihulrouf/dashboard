@@ -1,95 +1,96 @@
-import {Grid, makeStyles, withStyles, InputBase, Paper, ButtonBase, Typography,
-        Button} from '@material-ui/core';
-import {Search} from '@material-ui/icons';
+import React from "react";
+import {Container, Paper, Grid, Button,
+    Avatar, makeStyles,
+    IconButton, InputBase, withStyles} from "@material-ui/core";
+import {Menu} from "@material-ui/icons";
+import {Star, ArrowRightAlt} from "@material-ui/icons";
 import {getCourses} from '../../lib/api';
-import StarRatings from 'react-star-ratings';
+import Link from "next/link";
 
-const styles = ((theme) => ({
-    root: {
-        flexGrow: 1,
+const styles = (theme) => ({
+    iconButton: {
+        padding: '0px 20px'
     },
-    search: {
-        justifyContent: 'center',
-        display: 'flex',
-        marginBottom: 20,
+    input: {
+        marginLeft: theme.spacing(1),
+        flex: 1,
     },
-    searchIcon: {
-        alignSelf: 'center',
-        paddingLeft: 5,
-        paddingRight: 5
+    container: {
+        ['@media (min-width:800px)']: { 
+            padding: '20px 48px'
+        },
+        ['@media (max-width:800px)']: { 
+            padding: '20px 0px'
+        },
     },
     paper: {
-      padding: theme.spacing(2),
-      margin: 'auto',
-      width: 350,
-      ['@media (max-width:400px)']: { 
-        width: '90%'
-      }
-    },
-    image: {
-      width: 128,
-      height: 128,
-    },
-    img: {
-      margin: 'auto',
-      display: 'block',
-      maxWidth: '100%',
-      maxHeight: '100%',
-    },
-}));
-const useStyles = makeStyles(styles);
+        ['@media (min-width:800px)']: { 
+            borderRadius: 10,
+        },
+        ['@media (max-width:800px)']: { 
+            borderRadius: 0
+        },
+    }
+})
 
-function Module(props){
-    const {_id, name, about, total_problems, logo, price, rating} = props.data;
-    const classes = useStyles();
+
+const Course = (props) => {
+    const {_id, name, about, creator, total_problems, logo, price, rating} = props.data;
+    const classes = makeStyles(styles);
     return(
-        <Paper className={classes.paper}>
-            <Grid container spacing={2}>
-            <Grid item>
-                <ButtonBase className={classes.image}>
-                <img className={classes.img} src={logo} alt="complex" />
-                </ButtonBase>
-            </Grid>
-            <Grid item>
-                <b style={{fontSize: 20}}>{name}</b>
-                <div>
-                    <StarRatings
-                    rating={rating}
-                    starRatedColor="#F9A602"
-                    starDimension="20px"
-                    starSpacing="1px"
-                    name='rating'
-                    size={5}
-                    />
-                </div>
-                <div>
-                    {`${new Intl.NumberFormat('ind', {
-                        style: 'currency',
-                        currency: 'IDR',
-                        minimumFractionDigits: 2
-                        }).format(price)}`
-                    }
-                </div>
-                <div style={{marginTop: 10}}>
-                    <Button size="small" variant="outlined" color="primary" href={`/subjects/${_id}`}>
+        <Paper elevation={3} className={classes.paper}>
+            <div style={{padding: '32px 16px'}}>
+                <Grid container>
+                    <Grid item xs={12} sm={8}>
+                        <Grid container>
+                            <Grid xs={12} item style={{padding: 4}}><h6 style={{margin: 0, fontWeight: 700, color: '#121037', textAlign: 'left', fontSize: '1.25rem', lineHeight: 1.6}}>{name}</h6></Grid>
+                            <Grid xs={12} item style={{padding: 4}}><p style={{color: '#546e7a', fontWeight: 400, fontSize: '1rem', lineHeight: 1.5, margin: 0}}>{`Oleh: ${creator.name}`}</p></Grid>
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={4}>
+                        <div style={{margin: 0, padding: 8, borderRadius: 8, backgroundColor: '#3f51b5'}}>
+                            <p style={{ textAlign: 'center', margin: 0, fontWeight: 700, color: 'white', fontFamily: 'Lato', fontSize: '1rem', lineHeight: 1.5}}>{price === 0 ? `FREE` : `IDR ${price}`}</p>
+                        </div>
+                    </Grid>
+                    <Grid item xs={12}>
+                        <p style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: "ellipsis"}}>{about}</p>
+                    </Grid>
+                </Grid>
+                <Grid alignItems="center" container>
+                    <Grid xs={6} item>
+                        <Grid container>
+                            <Avatar src="https://thefront.maccarianagency.com/images/photos/people/veronica-adams.jpg" width="40" height="40" style={{border: '3px solid white'}} />
+                            <Avatar src="https://thefront.maccarianagency.com/images/photos/people/akachi-luccini.jpg" width="40" height="40" style={{marginLeft: -16, border: '3px solid white'}} />
+                            <Avatar width="40" height="40" style={{marginLeft: -16, border: '3px solid white'}} />
+                        </Grid>
+                        <span style={{paddingTop: 10}}>120 students enroll</span>
+                    </Grid>
+                    <Grid xs={6} item>
+                        <Grid container justify="flex-end"><Star style={{color: '#f9a825'}} />
+                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>{rating}</span>
+                            <span style={{marginLeft: 8, color: '#546e7a', fontWeight: 400, fontSize: '0.875rem', lineHeight: 1.43}}>(28 reviews)</span>
+                        </Grid>
+                    </Grid>
+                </Grid>
+                <Grid container alignItems="center" style={{paddingTop: 10}}>
+                    <Button size="small" variant="outlined" color="primary" href={`/subjects/${_id}`} endIcon={<ArrowRightAlt />}>
                         GO TO COURSE
                     </Button>
-                </div>
-            </Grid>
-            </Grid>
-        </Paper>    
+                </Grid>
+            </div>
+        </Paper>
     )
 }
 
-class MaterialPage extends React.Component{
+class Material extends React.Component{
+    
     constructor(props){
         super(props)
-        this.state={modules: []}
+        this.state = {modules: []}
     }
 
     componentDidMount(){
         const { auth } = this.props;
-
         getCourses(auth.user).then(courses => this.setState({modules: courses }));
     }
 
@@ -98,37 +99,29 @@ class MaterialPage extends React.Component{
         const {modules} = this.state;
 
         return(
-            <React.Fragment>
-            <div className={classes.search}>
-                <div style={{display: 'flex', borderStyle: 'ridge', borderRadius: 50}}>
-                    <div className={classes.searchIcon}>
-                        <Search style={{fontSize: 20}} />
-                    </div>
+            <Container className={classes.container}>
+                <Paper elevation={3} style={{height: '5em', display: 'flex', alignItems: 'center'}}>
+                    <IconButton className={classes.iconButton} aria-label="menu">
+                        <Menu />
+                    </IconButton>
                     <InputBase
-                        placeholder="Cari Materi……"
-                        classes={{
-                            root: classes.inputRoot,
-                            input: classes.inputInput,
-                        }}
-                        inputProps={{ 'aria-label': 'search' }}
-                        onInput={(text)=> console.log(text.target.value)}
+                        className={classes.input}
+                        placeholder="Search Courses"
                     />
-                </div>
-            </div>
-            <Grid container spacing={3}>
-                <Grid item xs={12}>
-                    <Grid container justify="center" spacing={3}>
-                        {modules.map((value) => (
-                            <Grid key={value._id} item>
-                                <Module data={value} />
-                            </Grid>
-                        ))}
-                    </Grid>
+                    <Button size="small" variant="contained" color="primary" style={{margin: '0px 20px'}}>
+                        Search
+                    </Button>
+                </Paper>
+                <Grid justify="flex-start" container style={{paddingTop: 30}}>
+                    <Button disabled variant="contained" color="primary" style={{backgroundColor: 'rgb(250, 199, 92)', color: 'white'}}>
+                        105 results found
+                    </Button>
                 </Grid>
-            </Grid>
-            </React.Fragment>    
+                <Grid container justify="center" spacing={5} style={{padding: 0, marginTop: 5}}>
+                    {modules.map((v,i)=> <Grid xs={12} sm={4} key={i} item><Course data={v} /></Grid>)}
+                </Grid>
+            </Container>
         )
     }
 }
-
-export default withStyles(styles)(MaterialPage);
+export default withStyles(styles)(Material);

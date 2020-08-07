@@ -49,7 +49,7 @@ export default class MyCourses extends React.Component{
       <Grid container>
         {open && <CreateEditCourseDialog {...dialogProps} />}
         <Grid container>
-          <h1>List Courses</h1>
+          <h1>My Courses</h1>
         </Grid>
         <Grid container style={{marginBottom: 20}} spacing={2}>
           {!this.props.auth.isAnOrganization && <React.Fragment>

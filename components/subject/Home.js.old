@@ -1,25 +1,17 @@
-import {Grid, List, Avatar, Paper, IconButton, withStyles, InputBase, Button} from '@material-ui/core';
-import {FilterList} from "@material-ui/icons";
+import {Grid, List, Avatar, Paper} from '@material-ui/core';
 import {getCoursePosts, deletePost} from '../../lib/api';
 import Pagination from '@material-ui/lab/Pagination';
-import DeleteDialog from './DeleteDialog';
+import FormDialog from './FormDialog';
 import PostForm from './PostForm';
 import PostItem from './PostItem';
 import PostFilter from './PostFilter';
-
-
-const styles = (theme) => ({
-    input: {
-        flex: 1
-    }
-})
 
 class Home extends React.Component{
     constructor(props){
         super(props);
         this.state = {
             posts: {limit: 0, page: 1, pages: 1, total: 0, docs: []}, 
-            query: {content: "", category: [], page: 1},
+            query: {page: 1},
             deleteDialogOpen: false
         }
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
@@ -63,14 +55,16 @@ class Home extends React.Component{
     }
 
     render(){
-        const {isInstructor, auth, classes} = this.props
+        const {isInstructor, auth} = this.props
         const {posts, deleteDialogOpen} = this.state
         return(
             <React.Fragment>
-                <DeleteDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
-                <PostFilter query={this.state.query} onSearchQueryChange={this.onSearchQueryChange} />
-                <Grid container style={{marginTop: 20}}>
-                    <Grid item xs={12}>
+                <FormDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
+                <Grid container>
+                    <Grid item xs={12} sm={4} style={{paddingRight: '5%'}}>
+                        <PostFilter onSearchQueryChange={this.onSearchQueryChange} />
+                    </Grid>
+                    <Grid item xs={12} sm={8}>
                         <Grid container style={{justifyContent: 'center'}}>
                             {isInstructor && <Grid item xs={12} style={{marginBottom: 50}}>
                                 <Paper elevation={5} style={{padding: 20}}>
@@ -101,4 +95,4 @@ class Home extends React.Component{
     }
 }
 
-export default withStyles(styles)(Home);
+export default Home;

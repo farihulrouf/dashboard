@@ -9,6 +9,7 @@ const examSchema = new Schema(
     duration: { type: Number },
     startTime: {type: Date},
     endTime: {type: Date},
+    courseId: {type: ObjectId, ref: "Course"}
   },
   {
     timestamps: true,
@@ -16,7 +17,7 @@ const examSchema = new Schema(
 );
 
 const autoPopulate = function (next) {
-  this.populate("questionPools", "_id question multipleChoices question");
+  this.populate("questionPools", "_id question multipleChoices question attachments tag");
   next();
 };
 

@@ -3,6 +3,12 @@ const { ObjectId } = mongoose.Schema;
 const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passportLocalMongoose = require("passport-local-mongoose");
 
+
+const emailValidator = (v) => {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(String(v).toLowerCase());
+}
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -10,13 +16,20 @@ const userSchema = new mongoose.Schema(
       trim: true,
       lowercase: true,
       unique: true,
-      required: "Email is required"
+      required: "Email is required",
+      validate: {
+        validator: emailValidator,
+        message: props => `${props.value} is not a valid email!`
+      }
     },
     name: {
       type: String,
       trim: true,
-      unique: true,
-      required: "Name is required"
+      required: "Name is required",
+      validate: {
+        validator: (v) => {return (v.length>4 && v.length<15)},
+        message: props => `${props.value} should be > 4 and <15 chars`
+      }
     },
     avatar: {
       type: String
@@ -32,8 +45,8 @@ const userSchema = new mongoose.Schema(
       default: ""
     },
     isAnOrganization: {type: Boolean, default: false, required: "Organization field is required"},
+    teachers: [{type: ObjectId, ref: "User"}],
     organization: [{ type: ObjectId, ref: "User" }],
-    /* we wrap 'following' and 'followers' in array so that when they are populated as objects, they are put in an array (to more easily iterate over them) */
     following: [{ type: ObjectId, ref: "User" }],
     followers: [{ type: ObjectId, ref: "User" }]
   },
@@ -55,7 +68,7 @@ userSchema.methods.canCreateCourse = function () {
 userSchema.methods.isInstructor = function (course) {
   //isInstructor is true if user is a creator or an instructor of a given course
   const {creator, instructors} = course;
-  return mongoose.Types.ObjectId(creator).equals(this._id) || instructors.find(e=> mongoose.Types.ObjectId(e._id).equals(this._id));
+  return !!(creator._id.equals(this._id) || instructors.find(e=> e._id.equals(this._id)));
 }
 
 userSchema.pre("findOne", autoPopulateFollowingAndFollowers);
@@ -65,5 +78,6 @@ userSchema.plugin(passportLocalMongoose, { usernameField: "email" });
 
 /* The MongoDBErrorHandler plugin gives us a better 'unique' error, rather than: "11000 duplicate key" */
 userSchema.plugin(mongodbErrorHandler);
+
 
 module.exports = mongoose.model("User", userSchema);

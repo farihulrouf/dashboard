@@ -8,10 +8,12 @@ const questionPoolController = require("../controllers/questionPoolController");
 const answerSheetController = require("../controllers/answerSheetController");
 const fileController = require("../controllers/fileController")
 const examController = require("../controllers/examController")
+const applicationController = require("../controllers/applicationController");
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 const fs = require('fs');
 
+const app = express();
 const router = express.Router();
 const DIR = "static/documents/";
 const storage = multer.diskStorage({
@@ -62,23 +64,15 @@ router.post("/api/auth/signin", authController.signin);
 router.get("/api/auth/signout", authController.signout);
 
 /**
- * EXERCISES ROUTES /api/exercises
- */
-router.get("/api/exercises/:id", exerciseController.fetchSingleExercise);
-router.put("/api/exercises/:id", exerciseController.updateExercise);
-router.get("/api/exercises", exerciseController.fetchAllExercise);
-router.post("/api/exercises", exerciseController.addNewExercises);
-
-/**
  * EXERCISE MATERIALS ROUTES
  */
 router.post(
-  "/api/question-pools",
+  "/api/courses/:courseId/question-pools",
   authController.checkAuth,
   questionPoolController.addNewQuestionPools
 );
 router.get(
-  "/api/question-pools",
+  "/api/courses/:courseId/question-pools",
   authController.checkAuth,
   questionPoolController.fetchAllExerciseSchema
 );
@@ -97,7 +91,7 @@ router.put(
  * PROBLEM STATEMENTS ROUTES
  */
 router.put(
-  "/api/answer-sheets/:id",
+  "/api/courses/:courseId/answer-sheets/:id",
   answerSheetController.updateAnswerSheet
 );
 router.get(
@@ -108,10 +102,10 @@ router.get(
 /**
  * EXAM ROUTES
  */
-router.post("/api/exams", examController.addNewExam);
+router.post("/api/courses/:courseId/exams", examController.addNewExam);
 router.get("/api/exams/:id", examController.fetchSingleExam);
-router.post("/api/exams/:id/question-pools", examController.addQuestionPoolToExam)
-router.get("/api/exams/:id/start", examController.startExam)
+router.post("/api/courses/:courseId/exams/:id/question-pools", examController.addQuestionPoolToExam)
+router.get("/api/courses/:courseId/exams/:id/start", examController.startExam)
 
 /**
  * COURSE ROUTES /api/courses
@@ -162,16 +156,9 @@ router.put(
   catchErrors(courseController.getMyCourses)
 )
 
-router.get("/api/courses/:courseId", catchErrors(courseController.getCourse));
-
 router.get(
   "/api/courses/:courseId/requests",
   catchErrors(courseController.getCourseRequests)
-);
-
-router.param(
-  "userId",
-  userController.getUserById
 );
 
 router.put(
@@ -234,28 +221,51 @@ router.post(
 // );
 
 /**
- * USER ROUTES: /api/user
+ * USER ROUTES: /api/users
  */
 
+
+router.get("/api/users/me", (req,res)=>{
+  res.json({status: "oke", user: req.user});
+});
+
+router.param("userId", userController.getUserById);
+
+router.get("/api/users/:userId", (req,res)=>{
+  res.json({status: "ok", user: req.profile})
+});
+
 router.get(
-  "/api/user",
-  catchErrors(userController.getUser)
-);
+  "/api/users",
+  authController.checkAuth,
+  catchErrors(userController.getUsers)
+)
 
 router.put(
-  "/api/user/updateprofile",
+  "/api/users/updateprofile",
   authController.checkAuth,
   catchErrors(userController.updateUser)
 );
 
-router.get(
-  "/api/:userId",
-  catchErrors(userController.getUserById)
-);
+/**
+ * Teacher Application Routes: /api/teacher-application
+ */
 
+router.param("applicationId",applicationController.getApplicationById);
 
+router.post(
+  "/api/teacher-applications/create",
+  authController.checkAuth,
+  catchErrors(applicationController.createApplication),
+  catchErrors(userController.getUsers)
+)
 
-module.exports = router;
+router.delete(
+  "/api/teacher-applications/:applicationId",
+  authController.checkAuth,
+  catchErrors(applicationController.cancelApplication),
+  catchErrors(userController.getUsers)
+)
 
 /**
  * POST ROUTES /api/files

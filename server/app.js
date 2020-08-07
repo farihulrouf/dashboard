@@ -22,6 +22,7 @@ require("./models/CourseRequest")
 require("./models/QuestionPool");
 require("./models/AnswerSheet");
 require("./models/Exam");
+require("./models/TeacherApplication");
 
 const routes = require("./routes");
 require("./passport");

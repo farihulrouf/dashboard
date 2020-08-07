@@ -1,5 +1,5 @@
-import {Grid, Typography, Paper, Button, Divider, TextareaAutosize, makeStyles, Popper, ButtonGroup} from '@material-ui/core';
-import {ThumbUp, Send, Comment, Share, MoreVert, AssessmentOutlined, AnnouncementOutlined, ClassOutlined} from '@material-ui/icons';
+import {Grid, Typography, Paper, Button, Divider, TextareaAutosize, makeStyles, Popper, ButtonGroup, IconButton} from '@material-ui/core';
+import {ThumbUp, ThumbUpOutlined, Send, Comment, Share, MoreVert, AssessmentOutlined, AnnouncementOutlined, ClassOutlined} from '@material-ui/icons';
 import {likeAPost, postComment} from '../../lib/api';
 import CommentItem from './CommentItem';
 import PostForm from './PostForm';
@@ -10,9 +10,32 @@ import MathJax from 'react-mathjax-preview'
 const styles = (theme) => ({
     inline: {
         display: 'inline',
+        fontSize: '0.875rem',
+        fontFamily: 'Lato',
+        fontWeight: 400,
+        lineHeight: 1.43,
+        color: '#121037',
+        fontStyle: 'italic'
     },
     link: {
         backgroundColor: 'black'
+    },
+    body: {
+        fontSize: '1rem',
+        color: '#121037',
+        fontFamily: 'Lato',
+        fontWeight: 400,
+        lineHeight: 1.5,
+        width: '100%'
+    },
+    paper: {
+        marginBottom: 30,
+        ['@media (min-width:800px)']: { 
+            padding: 50
+        },
+        ['@media (max-width:800px)']: { 
+            padding: 10
+        }
     }
 });
 const useStyles = makeStyles(styles);
@@ -52,33 +75,11 @@ const PostItem = (props) => {
     }
 
     return(
-        <Paper elevation={3} style={{marginBottom: 30, padding: 20, paddingTop: 0}}>
+        <Paper elevation={3} className={classes.paper}>
             {!editMode && <React.Fragment>
-                <Grid container spacing={2}>
-                    <Grid item xs={2} sm={1} style={{alignSelf: 'center'}}>
-                        {data.category == "Announcement" && <AnnouncementOutlined style={{width: '100%', height: 'auto'}} />}
-                        {data.category == "Materials" && <ClassOutlined style={{width: '100%', height: 'auto'}} />}
-                        {data.category == "Exam" && <AssessmentOutlined style={{width: '100%', height: 'auto'}} />}
-                    </Grid>
-                    <Grid item xs={8} sm={10}>
-                        <Grid container><Link href={`/posts/${data._id}`}>{data.title}</Link></Grid>
-                        <Grid container>
-                            <React.Fragment>
-                                <Typography
-                                    component="span"
-                                    variant="body2"
-                                    className={classes.inline}
-                                    color="textPrimary"
-                                >
-                                    {`${data.postedBy.name} - ${data.createdAt}`}
-                                </Typography>
-                            </React.Fragment>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={2} sm={1}>
-                        {data.owned && 
-                        <React.Fragment>
-                        <Button color="primary" style={{right: 0, position: 'relative'}} onClick={handleClick}>
+                {data.owned && 
+                    <React.Fragment>
+                        <Button color="primary" style={{right: 0, position: 'absolute'}} onClick={handleClick}>
                                 <MoreVert />
                         </Button>
                         <Popper id={id} open={open} anchorEl={anchorEl}>
@@ -92,12 +93,32 @@ const PostItem = (props) => {
                                 <Button variant="contained" value={data._id} onClick={props.openDeleteDialog}>Delete</Button>
                             </ButtonGroup>
                         </Popper>
-                        </React.Fragment>
-                        }
+                    </React.Fragment>
+                }
+                <Grid container spacing={2}>
+                    <Grid item xs={12} sm={1} style={{alignSelf: 'center'}}>
+                        <Grid container justify="center">
+                            {data.category == "Announcement" && <AnnouncementOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
+                            {data.category == "Materials" && <ClassOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
+                            {data.category == "Exam" && <AssessmentOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
+                        </Grid>
+                    </Grid>
+                    <Grid item xs={12} sm={11}>
+                        <Grid container><Link href={`/posts/${data._id}`}><a style={{textDecoration: 'none'}}><h6 style={{margin: 0, fontFamily: 'Lato', lineHeight: 1.6, fontWeight: 700, color: '#121037', fontSize: '1.25rem'}}>{data.title}</h6></a></Link></Grid>
+                        <Grid container>
+                            <React.Fragment>
+                                <Typography
+                                    component="p"
+                                    className={classes.inline}
+                                >
+                                    {`${data.postedBy.name} - ${data.createdAt}`}
+                                </Typography>
+                            </React.Fragment>
+                        </Grid>
                     </Grid>
                 </Grid>
-                <Grid container style={{marginTop: 10}}>
-                    <MathJax math={data.body} style={{width: '100%'}} />
+                <Grid container style={{margin: '1em 0px'}}>
+                    <MathJax math={data.body} className={classes.body}  />
                 </Grid>
                 <Grid container spacing={2} style={{marginTop: 10}}>
                     {data.attachments.map((e,idx)=><Grid key={e._id} item><a href={`/files/${encodeURIComponent(e.key)}`} style={{fontSize: 12}}>{e.name}</a></Grid>)}
@@ -111,41 +132,21 @@ const PostItem = (props) => {
                 <ThumbUp style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
                 <span style={{fontSize: 12}}>{data.likes.total} Likes</span>
             </Grid>
-            <Grid container spacing={3} style={{marginTop: 10}}>
+            <Grid container style={{marginTop: 10}}>
                 <Grid item>
-                    <Button
-                        variant={!!data.isLike?"contained" : "outlined"}
-                        color="primary"
-                        size="small"
-                        className={classes.button}
-                        startIcon={<ThumbUp />}
-                        onClick={likeAPost(data._id, setData)}
-                    >
-                        Like
-                    </Button>
+                    <IconButton style={{paddingLeft: 0}} color="primary" onClick={likeAPost(data._id, setData)}>
+                        {!!data.isLike? <ThumbUp style={{fontSize: 20}} /> : <ThumbUpOutlined style={{fontSize: 20}} />}
+                    </IconButton>
                 </Grid>
                 <Grid item>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        className={classes.button}
-                        startIcon={<Comment />}
-                        onClick={showCommentBox}
-                    >
-                        Comment
-                    </Button>
+                    <IconButton color="primary" onClick={showCommentBox}>
+                        <Comment style={{fontSize: 20}} />
+                    </IconButton>
                 </Grid>
                 <Grid item>
-                    <Button
-                        variant="outlined"
-                        color="primary"
-                        size="small"
-                        className={classes.button}
-                        startIcon={<Share />}
-                    >
-                        Share
-                    </Button>
+                    <IconButton color="primary">
+                        <Share style={{fontSize: 20}} />
+                    </IconButton>
                 </Grid>
             </Grid>
             <Divider style={{marginTop: 10}}/>
