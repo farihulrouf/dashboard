@@ -31,6 +31,7 @@ const useStyles = (theme) => ({
       ['@media (max-width:800px)']: { 
         display: 'none'
       },
+      zIndex: 1,
       flexGrow: 1
     }
 })
@@ -50,7 +51,7 @@ class NavBar extends React.Component{
                     <Toolbar className={classes.toolbar}>
                         <Grid container alignItems="center">
                             <Grid item className={classes.logo}>
-                                <Link href="/"><a style={{textDecoration: 'none'}}><img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo.svg" /></a></Link>
+                                <a href="/" style={{textDecoration: 'none'}}><img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo.svg" /></a>
                             </Grid>
                             <Grid item className={classes.navBar}>
                                 {!onlyLogo && <Grid container justify="flex-end" spacing={2}>
@@ -96,14 +97,14 @@ class NavBar extends React.Component{
                     {React.cloneElement(children,{active: active})}
                 </Container>
             </main>
-            <Container maxWidth={false} name="footer" style={{color: 'white', backgroundColor: '#1b1642',marginTop: 50, padding: '48px 0px'}}>
+            <Container maxWidth={false} name="footer" style={{color: 'white', backgroundColor: '#1b1642', padding: '48px 0px'}}>
                 <Container maxWidth="lg">
                     <Grid container spacing={4}>
                         <Grid item xs={12} md={2} style={{padding: 16}}>
                             <List style={{padding: 0}}>
                                 <ListItem style={{padding: 0, paddingBottom: 8}}>
                                     <div style={{width: 120, height: 32}}>
-                                    <Link href=""><a><img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo-negative.svg" /></a></Link>
+                                    <a href="/"><img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo-negative.svg" /></a>
                                     </div>
                                 </ListItem>
                                 <ListItem style={{padding: '8px 0px'}}>
