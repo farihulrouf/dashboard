@@ -52,12 +52,9 @@ exports.getCourseRequests =async (req,res) => {
         sort: {createdAt: 1}
     }
     const criteria = {course : course}
-    // const requests = await CourseRequest.find(criteria)
-    // console.log(requests)
     const requests = await CourseRequest.paginate(criteria,options)
     if(requests.docs){
         res.json({status: "ok", requests: requests.docs});
-        // console.log(requests)
     }else{
         res.json({status: "error"})
     }
@@ -83,6 +80,20 @@ exports.getJoinedCourse = async(req,res) => {
     const courses = await Course.find({participants: user})
     console.log(courses)
     res.json(courses)
+}
+
+exports.updateCourse = (req,res,next) => {
+    const {course} = req
+    // console.log(course)
+    const {name, about, prerequisites, materials, price, instructors} = req.body
+    console.log(about)
+    course.name = name, course.about = about, course.prerequisites = prerequisites, course.materials = materials, course.price = price, course.instructors = instructors;
+    course.save((err,response)=>{
+        if(!err){
+            return next();
+        }
+        res.json({status: "ok", course: response});
+    })
 }
 
 // exports.validatePost = (req,res,next) => {

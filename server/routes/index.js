@@ -133,12 +133,6 @@ router.post(
   catchErrors(courseController.getMyCourses)
 );
 
-// router.put(
-//   "/api/courses/:courseId",
-//   authController,
-//   catchErrors(courseController.updateCourse)
-// )
-
 router.get(
   "/api/courses",
   authController.checkAuth,
@@ -160,6 +154,13 @@ router.get(
   "/api/courses/:courseId",
   catchErrors(courseController.getCourse)
 );
+
+router.put(
+  "/api/courses/:courseId/edit",
+  authController.checkAuth,
+  courseController.updateCourse,
+  catchErrors(courseController.getMyCourses)
+)
 
 router.get("/api/courses/:courseId", catchErrors(courseController.getCourse));
 

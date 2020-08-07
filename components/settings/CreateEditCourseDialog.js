@@ -6,7 +6,8 @@ import {Grid, TextField, IconButton, Typography, DialogActions,
 import ChipInput from 'material-ui-chip-input';
 import CurrencyTextField from '@unicef/material-ui-currency-textfield';
 import TeacherField from './TeacherField';
-import {createCourse} from '../../lib/api';
+import {createCourse, updateCourse} from '../../lib/api';
+import AvatarPicker from "../AvatarPicker";
 
 
 const styles = (theme) => ({
@@ -52,9 +53,10 @@ const MyDialogActions = withStyles((theme) => ({
 }))(DialogActions);
 
 export default function CreateEditCourseDialog(props) {
-  const [course,setCourse] = React.useState({prereqs: [], materials: [], instructors: []})
+  const [course,setCourse] = React.useState({name: "", about:"", logo:"", prerequisites: [], materials: [], instructors: [], ...props.course})
   const [open, setOpen] = React.useState(true);
-  const {title, onDialogClose} = props;
+  const [state, setState] = React.useState({showCropper: false})
+  const {title, onDialogClose, action, avatarChosen, showCropper} = props;
 
   const handleClose = () => {
     setOpen(false);
@@ -63,14 +65,14 @@ export default function CreateEditCourseDialog(props) {
 
   const handleAddPrereq = (prereq) => {
     let updatedCourse = {...course};
-    updatedCourse.prereqs = course.prereqs.concat(prereq);
+    updatedCourse.prerequisites = course.prerequisites.concat(prereq);
     setCourse(updatedCourse)
   }
 
   const handleDeletePrereq = (prereq,index) => {
-    let newPrereqs = course.prereqs;
-    newPrereqs.splice(index,1)
-    setCourse({...course,newPrereqs})
+    let prerequisites = [...course.prerequisites];
+    prerequisites.splice(index,1)
+    setCourse({...course,prerequisites})
   }
 
   const handleAddMaterial = (material) => {
@@ -80,15 +82,33 @@ export default function CreateEditCourseDialog(props) {
   }
 
   const handleDeleteMaterial = (material,index) => {
-    let newMaterials = course.materials;
-    newMaterials.splice(index,1)
-    setCourse({...course, newMaterials});
+    let materials = [...course.materials];
+    materials.splice(index,1);
+    setCourse({...course, materials})
   }
 
   const onButtonClick = ()=> {
-    createCourse(course).then((response)=>{
-      props.onCourseCreated(response);
-    })
+    if(course._id){
+      updateCourse(course).then((response)=>{
+        // console.log(response)
+        props.onCourseUpdated(response);
+      })
+    }else{
+      createCourse(course).then((response)=>{
+        props.onCourseCreated(response);
+      })
+    }
+  }
+
+  const onLogoClick = (event) => {
+    let newState = {...state, showCropper: true, avatarChosen: event.target.files[0]}
+    setState(newState)
+  }
+
+  const logoPickerCallback = (file) => {
+    // console.log(file)
+    const logo = `/files/${encodeURIComponent(file.key)}`;
+    setState({showCropper: false, avatarChosen: undefined, course: {...course, logo}})
   }
 
   return (
@@ -100,9 +120,11 @@ export default function CreateEditCourseDialog(props) {
         <MyDialogContent dividers>
           <Grid container spacing={3}>
             <Grid item xs={12}>
+            {!!state.showCropper && <AvatarPicker callback={logoPickerCallback} image={state.avatarChosen || course.logo} />}
+            {!state.showCropper &&  
               <Grid container justify="center">
               <label htmlFor='courseLogo'>
-                  <input style={{display: 'none'}} id='courseLogo' type="file" name="files" onChange={()=>{}} />
+                  <input style={{display: 'none'}} id='courseLogo' type="file" name="files" onChange={onLogoClick} />
                   <Button
                       color="primary"
                       size="small"
@@ -113,11 +135,12 @@ export default function CreateEditCourseDialog(props) {
                       <PhotoCameraOutlined />Add Course Logo
                   </Button>
               </label>
-              </Grid>
+              </Grid>}
             </Grid>
             <Grid item xs={12}>
                 <TextField
                 required
+                value={course.name}
                 id="courseName"
                 name="courseName"
                 label="Course Name"
@@ -128,6 +151,7 @@ export default function CreateEditCourseDialog(props) {
             <Grid item xs={12}>
                 <TextField
                 required
+                value={course.about}
                 id="courseDescription"
                 name="courseDescription"
                 label="Course Description"
@@ -138,7 +162,7 @@ export default function CreateEditCourseDialog(props) {
             </Grid>
             <Grid item xs={12}>
               <ChipInput
-                value={course.prereqs}
+                value={course.prerequisites}
                 onAdd={(prereq) => handleAddPrereq(prereq)}
                 onDelete={(prereq, index) => handleDeletePrereq(prereq, index)}
                 label="Course Prerequisites"
@@ -156,6 +180,7 @@ export default function CreateEditCourseDialog(props) {
             </Grid>
             <Grid item xs={12}>
               <CurrencyTextField
+                  required
                   label="Course Price"
                   variant="standard"
                   value={course.price}
@@ -171,7 +196,7 @@ export default function CreateEditCourseDialog(props) {
         </MyDialogContent>
         <MyDialogActions>
           <Button onClick={onButtonClick} autoFocus color="primary">
-            Create
+            {action}
           </Button>
         </MyDialogActions>
       </Dialog>

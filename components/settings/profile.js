@@ -47,6 +47,7 @@ class Profile extends React.Component{
         const {avatar, name, email, linkedIn, about} = this.state.user;
         return(
             <Grid alignItems="center" direction="column" container>
+                {console.log(avatarChosen)}
                 <form noValidate autoComplete="off" style={{width: '80%'}}>
                     {!!showCropper && <AvatarPicker callback={this.avatarPickerCallback} image={avatarChosen || avatar} />}
                     {!showCropper && <Grid justify="center" container>`

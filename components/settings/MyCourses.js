@@ -7,7 +7,10 @@ import CreateEditCourseDialog from "./CreateEditCourseDialog";
 export default class MyCourses extends React.Component{
   constructor(props){
     super(props);
-    this.state = {courses: [], open: false, dialogProps: {auth: props.auth, onDialogClose: this.onDialogClose.bind(this), onCourseCreated: this.onCourseCreated.bind(this)}}
+    this.state = {
+      courses: [], open: false, 
+      dialogProps: {auth: props.auth, onDialogClose: this.onDialogClose.bind(this), onCourseCreated: this.onCourseCreated.bind(this), onCourseUpdated: this.onCourseUpdated.bind(this)},
+    }
     this.onCreateButtonClick = this.onCreateButtonClick.bind(this);
   }
 
@@ -16,7 +19,7 @@ export default class MyCourses extends React.Component{
   }
 
   onCreateButtonClick = () => {
-    const dialogProps = {...this.state.dialogProps, title: "Create New Course"}
+    const dialogProps = {...this.state.dialogProps, title: "Create New Course", course:{}, action: "create", avatarChosen: undefined, showCropper: false}
     this.setState({open: true, dialogProps: dialogProps})
   }
 
@@ -25,11 +28,23 @@ export default class MyCourses extends React.Component{
   }
 
   onCourseCreated = (data) => {
+    // console.log(data)
     this.setState({open: false, courses: data.courses})
+  }
+
+  onCourseUpdated = (data) => {
+    // console.log(data)
+    this.setState({open: false, courses: data.courses})
+  }
+
+  onEditCourse = (course) =>{
+    const dialogProps = {...this.state.dialogProps, title: "Edit Course", course: course, action: "update"}
+    this.setState({open: true, dialogProps: dialogProps})
   }
 
   render(){
     const {courses, open, dialogProps} = this.state;
+
     return (
       <Grid container>
         {open && <CreateEditCourseDialog {...dialogProps} />}
@@ -74,7 +89,7 @@ export default class MyCourses extends React.Component{
           </React.Fragment>}
         </Grid>
         <Grid container justify="space-evenly" spacing={2}>
-          {courses.map((course)=> <Grid key={course._id} item><CourseItem {...course} /></Grid>)}
+          {courses.map((course)=> <Grid key={course._id} item><CourseItem onEditCourse={this.onEditCourse.bind(this)}{...course} /></Grid>)}
         </Grid>
       </Grid>
     )

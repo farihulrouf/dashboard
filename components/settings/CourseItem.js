@@ -1,8 +1,13 @@
 import {Paper, Grid, Button} from "@material-ui/core";
 import StarRatings from 'react-star-ratings';
+import CreateEditCourseDialog from "./CreateEditCourseDialog";
 
 export default function CourseItem(props){
     const {logo,about,rating,name,price} = props
+
+    const onEditButton = () => {
+        props.onEditCourse(props)
+    }
 
     return(
         <Paper elevation={3} style={{padding: 10, width: 300}}>
@@ -29,7 +34,9 @@ export default function CourseItem(props){
                         name='rating'
                         size={5}
                     />
-                    <Button variant="outlined" color="primary">Edit Course</Button>
+                    <Button variant="outlined" color="primary" onClick={onEditButton}>
+                        Edit Course
+                    </Button>
                 </Grid>
             </Grid>
         </Paper>
