@@ -81,7 +81,7 @@ export default function MenuListComposition(props) {
                 <ClickAwayListener onClickAway={handleClose}>
                   <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
                     {name === "Account" &&
-                      [{id: 1, name: "Settings", icon: <Settings />, action: () => Router.push("./settings")}, {id: 2, name: "Log Out", icon: <Lock />, action: signoutUser}].map(item=> (
+                      [{id: 1, name: "Settings", icon: <Settings />, action: () => Router.push("/settings")}, {id: 2, name: "Log Out", icon: <Lock />, action: signoutUser}].map(item=> (
                         <MenuItem onClick={item.action} key={item.id}>
                           <IconButton style={{padding: 0, marginRight: 10}} aria-label="settings">
                             {item.icon}

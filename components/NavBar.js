@@ -19,7 +19,7 @@ const useStyles = (theme) => ({
         padding: 0
     },
     content: {
-        minHeight: 'calc(100vh - 64px - 370px)'
+        minHeight: 'calc(100vh - 64px - 320px)'
     },
     toolbarIcon: {
       ['@media (min-width:800px)']: { 
