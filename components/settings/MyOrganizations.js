@@ -23,7 +23,7 @@ function Organization (props){
             <Divider />
             <Grid justify="center" container>
                 {!status && <Button value={_id} onClick={props.onApplyButtonClick} className={classes.orgButton} variant="outlined" color="primary">Apply</Button>}
-                {status === "accepted" && <Button className={classes.orgButton} variant="outlined" disabled>Joined</Button>}
+                {status === "joined" && <Button className={classes.orgButton} variant="outlined" disabled>Joined</Button>}
                 {status === "pending" && <Button value={applicationId} onClick={props.onCancelButtonClick} className={classes.orgButton} variant="outlined">Cancel Request</Button>}
             </Grid>
         </Paper>
@@ -93,7 +93,7 @@ export default class MyOrganizations extends React.Component{
                         }}
                     />
                 </Grid>
-                <Grid container justify="center" spacing={2}>
+                <Grid container justify="space-evenly" spacing={2}>
                     {orgs.map((org) => 
                         <Grid key={org._id} item>
                             <Organization {...org} 

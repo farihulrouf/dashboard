@@ -8,6 +8,7 @@ import MyProfile from '../components/settings/MyProfile';
 import MyCourses from '../components/settings/MyCourses';
 import MyTeachers from '../components/settings/MyTeachers';
 import MyOrganizations from '../components/settings/MyOrganizations';
+import MyStarItems from '../components/settings/MyStarItems';
 
 const styles = () => ({
 })
@@ -37,7 +38,7 @@ const Content = (props) => {
       {props.settingOption === 2 && <MyCourses auth={props.auth} />}
       {props.settingOption === 3 && <MyTeachers auth={props.auth} />}
       {props.settingOption === 4 && <MyOrganizations auth={props.auth} />}
-      {props.settingOption === 5 && <div>Stars</div>}
+      {props.settingOption === 5 && <MyStarItems auth={props.auth} />}
     </React.Fragment>
   )
 }

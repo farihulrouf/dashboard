@@ -229,6 +229,8 @@ router.get("/api/users/me", (req,res)=>{
   res.json({status: "oke", user: req.user});
 });
 
+router.get("/api/users/me/myteachers",catchErrors(userController.getMyTeachers));
+
 router.param("userId", userController.getUserById);
 
 router.get("/api/users/:userId", (req,res)=>{
@@ -253,11 +255,31 @@ router.put(
 
 router.param("applicationId",applicationController.getApplicationById);
 
+router.get(
+  "/api/teacher-applications",
+  authController.checkAuth,
+  catchErrors(applicationController.getApplications)
+)
+
 router.post(
   "/api/teacher-applications/create",
   authController.checkAuth,
   catchErrors(applicationController.createApplication),
   catchErrors(userController.getUsers)
+)
+
+router.put(
+  "/api/teacher-applications/:applicationId/accept",
+  authController.checkAuth,
+  catchErrors(applicationController.acceptRequest),
+  catchErrors(applicationController.getApplications)
+)
+
+router.post(
+  "/api/teacher-applications/:applicationId/reject",
+  authController.checkAuth,
+  catchErrors(applicationController.rejectRequest),
+  catchErrors(applicationController.getApplications)
 )
 
 router.delete(

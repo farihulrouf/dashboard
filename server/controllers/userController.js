@@ -23,6 +23,15 @@ exports.getUsers = async (req,res) => {
     res.json({status: "ok", users: users})
 }
 
+
+exports.getMyTeachers = async (req,res) => {
+    const {user} = req;
+    if(!!user){
+        return res.json({status: "ok", teachers: user.teachers})
+    }
+    res.status(401).json({status: "error", message: "unauthorized"});
+}
+
 exports.getUserById = async (req, res, next, id) => {
     const profile = await User.findOne({_id: id});
     req.profile = profile //don't use req.user, it will override passport user

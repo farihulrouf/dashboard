@@ -45,7 +45,10 @@ const userSchema = new mongoose.Schema(
       default: ""
     },
     isAnOrganization: {type: Boolean, default: false, required: "Organization field is required"},
-    teachers: [{type: ObjectId, ref: "User"}],
+    teachers: [{
+      type: ObjectId, 
+      ref: "User"
+    }],
     organization: [{ type: ObjectId, ref: "User" }],
     following: [{ type: ObjectId, ref: "User" }],
     followers: [{ type: ObjectId, ref: "User" }]
@@ -57,6 +60,7 @@ const userSchema = new mongoose.Schema(
 const autoPopulateFollowingAndFollowers = function(next) {
   this.populate("following", "_id name avatar");
   this.populate("followers", "_id name avatar");
+  this.populate("teachers", "_id name avatar");
   next();
 };
 

@@ -49,18 +49,18 @@ class AvatarPicker extends React.Component {
     render() {
         const {onCrop, onScaleChange} = this;
         const {scaleValue} = this.state;
-        const {image, callback} = this.props;
-        console.log(image);
+        const {image, callback, width, height, borderRadius} = this.props;
+        
         return (
         <Grid container style={{marginBottom: 20}}>
             <Grid container justify="center">
                 <AvatarEditor
                     ref={(editor)=>this.editor = editor}
                     image={image}
-                    width={250}
-                    height={250}
+                    width={width || 250}
+                    height={height || 250}
                     border={0}
-                    borderRadius={150}
+                    borderRadius={borderRadius || 150}
                     color={[128, 128, 128, 0.6]} // RGBA
                     scale={scaleValue}
                     rotate={0}

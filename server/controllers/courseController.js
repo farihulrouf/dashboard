@@ -84,10 +84,10 @@ exports.getJoinedCourse = async(req,res) => {
 
 exports.updateCourse = (req,res,next) => {
     const {course} = req
-    // console.log(course)
-    const {name, about, prerequisites, materials, price, instructors} = req.body
-    console.log(about)
-    course.name = name, course.about = about, course.prerequisites = prerequisites, course.materials = materials, course.price = price, course.instructors = instructors;
+    const {name, about, prerequisites, materials, price, instructors, logo} = req.body
+    course.name = name, course.about = about, course.prerequisites = prerequisites, 
+    course.materials = materials, course.price = price, course.instructors = instructors;
+    course.logo = logo;
     course.save((err,response)=>{
         if(!err){
             return next();
