@@ -81,7 +81,7 @@ export default function CreateEditCourseDialog(props) {
   const handleAddMaterial = (material) => {
     let updatedCourse = {...state.course};
     updatedCourse.materials = state.course.materials.concat(material)
-    setState({...state, course: updateCourse})
+    setState({...state, course: updatedCourse})
   }
 
   const handleDeleteMaterial = (material,index) => {
