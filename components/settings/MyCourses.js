@@ -1,7 +1,7 @@
 import {Grid, ButtonGroup, Button} from '@material-ui/core';
 import {Add} from "@material-ui/icons";
 import CourseItem from "./CourseItem";
-import {getMyCourses} from "../../lib/api";
+import {getMyCourses, getMyTeachers} from "../../lib/api";
 import CreateEditCourseDialog from "./CreateEditCourseDialog";
   
 export default class MyCourses extends React.Component{
@@ -9,13 +9,19 @@ export default class MyCourses extends React.Component{
     super(props);
     this.state = {
       courses: [], open: false, 
-      dialogProps: {auth: props.auth, onDialogClose: this.onDialogClose.bind(this), onCourseCreated: this.onCourseCreated.bind(this), onCourseUpdated: this.onCourseUpdated.bind(this)},
+      dialogProps: {auth: props.auth, teachers: [], onDialogClose: this.onDialogClose.bind(this), onCourseCreated: this.onCourseCreated.bind(this), onCourseUpdated: this.onCourseUpdated.bind(this)},
     }
     this.onCreateButtonClick = this.onCreateButtonClick.bind(this);
   }
 
   componentDidMount(){
-    getMyCourses().then(res => this.setState({courses: res.courses }));
+    getMyCourses().then(courseRes => {
+      getMyTeachers().then((teacherRes)=> {
+        let {dialogProps} = this.state;
+        dialogProps.teachers = teacherRes.teachers;
+        this.setState({courses: courseRes.courses, dialogProps: dialogProps});
+      })
+    });
   }
 
   onCreateButtonClick = () => {
@@ -28,12 +34,10 @@ export default class MyCourses extends React.Component{
   }
 
   onCourseCreated = (data) => {
-    // console.log(data)
     this.setState({open: false, courses: data.courses})
   }
 
   onCourseUpdated = (data) => {
-    // console.log(data)
     this.setState({open: false, courses: data.courses})
   }
 

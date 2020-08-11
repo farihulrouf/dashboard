@@ -78,8 +78,11 @@ class Subject extends React.Component{
                                 </Grid>
                                 <Grid item xs={12}>
                                     <div style={{display: "flex", backgroundColor: 'white'}}>
-                                        <div style={{display: "block"}}><Avatar src="https://thefront.maccarianagency.com/images/photos/people/veronica-adams.jpg" width="40" height="40" style={{border: '3px solid white'}} /></div>
-                                        <div style={{display: "block"}}><Avatar src="https://thefront.maccarianagency.com/images/photos/people/akachi-luccini.jpg" width="40" height="40" style={{border: '3px solid white'}} /></div>
+                                        {course.instructors && course.instructors.map((ins)=> (
+                                            <div style={{display: "block"}}>
+                                                <a href={ins.linkedIn}><Avatar alt={ins.name} src={ins.avatar} width="40" height="40" style={{border: '3px solid white'}} /></a>
+                                            </div>
+                                        ))}
                                         <div style={{display: "flex", justifyContent: "flex-end", alignSelf: "center", backgroundColor: "white", flexGrow: 1}}>
                                             <Star style={{color: '#f9a825'}} />
                                             <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>{course.rating}</span>
@@ -90,9 +93,11 @@ class Subject extends React.Component{
                             </Grid>
                         </Grid>
                         <Grid xs={12} sm={4} item>
-                            <span height="auto" width="auto">
-                                <img src="https://thefront.maccarianagency.com/images/illustrations/mobiles.svg" height="100%" width="100%" />
-                            </span>
+                            <Grid container justify="center">
+                                <span height="auto" width="auto">
+                                    <img src={course.logo || "https://thefront.maccarianagency.com/images/illustrations/mobiles.svg"} height="100%" width="100%" />
+                                </span>
+                            </Grid>
                         </Grid>
                     </Grid>
                     <Tabs classes={{indicator: classes.indicator}} value={tabIndex} onChange={(e,value)=>{this.setState({tabIndex: value})}} aria-label="simple tabs example">

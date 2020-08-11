@@ -53,9 +53,12 @@ const MyDialogActions = withStyles((theme) => ({
 }))(DialogActions);
 
 export default function CreateEditCourseDialog(props) {
-  const [course,setCourse] = React.useState({name: "", about:"", logo:"", prerequisites: [], materials: [], instructors: [], ...props.course})
   const [open, setOpen] = React.useState(true);
-  const [state, setState] = React.useState({showCropper: false})
+  const [state, setState] = React.useState({
+    showCropper: false,
+    avatarChosen: undefined,
+    course: {name: "", about:"", logo:"", prerequisites: [], materials: [], instructors: [], ...props.course} 
+  })
   const {title, onDialogClose, action, avatarChosen, showCropper} = props;
 
   const handleClose = () => {
@@ -64,37 +67,36 @@ export default function CreateEditCourseDialog(props) {
   };
 
   const handleAddPrereq = (prereq) => {
-    let updatedCourse = {...course};
-    updatedCourse.prerequisites = course.prerequisites.concat(prereq);
-    setCourse(updatedCourse)
+    let updatedCourse = {...state.course};
+    updatedCourse.prerequisites = state.course.prerequisites.concat(prereq);
+    setState({...state, course: updatedCourse})
   }
 
   const handleDeletePrereq = (prereq,index) => {
-    let prerequisites = [...course.prerequisites];
+    let prerequisites = [...state.course.prerequisites];
     prerequisites.splice(index,1)
-    setCourse({...course,prerequisites})
+    setState({...state, course: {...state.course,prerequisites}})
   }
 
   const handleAddMaterial = (material) => {
-    let updatedCourse = {...course};
-    updatedCourse.materials = course.materials.concat(material)
-    setCourse(updatedCourse)
+    let updatedCourse = {...state.course};
+    updatedCourse.materials = state.course.materials.concat(material)
+    setState({...state, course: updatedCourse})
   }
 
   const handleDeleteMaterial = (material,index) => {
-    let materials = [...course.materials];
+    let materials = [...state.course.materials];
     materials.splice(index,1);
-    setCourse({...course, materials})
+    setState({...state, course: {...state.course, materials}})
   }
 
   const onButtonClick = ()=> {
-    if(course._id){
-      updateCourse(course).then((response)=>{
-        // console.log(response)
+    if(state.course._id){
+      updateCourse(state.course).then((response)=>{
         props.onCourseUpdated(response);
       })
     }else{
-      createCourse(course).then((response)=>{
+      createCourse(state.course).then((response)=>{
         props.onCourseCreated(response);
       })
     }
@@ -106,9 +108,12 @@ export default function CreateEditCourseDialog(props) {
   }
 
   const logoPickerCallback = (file) => {
-    // console.log(file)
     const logo = `/files/${encodeURIComponent(file.key)}`;
-    setState({showCropper: false, avatarChosen: undefined, course: {...course, logo}})
+    setState({...state, showCropper: false, avatarChosen: undefined, course: {...state.course, logo}})
+  }
+
+  const setCourse = (newCourse) => {
+    setState({...state, course: newCourse})
   }
 
   return (
@@ -120,49 +125,56 @@ export default function CreateEditCourseDialog(props) {
         <MyDialogContent dividers>
           <Grid container spacing={3}>
             <Grid item xs={12}>
-            {!!state.showCropper && <AvatarPicker callback={logoPickerCallback} image={state.avatarChosen || course.logo} />}
+            {!!state.showCropper && <AvatarPicker width={400} height={200} borderRadius={1} callback={logoPickerCallback} image={state.avatarChosen || state.course.logo} />}
             {!state.showCropper &&  
-              <Grid container justify="center">
-              <label htmlFor='courseLogo'>
-                  <input style={{display: 'none'}} id='courseLogo' type="file" name="files" onChange={onLogoClick} />
-                  <Button
-                      color="primary"
-                      size="small"
-                      component="span"
-                      aria-label="add"
-                      variant="outlined"
-                  >
-                      <PhotoCameraOutlined />Add Course Logo
-                  </Button>
-              </label>
+              <Grid container>
+              <Grid item xs={12}>
+                <Grid container justify="center"><img src={state.course.logo} alt="Course Logo" width="100%" height="auto" /></Grid>
+              </Grid>
+              <Grid item xs={12}>
+                <Grid container justify="center">
+                  <label htmlFor='courseLogo'>
+                      <input style={{display: 'none'}} id='courseLogo' type="file" name="files" onChange={onLogoClick} />
+                      <Button
+                          color="primary"
+                          size="small"
+                          component="span"
+                          aria-label="add"
+                          variant="outlined"
+                      >
+                          <PhotoCameraOutlined />Add Course Logo
+                      </Button>
+                  </label>
+                </Grid>
+              </Grid>
               </Grid>}
             </Grid>
             <Grid item xs={12}>
                 <TextField
                 required
-                value={course.name}
+                value={state.course.name}
                 id="courseName"
                 name="courseName"
                 label="Course Name"
-                onChange={(event)=>setCourse({...course,name: event.target.value})}
+                onChange={(event)=>setState({...state, course: {...state.course, name: event.target.value}})}
                 fullWidth
               />
             </Grid>
             <Grid item xs={12}>
                 <TextField
                 required
-                value={course.about}
+                value={state.course.about}
                 id="courseDescription"
                 name="courseDescription"
                 label="Course Description"
-                onChange={(event)=>setCourse({...course,about: event.target.value})}
+                onChange={(event)=>setState({...state, course: {...state.course, about: event.target.value}})}
                 fullWidth
                 multiline
               />
             </Grid>
             <Grid item xs={12}>
               <ChipInput
-                value={course.prerequisites}
+                value={state.course.prerequisites}
                 onAdd={(prereq) => handleAddPrereq(prereq)}
                 onDelete={(prereq, index) => handleDeletePrereq(prereq, index)}
                 label="Course Prerequisites"
@@ -171,7 +183,7 @@ export default function CreateEditCourseDialog(props) {
             </Grid>
             <Grid item xs={12}>
               <ChipInput
-                value={course.materials}
+                value={state.course.materials}
                 onAdd={(material) => handleAddMaterial(material)}
                 onDelete={(material, index) => handleDeleteMaterial(material, index)}
                 label="Course Materials"
@@ -183,14 +195,14 @@ export default function CreateEditCourseDialog(props) {
                   required
                   label="Course Price"
                   variant="standard"
-                  value={course.price}
+                  value={state.course.price}
                   currencySymbol="Rp"
                   outputFormat="string"
-                  onChange={(event, price)=> setCourse({...course,price})}
+                  onChange={(event, price)=> setState({...state, course: {...state.course,price}})}
               />
             </Grid>
             <Grid item xs={12}>
-              <TeacherField course={course} setCourse={setCourse} />
+              <TeacherField course={state.course} teachers={props.teachers} setCourse={setCourse} />
             </Grid>
           </Grid>
         </MyDialogContent>

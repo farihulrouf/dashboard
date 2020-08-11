@@ -44,7 +44,8 @@ const mongooseOptions = {
   useFindAndModify: false,
 };
 
-mongoose.set("useUnifiedTopology", true);
+mongoose.set('useUnifiedTopology', true);
+mongoose.set('runValidators', true);
 mongoose
   .connect(process.env.MONGO_URI, mongooseOptions)
   .then(() => console.log("DB connected"));

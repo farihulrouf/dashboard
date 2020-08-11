@@ -9,6 +9,37 @@ exports.getApplicationById = async (req,res,next,id)=>{
     next();
 }
 
+exports.getApplications = async (req,res) => {
+    const {user} = req;
+    const apps = await TeacherApplication.find({organization: user})
+    res.json({status: "ok", applications: apps})
+}
+
+exports.acceptRequest = async (req,res, next) => {
+    const {status} = req.params;
+    const {user, application} = req;
+    const updatedApplication  = await application.update({status: "joined"})
+    if(updatedApplication.ok){
+        //insert user to teachers
+        user.update({$addToSet: {teachers: application.teacher}}, (err,res)=>{
+            if(!err) return next();
+            res.status(500).json({status: "error", message: "Unable to accept request"});
+        })
+    }else{
+        res.status(500).json({status: "error", message: "Unable to accept request"})
+    }
+}
+
+exports.rejectRequest = async (req,res,next) => {
+    const {application} = req;
+    const deletedApp = await application.remove()
+    if(deletedApp){
+        return  next();
+    }
+    res.json ({status: "error", message: "Unable to reject request"})
+}
+
+
 exports.createApplication = async (req, res, next) => {
     const {user} = req;
     const {organizationId} = req.body;
