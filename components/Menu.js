@@ -11,6 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { signoutUser } from "../lib/auth";
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Router from "next/router";
+import io from "socket.io-client";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -29,6 +30,8 @@ export default function MenuListComposition(props) {
   const [open, setOpen] = React.useState(false);
   const {name} = props;
   const anchorRef = React.useRef(null);
+  const ENDPOINT = 'localhost:3000';
+  let socket;
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -58,6 +61,18 @@ export default function MenuListComposition(props) {
 
     prevOpen.current = open;
   }, [open]);
+
+  React.useEffect(() => {
+    socket = io(ENDPOINT);
+    socket.emit('join', {name: 'name', room: 'room'}, (error) => {
+    });
+  }, [ENDPOINT]);
+
+  React.useEffect(()=> {
+    socket.on('message', (message) => {
+      console.log(message);
+    })
+  }, []);
 
   return (
     <div className={classes.root}>
