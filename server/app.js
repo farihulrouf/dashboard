@@ -9,22 +9,26 @@ const passport = require("passport");
 const helmet = require("helmet");
 const compression = require("compression");
 const cors = require("cors");
+const socketio = require("socket.io");
+const http = require("http");
 
 /* Loads all variables from .env file to "process.env" */
 require("dotenv").config();
 /* Require our models here so we can use the mongoose.model() singleton to reference our models across our app */
 require("./models/Course");
 require("./models/User");
-require("./models/Exercise")
+require("./models/Exercise");
 require("./models/Post");
 require("./models/Comment");
-require("./models/CourseRequest")
+require("./models/CourseRequest");
 require("./models/QuestionPool");
 require("./models/AnswerSheet");
 require("./models/Exam");
 require("./models/TeacherApplication");
 
 const routes = require("./routes");
+const { callbackify } = require("util");
+const { addActiveUser, removeActiveUser, getAllActiveUsers } = require("./sockets/active_users");
 require("./passport");
 // require('./path/to/passport/config/file')(passport);
 
@@ -37,23 +41,22 @@ const handle = app.getRequestHandler();
 const mongooseOptions = {
   useNewUrlParser: true,
   useCreateIndex: true,
-  useFindAndModify: false
+  useFindAndModify: false,
 };
 
-mongoose.set('useUnifiedTopology', true);
+mongoose.set("useUnifiedTopology", true);
 mongoose
-  .connect(
-    process.env.MONGO_URI,
-    mongooseOptions
-  )
+  .connect(process.env.MONGO_URI, mongooseOptions)
   .then(() => console.log("DB connected"));
 
-mongoose.connection.on("error", err => {
+mongoose.connection.on("error", (err) => {
   console.log(`DB connection error: ${err.message}`);
 });
 
 app.prepare().then(() => {
   const server = express();
+  const app = http.createServer(server);
+  const io = socketio(app);
 
   if (!dev) {
     /* Helmet helps secure our app by setting various HTTP headers */
@@ -63,20 +66,18 @@ app.prepare().then(() => {
   }
 
   server.use((req, res, next) => {
-    if (process.env.NODE_ENV === 'production') {
-        // if (req.headers.host === 'your-app.herokuapp.com')
-        //     return res.redirect(301, 'https://www.your-custom-domain.com');
-        if (req.headers['x-forwarded-proto'] !== 'https')
-            return res.redirect('https://' + req.headers.host + req.url);
-        else
-            return next();
-    } else
-        return next();
+    if (process.env.NODE_ENV === "production") {
+      // if (req.headers.host === 'your-app.herokuapp.com')
+      //     return res.redirect(301, 'https://www.your-custom-domain.com');
+      if (req.headers["x-forwarded-proto"] !== "https")
+        return res.redirect("https://" + req.headers.host + req.url);
+      else return next();
+    } else return next();
   });
 
   /* Body Parser built-in to Express as of version 4.16 */
   server.use(express.json());
-  server.use(express.urlencoded({extended: true})); 
+  server.use(express.urlencoded({ extended: true }));
   // server.use(express.static('static'))
   /* Express Validator will validate form data sent to the backend */
   server.use(expressValidator());
@@ -98,7 +99,7 @@ app.prepare().then(() => {
     secret: process.env.SESSION_SECRET,
     store: new MongoStore({
       mongooseConnection: mongoose.connection,
-      ttl: 14 * 24 * 60 * 60 // save session for 14 days
+      ttl: 14 * 24 * 60 * 60, // save session for 14 days
     }),
     // forces the session to be saved back to the store
     resave: false,
@@ -106,8 +107,8 @@ app.prepare().then(() => {
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      maxAge: 1000 * 60 * 60 * 24 * 14 // expires in 14 days
-    }
+      maxAge: 1000 * 60 * 60 * 24 * 14, // expires in 14 days
+    },
   };
 
   if (!dev) {
@@ -132,7 +133,7 @@ app.prepare().then(() => {
   - we use skip to ignore static files from _next folder */
   server.use(
     logger("dev", {
-      skip: req => req.url.includes("_next")
+      skip: (req) => req.url.includes("_next"),
     })
   );
 
@@ -159,7 +160,40 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  server.listen(port, err => {
+  io.on('connection', (socket) => {
+    console.log("a new user join");
+
+    socket.on('join', ({name, room}, callback) => {
+      console.log(name, room);
+
+      const activeUser  = addActiveUser(socket.id, name, room)
+      const allActiveUsers = getAllActiveUsers()
+
+      socket.emit('message', {user: 'admin', text: `${activeUser.name} welcom to the room ${activeUser.room}`});
+      socket.broadcast.to(activeUser.room).emit('message', {user: 'admin', text: `${activeUser.name} welcom to the room ${activeUser.room}`})
+
+      socket.join(activeUser.room)
+
+      callback();
+    });
+
+    socket.on('sendMessage', (message, callback) => {
+      const activeUser = getActiveUser(socket.id);
+
+      io.to(activeUser.room).emit('message', {user: activeUser.name, text: message});
+
+      callback();
+    })
+
+    socket.on('disconnect', () => {
+      const activeUser = removeActiveUser(socket.id);
+      console.log('A User had left!!!');
+    })
+  })
+
+  server.set('socketio', io);
+
+  app.listen(port, (err) => {
     if (err) throw err;
     console.log(`Server listening on ${ROOT_URL}`);
   });
