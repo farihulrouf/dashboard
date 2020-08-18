@@ -6,8 +6,8 @@ var Course = require('./server/models/Course');
 var Post = require('./server/models/Post');
 var Comment = require('./server/models/Comment');
 var TeacherApplication = require('./server/models/TeacherApplication');
+var BankNotification = require('./server/models/BankNotification');
 const mongoose = require("mongoose");
-const fs = require('fs');
 
 const mongooseOptions = {
     useNewUrlParser: true,
@@ -90,4 +90,6 @@ replServer.context.User = User;
 replServer.context.Course = Course;
 replServer.context.Post = Post;
 replServer.context.Comment = Comment;
+replServer.context.TeacherApplication = TeacherApplication;
+replServer.context.BankNotification = BankNotification;
 replServer.context.seeds = seeds;

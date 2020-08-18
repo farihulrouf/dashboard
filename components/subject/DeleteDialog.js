@@ -22,7 +22,6 @@ export default class DeleteDialog extends React.Component{
 
     checkDelete(){
         const {toType, type} = this.state;
-        console.log(`${toType}===${type}`)
         if(toType == type){
             this.props.onDelete()
         }else{

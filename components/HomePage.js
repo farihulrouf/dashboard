@@ -175,8 +175,8 @@ class HomePage extends React.Component{
                                 <span style={{color: "#546e7a", fontSize: '1.25rem', fontWeight: 500, lineHeight: 1.6}}>The best way to do online learning is to be able to communicate two direction</span>
                             </h4>
                             <Grid container justify="space-evenly" spacing={3}>
-                                {this.features.map((f) => (
-                                    <Grid item><Feature f={f} /></Grid>)
+                                {this.features.map((f,i) => (
+                                    <Grid key={i} item><Feature f={f} /></Grid>)
                                 )}
                             </Grid>
                         </section>
@@ -206,8 +206,8 @@ class HomePage extends React.Component{
                                 <span style={{color: "#546e7a", fontSize: '1.25rem', fontWeight: 500, lineHeight: 1.6}}>Educators and students have a great experiences using Edupedia, Here is what they have to say</span>
                             </h4>
                             <Grid container justify="space-evenly">
-                                {this.testimonies.map((t)=> (
-                                    <Grid item><Testimoni {...t} /></Grid>
+                                {this.testimonies.map((t,i)=> (
+                                    <Grid item key={i}><Testimoni {...t} /></Grid>
                                 ))}
                             </Grid>
                         </section>

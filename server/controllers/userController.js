@@ -32,6 +32,19 @@ exports.getMyTeachers = async (req,res) => {
     res.status(401).json({status: "error", message: "unauthorized"});
 }
 
+exports.getMyNotifications = async (req,res) => {
+    if(!!req.user){
+        const {notifications} = await User.findById(req.user.id)
+                                            .populate("notifications.list.bankNotification","photo message createdAt url")
+                                            .select("notifications");
+        return res.json({
+            status: "ok", 
+            notifications: notifications
+        })
+        }
+        res.json({status: "error", notifications: []})
+}
+
 exports.getUserById = async (req, res, next, id) => {
     const profile = await User.findOne({_id: id});
     req.profile = profile //don't use req.user, it will override passport user

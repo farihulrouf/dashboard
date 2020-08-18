@@ -1,17 +1,18 @@
 import React from 'react';
-import {Button, IconButton} from '@material-ui/core';
+import {Button, IconButton, Badge, withStyles} from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import Grow from '@material-ui/core/Grow';
 import Paper from '@material-ui/core/Paper';
 import Popper from '@material-ui/core/Popper';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuList from '@material-ui/core/MenuList';
-import {Settings, Lock} from "@material-ui/icons";
+import {Settings, Lock, Notifications} from "@material-ui/icons";
 import { makeStyles } from '@material-ui/core/styles';
 import { signoutUser } from "../lib/auth";
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Router from "next/router";
-import io from "socket.io-client";
+import Notification from "./Notification";
+import {connect} from "react-redux";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,13 +26,21 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function MenuListComposition(props) {
+
+const StyledBadge = withStyles((theme) => ({
+  badge: {
+      fontSize: 10,
+      backgroundColor: 'red',
+      color: 'white',
+      fontWeight: 700
+  },
+}))(Badge);
+
+function MenuListComposition(props) {
   const classes = useStyles();
   const [open, setOpen] = React.useState(false);
   const {name} = props;
   const anchorRef = React.useRef(null);
-  const ENDPOINT = 'localhost:3000';
-  let socket;
 
   const handleToggle = () => {
     setOpen((prevOpen) => !prevOpen);
@@ -62,30 +71,27 @@ export default function MenuListComposition(props) {
     prevOpen.current = open;
   }, [open]);
 
-  React.useEffect(() => {
-    socket = io(ENDPOINT);
-    socket.emit('join', {name: 'name', room: 'room'}, (error) => {
-    });
-  }, [ENDPOINT]);
-
-  React.useEffect(()=> {
-    socket.on('message', (message) => {
-      console.log(message);
-    })
-  }, []);
-
   return (
     <div className={classes.root}>
       <div>
-        <Button
-          ref={anchorRef}
-          aria-controls={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-          endIcon={<KeyboardArrowDownIcon />}
-        >
-          <span className={classes.menuText}>{name}</span>
-        </Button>
+        {name == "Notifications" &&
+          <IconButton onClick={handleToggle} ref={anchorRef} aria-controls={open ? 'menu-list-grow' : undefined}>
+              <StyledBadge badgeContent={props.notifications.unread}>
+                  <Notifications style={{fontSize: 20}} />
+              </StyledBadge>
+          </IconButton>
+        }
+        {name !== "Notifications" && 
+          <Button
+            ref={anchorRef}
+            aria-controls={open ? 'menu-list-grow' : undefined}
+            aria-haspopup="true"
+            onClick={handleToggle}
+            endIcon={<KeyboardArrowDownIcon />}
+          >
+            <span className={classes.menuText}>{name}</span>
+          </Button>
+        }
         <Popper open={open} anchorEl={anchorRef.current} role={undefined} transition disablePortal>
           {({ TransitionProps, placement }) => (
             <Grow
@@ -110,6 +116,11 @@ export default function MenuListComposition(props) {
                         <MenuItem onClick={item.action} key={item.id}>{item.name}</MenuItem>
                       ))
                     }
+                    {name === "Notifications" && !!props.notifications &&
+                      props.notifications.list.map(item=> (
+                        <MenuItem key={item._id}><Notification data={item} /></MenuItem>
+                      ))
+                    }
                   </MenuList>
                 </ClickAwayListener>
               </Paper>
@@ -120,3 +131,11 @@ export default function MenuListComposition(props) {
     </div>
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    notifications: !!state ? state.notifications : []
+  }
+}
+
+export default connect(mapStateToProps,null)(MenuListComposition);

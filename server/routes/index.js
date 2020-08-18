@@ -226,8 +226,10 @@ router.post(
 
 
 router.get("/api/users/me", (req,res)=>{
-  res.json({status: "oke", user: req.user});
+  res.json({status: "ok", user: req.user});
 });
+
+router.get("/api/users/me/notifications", catchErrors(userController.getMyNotifications))
 
 router.get("/api/users/me/myteachers",catchErrors(userController.getMyTeachers));
 

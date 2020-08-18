@@ -4,7 +4,7 @@ import {ArrowRightAlt} from "@material-ui/icons";
 import NavBar from "../components/NavBar";
 import Link from "next/link";
 import MuiAlert from '@material-ui/lab/Alert';
-import {signupUser} from '../lib/auth';
+import {signupUser, authInitialProps} from '../lib/auth';
 import Router from "next/router"
 
 function Alert(props) {
@@ -190,5 +190,7 @@ class SignUp extends React.Component{
         )
     }
 }
+
+SignUp.getInitialProps = authInitialProps();
 
 export default SignUp;

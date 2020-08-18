@@ -13,6 +13,7 @@
 
 module.exports = {
   env: {
-      TINYMCE_APIKEY: process.env.TINYMCE_APIKEY
+      TINYMCE_APIKEY: process.env.TINYMCE_APIKEY,
+      SOCKET_URL: process.env.PRODUCTION_URL
   },
 }

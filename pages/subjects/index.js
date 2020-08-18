@@ -2,12 +2,12 @@ import React from "react";
 import {withRouter} from 'next/router'
 import {withStyles, Container, Grid, Avatar, Tabs, Tab, Paper, IconButton, Typography, Box, InputBase, Button} from "@material-ui/core";
 import {Star} from "@material-ui/icons";
-import { authInitialProps } from "../../../lib/auth"
-import NavBar from "../../../components/NavBar";
-import Home from "../../../components/subject/Home";
-import Discussion from "../../../components/subject/Discussion";
-import ExerciseSetting from "../../../components/subject/ExerciseSetting";
-import { getCourseById } from "../../../lib/api";
+import { authInitialProps } from "../../lib/auth"
+import NavBar from "../../components/NavBar";
+import Home from "../../components/subject/Home";
+import Discussion from "../../components/subject/Discussion";
+import ExerciseSetting from "../../components/subject/ExerciseSetting";
+import { getCourseById } from "../../lib/api";
 
 const styles = (theme) => ({
     indicator: {
@@ -79,7 +79,7 @@ class Subject extends React.Component{
                                 <Grid item xs={12}>
                                     <div style={{display: "flex", backgroundColor: 'white'}}>
                                         {course.instructors && course.instructors.map((ins)=> (
-                                            <div style={{display: "block"}}>
+                                            <div key={ins._id} style={{display: "block"}}>
                                                 <a href={ins.linkedIn}><Avatar alt={ins.name} src={ins.avatar} width="40" height="40" style={{border: '3px solid white'}} /></a>
                                             </div>
                                         ))}
@@ -136,4 +136,4 @@ class Subject extends React.Component{
 
 Subject.getInitialProps = authInitialProps(true);
 
-export default withRouter(withStyles(styles)(Subject));
+export default withStyles(styles)(withRouter(Subject));

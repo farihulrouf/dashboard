@@ -1,6 +1,8 @@
 const mongoose = require("mongoose");
 const Post = mongoose.model("Post");
 const Comment = mongoose.model("Comment");
+const BankNotification = mongoose.model("BankNotification");
+const {sendNotification} = require("../rabbitmq");
 
 
 exports.addPost = async (req, res) => {
@@ -45,19 +47,30 @@ exports.likeAPost = async (req,res) => {
   const post = req.post;
   likes = post.likes;
   idx = likes.likedBy.indexOf(req.user._id);
+  let notification = null;
+  let query = {};
   if(idx >= 0){
     //Already like it, unlike it
-    likes.total -= 1;
-    delete likes.likedBy[idx]
+    query = {
+      $inc: {"likes.total": -1},
+      $pull: {"likes.likedBy": req.user._id}
+    }
     isLike = false
   }else{
-    likes.total += 1;
-    likes.likedBy.push(req.user._id)
+    query = {
+      $inc: {"likes.total": 1},
+      $addToSet: {"likes.likedBy": req.user._id}
+    }
     isLike = true;
+    notification = await BankNotification.createLikePostNotif(req.user,post)
   }
-  post.save((err,post)=>{
+  Post.findByIdAndUpdate(post.id, query, {new: true},(err,post)=>{
     if(!err){
       post._doc.isLike = isLike;
+      //Create notification if notif exist from thumbs up and never exist before
+      if(!!notification && !notification.isExist){
+        sendNotification(process.env.NOTIFICATION_OUTGOING_EXCHANGE,notification);
+      }
       res.json({status: "ok", message: "like/unlike post success", post: post});
     }
     else res.json({status: "error", message: "unable to like/unlike post"})

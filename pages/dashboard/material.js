@@ -5,7 +5,7 @@ import {Container, Paper, Grid, Button,
 import {Menu} from "@material-ui/icons";
 import {Star, ArrowRightAlt} from "@material-ui/icons";
 import {getCourses} from '../../lib/api';
-import Link from "next/link";
+import Router from "next/router";
 
 const styles = (theme) => ({
     iconButton: {
@@ -73,7 +73,7 @@ const Course = (props) => {
                     </Grid>
                 </Grid>
                 <Grid container alignItems="center" style={{paddingTop: 10}}>
-                    <Button size="small" variant="outlined" color="primary" href={`/subjects/${_id}`} endIcon={<ArrowRightAlt />}>
+                    <Button size="small" variant="outlined" color="primary" onClick={()=>Router.push({pathname: '/subjects', query: {id: _id}})} endIcon={<ArrowRightAlt />}>
                         GO TO COURSE
                     </Button>
                 </Grid>

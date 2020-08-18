@@ -9,6 +9,11 @@ const emailValidator = (v) => {
   return re.test(String(v).toLowerCase());
 }
 
+const userNotificationSchema = mongoose.Schema({
+  bankNotification: {type: ObjectId, ref: "BankNotification"},
+  status: {type: String, enum: ['read','unread'], default: 'unread'}
+})
+
 const userSchema = new mongoose.Schema(
   {
     email: {
@@ -49,6 +54,11 @@ const userSchema = new mongoose.Schema(
       type: ObjectId, 
       ref: "User"
     }],
+    notifications: {
+      total: {type: Number, default: 0},
+      unread: {type: Number, default: 0},
+      list: [{type: userNotificationSchema}]
+    },
     organization: [{ type: ObjectId, ref: "User" }],
     following: [{ type: ObjectId, ref: "User" }],
     followers: [{ type: ObjectId, ref: "User" }]
@@ -57,7 +67,7 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const autoPopulateFollowingAndFollowers = function(next) {
+const autoPopulateFollowingAndFollowers = function(next){
   this.populate("following", "_id name avatar");
   this.populate("followers", "_id name avatar");
   this.populate("teachers", "_id name avatar");
@@ -75,7 +85,13 @@ userSchema.methods.isInstructor = function (course) {
   return !!(creator._id.equals(this._id) || instructors.find(e=> e._id.equals(this._id)));
 }
 
-userSchema.pre("findOne", autoPopulateFollowingAndFollowers);
+userSchema.pre("findOne", function(next){
+  const populatedPaths = this.getPopulatedPaths();
+  if(populatedPaths.length === 0){
+      return autoPopulateFollowingAndFollowers.bind(this)(next);
+  } 
+  next();
+}); 
 
 /* passportLocalMongoose takes our User schema and sets up a passport "local" authentication strategy using our email as the username field */
 userSchema.plugin(passportLocalMongoose, { usernameField: "email" });

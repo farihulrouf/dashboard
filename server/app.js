@@ -10,6 +10,8 @@ const helmet = require("helmet");
 const compression = require("compression");
 const cors = require("cors");
 const socketio = require("socket.io");
+const passportSocketIo = require("passport.socketio");
+const cookieParser = require("cookie-parser");
 const http = require("http");
 
 /* Loads all variables from .env file to "process.env" */
@@ -25,10 +27,13 @@ require("./models/QuestionPool");
 require("./models/AnswerSheet");
 require("./models/Exam");
 require("./models/TeacherApplication");
+require("./models/BankNotification");
 
 const routes = require("./routes");
 const { callbackify } = require("util");
 const { addActiveUser, removeActiveUser, getAllActiveUsers } = require("./sockets/active_users");
+const {connectRabbit, producer, createSocketConsumer, disconnectConsumer} =  require("./rabbitmq");
+
 require("./passport");
 // require('./path/to/passport/config/file')(passport);
 
@@ -94,14 +99,16 @@ app.prepare().then(() => {
   });
 
   const MongoStore = mongoSessionStore(session);
+  const sessionStore = new MongoStore({
+    mongooseConnection: mongoose.connection,
+    ttl: 14 * 24 * 60 * 60, // save session for 14 days
+  });
+
   const sessionConfig = {
     name: "next-connect.sid",
     // secret used for using signed cookies w/ the session
     secret: process.env.SESSION_SECRET,
-    store: new MongoStore({
-      mongooseConnection: mongoose.connection,
-      ttl: 14 * 24 * 60 * 60, // save session for 14 days
-    }),
+    store: sessionStore,
     // forces the session to be saved back to the store
     resave: false,
     // don't save unmodified sessions
@@ -161,36 +168,46 @@ app.prepare().then(() => {
     handle(req, res);
   });
 
-  io.on('connection', (socket) => {
-    console.log("a new user join");
 
-    socket.on('join', ({name, room}, callback) => {
-      console.log(name, room);
+  io.use(passportSocketIo.authorize({
+    cookieParser: cookieParser,
+    key: "next-connect.sid",
+    secret: process.env.SESSION_SECRET,
+    store: sessionStore,
+    success: onAuthorizeSuccess,
+    fail: onAuthorizeFail,
+  }))
 
-      const activeUser  = addActiveUser(socket.id, name, room)
-      const allActiveUsers = getAllActiveUsers()
+  function onAuthorizeSuccess(data, accept){
+    console.log('successful connection to socket.io');
+    accept(null, true);
+  }
+  
+  function onAuthorizeFail(data, message, error, accept){
+    if(error)
+      throw new Error(message);
+    console.log('failed connection to socket.io:', message);
+    accept(null, false);
+  }
 
-      socket.emit('message', {user: 'admin', text: `${activeUser.name} welcom to the room ${activeUser.room}`});
-      socket.broadcast.to(activeUser.room).emit('message', {user: 'admin', text: `${activeUser.name} welcom to the room ${activeUser.room}`})
-
-      socket.join(activeUser.room)
-
-      callback();
-    });
-
-    socket.on('sendMessage', (message, callback) => {
-      const activeUser = getActiveUser(socket.id);
-
-      io.to(activeUser.room).emit('message', {user: activeUser.name, text: message});
-
-      callback();
+  function connectRabbitCallback(conn){
+    producer(conn);
+    io.on('connection', (socket) => {
+      console.log('connection handler running');
+      const {user} = socket.request;
+      let channel = null;
+      if(user.logged_in !== false){
+          const opt = { queue: socket.id, exchange: user.id}
+          channel = createSocketConsumer(conn,opt,socket)
+      }
+      socket.on('disconnect',()=>{
+          console.log(`${socket.id} is disconnected`);
+          disconnectConsumer(channel);
+      })
     })
+  }
 
-    socket.on('disconnect', () => {
-      const activeUser = removeActiveUser(socket.id);
-      console.log('A User had left!!!');
-    })
-  })
+  connectRabbit(connectRabbitCallback);
 
   server.set('socketio', io);
 

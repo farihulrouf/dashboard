@@ -51,7 +51,7 @@ class NavBar extends React.Component{
                     <Toolbar className={classes.toolbar}>
                         <Grid container alignItems="center">
                             <Grid item className={classes.logo}>
-                                <a href="/" style={{textDecoration: 'none'}}><img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo.svg" /></a>
+                                <Link href="/"><a style={{textDecoration: 'none'}}><img width="100%" height="100%" src="https://thefront.maccarianagency.com/images/logos/logo.svg" /></a></Link>
                             </Grid>
                             <Grid item className={classes.navBar}>
                                 {!onlyLogo && <Grid container justify="flex-end" spacing={2}>
@@ -72,6 +72,9 @@ class NavBar extends React.Component{
                                         </Grid>
                                         <Grid item>
                                             <MenuItem name="Pages" />
+                                        </Grid>
+                                        <Grid item>
+                                            <MenuItem name="Notifications" />
                                         </Grid>
                                         <Grid item>
                                             <MenuItem name="Account" />

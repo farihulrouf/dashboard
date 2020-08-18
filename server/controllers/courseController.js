@@ -78,7 +78,6 @@ exports.getJoinedCourse = async(req,res) => {
     const user = req.user;
     // participants: user
     const courses = await Course.find({participants: user})
-    console.log(courses)
     res.json(courses)
 }
 

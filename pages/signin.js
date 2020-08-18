@@ -4,7 +4,7 @@ import {ArrowRightAlt} from "@material-ui/icons";
 import NavBar from "../components/NavBar";
 import Link from "next/link";
 import Router from "next/router";
-import {signInUser} from "../lib/auth"
+import {signInUser, authInitialProps} from "../lib/auth"
 import MuiAlert from '@material-ui/lab/Alert';
 
 
@@ -25,7 +25,7 @@ class SignIn extends React.Component{
         const {user} = this.state;
         this.setState({isLoading: true})
         signInUser(user).then((response) => {
-            Router.push("/"); 
+            window.location.href = "/";
         }).catch((err) => {
             this.setState({isLoading: false, error: err.response.data})
         })
@@ -132,5 +132,7 @@ class SignIn extends React.Component{
         )
     }
 }
+
+SignIn.getInitialProps = authInitialProps();
 
 export default SignIn;

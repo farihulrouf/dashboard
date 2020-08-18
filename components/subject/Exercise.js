@@ -108,8 +108,6 @@ function CheckboxLabels(props) {
     const handleChange = (event) => {
       setState({ ...state, [event.target.name]: event.target.checked });
     };
-  
-    console.log("CheckBoxLabels");
 
     return (
       <FormGroup row>

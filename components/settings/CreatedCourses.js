@@ -15,7 +15,6 @@ class CreatedCourses extends React.Component{
     }
 
     render(){
-      // console.log(this.state.courses)
       return(
         <Grid item xs={12}>
           <Grid container justify="center">

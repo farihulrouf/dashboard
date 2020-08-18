@@ -6,6 +6,7 @@ import PostForm from './PostForm';
 import Link from 'next/link'
 // import MathJax from "mathjax3-react";
 import MathJax from 'react-mathjax-preview'
+import Router from 'next/router';
 
 const styles = (theme) => ({
     inline: {
@@ -104,7 +105,7 @@ const PostItem = (props) => {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} sm={11}>
-                        <Grid container><Link href={`/posts/${data._id}`}><a style={{textDecoration: 'none'}}><h6 style={{margin: 0, fontFamily: 'Lato', lineHeight: 1.6, fontWeight: 700, color: '#121037', fontSize: '1.25rem'}}>{data.title}</h6></a></Link></Grid>
+                        <Grid container><a onClick={()=>Router.push({pathname: 'posts', query: {id: data._id}})} style={{textDecoration: 'none'}}><h6 style={{margin: 0, fontFamily: 'Lato', lineHeight: 1.6, fontWeight: 700, color: '#121037', fontSize: '1.25rem'}}>{data.title}</h6></a></Grid>
                         <Grid container>
                             <React.Fragment>
                                 <Typography
