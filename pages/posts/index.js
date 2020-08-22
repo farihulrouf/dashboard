@@ -4,6 +4,7 @@ import { authInitialProps } from "../../lib/auth";
 import {getPostById} from "../../lib/api";
 import {withRouter} from 'next/router'
 import {Grid, Container, withStyles} from "@material-ui/core";
+import DefaultErrorPage from 'next/error';
 
 const styles = (theme) => ({
     container: {
@@ -21,6 +22,7 @@ class Post extends React.Component{
     constructor(props){
         super(props)
         this.state = {post: undefined}
+        this.fetchPost = this.fetchPost.bind(this);
     }
 
     openDeleteDialog = (event)=>{
@@ -28,9 +30,22 @@ class Post extends React.Component{
     }
 
     componentDidMount(){
+        this.fetchPost();
+    }
+    
+    componentDidUpdate(prevProps){
+        if (prevProps.router.query.id !== this.props.router.query.id) {
+            this.fetchPost();
+        }
+    }
+
+    fetchPost = () => {
         const {id} = this.props.router.query;
         getPostById(id).then((data)=> {
-            this.setState({post: data.post})
+            console.log(data);
+            this.setState({status: data.status, post: data.post})
+        }).catch(err=>{
+           this.setState({status: err.response.data.status})
         })
     }
 
@@ -41,7 +56,8 @@ class Post extends React.Component{
                 <Container className={classes.container}>
                     <Grid container justify="center">
                         <Grid item>
-                        {!!this.state.post && <PostItem data={this.state.post} openDeleteDialog={this.openDeleteDialog} />}
+                        {this.state.status === "ok" && !!this.state.post && <PostItem data={this.state.post} openDeleteDialog={this.openDeleteDialog} />}
+                        {this.state.status === "error" && <DefaultErrorPage statusCode={404} />}
                         </Grid>
                     </Grid>
                 </Container>

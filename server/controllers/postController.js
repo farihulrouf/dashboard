@@ -31,6 +31,10 @@ exports.deletePost = async (req,res,next)=>{
 
 exports.getPostById = async (req,res,next,id) => {
     const post = await Post.findOne({ _id: id });
+    if(!post){
+      //Post not found
+      return res.status(404).json({status: "error", message: "post not found"});
+    }
     req.post = post;
 
     const posterId = mongoose.Types.ObjectId(req.post.postedBy._id)

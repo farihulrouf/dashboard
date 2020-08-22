@@ -23,6 +23,20 @@ exports.getUsers = async (req,res) => {
     res.json({status: "ok", users: users})
 }
 
+exports.readMyNotification = async (req,res) => {
+    const {user} = req;
+    const {notificationId} = req.params;
+    const updatedNoti = await User.updateOne({
+        "_id": user.id,
+        "notifications.list": {$elemMatch: {_id: notificationId, status: "unread"} },
+    },{
+        $inc: {"notifications.unread": -1},
+        $set: {"notifications.list.$.status": "read"}  
+    })
+    if(updatedNoti.ok)
+        return res.json({status: "ok"})
+    res.json({status: "error", message: "Could not read notification"})
+}
 
 exports.getMyTeachers = async (req,res) => {
     const {user} = req;
@@ -35,14 +49,17 @@ exports.getMyTeachers = async (req,res) => {
 exports.getMyNotifications = async (req,res) => {
     if(!!req.user){
         const {notifications} = await User.findById(req.user.id)
-                                            .populate("notifications.list.bankNotification","photo message createdAt url")
+                                            .populate({
+                                                path: "notifications.list.bankNotification",
+                                                select: "photo message createdAt url"
+                                            })
                                             .select("notifications");
         return res.json({
             status: "ok", 
             notifications: notifications
         })
-        }
-        res.json({status: "error", notifications: []})
+    }
+    res.json({status: "error", notifications: []})
 }
 
 exports.getUserById = async (req, res, next, id) => {

@@ -75,27 +75,13 @@ const PostItem = (props) => {
         setEditMode(false);
     }
 
+    React.useEffect(()=>{
+        setData(props.data);
+    },[props.data])
+
     return(
         <Paper elevation={3} className={classes.paper}>
             {!editMode && <React.Fragment>
-                {data.owned && 
-                    <React.Fragment>
-                        <Button color="primary" style={{right: 0, position: 'absolute'}} onClick={handleClick}>
-                                <MoreVert />
-                        </Button>
-                        <Popper id={id} open={open} anchorEl={anchorEl}>
-                            <ButtonGroup
-                                orientation="vertical"
-                                color="primary"
-                                aria-label="vertical outlined primary button group"
-                                style={{marginRight: 50}}
-                            >
-                                <Button variant="contained" onClick={onEditClick}>Edit</Button>
-                                <Button variant="contained" value={data._id} onClick={props.openDeleteDialog}>Delete</Button>
-                            </ButtonGroup>
-                        </Popper>
-                    </React.Fragment>
-                }
                 <Grid container spacing={2}>
                     <Grid item xs={12} sm={1} style={{alignSelf: 'center'}}>
                         <Grid container justify="center">
@@ -105,7 +91,42 @@ const PostItem = (props) => {
                         </Grid>
                     </Grid>
                     <Grid item xs={12} sm={11}>
-                        <Grid container><a onClick={()=>Router.push({pathname: 'posts', query: {id: data._id}})} style={{textDecoration: 'none'}}><h6 style={{margin: 0, fontFamily: 'Lato', lineHeight: 1.6, fontWeight: 700, color: '#121037', fontSize: '1.25rem'}}>{data.title}</h6></a></Grid>
+                        <Grid container>
+                            <Grid item style={{flexGrow: 1}}>
+                                <h6 style={{margin: 0}}>
+                                    <a href="#" 
+                                    onClick={()=>Router.push({pathname: 'posts', query: {id: data._id}})} 
+                                    style={{
+                                        textDecoration: 'none',
+                                        fontFamily: 'Lato', 
+                                        lineHeight: 1.6, 
+                                        fontWeight: 700, 
+                                        color: '#121037', 
+                                        fontSize: '1.25rem'
+                                    }}>
+                                        {data.title}
+                                    </a>
+                                </h6>
+                            </Grid>
+                            {data.owned && 
+                                <Grid item>
+                                    <Button color="primary" onClick={handleClick}>
+                                            <MoreVert />
+                                    </Button>
+                                    <Popper id={id} open={open} anchorEl={anchorEl}>
+                                        <ButtonGroup
+                                            orientation="vertical"
+                                            color="primary"
+                                            aria-label="vertical outlined primary button group"
+                                            style={{marginRight: 50}}
+                                        >
+                                            <Button variant="contained" onClick={onEditClick}>Edit</Button>
+                                            <Button variant="contained" value={data._id} onClick={props.openDeleteDialog}>Delete</Button>
+                                        </ButtonGroup>
+                                    </Popper>
+                                </Grid>
+                            }
+                        </Grid>
                         <Grid container>
                             <React.Fragment>
                                 <Typography

@@ -231,6 +231,12 @@ router.get("/api/users/me", (req,res)=>{
 
 router.get("/api/users/me/notifications", catchErrors(userController.getMyNotifications))
 
+router.put(
+  '/api/users/me/notifications/:notificationId',
+  authController.checkAuth,
+  catchErrors(userController.readMyNotification)
+)
+
 router.get("/api/users/me/myteachers",catchErrors(userController.getMyTeachers));
 
 router.param("userId", userController.getUserById);

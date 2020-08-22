@@ -12,7 +12,9 @@ import { signoutUser } from "../lib/auth";
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Router from "next/router";
 import Notification from "./Notification";
+import { fetchNotifications } from "../redux/"
 import {connect} from "react-redux";
+import {readMyNotification} from "../lib/api";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -59,6 +61,16 @@ function MenuListComposition(props) {
       event.preventDefault();
       setOpen(false);
     }
+  }
+
+  const openNotificationItem = (e) => {
+    const {notificationId, notificationUrl} = e.currentTarget.dataset;
+    readMyNotification(notificationId).then((res)=>{
+      if(res.status === "ok"){
+        Router.push(notificationUrl);
+        props.fetchNotifications();
+      }
+    })
   }
 
   // return focus to the button when we transitioned from !open -> open
@@ -118,7 +130,13 @@ function MenuListComposition(props) {
                     }
                     {name === "Notifications" && !!props.notifications &&
                       props.notifications.list.map(item=> (
-                        <MenuItem key={item._id}><Notification data={item} /></MenuItem>
+                        <MenuItem 
+                        data-notification-id={item._id}
+                        data-notification-url={item.bankNotification.url}
+                        onClick={openNotificationItem} 
+                        key={item._id}>
+                          <Notification data={item} />
+                        </MenuItem>
                       ))
                     }
                   </MenuList>
@@ -138,4 +156,10 @@ const mapStateToProps = (state) => {
   }
 }
 
-export default connect(mapStateToProps,null)(MenuListComposition);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchNotifications: () => dispatch(fetchNotifications())
+  }
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(MenuListComposition);

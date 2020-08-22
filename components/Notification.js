@@ -26,7 +26,7 @@ export default function Notification(props){
             </Grid>
             <Grid xs={1} item>
                 <Grid alignItems="center" justify="center" style={{height: '100%'}} container>
-                    {!data.read && <FiberManualRecord color="primary" style={{fontSize: 10}} />}
+                    {data.status === "unread" && <FiberManualRecord color="primary" style={{fontSize: 10}} />}
                 </Grid>
             </Grid>
         </Grid>
