@@ -6,8 +6,9 @@ const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
 const questionPoolController = require("../controllers/questionPoolController");
 const answerSheetController = require("../controllers/answerSheetController");
-const fileController = require("../controllers/fileController")
-const examController = require("../controllers/examController")
+const fileController = require("../controllers/fileController");
+const examController = require("../controllers/examController");
+const attachmentController = require("../controllers/attachmentController");
 const applicationController = require("../controllers/applicationController");
 const multer = require('multer');
 const {uuid} = require('uuidv4');
@@ -64,7 +65,7 @@ router.post("/api/auth/signin", authController.signin);
 router.get("/api/auth/signout", authController.signout);
 
 /**
- * EXERCISE MATERIALS ROUTES
+ * QUESTION POOL ROUTES
  */
 router.post(
   "/api/courses/:courseId/question-pools",
@@ -85,6 +86,22 @@ router.put(
   "/api/question-pools/:id",
   authController.checkAuth,
   questionPoolController.updateQuestionPool
+);
+
+/**
+ * ATTACHMENT ROUTE
+ */
+
+router.post(
+  "/api/attachments",
+  authController.checkAuth,
+  attachmentController.createAttachment
+);
+
+router.get(
+  "/api/attachments/:id",
+  authController.checkAuth,
+  attachmentController.fetchSingleAttachment
 );
 
 /**

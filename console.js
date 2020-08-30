@@ -14,7 +14,6 @@ const mongooseOptions = {
     useCreateIndex: true,
     useFindAndModify: false
   };
-  
 mongoose.set('useUnifiedTopology', true);
 mongoose
 .connect(

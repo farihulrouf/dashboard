@@ -28,6 +28,7 @@ require("./models/AnswerSheet");
 require("./models/Exam");
 require("./models/TeacherApplication");
 require("./models/BankNotification");
+require("./models/Attachment")
 
 const routes = require("./routes");
 const { callbackify } = require("util");
