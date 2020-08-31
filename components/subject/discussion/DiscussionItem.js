@@ -6,6 +6,7 @@ import MathJax from "react-mathjax-preview";
 import truncatise from "truncatise";
 import CreateAnswer from "./CreateAnswer";
 import DiscussionAnswer from "./DiscussionAnswer";
+import {voteDiscussion}from "../../../lib/api";
 
 class DiscussionItem extends React.Component{
     constructor(props){
@@ -29,9 +30,15 @@ class DiscussionItem extends React.Component{
         this.setState({discussion: newDiscussion})
     }
 
+    onVoteButtonClick = () => {
+        const {discussion} = this.state;
+        voteDiscussion(discussion)
+            .then((res)=> this.setState({discussion: res.discussion}))
+            .catch((err) => alert(err.message))
+    }
+
     render(){
         const {discussion} = this.state;
-        console.log(discussion);
         const {showCreateAnAnswer, showBestAnswer} = this.state;
         return(
         <div style={{position: 'relative'}}>
@@ -40,8 +47,8 @@ class DiscussionItem extends React.Component{
             </IconButton>
             <Grid container style={{marginRight: 30}}>
                 <Grid xs={12} sm={2} item style={{padding: 20, textAlign: 'center'}}>
-                    <IconButton style={{margin: 0, padding: 0}}>
-                        <KeyboardArrowUp />
+                    <IconButton onClick={this.onVoteButtonClick} style={{margin: 0, padding: 0}}>
+                        <KeyboardArrowUp style={discussion.isVoted ? {color: '#1b1642', fontSize: 50} : {}}/>
                     </IconButton>
                     <h3 style={{margin: 0, padding: 0}}>{discussion.votes.total}</h3>
                     <span>Votes</span>

@@ -18,16 +18,36 @@ exports.validateDiscussion = (req,res,next) => {
     next();
 }
 
-exports.getDiscussionById = (req,res,next) => {
+exports.getDiscussionById = async (req,res,next) => {
     const {discussionId} = req.params;
-    const {newAnswer} = req;
-    Discussion.findById(discussionId, (err,discussion)=>{
-        if(err) return res.status(404).json({status: "error", message: "Discussion not found"})
-        if(!!next)
-            return next();
-        if(!!newAnswer) discussion._doc.newAnswer = newAnswer;
-        return res.json({status: "ok", discussion: discussion})
-    });
+    const discussion = await Discussion.findById(discussionId);
+    res.json({status: "ok", discussion: discussion});
+}
+
+exports.voteDiscussion = async (req,res,next) => {
+    const {user} = req;
+    const {discussionid} = req.params;
+    let isVoted = null;
+    const votedDiscussion = await Discussion.findOne({
+        _id: discussionid,
+        "votes.voters": user
+    })
+    if(votedDiscussion){
+        //unvote it
+        query = {$inc: {"votes.total": -1}, $pull: {"votes.voters": user.id}}
+        isVoted = false;
+    }else{
+        //upvote it
+        query = {$inc: {"votes.total": 1}, $push: {"votes.voters": user.id}}
+        isVoted = true;
+    }
+    const newDiscussion = await Discussion.findByIdAndUpdate(
+        discussionid, query, {new: true, populate: "answers.topAnswers"})
+    if(!newDiscussion) 
+        return res.status(404)
+            .json({status: "error", message: "Discussion is not found"})
+    newDiscussion._doc.isVoted = isVoted;
+    res.json({status: "ok", discussion: newDiscussion})
 }
 
 exports.createAnswer = (req,res,next) => {

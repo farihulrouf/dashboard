@@ -266,6 +266,12 @@ router.post(
   discussionController.createAnswer
 )
 
+router.put(
+  "/api/discussions/:discussionid/vote",
+  authController.checkAuth,
+  catchErrors(discussionController.voteDiscussion)
+)
+
 /**
  * USER ROUTES: /api/users
  */
