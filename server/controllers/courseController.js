@@ -390,7 +390,8 @@ exports.getDiscussions = async (req,res) => {
     const {course, user} = req;
     const discussions = await Discussion.aggregate([
         {$match: {postedOn: course._id}},
-        {$addFields: {isVoted: {$in: [user._id, "$votes.voters"]}}}
+        {$addFields: {isVoted: {$in: [user._id, "$votes.voters"]}}},
+        {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}}
     ])
     res.json({status: "ok", discussions: discussions});
 }
