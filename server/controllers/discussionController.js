@@ -63,6 +63,8 @@ exports.voteDiscussion = async (req,res,next) => {
         return res.status(404)
             .json({status: "error", message: "Discussion is not found"})
     newDiscussion._doc.isVoted = isVoted;
+    newDiscussion._doc.canEdit = user.canEditDiscussion(newDiscussion);
+    newDiscussion._doc.canDelete = user.canDeleteDiscussion(newDiscussion)
     res.json({status: "ok", discussion: newDiscussion})
 }
 
@@ -92,6 +94,8 @@ exports.createAnswer = (req,res,next) => {
         }, (err,newDiscussion) => {
             if(err) return res.json({status: "error", message: err.message})
             newDiscussion._doc.newAnswer = savedAnswer;
+            newDiscussion._doc.canEdit = user.canEditDiscussion(newDiscussion)
+            newDiscussion._doc.canDelete = user.canDeleteDiscussion(newDiscussion)
             return  res.json({status: "ok", discussion: newDiscussion})
         })
     })

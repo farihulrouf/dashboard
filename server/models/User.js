@@ -119,8 +119,16 @@ userSchema.methods.canCreateCourse = function () {
     return this.isAnOrganization || this.organization.length == 0;
 };
 
-userSchema.methods.canEditDiscussion = function (creator) {
-  return user._id === creator
+userSchema.methods.canEditDiscussion = function(discussion){
+  return this._id.equals(discussion.creator._id)
+}
+
+userSchema.methods.canDeleteDiscussion = function(discussion){
+  let canDelete = false;
+  [discussion.creator._id, discussion.creator._id].forEach((e) => {
+    if(e.equals(this._id)) canDelete = true;
+  })
+  return canDelete;
 }
 
 userSchema.methods.canCreateDiscussion = function(course) {
