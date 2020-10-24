@@ -49,7 +49,7 @@ const courseSchema = new mongoose.Schema(
 const autoPopulate = function(next){
     this.populate("instructors", "_id name avatar linkedIn");
     this.populate("participants","_id name avatar linkedIn");
-    this.populate("creator","_id name avatar linkedIn");
+    this.populate("creator","_id name avatar linkedIn teachers");
     next();
 }
 

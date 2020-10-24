@@ -34,7 +34,12 @@ exports.getCourseById = async (req, res, next, id) => {
 };
 
 exports.getCourse = async (req,res) => {
-    res.json({course: req.course})
+    const course = await Course.findById(req.course.id);
+    req.course = course;
+    if(req.course && req.user){
+        req.course._doc.isInstructor = req.user.isInstructor(course);
+        return res.json({course: req.course});
+    }
 }
 
 exports.getMyCourses = async (req,res) => {
