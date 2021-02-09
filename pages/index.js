@@ -1,11 +1,11 @@
 
-import NavBar from '../components/NavBar.js';
+import NavBar from '../components/Navbar/NavBar.js';
 import CONSTANTS from '../components/constant';
 import MaterialPage from './dashboard/material';
 import ReportPage from './dashboard/report';
 import TryOutPage from './dashboard/tryout';
 import { authInitialProps } from "../lib/auth";
-import HomePage from '../components/HomePage';
+import Home from '../components/Home';
 
 const Body = ({active, auth}) => {
   switch(active){
@@ -23,15 +23,15 @@ const Body = ({active, auth}) => {
 const Index = ({auth, userId}) => {
     if(!!auth.user && Object.keys(auth.user).length !== 0 && auth.constructor === Object)
       return(
-        <NavBar auth={auth}>
+        <NavBar mode={0} auth={auth}>
           <Body auth={auth} />
         </NavBar>
       )
     else
       return(
         <span>
-          <NavBar>
-            <HomePage />
+          <NavBar mode={1}>
+            <Home />
           </NavBar>
         </span>
       )

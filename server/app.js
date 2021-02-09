@@ -29,6 +29,8 @@ require("./models/Exam");
 require("./models/TeacherApplication");
 require("./models/BankNotification");
 require("./models/Attachment")
+require("./models/Payment")
+require("./models/Review")
 
 const routes = require("./routes");
 const { callbackify } = require("util");

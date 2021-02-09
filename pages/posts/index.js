@@ -1,10 +1,11 @@
 import PostItem from '../../components/subject/PostItem';
-import NavBar from '../../components/NavBar';
+import NavBar from '../../components/NavBar/NavBar';
 import { authInitialProps } from "../../lib/auth";
 import {getPostById} from "../../lib/api";
 import {withRouter} from 'next/router'
 import {Grid, Container, withStyles} from "@material-ui/core";
 import DefaultErrorPage from 'next/error';
+import React from 'react'
 
 const styles = (theme) => ({
     container: {

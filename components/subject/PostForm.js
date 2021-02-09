@@ -4,6 +4,7 @@ import {Attachment, Clear, Description} from "@material-ui/icons"
 import { Editor } from '@tinymce/tinymce-react';
 import { createCoursePost, generatePutUrl, uploadToS3, updatePost} from '../../lib/api';
 import axios from "axios";
+import React from 'react';
 
 
 class Attachments extends React.Component{
@@ -41,6 +42,7 @@ class Attachments extends React.Component{
 class PostForm extends React.Component{
     constructor(props){
         super(props);
+        console.log(props);
         const {_id, title, body, category, attachments} = props.post || {};
         this.state = {
             newPost: {_id: (_id || null), title: (title || ""), body: (body || ""), category: (category || ""), attachments: (attachments || []).map(e=>{e.progress=100; return e})},
@@ -146,6 +148,7 @@ class PostForm extends React.Component{
 
     render(){
         const {newPost} = this.state;
+        // console.log(this.props);
         // console.log(newPost.attachments)
         return(
             <form onSubmit={(e)=> this.onSubmit(e,this.props.courseId)}>

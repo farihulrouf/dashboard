@@ -3,6 +3,7 @@ import {Add} from "@material-ui/icons";
 import SearchBar from "material-ui-search-bar";
 import {getTeachers, updateTeacherApplication} from "../../lib/api";
 import { red } from '@material-ui/core/colors';
+import React from 'react';
 
 
 const redTheme = createMuiTheme({ palette: { primary: red } })

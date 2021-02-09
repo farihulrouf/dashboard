@@ -1,0 +1,284 @@
+.material {
+    margin-top: 64px;
+    padding: 0 4% !important;
+
+    .search-box-container {
+        margin: 80px 0 20px;
+        padding: 5px 10px 5px 20px;
+        display: flex;
+        align-items: center;
+        border: solid 1.5px #C5CCD0;
+        border-radius: 8px;
+
+        button:hover,
+        span:hover {
+            background-color: white!important;
+            border-radius: 0;
+        }
+
+        .search-bar {
+            width: 100%;
+
+            input {
+                width: 100%;
+            }
+        }
+
+        button {
+            border-radius: 100%!important;
+
+            .search-btn {
+                margin-left: auto;
+                font-size: 1.5rem;
+                color: #C5CCD0;
+            }
+        }
+
+        button:hover{
+            
+            .search-btn:hover {
+                color: #3F51B5!important
+            }
+        }
+    }
+
+    .course-number {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+
+        .course-number-content {
+            background: rgba(255, 181, 98, 0.128442);
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: solid 1px #FFB562;
+            color: #FFB562;
+            width: 135px;
+            margin-right: auto;
+            text-align: center;
+            font-weight: 400;
+        }
+
+        .filter {
+            font-size: 1.25rem;
+            color: #C5CCD0;
+        }
+
+        button:hover {
+            background-color: transparent;
+
+            .filter:hover {
+                color: #3F51B5;
+            }
+        }
+    }
+}
+
+.filter-modal {
+    position: absolute!important;
+    top: 0;
+    left: 0;
+    width: 100%;
+    margin: 0;
+
+    div[class^="MuiDialogContent"] {
+        padding: 25px 35px;
+    }
+
+    div[role="dialog"] {
+        width: 400px;
+        height: 535px;
+        max-width: 100%;
+
+        input {
+            width: 100%!important;
+        }
+
+        @media (max-width: 448px) {
+            width: 90%;
+        }   
+    }
+
+    div[class^="MuiDialogTitle-root"] {
+        display: flex;
+        align-items: center;
+
+        button {
+            position: relative!important;
+            top: 0!important;
+            right: 0!important;
+        }
+
+        h6 {
+            width: 100%;
+        }
+    }
+
+    span[class^="PrivateValueLabel-circle"] {
+        display: flex;
+        border-radius: 2px;
+        transform: rotate(0);
+        padding: 0 2px;
+        width: 64px;
+
+        span {
+            
+            display: flex;
+            transform: rotate(0);
+        }
+    }
+
+    span[class^="PrivateValueLabel-circle"]::after {
+        content: '';
+        position: absolute;
+        background-color: #3F51B5;
+        z-index: -20;
+        height: 20px;
+        width: 20px;
+        transform: rotateZ(45deg) ;
+        bottom: 0;
+        left: calc(50%-10px);
+    }
+
+    .price-range-dom {
+        margin-left: 25px ;
+    }
+
+    .rating-filter-container {
+        label {
+            display: block;
+            width: 100%;
+        }
+
+        .MuiRating-iconFilled {
+            color: #3F51B5;
+        }
+    }
+
+    .clear-filter {
+        span {
+            color: crimson;
+        }
+    }
+}
+
+.apply-filter-title {
+    font-weight: 400!important;
+    margin-bottom: 20px;
+}
+
+div[role^="combobox"] {
+    position: relative!important;
+
+    span {
+        font-weight: 300!important;
+    }
+}
+
+div[role^="combobox"] > div {
+    width: 100%;
+}
+
+ul[role^="listbox"] {
+    width: 100%;
+}
+
+.MuiFormControl-root {
+    width: 100%!important;
+}
+
+.modal-btn {
+    padding: 4px 8px!important;
+    margin-left: 15px!important;
+    font-size: .875rem!important;
+}
+
+.unread-container {
+    margin: 0 0 0 auto!important;
+    height: 100%;
+    
+    .unread {
+        font-size: .75rem!important;
+        width: 100%!important;
+        position: relative;
+        top: -10px;
+    }
+}
+
+.load-more {
+    margin: 50px auto;
+
+    h4 {
+        font-weight: 400;
+        color: #C5CCD0;
+
+        span {
+            display: none;
+        }
+    }
+}
+
+.load-more:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+
+    h4 {
+        color: #3F51B5;
+
+        span {
+            animation: dot 1.5s ease-in infinite;
+            display: inline-block;
+            transition: none!important;
+        }
+
+        span:nth-child(1) {
+            animation-delay: .3s;
+        }
+
+        span:nth-child(2) {
+            animation-delay: .6s;
+        }
+
+        span:nth-child(3) {
+            animation-delay: .9s;
+        }
+
+        span:nth-child(4) {
+            animation-delay: 1.2s;
+        }
+
+        span:nth-child(5) {
+            animation-delay: 1.5s;
+        }
+    }
+}
+
+.no-course {
+    min-height: 40vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom:  50px;
+
+    svg, h4 {
+        color: #E1E1E1;
+    }
+
+    svg {
+        font-size: 12rem;
+    }
+    
+}
+
+@keyframes dot {
+    0% {
+        opacity: 0;
+    }
+    50% {
+        opacity: .5;
+    }
+    100% {
+        opacity: 1;
+    }
+}

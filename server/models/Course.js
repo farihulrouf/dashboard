@@ -34,7 +34,6 @@ const courseSchema = new mongoose.Schema(
         },
         rating: {
             type: Number,
-            required: "Course rating is required",
             default: 0
         },
         instructors: [{type: ObjectId, ref: "User"}],
@@ -49,7 +48,7 @@ const courseSchema = new mongoose.Schema(
 const autoPopulate = function(next){
     this.populate("instructors", "_id name avatar linkedIn");
     this.populate("participants","_id name avatar linkedIn");
-    this.populate("creator","_id name avatar linkedIn teachers");
+    this.populate("creator","_id name avatar linkedIn teachers isAnOrganization");
     next();
 }
 
@@ -57,7 +56,11 @@ courseSchema
     .pre("findOne",autoPopulate)
     .pre("find",autoPopulate)
 
-courseSchema.index({ instructors: 1});
+courseSchema.index({ name: 1 });
+courseSchema.index({ about: 1 })
 courseSchema.index({createdAt: 1 });
+courseSchema.index({instructors: 1})
+
+
 
 module.exports = mongoose.model("Course", courseSchema);

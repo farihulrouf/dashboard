@@ -12,6 +12,7 @@ import { Provider, connect } from "react-redux";
 import reduxStore from "../redux/store";
 import { fetchNotifications } from "../redux/"
 import ScrollToTop from "../components/ScrollToTop";
+import '../styles/global.scss'
 
 function MyApp(props){
   const { Component, pageProps } = props;

@@ -1,185 +1,206 @@
 import React from 'react';
-import {Container, Grid, IconButton, Button, TextField, CircularProgress} from "@material-ui/core";
+import {
+    Container,
+    Grid,
+    IconButton,
+    Button,
+    TextField,
+    CircularProgress
+} from "@material-ui/core";
 import {ArrowRightAlt} from "@material-ui/icons";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/NavBar/NavBar";
 import Link from "next/link";
 import MuiAlert from '@material-ui/lab/Alert';
 import {signupUser, authInitialProps} from '../lib/auth';
 import Router from "next/router"
 
 function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} />;
+    return <MuiAlert elevation={6} variant="filled" onClose={this.closeAlert} />;
 }
 
-class SignUp extends React.Component{
-    constructor(props){
+class SignUp extends React.Component {
+    constructor(props) {
         super(props);
-        let user = {name: "", email: "", occupation: "", password: "", confPass: ""}
-        this.state={user: user, error: {}, isLoading: false}
-        this.handleChange = this.handleChange.bind(this);
-        this.closeAlert = this.closeAlert.bind(this);
+        let user = {
+            name: "",
+            email: "",
+            occupation: "",
+            password: "",
+            confPass: ""
+        }
+        this.state = {
+            user: user,
+            error: {},
+            isLoading: false
+        }
+        this.handleChange = this
+            .handleChange
+            .bind(this);
+        this.closeAlert = this
+            .closeAlert
+            .bind(this);
     }
 
     handleChange = (event) => {
         const {name, value} = event.target;
-        let newUser = {...this.state.user};
+        let newUser = {
+            ...this.state.user
+        };
         newUser[name] = value;
         let newError = this.errorCheck(newUser, this.state.error);
         this.setState({user: newUser, error: newError})
     }
 
     errorCheck = (user, error) => {
-        const required = ["name","email","password"]
-        let newError = {...error}
-        required.forEach((field)=>{
-            if(user[field] === "") newError[field] = "This field should not be empty"
-            else newError[field] = ""
+        const required = ["name", "email", "password"]
+        let newError = {
+            ...error
+        }
+        required.forEach((field) => {
+            if (user[field] === "") 
+                newError[field] = "This field should not be empty"
+            else 
+                newError[field] = ""
         })
-        if(user.password !== user.confPass) newError["confPass"] = "Should matched password"
-        else newError["confPass"] = ""
+        if (user.password !== user.confPass) 
+            newError["confPass"] = "Should matched password"
+        else 
+            newError["confPass"] = ""
         return newError;
     }
 
     handleSubmit = (event) => {
         event.preventDefault();
-        const {user,error} = this.state;
-        let newError = this.errorCheck(user,error);
+        const {user, error} = this.state;
+        let newError = this.errorCheck(user, error);
         this.setState({error: newError, isLoading: true});
-        if(Object.values(newError).reduce((c,n) => {
+        if (Object.values(newError).reduce((c, n) => {
             return (c && (n === ""))
-        },true)){
-            return signupUser(user)
-            .then(response=>{
+        }, true)) {
+            return signupUser(user).then(response => {
                 Router.push("/signin");
                 // this.setState({isLoading: false})
-            }).catch(err=>{
-                let newError = {...error};
+            }).catch(err => {
+                let newError = {
+                    ...error
+                };
                 newError["server"] = err.response.data
                 this.setState({error: newError, isLoading: false})
             })
         }
     }
 
-    closeAlert = (event) =>{
-        let newError = {...this.state.error}
+    closeAlert = (event) => {
+        let newError = {
+            ...this.state.error
+        }
         newError["server"] = "";
         this.setState({error: newError})
     }
 
-    render(){
+    render() {
         const {error, user, isLoading} = this.state;
 
-        return(
+        return (
             <NavBar onlyLogo={true}>
-                <Container maxWidth="lg" style={{height: '90vh'}}>
-                    {!!error.server && <Alert style={{width: '50%', margin: '0px 25%'}} onClose={this.closeAlert} severity="error">{`${error.server}`}</Alert>}
-                    <Grid justify="center" alignItems="center" container style={{height: '100%'}}>
+                <Container maxWidth="lg" className="sign-up-page">
+                    {!!error.server && <Alert severity="error">{`${error.server}`}</Alert>}
+                    <Grid className="container" container>
                         <Container maxWidth="sm">
-                            <Grid container style={{marginBottom: 30}}>
-                                <Grid xs={12} style={{padding: 5}} item>
-                                    <h3 style={{margin: 0, padding: 0, textAlign: 'center', fontWeight: 'bold', color: '#121037', fontSize: '3rem', lineHeight: 1}}>Sign up</h3>
+                            <Grid container>
+                                <Grid xs={12} item>
+                                    <h1>Sign Up</h1>
                                 </Grid>
-                                <Grid xs={12} style={{padding: 5}} item>
-                                    <h6 style={{fontFamily: 'Lato', fontWeight: 500, lineHeight: 1.6, margin: 0, padding: '0px 50px', textAlign: 'center', fontSize: '1.25rem', color: '#546e7a'}}>
+                                <Grid xs={12} item className="field-container">
+                                    <h5 className="sign-up-sub">
                                         Create an account to start teaching and learning in our platform
-                                    </h6>
+                                    </h5>
                                 </Grid>
                             </Grid>
                             <Grid justify="center" container spacing={2}>
-                                {isLoading && <div style={{padding: '50px 0px'}}><CircularProgress /></div>}
+                                {isLoading && <CircularProgress thickness={6} size="6rem" />}
                                 {!isLoading && <React.Fragment>
-                                    <Grid xs={12} item>
+                                    <Grid xs={12} item className="input-container">
                                         <TextField
-                                        id="outlined-name-input"
-                                        label="Name*"
-                                        name="name"
-                                        value={user.name}
-                                        type="text"
-                                        variant="outlined"
-                                        style={{width: '100%'}}
-                                        onChange={this.handleChange}
-                                        />
-                                        <span style={{color: 'red', fontStyle: 'italic'}}>{error.name}</span>
+                                            id="outlined-name-input"
+                                            label="Name*"
+                                            name="name"
+                                            value={user.name}
+                                            type="text"
+                                            variant="outlined"
+                                            onChange={this.handleChange}/>
+                                        <span >{error.name}</span>
                                     </Grid>
-                                    <Grid xs={12} sm={6} item>
+                                    <Grid xs={12} sm={6} item className="input-container">
                                         <TextField
-                                        id="outlined-email-input"
-                                        label="Email*"
-                                        name="email"
-                                        value={user.email}
-                                        type="email"
-                                        variant="outlined"
-                                        style={{width: '100%'}}
-                                        onChange={this.handleChange}
-                                        />
-                                        <span style={{color: 'red', fontStyle: 'italic'}}>{error.email}</span>
+                                            id="outlined-email-input"
+                                            label="Email*"
+                                            name="email"
+                                            value={user.email}
+                                            type="email"
+                                            variant="outlined"
+                                            onChange={this.handleChange}/>
+                                        <span >{error.email}</span>
                                     </Grid>
-                                    <Grid xs={12} sm={6} item>
+                                    <Grid xs={12} sm={6} item className="input-container">
                                         <TextField
-                                        id="occupation-input"
-                                        label="Occupation"
-                                        name="occupation"
-                                        value={user.occupation}
-                                        type="text"
-                                        variant="outlined"
-                                        style={{width: '100%'}}
-                                        onChange={this.handleChange}
-                                        />
-                                        <span style={{color: 'red', fontStyle: 'italic'}}>{error.occupation}</span>
+                                            id="occupation-input"
+                                            label="Occupation"
+                                            name="occupation"
+                                            value={user.occupation}
+                                            type="text"
+                                            variant="outlined"
+                                            onChange={this.handleChange}/>
+                                        <span >{error.occupation}</span>
                                     </Grid>
-                                    <Grid xs={12} item>
+                                    <Grid xs={12} item className="input-container">
                                         <TextField
-                                        id="outlined-password-input"
-                                        label="Password*"
-                                        name="password"
-                                        value={user.password}
-                                        type="password"
-                                        autoComplete="new-password"
-                                        variant="outlined"
-                                        style={{width: '100%'}}
-                                        onChange={this.handleChange}
-                                        />
-                                        <span style={{color: 'red', fontStyle: 'italic'}}>{error.password}</span>
+                                            id="outlined-password-input"
+                                            label="Password*"
+                                            name="password"
+                                            value={user.password}
+                                            type="password"
+                                            autoComplete="new-password"
+                                            variant="outlined"
+                                            onChange={this.handleChange}/>
+                                        <span >{error.password}</span>
                                     </Grid>
-                                    <Grid xs={12} item>
+                                    <Grid xs={12} item className="input-container">
                                         <TextField
-                                        id="outlined-confirmation-password-input"
-                                        label="Retype Password*"
-                                        name="confPass"
-                                        value={user.confPass}
-                                        type="password"
-                                        variant="outlined"
-                                        style={{width: '100%'}}
-                                        onChange={this.handleChange}
-                                        />
-                                        <span style={{color: 'red', fontStyle: 'italic'}}>{error.confPass}</span>
+                                            id="outlined-confirmation-password-input"
+                                            label="Retype Password*"
+                                            name="confPass"
+                                            value={user.confPass}
+                                            type="password"
+                                            variant="outlined"
+                                            onChange={this.handleChange}/>
+                                        <span >{error.confPass}</span>
                                     </Grid>
-                                    <Grid xs={12} item>
-                                        <h6 style={{margin: 0, padding: 0, fontSize: '0.875rem', fontWeight: 500, lineHeight: 1.5}}>
+                                    <Grid xs={12} item className="field-container">
+                                        <h6>
                                             Fields that are marked with * signed is required
                                         </h6>
                                     </Grid>
                                 </React.Fragment>}
                                 <Grid xs={12} item>
-                                    <Button
-                                        onClick={this.handleSubmit} 
-                                        variant="contained" 
-                                        size="large" 
-                                        style={{width: '100%', color: 'white', backgroundColor: '#3f51b5'}}
-                                    >
+                                    <Button onClick={this.handleSubmit} variant="contained" size="large" className="sign-btn">
                                         Create An Account
                                     </Button>
                                 </Grid>
-                                <Grid xs={12} item>
-                                    <h6 style={{textAlign: 'center', color: '#546e7a', margin: 0, padding: 0, fontSize: '1rem', fontWeight: 400, lineHeight: 1.75}}>
-                                        Already have an account? <Link href="./signin">
-                                        <a style={{color: '#3f51b5', fontWeight: 'bold', textDecoration: 'none'}}>
-                                            Sign in
-                                            <IconButton style={{color: '#3f51b5', height: 20, width: 20}}>
-                                                <ArrowRightAlt />
-                                            </IconButton>
-                                        </a>
-                                        </Link>
+                                <Grid xs={12} item className="field-container">
+                                    <h6>
+                                        <div className="desc">Already have an account ?</div>
+                                        <div className="desc-link">
+                                            <Link href="./signin">
+                                                <a>
+                                                    <div>
+                                                        &nbsp; Sign in.
+
+                                                        <ArrowRightAlt/>
+                                                    </div>
+                                                </a>
+                                            </Link>
+                                        </div>
                                     </h6>
                                 </Grid>
                             </Grid>

@@ -1,7 +1,7 @@
-import React from 'react';
-import Document, { Html, Head, Main, NextScript } from 'next/document';
-import { ServerStyleSheets } from '@material-ui/core/styles';
-import theme from '../components/theme';
+import React from "react";
+import Document, { Html, Head, Main, NextScript } from "next/document";
+import { ServerStyleSheets } from "@material-ui/core/styles";
+import theme from "../components/theme";
 
 export default class MyDocument extends Document {
   render() {
@@ -12,20 +12,26 @@ export default class MyDocument extends Document {
           <meta name="theme-color" content={theme.palette.primary.main} />
           <link
             rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
+            href="https://fonts.googleapis.com/css?family=Lato:300,400,500,600,700&display=swap"
           />
+          <link
+            href="https://unpkg.com/aos@2.3.1/dist/aos.css"
+            rel="stylesheet"
+          />
+          <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         </Head>
         <body>
           <Main />
           <NextScript />
+          <script>AOS.init();</script>
         </body>
       </Html>
     );
   }
 }
 
-// `getInitialProps` belongs to `_document` (instead of `_app`),
-// it's compatible with server-side generation (SSG).
+// `getInitialProps` belongs to `_document` (instead of `_app`), it's compatible
+// with server-side generation (SSG).
 MyDocument.getInitialProps = async (ctx) => {
   // Resolution order
   //
@@ -47,9 +53,8 @@ MyDocument.getInitialProps = async (ctx) => {
   // 1. app.getInitialProps
   // 2. page.getInitialProps
   // 3. app.render
-  // 4. page.render
-
-  // Render app and page and get the context of the page with collected side effects.
+  // 4. page.render Render app and page and get the context of the page with
+  // collected side effects.
   const sheets = new ServerStyleSheets();
   const originalRenderPage = ctx.renderPage;
 
@@ -63,6 +68,9 @@ MyDocument.getInitialProps = async (ctx) => {
   return {
     ...initialProps,
     // Styles fragment is rendered after the app and page rendering finish.
-    styles: [...React.Children.toArray(initialProps.styles), sheets.getStyleElement()],
+    styles: [
+      ...React.Children.toArray(initialProps.styles),
+      sheets.getStyleElement(),
+    ],
   };
 };

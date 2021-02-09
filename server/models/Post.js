@@ -12,7 +12,7 @@ const commentsSchema = new mongoose.Schema({
     listComments: [{type: ObjectId, ref: "Comment"}]
 })
 
-const attachmentSchema = new mongoose.Schema({
+var attachmentSchema = new mongoose.Schema({
     key: {type: String, required: "Attachment should has key"},
     name: {type: String, required: "Attachment name should be declared"},
     size: {type: Number, required: "Attachment size should be defined, default in (KB)"},
@@ -43,8 +43,8 @@ postSchema
     .pre("findOne",autoPopulate)
     .pre("find",autoPopulate)
     .pre("findOneAndUpdate",autoPopulate)
-    
-postSchema.index({ postedOn: 1, category: 1});
-postSchema.index({ title: "text", body: "text"})
 
-module.exports = mongoose.model("Post", postSchema);
+postSchema.index({ postedOn: 1, category: 1});
+postSchema.index({ title: "text", body: "text", 'attachments.name': 'text'})
+
+module.exports = mongoose.model("Post", postSchema);``

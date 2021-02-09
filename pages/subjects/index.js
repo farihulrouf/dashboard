@@ -1,139 +1,304 @@
 import React from "react";
-import {withRouter} from 'next/router'
-import {withStyles, Container, Grid, Avatar, Tabs, Tab, Paper, IconButton, Typography, Box, InputBase, Button} from "@material-ui/core";
-import {Star} from "@material-ui/icons";
-import { authInitialProps } from "../../lib/auth"
-import NavBar from "../../components/NavBar";
+import { withRouter } from "next/router";
+import {
+  Container,
+  Grid,
+  Avatar,
+  Tabs,
+  Tab,
+  Typography,
+  Box,
+  Button,
+} from "@material-ui/core";
+import { Star, ArrowRightAlt } from "@material-ui/icons";
+import Breadcrumb from "../../components/subject/Breadcrumb";
+import { authInitialProps } from "../../lib/auth";
+import NavBar from "../../components/Navbar/NavBar";
 import Home from "../../components/subject/Home";
 import Discussion from "../../components/subject/Discussion";
 import ExerciseSetting from "../../components/subject/ExerciseSetting";
-import { getCourseById } from "../../lib/api";
-
-const styles = (theme) => ({
-    indicator: {
-        backgroundColor: "rgb(27, 22, 66)"
-    },
-    container: {
-        backgroundColor: 'white', 
-        ['@media (min-width:800px)']: { 
-            padding: '20px 48px'
-        },
-        ['@media (max-width:800px)']: { 
-            padding: '20px 9px'
-        }
-    }
-})
-
+import InstructorItem from "../../components/subject/InstructorItem";
+import {
+  getCourseById,
+  getJoinedCourse,
+  createInvoice,
+  getMyInvoice,
+} from "../../lib/api";
 
 function TabPanel(props) {
-    const { children, value, index, ...other } = props;
-  
-    return (
-        <Typography
-        component="div"
-        role="tabpanel"
-        hidden={value !== index}
-        id={`action-tabpanel-${index}`}
-        aria-labelledby={`action-tab-${index}`}
-        {...other}
-        >
-            {value === index && <Box p={1}>{children}</Box>}
-        </Typography>
-    );
+  const { children, value, index, ...other } = props;
+
+  return (
+    <Typography
+      component="div"
+      role="tabpanel"
+      hidden={value !== index}
+      id={`action-tabpanel-${index}`}
+      aria-labelledby={`action-tab-${index}`}
+      {...other}
+    >
+      {value === index && <Box p={1}>{children}</Box>}
+    </Typography>
+  );
 }
 
 function a11yProps(index) {
-    return {
-        id: `action-tab-${index}`,
-        "aria-controls": `action-tabpanel-${index}`
-    };
+  return {
+    id: `action-tab-${index}`,
+    "aria-controls": `action-tabpanel-${index}`,
+  };
 }
 
-class Subject extends React.Component{
-    constructor(props){
-        super(props);
-        this.state={tabIndex: 0, course: {}}
+function CourseStatus(props) {
+  const { status, price, handleEnroll } = props;
+  if (status == 1) {
+    return (
+      <Grid container className="btn-container">
+        <Grid item className="pending-tag-container">
+          <div className="pending-tag mybtn">PENDING</div>
+        </Grid>
+        <Grid item className="join-btn-container">
+          <Button className="join-btn mybtn" onClick={handleEnroll}>
+            <p>Finish Payment</p>
+            <ArrowRightAlt
+              style={{
+                color: "white",
+              }}
+            />
+          </Button>
+        </Grid>
+      </Grid>
+    );
+  } else if (status == 2) {
+    return (
+      <Grid container className="btn-container">
+        <Grid item className="enrolled-tag-container">
+          <div className="enrolled-tag mybtn">ENROLLED</div>
+        </Grid>
+      </Grid>
+    );
+  }
+  return (
+    <Grid container className="btn-container">
+      <Grid item className="price-tag-container">
+        <div className="price-tag mybtn">Rp. {price}</div>
+      </Grid>
+      <Grid item className="join-btn-container">
+        <Button className="join-btn mybtn" onClick={handleEnroll}>
+          <p>Join Course</p>
+          <ArrowRightAlt
+            style={{
+              color: "white",
+            }}
+          />
+        </Button>
+      </Grid>
+    </Grid>
+  );
+}
+
+class Subject extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { tabIndex: 0, course: {}, joined: 0 };
+    this.handleEnroll = this.handleEnroll.bind(this);
+  }
+
+  componentDidMount() {
+    const { id } = this.props.router.query;
+    getCourseById(id).then((course) => {
+      this.setState(course, () => {
+        getMyInvoice().then((res) => {
+          if (
+            res.status == "ok" &&
+            res.payment.some(
+              (p) =>
+                this.state.course._id === p.course && p.status === "PENDING"
+            )
+          ) {
+            this.setState({ joined: 1 });
+          } else if (
+            res.status == "ok" &&
+            res.payment.some(
+              (p) => this.state.course._id === p.course && p.status === "PAID"
+            )
+          ) {
+            this.setState({ joined: 2 });
+          } else {
+            getJoinedCourse().then((courses) => {
+              courses.forEach((course) => {
+                if (this.state.course._id === course._id) {
+                  this.setState({ joined: 2 });
+                }
+              });
+            });
+          }
+        });
+      });
+    });
+  }
+
+  handleEnroll = () => {
+    const { joined } = this.state;
+    const { _id } = this.state.course;
+
+    if (joined === 0) {
+      const payload = {
+        course: this.state.course,
+      };
+
+      createInvoice(payload).then((res) => {
+        if (!res.data.error) {
+          console.log(res.data);
+          this.setState({ joined: 1 });
+          window.open(res.data.invoice_url, "_blank");
+        } else {
+          console.log(res.data.error);
+        }
+      });
+    } else if (joined === 1) {
+      getMyInvoice().then((res) => {
+        res.payment.forEach((p) => {
+          if (p.course === _id) {
+            window.open(p.invoice_url, "_blank");
+          }
+        });
+      });
     }
+  };
 
-    componentDidMount(){
-        const {id} = this.props.router.query;
-        getCourseById(id).then(course=>this.setState(course));
-    }
+  render() {
+    const { auth, router } = this.props;
+    const { tabIndex, course, joined } = this.state;
+    const { creator, instructors, createdAt, name } = course;
 
-    render(){
-        const {auth, classes, router} = this.props;
-        const {tabIndex, course} = this.state;
-
-        return(
-            <NavBar auth={auth}>
-                <Container className={classes.container}>
-                    <Grid name="course-header" container>
-                        <Grid xs={12} sm={8} item style={{padding: 16}}>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12}>
-                                    <h3 style={{margin: 0, fontWeight: 'bold', color: '#121037', textAlign: 'left', fontSize: '3rem', fontFamily: 'Lato', lineHeight: 1.2}}>{course.name}</h3>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <h6 style={{margin: 0, color: '#546e7a', textAlign: 'left', fontWeight: 500, fontSize: '1.25rem', lineHeight: 1.6, fontFamily: 'Lato'}}>{course.about}</h6>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <div style={{display: "flex", backgroundColor: 'white'}}>
-                                        {course.instructors && course.instructors.map((ins)=> (
-                                            <div key={ins._id} style={{display: "block"}}>
-                                                <a href={ins.linkedIn}><Avatar alt={ins.name} src={ins.avatar} width="40" height="40" style={{border: '3px solid white'}} /></a>
-                                            </div>
-                                        ))}
-                                        <div style={{display: "flex", justifyContent: "flex-end", alignSelf: "center", backgroundColor: "white", flexGrow: 1}}>
-                                            <Star style={{color: '#f9a825'}} />
-                                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>{course.rating}</span>
-                                            <span style={{marginLeft: 8, color: '#546e7a', fontWeight: 400, fontSize: '0.875rem', lineHeight: 1.43}}>(28 reviews)</span>
-                                        </div>
-                                    </div>
-                                </Grid>
-                            </Grid>
-                        </Grid>
-                        <Grid xs={12} sm={4} item>
-                            <Grid container justify="center">
-                                <span height="auto" width="auto">
-                                    <img src={course.logo || "https://thefront.maccarianagency.com/images/illustrations/mobiles.svg"} height="100%" width="100%" />
-                                </span>
-                            </Grid>
-                        </Grid>
+    return (
+      <NavBar auth={auth}>
+        <Container className="subject-container">
+          <Grid name="course-header" container className="subject-header">
+            <Grid item className="breadcrumb">
+              <Breadcrumb courseName={name} />
+            </Grid>
+            <Grid item className="subject">
+              <Grid className="subject-header-desc">
+                {creator ? (
+                  <Grid item className="creator-container">
+                    <Grid className="creator-logo" item container>
+                      <a href={creator.linkedIn}>
+                        <Avatar
+                          alt={creator.name}
+                          src={creator.avatar}
+                          className="logo"
+                        />
+                      </a>
                     </Grid>
-                    <Tabs classes={{indicator: classes.indicator}} value={tabIndex} onChange={(e,value)=>{this.setState({tabIndex: value})}} aria-label="simple tabs example">
-                        <Tab label="Home" {...a11yProps(0)}  />
-                        <Tab label="Discussion" {...a11yProps(1)}  />
-                        <Tab label="Exercise" {...a11yProps(2)}/>
-                    </Tabs>
-                    <React.Fragment>
-                        <TabPanel value={tabIndex} index={0} className={classes.tabPanel}>
-                            <Home
-                                auth = {auth} 
-                                courseId={router.query.id} 
-                                isInstructor = {course.isInstructor} 
-                            />
-                        </TabPanel>
-                        <TabPanel value={tabIndex} index={1} className={classes.tabPanel}>
-                            <Discussion
-                                auth = {auth}
-                                courseId={router.query.id} 
-                                isInstructor = {course.isInstructor} 
-                            />
-                        </TabPanel>
-                        <TabPanel value={tabIndex} index={2}>
-                            <ExerciseSetting
-                                auth = {auth}
-                                courseId={router.query.id} 
-                                isInstructor = {course.isInstructor} 
-                            />
-                        </TabPanel>
-                    </React.Fragment>
-                </Container>
-            </NavBar>
-        )
-    }
+                    {creator.isAnOrganization ? (
+                      <Grid className="org-desc" item>
+                        {creator ? <h5>{creator.name}</h5> : ""}
+                      </Grid>
+                    ) : (
+                      <Grid className="creator-desc" item xs={10}>
+                        <h6>Personal Course</h6>
+                        {creator ? (
+                          <h6 className="creator-name">by: {creator.name}</h6>
+                        ) : (
+                          ""
+                        )}
+                      </Grid>
+                    )}
+                  </Grid>
+                ) : (
+                  ""
+                )}
+                <Grid className="subject-title" item>
+                  <h2>{course.name}</h2>
+                </Grid>
+                <Grid className="subject-desc" item>
+                  <h5>{course.about}</h5>
+                </Grid>
+                <Grid item>
+                  <div>
+                    <div className="subject-rating">
+                      <Star style={{ color: "#f9a825" }} />
+                      <span className="rating">
+                        {`${course.rating} `}&nbsp;
+                      </span>
+                      <span className="review">{`(${
+                        course.countReview ? course.countReview : 0
+                      } reviews)`}</span>
+                    </div>
+                  </div>
+                </Grid>
+              </Grid>
+              <Grid className="subject-header-button" item>
+                <CourseStatus
+                  status={joined}
+                  price={course.price}
+                  handleEnroll={this.handleEnroll}
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid className="subject-instructors" container>
+            <Grid className="instructors-title" item>
+              <p>Instructors:</p>
+            </Grid>
+            <Grid item container>
+              {instructors &&
+                instructors.map((instructor) => (
+                  <InstructorItem id={instructor._id} data={instructor} />
+                ))}
+            </Grid>
+          </Grid>
+          <Tabs
+            value={tabIndex}
+            onChange={(e, value) => {
+              this.setState({ tabIndex: value });
+            }}
+            aria-label="simple tabs example"
+            indicatorColor="primary"
+            textColor="primary"
+            className="tab-container"
+            centered
+          >
+            <Tab label="Home" {...a11yProps(0)} />
+            <Tab label="Discussion" {...a11yProps(1)} />
+            <Tab label="Exercise" {...a11yProps(2)} />
+          </Tabs>
+          <React.Fragment>
+            <TabPanel value={tabIndex} index={0}>
+              <Home
+                auth={auth}
+                courseId={router.query.id}
+                isInstructor={course.isInstructor}
+                instructors={instructors}
+                createdAt={createdAt}
+                className="subject-home"
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={1}>
+              <Discussion
+                auth={auth}
+                courseId={router.query.id}
+                isInstructor={course.isInstructor}
+                className="subject-discussion"
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={2}>
+              <ExerciseSetting
+                auth={auth}
+                courseId={router.query.id}
+                isInstructor={course.isInstructor}
+                className="subject-exercise"
+              />
+            </TabPanel>
+          </React.Fragment>
+        </Container>
+      </NavBar>
+    );
+  }
 }
 
 Subject.getInitialProps = authInitialProps(true);
 
-export default withStyles(styles)(withRouter(Subject));
+export default withRouter(Subject);

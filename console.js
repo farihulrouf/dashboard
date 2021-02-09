@@ -2,7 +2,9 @@ require("dotenv").config();
 var repl = require("repl");
 var replServer = repl.start({prompt: "Node Console > "});
 var User = require('./server/models/User');
+var Review = require('./server/models/Review');
 var Course = require('./server/models/Course');
+var Payment = require('./server/models/Payment')
 var Post = require('./server/models/Post');
 var Comment = require('./server/models/Comment');
 var TeacherApplication = require('./server/models/TeacherApplication');
@@ -86,6 +88,8 @@ const seeds = async function(){
 }
 
 replServer.context.User = User;
+replServer.context.Review = Review;
+replServer.context.Payment = Payment;
 replServer.context.Course = Course;
 replServer.context.Post = Post;
 replServer.context.Comment = Comment;

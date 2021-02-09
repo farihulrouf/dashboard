@@ -1,204 +1,259 @@
-import {Grid, Typography, Paper, Button, Divider, TextareaAutosize, makeStyles, Popper, ButtonGroup, IconButton} from '@material-ui/core';
-import {ThumbUp, ThumbUpOutlined, Send, Comment, Share, MoreVert, AssessmentOutlined, AnnouncementOutlined, ClassOutlined} from '@material-ui/icons';
-import {likeAPost, postComment} from '../../lib/api';
-import CommentItem from './CommentItem';
-import PostForm from './PostForm';
-import Link from 'next/link'
+import {
+  Grid,
+  Button,
+  TextareaAutosize,
+  Popper,
+  Paper,
+  IconButton,
+} from "@material-ui/core";
+import {
+  ThumbUp,
+  Send,
+  Description,
+  Comment,
+  Share,
+  MoreVert,
+  AssessmentOutlined,
+  AnnouncementOutlined,
+  ClassOutlined,
+  AttachFile,
+  GetApp,
+} from "@material-ui/icons";
+import { likeAPost, postComment } from "../../lib/api";
+import CommentItem from "./CommentItem";
+import PostForm from "./PostForm";
 // import MathJax from "mathjax3-react";
-import MathJax from 'react-mathjax-preview'
-import Router from 'next/router';
-
-const styles = (theme) => ({
-    inline: {
-        display: 'inline',
-        fontSize: '0.875rem',
-        fontFamily: 'Lato',
-        fontWeight: 400,
-        lineHeight: 1.43,
-        color: '#121037',
-        fontStyle: 'italic'
-    },
-    link: {
-        backgroundColor: 'black'
-    },
-    body: {
-        fontSize: '1rem',
-        color: '#121037',
-        fontFamily: 'Lato',
-        fontWeight: 400,
-        lineHeight: 1.5,
-        width: '100%'
-    },
-    paper: {
-        marginBottom: 30,
-        ['@media (min-width:800px)']: { 
-            padding: 50
-        },
-        ['@media (max-width:800px)']: { 
-            padding: 10
-        }
-    }
-});
-const useStyles = makeStyles(styles);
+import MathJax from "react-mathjax-preview";
+import Router from "next/router";
+import React, { useState, useEffect, useRef } from "react";
 
 const PostItem = (props) => {
-    const classes = useStyles();
-    const [showComment,setShowComment] = React.useState(false);
-    const [data,setData] = React.useState(props.data);
-    const [comment,setComment] = React.useState("");
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const [editMode, setEditMode] = React.useState(false);
+  // const [showComment, setShowComment] = useState(false);
+  const [data, setData] = useState(props.data);
+  const [comment, setComment] = useState("");
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [editMode, setEditMode] = useState(false);
+  const [readMore, setReadMore] = useState(false);
 
-    const handleClick = (event) => {
-        setAnchorEl(anchorEl ? null : event.currentTarget);
-      };
-    
-      const open = Boolean(anchorEl);
-      const id = open ? 'simple-popper' : undefined;
-    
-    const showCommentBox = (event) => {
-       setShowComment(!showComment);
+  const handleClick = (event) => {
+    setAnchorEl(anchorEl ? null : event.currentTarget);
+  };
+
+  console.log(data);
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popper" : undefined;
+
+  useEffect(() => {
+    let readMoreText = document.getElementById("readMore");
+
+    if (readMoreText) {
+      readMoreText.addEventListener("click", function () {
+        setReadMore(true);
+      });
     }
+  });
 
-    const postCallback = (data) => {
-        setComment("");
-        setData(data);
-    }
+  const showCommentBox = (event) => {
+    setShowComment(!showComment);
+  };
 
-    const onEditClick = ()=>{
-        setEditMode(true);
-    }
+  const postCallback = (data) => {
+    setComment("");
+    setData(data);
+  };
 
-    const onPostUpdated = (post) => {
-        setData(post);
-        setAnchorEl(null);
-        setEditMode(false);
-    }
+  const onEditClick = () => {
+    setEditMode(true);
+  };
 
-    React.useEffect(()=>{
-        setData(props.data);
-    },[props.data])
+  const onPostUpdated = (post) => {
+    setData(post);
+    setAnchorEl(null);
+    setEditMode(false);
+  };
 
-    return(
-        <Paper elevation={3} className={classes.paper}>
-            {!editMode && <React.Fragment>
-                <Grid container spacing={2}>
-                    <Grid item xs={12} sm={1} style={{alignSelf: 'center'}}>
-                        <Grid container justify="center">
-                            {data.category == "Announcement" && <AnnouncementOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
-                            {data.category == "Materials" && <ClassOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
-                            {data.category == "Exam" && <AssessmentOutlined style={{maxWidth: '100%', width: 'auto', height: '50px'}} />}
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12} sm={11}>
-                        <Grid container>
-                            <Grid item style={{flexGrow: 1}}>
-                                <h6 style={{margin: 0}}>
-                                    <a href="#" 
-                                    onClick={()=>Router.push({pathname: 'posts', query: {id: data._id}})} 
-                                    style={{
-                                        textDecoration: 'none',
-                                        fontFamily: 'Lato', 
-                                        lineHeight: 1.6, 
-                                        fontWeight: 700, 
-                                        color: '#121037', 
-                                        fontSize: '1.25rem'
-                                    }}>
-                                        {data.title}
-                                    </a>
-                                </h6>
-                            </Grid>
-                            {data.owned && 
-                                <Grid item>
-                                    <Button color="primary" onClick={handleClick}>
-                                            <MoreVert />
-                                    </Button>
-                                    <Popper id={id} open={open} anchorEl={anchorEl}>
-                                        <ButtonGroup
-                                            orientation="vertical"
-                                            color="primary"
-                                            aria-label="vertical outlined primary button group"
-                                            style={{marginRight: 50}}
-                                        >
-                                            <Button variant="contained" onClick={onEditClick}>Edit</Button>
-                                            <Button variant="contained" value={data._id} onClick={props.openDeleteDialog}>Delete</Button>
-                                        </ButtonGroup>
-                                    </Popper>
-                                </Grid>
-                            }
-                        </Grid>
-                        <Grid container>
-                            <React.Fragment>
-                                <Typography
-                                    component="p"
-                                    className={classes.inline}
-                                >
-                                    {`${data.postedBy.name} - ${data.createdAt}`}
-                                </Typography>
-                            </React.Fragment>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid container style={{margin: '1em 0px'}}>
-                    <MathJax math={data.body} className={classes.body}  />
-                </Grid>
-                <Grid container spacing={2} style={{marginTop: 10}}>
-                    {data.attachments.map((e,idx)=><Grid key={e._id} item><a href={`/files/${encodeURIComponent(e.key)}`} style={{fontSize: 12}}>{e.name}</a></Grid>)}
-                </Grid>
-            </React.Fragment>}
-            {editMode && 
-                <div style={{paddingTop: 20}}>
-                    <PostForm post={data} callback={onPostUpdated} />
-                </div>}
-            <Grid container style={{marginTop: 10}}>
-                <ThumbUp style={{fontSize: 15, color:"#556cd6", marginRight: 10}} />
-                <span style={{fontSize: 12}}>{data.likes.total} Likes</span>
+  const formatDate = (date) => {
+    return date.slice(0, 19).replace("T", " at ");
+  };
+
+  useEffect(() => {
+    setData(props.data);
+  }, [props.data]);
+
+  return (
+    <Grid className="post-box" id={props.data._id}>
+      {!editMode && (
+        <React.Fragment>
+          <Grid item className="post-header">
+            <Grid container className="title-container">
+              <Grid item>
+                {data.category == "Announcement" && <AnnouncementOutlined />}
+                {data.category == "Materials" && <ClassOutlined />}
+                {data.category == "Exam" && <AssessmentOutlined />}
+              </Grid>
+              <Grid item className="title">
+                <h5>
+                  <a
+                    onClick={() =>
+                      Router.push({
+                        pathname: "posts",
+                        query: { id: data._id },
+                      })
+                    }
+                  >
+                    {data.title}
+                  </a>
+                </h5>
+                <p>{`${data.postedBy.name} - ${formatDate(data.createdAt)}`}</p>
+              </Grid>
             </Grid>
-            <Grid container style={{marginTop: 10}}>
+            <Grid item>
+              {data.owned && (
                 <Grid item>
-                    <IconButton style={{paddingLeft: 0}} color="primary" onClick={likeAPost(data._id, setData)}>
-                        {!!data.isLike? <ThumbUp style={{fontSize: 20}} /> : <ThumbUpOutlined style={{fontSize: 20}} />}
-                    </IconButton>
+                  <Button color="primary" onClick={handleClick}>
+                    <MoreVert />
+                  </Button>
+                  <Popper
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl}
+                    placement="left-start"
+                  >
+                    <Paper item className="edit-course">
+                      <Button variant="contained" onClick={onEditClick}>
+                        Edit
+                      </Button>
+                      <Button
+                        variant="contained"
+                        value={data._id}
+                        onClick={props.openDeleteDialog}
+                      >
+                        Delete
+                      </Button>
+                    </Paper>
+                  </Popper>
                 </Grid>
-                <Grid item>
-                    <IconButton color="primary" onClick={showCommentBox}>
-                        <Comment style={{fontSize: 20}} />
-                    </IconButton>
-                </Grid>
-                <Grid item>
-                    <IconButton color="primary">
-                        <Share style={{fontSize: 20}} />
-                    </IconButton>
-                </Grid>
+              )}
             </Grid>
-            <Divider style={{marginTop: 10}}/>
-                <Grid container>
-                    {data.comments.listComments.map((value) => <CommentItem key={value._id} data={value} />)}
+          </Grid>
+          <hr />
+          <Grid item className="post-body">
+            {readMore ? (
+              <MathJax math={data.body} />
+            ) : (
+              <MathJax
+                math={`${data.body.substring(0, 800)}${
+                  readMore
+                    ? ""
+                    : '<span class="read-more" id="readMore">&nbsp;...Read More</span>'
+                }`}
+              />
+            )}
+            {readMore && (
+              <a
+                href={`#${props.data._id}`}
+                class="read-less"
+                onClick={() => {
+                  setReadMore(false);
+                }}
+              >
+                ...Read Less
+              </a>
+            )}
+          </Grid>
+          <hr />
+          <Grid item className="post-middle">
+            <Grid item className="attachment">
+              <Grid item className="attachment-number">
+                <AttachFile />
+                <span>
+                  {data.attachments.length
+                    ? `${data.attachments.length} attachment${
+                        data.attachments.length > 1
+                      }`
+                    : "No attachments available"}
+                </span>
+              </Grid>
+              {data.attachments.length > 0 && (
+                <Grid item className="download">
+                  <GetApp />
+                  <span>Download All Attachment</span>
                 </Grid>
-                {showComment && <Grid container style={{marginTop: 10}}>
-                    <Grid xs={12} sm={11} item>
-                        <TextareaAutosize
-                            placeholder="Write your comments"
-                            multiline="true"
-                            rowsMin={2}
-                            rowsMax={10}
-                            style={{width: '100%', borderRadius: 10, resize: 'none'}}
-                            value={comment}
-                            onChange={(e)=>setComment(e.target.value)}
-                        />
-                    </Grid>
-                    <Grid xs={12} sm={1} item>
-                        <Button
-                            variant="outlined"
-                            color="primary"
-                            onClick={postComment({postId: data._id,comment: comment},postCallback)}
-                        >
-                            <Send style={{fontSize: 15}} />
-                        </Button>
-                    </Grid>
-                </Grid>}
-        </Paper>
-    )
-}
+              )}
+            </Grid>
+            {data.attachments.map((e, idx) => (
+              <Grid key={e._id} item>
+                <a
+                  href={`/files/${encodeURIComponent(e.key)}`}
+                  className="attached-file"
+                >
+                  {" "}
+                  <Description />
+                  <p>{e.name}</p>
+                </a>
+              </Grid>
+            ))}
+          </Grid>
+        </React.Fragment>
+      )}
+      {editMode && (
+        <div>
+          <PostForm post={data} callback={onPostUpdated} />
+        </div>
+      )}
+      <Grid container className="post-comment">
+        <Grid item>
+          <IconButton onClick={likeAPost(data._id, setData)} className="icon">
+            {!data.isLike ? <ThumbUp /> : <ThumbUp className="purple" />}
+            <span className={data.isLike && "purple"}>{`${
+              data.likes.total
+            } like${data.likes.total !== 1 ? "s" : ""}`}</span>
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton color="primary" onClick={showCommentBox} className="icon">
+            <Comment />
+            <span>{`${data.comments.total} comment${
+              data.comments.total !== 1 ? "s" : ""
+            }`}</span>
+          </IconButton>
+        </Grid>
+        <Grid item>
+          <IconButton color="primary" className="icon">
+            <Share />
+            <span>share</span>
+          </IconButton>
+        </Grid>
+      </Grid>
+      <Grid container className="comment-container">
+        {data.comments.listComments.map((value) => (
+          <CommentItem key={value._id} data={value} />
+        ))}
+      </Grid>
+
+      <Grid item className="comment-input-box">
+        <TextareaAutosize
+          placeholder="Write your comments"
+          // multiline="true"
+          rowsMin={2}
+          rowsMax={10}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+        />
+        <Grid
+          item
+          className="send-btn"
+          onClick={postComment(
+            { postId: data._id, comment: comment },
+            postCallback
+          )}
+        >
+          <Send />
+        </Grid>
+      </Grid>
+    </Grid>
+  );
+};
 
 export default PostItem;

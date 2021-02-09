@@ -108,7 +108,7 @@ export default function CreateEditCourseDialog(props) {
   }
 
   const logoPickerCallback = (file) => {
-    const logo = `/files/${encodeURIComponent(file.key)}`;
+    const logo = `/course_logo/${encodeURIComponent(file.key)}`;
     setState({...state, showCropper: false, avatarChosen: undefined, course: {...state.course, logo}})
   }
 

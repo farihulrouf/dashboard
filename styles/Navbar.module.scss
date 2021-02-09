@@ -1,0 +1,345 @@
+.navbar,
+.navbar-1 {
+    position: absolute!important;
+    top: 0;
+    background-color: transparent!important;
+    box-shadow: none!important;
+    height: 72px;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 5!important;
+    // height:100%
+    .container {
+        display: flex;
+        align-items: center;
+        padding: 0 50px !important;
+
+        .brands {
+            width: 8%;
+            margin-top: 5px;
+
+            img {
+                position: relative;
+                width: 100%;
+            }
+        }
+
+        span {
+            color: white;
+            font-weight: 400;
+        }
+
+        .nav-menu {
+            margin-left: auto;
+            display: flex;
+            width: calc(89% - 41px);
+            align-items: center;
+        }
+
+        .right-nav {
+            button {
+                svg {
+                    color: #ABABAB!important;
+                }
+            }
+        }
+
+        .right-nav {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+
+            button {
+                margin-left: 10px;
+                border-radius: 100%!important;
+            }
+
+            svg {
+                font-size: 1.25rem;
+            }
+            button:hover {
+                background-color: #C5CCD0;
+            }
+            .MuiTouchRipple-root:hover {
+                background: transparent!important;
+            }
+        }
+    }
+
+    .sign-btn {
+        background-color: white!important;
+        border: 1px solid white!important;
+
+        span {
+            color: #3F51B5!important;
+            font-weight: 500;
+            text-decoration: none;
+            min-width: 64px;
+        }
+    }
+}
+
+.navbar-1 {
+    span {
+        color: #1B1642!important;
+    }
+
+    .MuiBadge-badge {
+        color: white!important;
+    }
+
+    .sign-btn {
+        background-color: #3F51B5!important;
+        border: 2px solid #3F51B5!important;
+
+        span {
+            color: white!important;
+
+            text-decoration: none;
+        }
+    }
+}
+
+.footer {
+    background-color: #1B1642;
+    position: relative;
+    z-index: 10;
+
+    .left-footer {
+        max-width: 16.666667%!important;
+
+        ul {
+            margin-top: 1rem;
+        }
+    }
+
+    .right-footer {
+        max-width: 83.33333%!important;
+        padding: 2rem !important;
+        margin: 0;
+    }
+
+    .footer-logo {
+        width: 100%;
+        padding: 10px 4px;
+    }
+
+    .social {
+        position: relative;
+        padding-left: 0;
+        padding-right: 0;
+        width: 65%;
+
+        button {
+            padding: 3px;
+            margin-right: 2px;
+            width: 25%;
+            min-width: 0!important;
+
+            svg {
+                color: white;
+                font-size: 1.5vw;
+            }
+        }
+        button:hover {
+            transform: scale(1.1);
+        }
+    }
+
+    .footer-item {
+        padding: 0 1.5rem;
+        margin: 1rem 0;
+        min-width: 20%;
+
+        a {
+            color: white;
+            text-decoration: none;
+            font-weight: 300;
+            font-size: 1.05vw;
+            // margin: 5%;
+        }
+
+        li {
+            padding: 4px 0;
+        }
+
+        .heading {
+            font-weight: 500;
+            margin: 15px 0;
+        }
+    }
+}
+
+.popout-menu {
+    min-width: 180px;
+    padding: 5px;
+
+    ul {
+        padding: 0 !important;
+    }
+
+    li {
+        align-items: center;
+        color: #3e3e3e;
+        padding: 10px;
+    }
+    svg {
+        font-size: 1.25rem;
+        margin-right: 10px;
+    }
+}
+
+.nav-item {
+    text-transform: capitalize;
+}
+
+.notif-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .notif {
+        min-width: 0!important;
+        border-radius: 100%!important;
+        font-size: 1rem;
+        padding: 4px !important;
+
+        svg {
+            font-size: 1.1rem;
+        }
+    }
+
+}
+
+.profile-picture {
+    margin-left: 15px !important;
+    width: 15%;
+
+    button {
+        margin: 0 !important;
+
+        img {
+            width: 100%;
+            border-radius: 100%;
+        }
+
+        svg {
+            font-size: 2rem!important;
+        }
+    }
+    button:hover,
+    svg:hover {
+        background: transparent!important;
+    }
+}
+
+.notification-box {
+    position: relative;
+    transform: translate(30px, 15px)!important;
+    border-radius: 16px!important;
+    border: solid 1.5px #c7c7c7;
+    width: 275px;
+    max-height: 275px;
+    padding: 8px 0;
+
+    .notifications-item {
+        box-shadow: none;
+        border-bottom: solid 1.5px #c7c7c7;
+        padding: 12px 20px;
+    }
+
+    .notification-item {
+        align-items: flex-start;
+        justify-content: flex-start;
+        margin: 0;
+        box-shadow: none;
+
+        .avatar-container {
+            margin-right: 10px;
+
+            div {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        p {
+            margin-block: 0 !important;
+            margin-inline: 0 !important;
+            font-weight: 300;
+            font-size: 0.85rem;
+            line-height: 1;
+            color: #555757;
+            margin-bottom: 10px !important;
+        }
+
+        span {
+            font-weight: 500;
+            font-size: 0.85rem;
+            line-height: 1;
+        }
+
+        .unread-container {
+            width: 10px;
+            height: 10px;
+            align-self: center;
+        }
+    }
+
+    .see-all {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 15px 0 7px;
+        z-index: 20;
+
+        span {
+            color: #3F51B5!important;
+        }
+        span:hover {
+            color: #1B1642!important;
+        }
+    }
+
+    .no-notif {
+        padding: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        span {
+            color: #3F51B5!important;
+        }
+    }
+    .no-notif:hover,
+    .see-all:hover {
+        cursor: pointer;
+    }
+}
+
+.notification-box::after {
+    content: '';
+    position: absolute;
+    background-color: white;
+    width: 20px;
+    height: 20px;
+    border-left: solid 1.5px #c7c7c7;
+    border-top: solid 1.5px #c7c7c7;
+    border-radius: 3px;
+    transform: rotateZ(45deg);
+    top: -11.22px;
+    left: calc(100% - 54px);
+}
+
+.notif-container {
+    display: block;
+
+    .paper-container {
+        max-height: 216px;
+        overflow-y: auto;
+        box-shadow: none;
+
+    }
+}

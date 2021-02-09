@@ -1,104 +1,131 @@
-import {Grid, List, Avatar, Paper, IconButton, withStyles, InputBase, Button} from '@material-ui/core';
-import {FilterList} from "@material-ui/icons";
-import {getCoursePosts, deletePost} from '../../lib/api';
-import Pagination from '@material-ui/lab/Pagination';
-import DeleteDialog from './DeleteDialog';
-import PostForm from './PostForm';
-import PostItem from './PostItem';
-import PostFilter from './PostFilter';
+import { Grid, List } from "@material-ui/core";
+import { getCoursePosts, deletePost } from "../../lib/api";
+import Pagination from "@material-ui/lab/Pagination";
+import DeleteDialog from "./DeleteDialog";
+import PostItem from "./PostItem";
+import PostFilter from "./PostFilter";
+import React from "react";
+class Home extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      posts: { limit: 0, page: 1, pages: 1, total: 0, docs: [] },
+      query: {
+        content: "",
+        dateStart: "",
+        dateEnd: "",
+        creator: [],
+        category: [],
+        page: 1,
+      },
+      deleteDialogOpen: false,
+    };
+    this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
+    this.handlePaginationChange = this.handlePaginationChange.bind(this);
+    this.deletePost = this.deletePost.bind(this);
+    this.deleteDialogOnClose = this.deleteDialogOnClose.bind(this);
+    this.openDeleteDialog = this.openDeleteDialog.bind(this);
+    this.onNewPostCreated = this.onNewPostCreated.bind(this);
+  }
 
+  handlePaginationChange(event, page) {
+    getCoursePosts(this.props.courseId, {
+      ...this.state.query,
+      page: page,
+    }).then((posts) => this.setState(posts));
+  }
 
-const styles = (theme) => ({
-    input: {
-        flex: 1
-    }
-})
+  componentDidMount() {
+    const { courseId, createdAt } = this.props;
+    // console.log(createdAt);
+    // this.setState(prev => ({
+    //   query: {
+    //     ...prev.query,
+    //     dateStart: createdAt
+    //   }
+    // }), () => {
+    //   getCoursePosts(courseId,this.state.query).then(posts => this.setState(posts))
+    // })
 
-class Home extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {
-            posts: {limit: 0, page: 1, pages: 1, total: 0, docs: []}, 
-            query: {content: "", category: [], page: 1},
-            deleteDialogOpen: false
-        }
-        this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
-        this.handlePaginationChange = this.handlePaginationChange.bind(this)
-        this.deletePost = this.deletePost.bind(this);
-        this.deleteDialogOnClose = this.deleteDialogOnClose.bind(this);
-        this.openDeleteDialog = this.openDeleteDialog.bind(this);
-        this.onNewPostCreated = this.onNewPostCreated.bind(this);
-    }
+    getCoursePosts(courseId, this.state.query).then((posts) =>
+      this.setState(posts)
+    );
+  }
 
-    handlePaginationChange(event,page){
-        getCoursePosts(this.props.courseId,{...this.state.query, page: page}).then(posts=>this.setState(posts));
-    }
+  onSearchQueryChange(query) {
+    getCoursePosts(this.props.courseId, query).then((result) =>
+      this.setState({ posts: result.posts, query: query })
+    );
+  }
 
-    componentDidMount(){
-        const {courseId} = this.props;
-        getCoursePosts(courseId,this.state.query).then(posts => this.setState(posts))
-    }
+  openDeleteDialog = (event) => {
+    this.setState({
+      deleteDialogOpen: true,
+      postToDelete: event.currentTarget.value,
+    });
+  };
 
-    onSearchQueryChange(query){
-        getCoursePosts(this.props.courseId,query)
-            .then(result => this.setState({posts: result.posts, query: query}));
-    }
+  deleteDialogOnClose = () => {
+    this.setState({ deleteDialogOpen: false });
+  };
 
-    openDeleteDialog = (event)=>{
-        this.setState({deleteDialogOpen: true, postToDelete: event.currentTarget.value});
-    }
+  deletePost = () => {
+    const { postToDelete, query } = this.state;
+    deletePost(postToDelete, query).then((result) =>
+      this.setState({ posts: result.posts, deleteDialogOpen: false })
+    );
+  };
 
-    deleteDialogOnClose = () => {
-        this.setState({deleteDialogOpen: false});
-    }
+  onNewPostCreated = (posts) => {
+    //Reload all posts with default query
+    this.setState({ posts: posts });
+  };
 
-    deletePost = () => {
-        const {postToDelete, query} = this.state;
-        deletePost(postToDelete, query).then(result=> this.setState({posts: result.posts, deleteDialogOpen: false}))
-    }
+  render() {
+    const { isInstructor, auth, instructors, createdAt } = this.props;
+    const { posts, deleteDialogOpen } = this.state;
 
-    onNewPostCreated = (posts) => {
-        //Reload all posts with default query
-        this.setState({posts: posts});
-    }
+    return (
+      <div className="subject-home">
+        <DeleteDialog
+          open={deleteDialogOpen}
+          handleClose={this.deleteDialogOnClose}
+          onDelete={this.deletePost}
+        />
+        <PostFilter
+          query={this.state.query}
+          onSearchQueryChange={this.onSearchQueryChange}
+          courseId={this.props.courseId}
+          callback={this.onNewPostCreated}
+          auth={auth}
+          isInstructor={isInstructor}
+          instructors={instructors}
+          createdAt={createdAt}
+        />
 
-    render(){
-        const {isInstructor, auth, classes} = this.props
-        const {posts, deleteDialogOpen} = this.state
-        return(
-            <React.Fragment>
-                <DeleteDialog open={deleteDialogOpen} handleClose={this.deleteDialogOnClose} onDelete={this.deletePost} />
-                <PostFilter query={this.state.query} onSearchQueryChange={this.onSearchQueryChange} />
-                <Grid container style={{marginTop: 20}}>
-                    <Grid item xs={12}>
-                        <Grid container style={{justifyContent: 'center'}}>
-                            {isInstructor && <Grid item xs={12} style={{marginBottom: 50}}>
-                                <Paper elevation={5} style={{padding: 20}}>
-                                        <Grid container style={{marginBottom: 20}}>
-                                            <Grid item style={{marginRight: 10}}>
-                                                <Avatar style={{width: 30, height: 30}} alt={auth.user.name} src={auth.user.avatar} />
-                                            </Grid>
-                                            <Grid item>
-                                                <Grid container style={{fontSize: 20}}><b>{auth.user.name}</b></Grid>
-                                            </Grid>
-                                        </Grid>
-                                        <PostForm courseId={this.props.courseId} callback={this.onNewPostCreated} />
-                                </Paper>
-                            </Grid>}
-                            <Grid item sx={12} style={{marginBottom: 30}}>
-                                <Pagination count={posts.pages} color="primary" onChange={this.handlePaginationChange} />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <List>
-                                    {posts.docs.map((value) => <PostItem key={value._id} data={value} openDeleteDialog={this.openDeleteDialog} />)}
-                                </List>
-                            </Grid>
-                        </Grid>
-                    </Grid>
-                </Grid>
-            </React.Fragment>
-        )
-    }
+        <Grid container>
+          {/* <Grid item>
+            <Pagination
+              count={posts.pages}
+              color="primary"
+              onChange={this.handlePaginationChange}
+            />
+          </Grid> */}
+          <Grid item xs={12}>
+            <List>
+              {posts.docs.map((value) => (
+                <PostItem
+                  key={value._id}
+                  data={value}
+                  openDeleteDialog={this.openDeleteDialog}
+                />
+              ))}
+            </List>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  }
 }
 
-export default withStyles(styles)(Home);
+export default Home;
