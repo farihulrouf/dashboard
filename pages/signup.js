@@ -8,7 +8,7 @@ import {
     CircularProgress
 } from "@material-ui/core";
 import {ArrowRightAlt} from "@material-ui/icons";
-import NavBar from "../components/NavBar/NavBar";
+import NavBar from "../components/Navbar/NavBar";
 import Link from "next/link";
 import MuiAlert from '@material-ui/lab/Alert';
 import {signupUser, authInitialProps} from '../lib/auth';
