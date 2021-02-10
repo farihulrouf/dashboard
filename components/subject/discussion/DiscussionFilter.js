@@ -20,7 +20,7 @@ class DiscussionFilter extends React.Component{
                     name="content"
                     onChange={this.onQueryChange}
                 />
-                <IconButton style={{backgroundColor: '#556cd6', marginRight: 20}} aria-label="add-new-discussion" onClick={()=> alert("Create New Discussion")}>
+                <IconButton onClick={this.props.openDiscussionForm} style={{backgroundColor: '#556cd6', marginRight: 20}} aria-label="add-new-discussion">
                     <AddComment style={{color: 'white'}} />
                 </IconButton>
             </Paper>

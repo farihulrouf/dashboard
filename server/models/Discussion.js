@@ -1,21 +1,7 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate');
 const { ObjectId } = mongoose.Schema;
-const DiscussionAnswer = require("./DiscussionAnswer");
-
-const answerSchema = mongoose.Schema({
-    creator: {type: ObjectId, ref: "User"},
-    content: {type: String, required: "Answer body is required"},
-    status: {
-        type: String, default: "none", 
-        enum: ["none", "accepted"], 
-        required: "Answer's status is required"
-    },
-    votes: {
-        total: {type: Number, default: 0},
-        voters: [{type: ObjectId, ref: "User"}]
-    }
-})
+const {answerSchema} = require("./DiscussionAnswer");
 
 var discussionSchema = mongoose.Schema({
     title: {type: String, required: "Discussion title is required"},
@@ -28,7 +14,7 @@ var discussionSchema = mongoose.Schema({
     },
     answers: {
         total: {type: Number, default: 0},
-        mostRelevant: [{type: DiscussionAnswer.schema}]
+        mostRelevant: [{type: answerSchema}]
     }
 }, {timestamps: true})
 

@@ -17,4 +17,7 @@ const answerSchema = mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model("DiscussionAnswer", answerSchema)
+module.exports = {
+    DiscussionAnswer: mongoose.model("DiscussionAnswer", answerSchema),
+    answerSchema: answerSchema
+}
