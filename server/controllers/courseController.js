@@ -346,12 +346,6 @@ exports.getPosts = async (req, res) => {
   }
 };
 
-exports.getDiscussions = async (req,res) => {
-  const {course} = req;
-  const discussions = await Discussion.find({postedOn: course})
-  res.json({status: "ok", discussions: discussions});
-}
-
 exports.createReview = async (req, res) => {
   const { rating, user, course, message } = req.body;
 
@@ -391,3 +385,12 @@ exports.createReview = async (req, res) => {
     res.json(review);
   });
 };
+
+exports.getDiscussions = async (req,res) => {
+    const {course, user} = req;
+    const discussions = await Discussion.aggregate([
+        {$match: {postedOn: course._id}},
+        {$addFields: {isVoted: {$in: [user._id, "$votes.voters"]}}}
+    ])
+    res.json({status: "ok", discussions: discussions});
+}

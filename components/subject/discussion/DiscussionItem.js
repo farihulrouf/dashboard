@@ -48,7 +48,7 @@ class DiscussionItem extends React.Component{
             <Grid container style={{marginRight: 30}}>
                 <Grid xs={12} sm={2} item style={{padding: 20, textAlign: 'center'}}>
                     <IconButton onClick={this.onVoteButtonClick} style={{margin: 0, padding: 0}}>
-                        <KeyboardArrowUp style={discussion.isVoted ? {color: '#1b1642', fontSize: 50} : {}}/>
+                        <KeyboardArrowUp style={discussion.isVoted ? {color: 'blue', fontSize: 50} : {}}/>
                     </IconButton>
                     <h3 style={{margin: 0, padding: 0}}>{discussion.votes.total}</h3>
                     <span>Votes</span>
