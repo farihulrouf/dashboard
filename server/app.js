@@ -32,6 +32,7 @@ require("./models/Discussion");
 require("./models/Attachment")
 require("./models/Payment")
 require("./models/Review")
+require('./models/DiscussionAnswer');
 
 const routes = require("./routes");
 const { callbackify } = require("util");

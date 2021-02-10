@@ -11,6 +11,7 @@ const examController = require("../controllers/examController");
 const attachmentController = require("../controllers/attachmentController");
 const applicationController = require("../controllers/applicationController");
 const paymentController = require("../controllers/paymentController");
+const discussionController = require('../controllers/discussionController.js');
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 const fs = require('fs');
@@ -135,17 +136,26 @@ router.get(
   catchErrors(courseController.getPosts)
 );
 
+
+router.param("courseId", courseController.getCourseById);
+
 router.get(
-  "/api/courses/:courseid/discussions",
+  "/api/courses/:courseId/discussions",
   authController.checkAuth,
   catchErrors(courseController.getDiscussions)
 )
 
-router.param("courseId", courseController.getCourseById);
+router.post(
+  "/api/courses/:courseId/discussions",
+  authController.checkAuth,
+  discussionController.validateDiscussion,
+  courseController.createCourseDiscussion,
+  catchErrors(courseController.getDiscussions)
+)
 
 //Unregistered user can see courses and course info
 router.post(
-  "/api/courses/create",
+  "/api/courses",
   authController.checkAuth,
   catchErrors(courseController.createCourse),
   catchErrors(courseController.getMyCourses)
@@ -202,7 +212,7 @@ router.put(
 );
 
 router.post(
-  "/api/courses/:courseId/posts/create",
+  "/api/courses/:courseId/posts",
   authController.checkAuth,
   postController.validatePost,
   catchErrors(courseController.createCoursePost),
@@ -248,19 +258,36 @@ router.post(
 );
 
 /**
+ * /api/discussions
+ */
+router.post(
+  "/api/discussions/:discussionid/answers",
+  authController.checkAuth,
+  discussionController.createAnswer
+)
+
+/**
  * USER ROUTES: /api/users
  */
 
 
-router.get("/api/users/me", (req,res)=>{
-  res.json({status: "ok", user: req.user});
-});
+router.get(
+  "/api/users/me",
+  authController.checkAuth, 
+  (req,res)=>{
+    res.json({status: "ok", user: req.user});
+  }
+);
 
 router.get("/api/users/instructors", (req,res)=>{
   res.json({status: "ok", user: req.user});
 });
 
-router.get("/api/users/me/notifications", catchErrors(userController.getMyNotifications))
+router.get(
+  "/api/users/me/notifications", 
+  authController.checkAuth,
+  catchErrors(userController.getMyNotifications)
+)
 
 router.put(
   '/api/users/me/notifications/:notificationId',
@@ -268,7 +295,11 @@ router.put(
   catchErrors(userController.readMyNotification)
 )
 
-router.get("/api/users/me/myteachers",catchErrors(userController.getMyTeachers));
+router.get(
+  "/api/users/me/myteachers",
+  authController.checkAuth,
+  catchErrors(userController.getMyTeachers)
+);
 
 router.param("userId", userController.getUserById);
 
@@ -312,7 +343,7 @@ router.get(
 )
 
 router.post(
-  "/api/teacher-applications/create",
+  "/api/teacher-applications",
   authController.checkAuth,
   catchErrors(applicationController.createApplication),
   catchErrors(userController.getUsers)

@@ -5,7 +5,8 @@ const { ObjectId } = mongoose.Schema;
 
 const answerSchema = mongoose.Schema({
     creator: {type: ObjectId, ref: "User"},
-    content: {type: String, required: "Answer body is required"},
+    discussion: {type: ObjectId, ref: "Discussion"},
+    body: {type: String, required: "Answer body is required"},
     status: {
         type: String, default: "none", 
         enum: ["none", "accepted"], 
@@ -15,7 +16,7 @@ const answerSchema = mongoose.Schema({
         total: {type: Number, default: 0},
         voters: [{type: ObjectId, ref: "User"}]
     }
-})
+}, {timestamps: true})
 
 module.exports = {
     DiscussionAnswer: mongoose.model("DiscussionAnswer", answerSchema),

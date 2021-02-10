@@ -119,6 +119,11 @@ userSchema.methods.canCreateCourse = function () {
     return this.isAnOrganization || this.organization.length == 0;
 };
 
+userSchema.methods.canCreateDiscussion = function(course) {
+  //Check if a user can create a discussion on the given courseId
+  return true;
+}
+
 //Teacher untuk sebuah organisasi --> user.organiztion ! =[]
 //Private teacher ---> user.organization = [] && user.courses != []
 userSchema.methods.isInstructor = function (course) {

@@ -5,14 +5,27 @@ import {
 } from '@material-ui/core';
 import {Editor} from "@tinymce/tinymce-react";
 import TagsForm from "./TagsForm";
+import {createCourseDiscussion} from "../../../lib/api";
 
 export default function DiscussionForm(props) {
   const [open, setOpen] = React.useState(props.open);
+  const [discussion, setDiscussion] = React.useState({postedOn: props.courseId});
   const {user} = props.auth;
 
   React.useEffect(()=>{
       setOpen(props.open);
   },[props.open])
+
+  const onValueChange = (event) => {
+    const {id, value} = event.currentTarget;
+    const newDiscussion = {...discussion, [id]: value};
+    setDiscussion(newDiscussion);
+  }
+
+  const handleEditorChange = (content,editor) => {
+    const newDiscussion = {...discussion, [editor.id]: content}
+    setDiscussion(newDiscussion);
+  }
 
   return (
     <div>
@@ -26,14 +39,16 @@ export default function DiscussionForm(props) {
           <div style={{marginBottom: 10}}>
             <h3 style={{margin: 0}}>Title</h3>
             <p style={{margin: 0}}>Be specific and imagine you’re asking a question to another person</p>
-            <TextField fullWidth size="small" placeholder="What's your question? Be specific..." variant="outlined" />
+            <TextField id="title" onChange={onValueChange} fullWidth size="small" placeholder="What's your question? Be specific..." variant="outlined" />
           </div>
           <div style={{marginBottom: 10}}>
             <h3 style={{margin: 0}}>Body</h3>
             <p style={{margin: 0}}>Include all the information someone would need to answer your question</p>
             <Editor
-            initialValue="<span style='color: #C5CCD0'>Write a discussion...</span>" 
+            id="body"
+            onEditorChange={handleEditorChange}
             init={{
+              placeholder: "Write a discussion.....",
               menubar: false,
               external_plugins: { 'tiny_mce_wiris' : '/static/js/plugin.min.js'},
               toolbar:  'tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| \
@@ -52,7 +67,7 @@ export default function DiscussionForm(props) {
           <Button onClick={props.closeDiscussionForm} color="primary">
             Cancel
           </Button>
-          <Button onClick={props.closeDiscussionForm} color="primary">
+          <Button onClick={() => createCourseDiscussion(discussion)} color="primary">
             Create A Discussion
           </Button>
         </DialogActions>

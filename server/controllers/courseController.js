@@ -136,6 +136,30 @@ exports.getMyCourses = async (req, res) => {
   return res.json({ status: "ok", courses: results });
 };
 
+exports.createCourseDiscussion = (req,res,next) => {
+  const {title, body, tags} = req.body;
+  const {user, course} = req;
+  if(!user.canCreateDiscussion(course)){
+      return res.status(403).json({
+          status: "error", 
+          message: "Forbidden to create discussion in this course"
+      });
+  }
+  let discussion = new Discussion({
+      title: title,
+      body: body,
+      tags: tags,
+      postedOn: course,
+      creator: user
+  })
+  discussion.save((err,savedDiscussion)=>{
+      if(err){
+          return res.json({status: "error", message: err.message})
+      }
+      next();
+  })
+}
+
 exports.getCourseRequests = async (req, res) => {
   const course = req.course;
   const { page } = req.query;
@@ -323,8 +347,8 @@ exports.getPosts = async (req, res) => {
 };
 
 exports.getDiscussions = async (req,res) => {
-  const {courseid} = req.params
-  const discussions = await Discussion.find({postedOn: courseid})
+  const {course} = req;
+  const discussions = await Discussion.find({postedOn: course})
   res.json({status: "ok", discussions: discussions});
 }
 

@@ -139,7 +139,7 @@ export default function TagsForm() {
     setAnchorEl,
   } = useAutocomplete({
     id: 'customized-hook-demo',
-    defaultValue: [top100Films[1]],
+    defaultValue: [],
     multiple: true,
     options: top100Films,
     getOptionLabel: (option) => option.title,

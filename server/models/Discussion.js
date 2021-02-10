@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate');
 const { ObjectId } = mongoose.Schema;
-const {answerSchema} = require("./DiscussionAnswer");
 
 var discussionSchema = mongoose.Schema({
     title: {type: String, required: "Discussion title is required"},
@@ -14,9 +13,18 @@ var discussionSchema = mongoose.Schema({
     },
     answers: {
         total: {type: Number, default: 0},
-        mostRelevant: [{type: answerSchema}]
-    }
+        topAnswers: [{type: ObjectId, ref: "DiscussionAnswer"}]
+    },
+    solved: {type: Boolean, default: false} //if there is an accepted answers solved is true
 }, {timestamps: true})
 
+
+discussionSchema.pre("find", function(next){
+    this.populate(
+        "answers.topAnswers",
+        "creator body status votes createdAt"
+    )
+    next();
+})
 
 module.exports = mongoose.model("Discussion", discussionSchema);
