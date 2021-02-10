@@ -2,6 +2,7 @@ const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const Course = mongoose.model("Course");
 const Post = mongoose.model("Post");
+const Discussion = mongoose.model("Discussion");
 const Review = mongoose.model("Review");
 const CourseRequest = mongoose.model("CourseRequest");
 
@@ -320,6 +321,12 @@ exports.getPosts = async (req, res) => {
     res.json({ status: "error" });
   }
 };
+
+exports.getDiscussions = async (req,res) => {
+  const {courseid} = req.params
+  const discussions = await Discussion.find({postedOn: courseid})
+  res.json({status: "ok", discussions: discussions});
+}
 
 exports.createReview = async (req, res) => {
   const { rating, user, course, message } = req.body;

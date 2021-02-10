@@ -14,7 +14,7 @@ import {
   Add,
 } from "@material-ui/icons";
 import FilterDialog from "./FilterDialog";
-import PostFormDialog from "./PostFormDialog";
+import PostFormDialog from "../PostFormDialog";
 import React from "react";
 
 const styles = (theme) => ({

@@ -2,7 +2,7 @@ import {FormControl, TextField, InputLabel, Select, MenuItem, Button, Grid, List
     ListItemSecondaryAction,IconButton} from "@material-ui/core";
 import {Attachment, Clear, Description} from "@material-ui/icons"
 import { Editor } from '@tinymce/tinymce-react';
-import { createCoursePost, generatePutUrl, uploadToS3, updatePost} from '../../lib/api';
+import { createCoursePost, generatePutUrl, uploadToS3, updatePost} from '../../../lib/api';
 import axios from "axios";
 import React from 'react';
 

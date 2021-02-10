@@ -135,6 +135,12 @@ router.get(
   catchErrors(courseController.getPosts)
 );
 
+router.get(
+  "/api/courses/:courseid/discussions",
+  authController.checkAuth,
+  catchErrors(courseController.getDiscussions)
+)
+
 router.param("courseId", courseController.getCourseById);
 
 //Unregistered user can see courses and course info
@@ -240,14 +246,6 @@ router.post(
   postController.validateComment,
   catchErrors(postController.createComment)
 );
-
-// router.post(
-//   "/api/posts/new/:userId",
-//   authController.checkAuth
-//   postController.uploadImage,
-//   catchErrors(postController.resizeImage),
-//   catchErrors(postController.addPost)
-// );
 
 /**
  * USER ROUTES: /api/users

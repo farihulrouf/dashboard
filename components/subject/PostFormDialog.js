@@ -1,6 +1,6 @@
 import React from 'react';
 import {Dialog, DialogActions, DialogContent, DialogTitle, Button, Grid, Avatar} from '@material-ui/core';
-import PostForm from './PostForm';
+import PostForm from './home/PostForm';
 
 class PostFormDialog extends React.Component{
   constructor(props){

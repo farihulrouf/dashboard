@@ -28,6 +28,7 @@ require("./models/AnswerSheet");
 require("./models/Exam");
 require("./models/TeacherApplication");
 require("./models/BankNotification");
+require("./models/Discussion");
 require("./models/Attachment")
 require("./models/Payment")
 require("./models/Review")

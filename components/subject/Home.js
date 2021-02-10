@@ -2,8 +2,8 @@ import { Grid, List } from "@material-ui/core";
 import { getCoursePosts, deletePost } from "../../lib/api";
 import Pagination from "@material-ui/lab/Pagination";
 import DeleteDialog from "./DeleteDialog";
-import PostItem from "./PostItem";
-import PostFilter from "./PostFilter";
+import PostItem from "./home/PostItem";
+import PostFilter from "./home/PostFilter";
 import React from "react";
 class Home extends React.Component {
   constructor(props) {

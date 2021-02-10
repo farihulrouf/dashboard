@@ -19,7 +19,7 @@ import {
   AttachFile,
   GetApp,
 } from "@material-ui/icons";
-import { likeAPost, postComment } from "../../lib/api";
+import { likeAPost, postComment } from "../../../lib/api";
 import CommentItem from "./CommentItem";
 import PostForm from "./PostForm";
 // import MathJax from "mathjax3-react";
