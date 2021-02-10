@@ -83,6 +83,9 @@ exports.addNewQuestionPools = async (req, res, next) => {
   const type = req.body.type;
   const attachments = req.body.attachments;
   const tag = req.body.tag;
+  const playbackTimes = req.body.playbackTimes;
+  const correctScore = req.body.correctScore;
+  const wrongScore = req.body.wrongScore;
 
   const newQuestionPool = new QuestionPool({
     difficultyLabel,
@@ -92,7 +95,10 @@ exports.addNewQuestionPools = async (req, res, next) => {
     solution,
     type,
     attachments,
-    tag
+    tag,
+    playbackTimes,
+    correctScore,
+    wrongScore
   });
 
   newQuestionPool
