@@ -17,10 +17,12 @@ const questionPoolSchema = new Schema(
     question: {type: String, required: true},
     courseId: {type: ObjectId, ref: "Course"},
     multipleChoices: [{type: String, required: true}],
-    question: {type: String, required: true},
     solution: {type: String, required: true},
     tag: [{type: String, required: true}],
-    attachments: [{type: ObjectId, ref: "Attachment"}]
+    attachments: [{type: ObjectId, ref: "Attachment"}],
+    playbackTimes: {type: Number, required: true},
+    correctScore: {type: Number, required: true},
+    wrongScore: {type: Number, required: true}
   },
   {
     timestamps: true,
