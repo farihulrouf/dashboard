@@ -1,4 +1,4 @@
-import PostItem from '../../components/subject/PostItem';
+import PostItem from '../../components/subject/home/PostItem';
 import NavBar from '../../components/Navbar/NavBar';
 import { authInitialProps } from "../../lib/auth";
 import {getPostById} from "../../lib/api";
