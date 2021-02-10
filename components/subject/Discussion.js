@@ -27,6 +27,10 @@ class Discussion extends React.Component{
         this.setState({open: false})
     }
 
+    afterCreateDiscussion = (discussions) => {
+        this.setState({open: false, discussions: discussions})
+    }
+
     render(){
         const {open, discussions} = this.state;
         return(
@@ -35,6 +39,7 @@ class Discussion extends React.Component{
                 <DiscussionForm 
                     auth={this.props.auth} 
                     closeDiscussionForm={this.closeDiscussionForm} 
+                    afterCreateDiscussion={this.afterCreateDiscussion}
                     open={open}
                     courseId={this.props.courseId}
                 />

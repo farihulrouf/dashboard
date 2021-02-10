@@ -119,6 +119,10 @@ userSchema.methods.canCreateCourse = function () {
     return this.isAnOrganization || this.organization.length == 0;
 };
 
+userSchema.methods.canEditDiscussion = function (creator) {
+  return user._id === creator
+}
+
 userSchema.methods.canCreateDiscussion = function(course) {
   //Check if a user can create a discussion on the given courseId
   return true;

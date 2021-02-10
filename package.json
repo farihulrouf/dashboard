@@ -78,8 +78,8 @@
   },
   "scripts": {
     "console": "node --experimental-repl-await ./console.js",
-    "dev": "nodemon server/app.js --watch server",
-    "start": "node server/app.js",
+    "dev": "nodemon server/notifconsumer.js & nodemon server/app.js --watch server",
+    "start": "node server/notifconsumer.js & node server/app.js",
     "build": "next build",
     "deploy": "now --public",
     "alias": "now alias",

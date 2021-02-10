@@ -260,6 +260,14 @@ router.post(
 /**
  * /api/discussions
  */
+
+router.put(
+  "/api/discussions/:discussionid",
+  authController.checkAuth,
+  discussionController.validateDiscussion,
+  discussionController.updateDiscussion
+)
+
 router.post(
   "/api/discussions/:discussionid/answers",
   authController.checkAuth,

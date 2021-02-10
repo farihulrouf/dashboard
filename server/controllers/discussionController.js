@@ -12,10 +12,26 @@ exports.validateDiscussion = (req,res,next) => {
     
     const errors = req.validationErrors();
     if(errors){
-        const firstError = errors.map(error => error.msg)[0];
-        return res.json({status: "error", message: firstError});
+        return res.status(500).json({status: "error", message: errors});
     }
     next();
+}
+
+
+exports.updateDiscussion = (req,res) => {
+    const {discussionid} = req.params;
+    const {title, body} = req.body;
+    Discussion.findByIdAndUpdate(
+        discussionid,
+        {$set: {title: title, body: body}},
+        {new: true},
+        (err,updatedDiscussion)=> {
+            if(err) return res.json({status: 'error', message: err.message})
+            updatedDiscussion._doc.canEdit = true;
+            updatedDiscussion._doc.canDelete = true;
+            res.json({status: "ok", discussion: updatedDiscussion})
+        }
+    )
 }
 
 exports.getDiscussionById = async (req,res,next) => {

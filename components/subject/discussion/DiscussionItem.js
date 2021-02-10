@@ -1,10 +1,11 @@
 import React from "react";
-import {Grid, Divider, Paper, Button, IconButton, ButtonGroup} from "@material-ui/core";
+import {Grid, Divider, IconButton} from "@material-ui/core";
 import Chip from '@material-ui/core/Chip';
-import {MoreVert, KeyboardArrowUp, Create, QuestionAnswer} from "@material-ui/icons";
+import {KeyboardArrowUp, Create, QuestionAnswer} from "@material-ui/icons";
 import MathJax from "react-mathjax-preview";
 import truncatise from "truncatise";
 import CreateAnswer from "./CreateAnswer";
+import DiscussionItemMore from "./DiscussionItemMore";
 import DiscussionAnswer from "./DiscussionAnswer";
 import {voteDiscussion}from "../../../lib/api";
 
@@ -37,14 +38,24 @@ class DiscussionItem extends React.Component{
             .catch((err) => alert(err.message))
     }
 
+    afterUpdateDiscussion = (discussion) => {
+        this.setState({discussion: discussion});
+    }
+
     render(){
         const {discussion} = this.state;
+        const {canEdit, canDelete} = discussion;
         const {showCreateAnAnswer, showBestAnswer} = this.state;
         return(
         <div style={{position: 'relative'}}>
-            <IconButton style={{position: 'absolute', right: 0}}>
-                <MoreVert />
-            </IconButton>
+            {(canEdit || canDelete ) && 
+                <DiscussionItemMore 
+                    discussion={discussion} 
+                    afterUpdateDiscussion={this.afterUpdateDiscussion}
+                    canEdit={canEdit}
+                    canDelete={canDelete}
+                />
+            }
             <Grid container style={{marginRight: 30}}>
                 <Grid xs={12} sm={2} item style={{padding: 20, textAlign: 'center'}}>
                     <IconButton onClick={this.onVoteButtonClick} style={{margin: 0, padding: 0}}>

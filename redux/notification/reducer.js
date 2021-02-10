@@ -6,7 +6,7 @@ import {
 
 
 const initialProps = {
-    notifications: [],
+    notifications: {},
     loading: false,
     error: ''
 }
@@ -25,7 +25,7 @@ const reducer = (state=initialProps, action) => {
         }
 
         case FETCH_NOTIFICATION_FAILURE: return {
-            notifications: [],
+            notifications: {},
             loading: false,
             error: action.payload
         }
