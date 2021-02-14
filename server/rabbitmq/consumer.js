@@ -3,7 +3,7 @@ const bail = (err) => {
         console.log(err);
         process.exit();
     }
-    console.log("RABBIT READY")
+    console.log("Consumer connect to RABBIT")
 }
 
 const createSocketConsumer = (conn,options,socket)=>{

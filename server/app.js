@@ -58,7 +58,7 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.set('runValidators', true);
 mongoose
   .connect(process.env.MONGO_URI, mongooseOptions)
-  .then(() => console.log("DB connected"));
+  .then(() => console.log("app connected to DB"));
 
 mongoose.connection.on("error", (err) => {
   console.log(`DB connection error: ${err.message}`);
