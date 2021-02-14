@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid email!`
         }
     },
+    active: {type: Boolean, default: false},
     name: {
         type: String,
         trim: true,
@@ -155,7 +156,7 @@ userSchema.pre("findOne", function (next) {
 userSchema.index({ name: "text"});
 
 /* passportLocalMongoose takes our User schema and sets up a passport "local" authentication strategy using our email as the username field */
-userSchema.plugin(passportLocalMongoose, {usernameField: "email"});
+userSchema.plugin(passportLocalMongoose, {usernameField: 'email'});
 
 /* The MongoDBErrorHandler plugin gives us a better 'unique' error, rather than: "11000 duplicate key" */
 userSchema.plugin(mongodbErrorHandler);

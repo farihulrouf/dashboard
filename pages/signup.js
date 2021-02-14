@@ -15,7 +15,7 @@ import {signupUser, authInitialProps} from '../lib/auth';
 import Router from "next/router"
 
 function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" onClose={this.closeAlert} />;
+    return <MuiAlert elevation={6} variant="filled" {...props} className="alert" />;
 }
 
 class SignUp extends React.Component {
@@ -73,10 +73,12 @@ class SignUp extends React.Component {
         event.preventDefault();
         const {user, error} = this.state;
         let newError = this.errorCheck(user, error);
-        this.setState({error: newError, isLoading: true});
+        this.setState({error: newError});
+        console.log(newError)
         if (Object.values(newError).reduce((c, n) => {
             return (c && (n === ""))
         }, true)) {
+            this.setState({isLoading: true})
             return signupUser(user).then(response => {
                 Router.push("/signin");
                 // this.setState({isLoading: false})
@@ -100,11 +102,12 @@ class SignUp extends React.Component {
 
     render() {
         const {error, user, isLoading} = this.state;
+        console.log(error.server);
 
         return (
             <NavBar onlyLogo={true}>
                 <Container maxWidth="lg" className="sign-up-page">
-                    {!!error.server && <Alert severity="error">{`${error.server}`}</Alert>}
+                    {!!error.server && <Alert onClose={this.closeAlert} severity="error">{`${error.server}`}</Alert>}
                     <Grid className="container" container>
                         <Container maxWidth="sm">
                             <Grid container>
@@ -129,7 +132,7 @@ class SignUp extends React.Component {
                                             type="text"
                                             variant="outlined"
                                             onChange={this.handleChange}/>
-                                        <span >{error.name}</span>
+                                        <span style={{color: 'red'}} >{error.name}</span>
                                     </Grid>
                                     <Grid xs={12} sm={6} item className="input-container">
                                         <TextField
@@ -140,7 +143,7 @@ class SignUp extends React.Component {
                                             type="email"
                                             variant="outlined"
                                             onChange={this.handleChange}/>
-                                        <span >{error.email}</span>
+                                        <span style={{color: 'red'}} >{error.email}</span>
                                     </Grid>
                                     <Grid xs={12} sm={6} item className="input-container">
                                         <TextField
@@ -151,7 +154,7 @@ class SignUp extends React.Component {
                                             type="text"
                                             variant="outlined"
                                             onChange={this.handleChange}/>
-                                        <span >{error.occupation}</span>
+                                        <span style={{color: 'red'}} >{error.occupation}</span>
                                     </Grid>
                                     <Grid xs={12} item className="input-container">
                                         <TextField
@@ -163,7 +166,7 @@ class SignUp extends React.Component {
                                             autoComplete="new-password"
                                             variant="outlined"
                                             onChange={this.handleChange}/>
-                                        <span >{error.password}</span>
+                                        <span style={{color: 'red'}} >{error.password}</span>
                                     </Grid>
                                     <Grid xs={12} item className="input-container">
                                         <TextField
@@ -174,7 +177,7 @@ class SignUp extends React.Component {
                                             type="password"
                                             variant="outlined"
                                             onChange={this.handleChange}/>
-                                        <span >{error.confPass}</span>
+                                        <span style={{color: 'red'}} >{error.confPass}</span>
                                     </Grid>
                                     <Grid xs={12} item className="field-container">
                                         <h6>

@@ -15,7 +15,7 @@ exports.validateSignup = (req, res, next) => {
   req
     .checkBody("email", "Enter a valid email")
     .isEmail()
-    .normalizeEmail();
+    //.normalizeEmail();
 
   // Password must be non-null, between 4 and 10 characters
   req.checkBody("password", "Enter a password").notEmpty();
