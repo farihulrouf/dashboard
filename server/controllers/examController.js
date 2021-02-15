@@ -186,6 +186,35 @@ exports.startExam = async (req, res) => {
   // .catch((err) => res.Status(400).json("Error " + err));
 };
 
+exports.addMultipleExam = async (req, res) => {
+  const exams = req.body
+  let newExams = []
+  const saveAllExam = () =>{
+    console.log('saveAllExam',newExams)
+    Exam.insertMany(newExams,(error, savedExams)=>{
+      if(error) res.status(400).json("Error " + error)
+      else res.json(newExams)
+    })
+  }
+  exams.forEach(exam =>{
+    QuestionPool.insertMany(exam.questionPools, (error,questionPools)=>{
+      if(error) {
+        res.status(400).json("Error " + error)
+        return
+      }
+      let questionPoolIds = []
+      questionPools.forEach(questionPool=>{
+        questionPoolIds.push(questionPool.id);
+      })
+      exam.questionPools = questionPoolIds;
+      newExams.push(exam)
+      if(newExams.length == exams.length){
+        saveAllExam()
+      }
+    })
+  })
+}
+
 function getDateDiffInMinutes(d1, d2) {
   var diff = d2 - d1;
   diffMinnutes = diff / (60 * 1000);
