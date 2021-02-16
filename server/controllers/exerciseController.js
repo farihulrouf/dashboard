@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Exercise = mongoose.model("Exercise");
+const QuestionPool = mongoose.model("QuestionPool");
 
 exports.fetchAllExercise = async (req, res) => {
   Exercise.find()
@@ -54,3 +55,33 @@ exports.addNewExercises = async (req, res) => {
     .then(() => res.json("Exercise saved!"))
     .catch((err) => res.Status(400).json("Error: " + err));
 };
+
+exports.addMultipleExercise = async (req, res) => {
+  const exercises = req.body
+  const courseId = req.params.courseId
+  let newExercises = []
+  const saveAllExercise = () =>{
+    Exercise.insertMany(newExercises,(error, savedExercises)=>{
+      if(error) res.status(400).json("Error " + error)
+      else res.json(savedExercises)
+    })
+  }
+  exercises.forEach(exercise =>{
+    QuestionPool.insertMany(exercise.questionPools, (error,questionPools)=>{
+      if(error) {
+        res.status(400).json("Error " + error)
+        return
+      }
+      let questionPoolIds = []
+      questionPools.forEach(questionPool=>{
+        questionPoolIds.push(questionPool.id);
+      })
+      exercise.questionPools = questionPoolIds;
+      exercise.courseId = courseId
+      newExercises.push(exercise)
+      if(newExercises.length == exercises.length){
+        saveAllExercise()
+      }
+    })
+  })
+}
