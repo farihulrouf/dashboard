@@ -188,6 +188,7 @@ exports.startExam = async (req, res) => {
 
 exports.addMultipleExam = async (req, res) => {
   const exams = req.body
+  const courseId = req.params.courseId
   let newExams = []
   const saveAllExam = () =>{
     Exam.insertMany(newExams,(error, savedExams)=>{
@@ -206,6 +207,7 @@ exports.addMultipleExam = async (req, res) => {
         questionPoolIds.push(questionPool.id);
       })
       exam.questionPools = questionPoolIds;
+      exam.courseId = courseId
       newExams.push(exam)
       if(newExams.length == exams.length){
         saveAllExam()
