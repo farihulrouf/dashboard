@@ -17,6 +17,7 @@ import NavBar from "../../components/Navbar/NavBar";
 import Home from "../../components/subject/Home";
 import Discussion from "../../components/subject/Discussion";
 import ExerciseSetting from "../../components/subject/ExerciseSetting";
+import CreateExercise from "../../components/subject/exercise/CreateExercise";
 import InstructorItem from "../../components/subject/InstructorItem";
 import {
   getCourseById,
@@ -285,11 +286,11 @@ class Subject extends React.Component {
               />
             </TabPanel>
             <TabPanel value={tabIndex} index={2}>
-              <ExerciseSetting
+              <CreateExercise
                 auth={auth}
                 courseId={router.query.id}
                 isInstructor={course.isInstructor}
-                className="subject-exercise"
+                className="subject-exercise-create"
               />
             </TabPanel>
           </React.Fragment>
