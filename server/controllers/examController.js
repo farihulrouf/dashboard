@@ -190,10 +190,9 @@ exports.addMultipleExam = async (req, res) => {
   const exams = req.body
   let newExams = []
   const saveAllExam = () =>{
-    console.log('saveAllExam',newExams)
     Exam.insertMany(newExams,(error, savedExams)=>{
       if(error) res.status(400).json("Error " + error)
-      else res.json(newExams)
+      else res.json(savedExams)
     })
   }
   exams.forEach(exam =>{
