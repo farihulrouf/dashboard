@@ -1,127 +1,195 @@
-import React from "react";
-import {Container, Paper, Grid, Button,
-    Avatar, makeStyles,
-    IconButton, InputBase, withStyles} from "@material-ui/core";
-import {Menu} from "@material-ui/icons";
-import {Star, ArrowRightAlt} from "@material-ui/icons";
-import {getCourses} from '../../lib/api';
-import Router from "next/router";
+import React, { useState, useEffect } from "react";
+import { Container, Grid, Button, CircularProgress } from "@material-ui/core";
+import { getCourses } from "../../lib/api";
+import Course from "../../components/Home/Course";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import Searchbar from "../../components/Material/Searchbar";
+import Filter from "../../components/Material/Filter";
+import NoCourse from "../../components/Material/NoCourse";
+import { set } from "js-cookie";
 
-const styles = (theme) => ({
-    iconButton: {
-        padding: '0px 20px'
-    },
-    input: {
-        marginLeft: theme.spacing(1),
-        flex: 1,
-    },
-    container: {
-        ['@media (min-width:800px)']: { 
-            padding: '20px 48px'
-        },
-        ['@media (max-width:800px)']: { 
-            padding: '20px 0px'
-        },
-    },
-    paper: {
-        ['@media (min-width:800px)']: { 
-            borderRadius: 10,
-        },
-        ['@media (max-width:800px)']: { 
-            borderRadius: 0
-        },
+const Material = ({ auth }) => {
+  const [data, setData] = useState([]);
+  const [loadMoreAvail, setLoadMoreAvail] = useState(false);
+
+  const [isLoading, setIsLoading] = useState(false);
+
+  const [open, setOpen] = useState(false);
+
+  const [filter, setFilter] = useState({
+    query: "",
+    instructor: [],
+    organization: [],
+    price: [0, 500000],
+    rating: 0,
+    page: 1,
+    limit: 3,
+  });
+
+  const loadMore = () => {
+    if (loadMoreAvail) {
+      setFilter((prev) => {
+        return {
+          ...prev,
+          page: prev.page + 1,
+        };
+      });
+
+      setIsLoading(true);
     }
-})
+  };
 
+  useEffect(() => {
+    getCourses(filter).then((res) => {
+      setIsLoading(false);
+      setData((prev) => [...prev, ...res.courses]);
+      setLoadMoreAvail(res.avail);
+    });
+  }, [filter.page]);
 
-const Course = (props) => {
-    const {_id, name, about, creator, total_problems, logo, price, rating} = props.data;
-    const classes = makeStyles(styles);
-    return(
-        <Paper elevation={3} className={classes.paper}>
-            <div style={{padding: '32px 16px'}}>
-                <Grid container>
-                    <Grid item xs={12} sm={8}>
-                        <Grid container>
-                            <Grid xs={12} item style={{padding: 4}}><h6 style={{margin: 0, fontWeight: 700, color: '#121037', textAlign: 'left', fontSize: '1.25rem', lineHeight: 1.6}}>{name}</h6></Grid>
-                            <Grid xs={12} item style={{padding: 4}}><p style={{color: '#546e7a', fontWeight: 400, fontSize: '1rem', lineHeight: 1.5, margin: 0}}>{`Oleh: ${creator.name}`}</p></Grid>
-                        </Grid>
-                    </Grid>
-                    <Grid item xs={12} sm={4}>
-                        <div style={{margin: 0, padding: 8, borderRadius: 8, backgroundColor: '#3f51b5'}}>
-                            <p style={{ textAlign: 'center', margin: 0, fontWeight: 700, color: 'white', fontFamily: 'Lato', fontSize: '1rem', lineHeight: 1.5}}>{price === 0 ? `FREE` : `IDR ${price}`}</p>
-                        </div>
-                    </Grid>
-                    <Grid item xs={12}>
-                        <p style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: "ellipsis"}}>{about}</p>
-                    </Grid>
-                </Grid>
-                <Grid alignItems="center" container>
-                    <Grid xs={6} item>
-                        <Grid container>
-                            <Avatar src="https://thefront.maccarianagency.com/images/photos/people/veronica-adams.jpg" width="40" height="40" style={{border: '3px solid white'}} />
-                            <Avatar src="https://thefront.maccarianagency.com/images/photos/people/akachi-luccini.jpg" width="40" height="40" style={{marginLeft: -16, border: '3px solid white'}} />
-                            <Avatar width="40" height="40" style={{marginLeft: -16, border: '3px solid white'}} />
-                        </Grid>
-                        <span style={{paddingTop: 10}}>120 students enroll</span>
-                    </Grid>
-                    <Grid xs={6} item>
-                        <Grid container justify="flex-end"><Star style={{color: '#f9a825'}} />
-                            <span style={{fontWeight: 700, fontSize: '1rem', fontColor: '#121037'}}>{rating}</span>
-                            <span style={{marginLeft: 8, color: '#546e7a', fontWeight: 400, fontSize: '0.875rem', lineHeight: 1.43}}>(28 reviews)</span>
-                        </Grid>
-                    </Grid>
-                </Grid>
-                <Grid container alignItems="center" style={{paddingTop: 10}}>
-                    <Button size="small" variant="outlined" color="primary" onClick={()=>Router.push({pathname: '/subjects', query: {id: _id}})} endIcon={<ArrowRightAlt />}>
-                        GO TO COURSE
-                    </Button>
-                </Grid>
-            </div>
-        </Paper>
-    )
-}
+  useEffect(() => {
+    setFilter((prev) => {
+      return {
+        ...prev,
+        page: 1,
+      };
+    });
+  }, [data.length === 0]);
 
-class Material extends React.Component{
-    
-    constructor(props){
-        super(props)
-        this.state = {modules: []}
-    }
+  const { query, instructor, organization, price, rating } = filter;
 
-    componentDidMount(){
-        const { auth } = this.props;
-        getCourses(auth.user).then(courses => this.setState({modules: courses }));
-    }
+  const applyFilter = () => {
+    setIsLoading(true);
+    getCourses(filter)
+      .then((res) => {
+        setIsLoading(false);
+        setData(res.courses);
+        setLoadMoreAvail(res.avail);
+      })
+      .catch((err) => setData([]));
+    setOpen(false);
+  };
 
-    render(){
-        const {classes} = this.props;
-        const {modules} = this.state;
+  const clearFilter = () => {
+    let emptyFilter = {
+      query: "",
+      instructor: [],
+      organization: [],
+      price: [0, 500000],
+      rating: 0,
+      page: 1,
+      limit: 3,
+    };
 
-        return(
-            <Container className={classes.container}>
-                <Paper elevation={3} style={{height: '5em', display: 'flex', alignItems: 'center'}}>
-                    <IconButton className={classes.iconButton} aria-label="menu">
-                        <Menu />
-                    </IconButton>
-                    <InputBase
-                        className={classes.input}
-                        placeholder="Search Courses"
-                    />
-                    <Button size="small" variant="contained" color="primary" style={{margin: '0px 20px'}}>
-                        Search
-                    </Button>
-                </Paper>
-                <Grid justify="flex-start" container style={{paddingTop: 30}}>
-                    <Button disabled variant="contained" color="primary" style={{backgroundColor: 'rgb(250, 199, 92)', color: 'white'}}>
-                        105 results found
-                    </Button>
-                </Grid>
-                <Grid container justify="center" spacing={5} style={{padding: 0, marginTop: 5}}>
-                    {modules.map((v,i)=> <Grid xs={12} sm={4} key={i} item><Course data={v} /></Grid>)}
-                </Grid>
-            </Container>
-        )
-    }
-}
-export default withStyles(styles)(Material);
+    setFilter(emptyFilter);
+    setIsLoading(true);
+
+    getCourses(emptyFilter)
+      .then((res) => {
+        setIsLoading(false);
+        setData(res.courses);
+        setLoadMoreAvail(res.avail);
+      })
+      .catch((err) => {
+        setIsLoading(true);
+      });
+
+    setOpen(false);
+  };
+
+  useEffect(() => {
+    setData([]);
+    setIsLoading(true);
+
+    getCourses(filter)
+      .then((res) => {
+        setIsLoading(false);
+        setData(res.courses);
+        setLoadMoreAvail(res.avail);
+        console.log(res);
+      })
+      .catch((err) => {
+        setIsLoading(true);
+      });
+  }, [query]);
+
+  return (
+    <Container className="material">
+      <Searchbar
+        auth={auth}
+        setData={setData}
+        setIsLoading={setIsLoading}
+        filter={filter}
+        setFilter={setFilter}
+        setLoadMoreAvail={setLoadMoreAvail}
+      />
+      <Container className="course-number">
+        <Grid className="course-number-content">
+          {`${data.length} result${data.length !== 1 ? "" : "s"} found`}
+        </Grid>
+        <Grid>
+          <Button>
+            <FontAwesomeIcon
+              icon={faFilter}
+              className="filter"
+              onClick={() => setOpen(true)}
+            />
+          </Button>
+        </Grid>
+      </Container>
+
+      <div className="course">
+        <Grid container justify="center">
+          <Grid container justify="center">
+            {data.map((val, index) => (
+              <Grid
+                key={index}
+                item
+                data-aos="flip-left"
+                data-aos-easing="ease-out-cubic"
+                data-aos-duration="1000"
+              >
+                <Course courseItem={val} />
+              </Grid>
+            ))}
+          </Grid>
+          {isLoading && (
+            <Grid container justify="center">
+              <CircularProgress thickness={6} size="6rem" />
+            </Grid>
+          )}
+
+          {data.length === 0 && !isLoading && <NoCourse />}
+          {!isLoading && loadMoreAvail && (
+            <Grid
+              className="load-more"
+              onClick={() => {
+                loadMore();
+              }}
+            >
+              <h4>
+                Load More Courses<span className="dot">.</span>
+                <span className="dot">.</span>
+                <span className="dot">.</span>
+                <span className="dot">.</span>
+                <span className="dot">.</span>
+              </h4>
+            </Grid>
+          )}
+        </Grid>
+      </div>
+
+      <Filter
+        open={open}
+        setOpen={setOpen}
+        filter={filter}
+        setFilter={setFilter}
+        applyFilter={applyFilter}
+        clearFilter={clearFilter}
+      />
+    </Container>
+  );
+};
+
+export default Material;

@@ -1,0 +1,172 @@
+@import "~slick-carousel/slick/slick.css"; 
+@import "~slick-carousel/slick/slick-theme.css";
+
+@font-face {
+    font-family: 'Gilroy';
+    src: url('/fonts/gilroy/gilroy-bold-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-bold-webfont.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'Gilroy';
+    src: url('/fonts/gilroy/gilroy-extrabold-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-extrabold-webfont.woff') format('woff');
+    font-weight: 700;
+}
+@font-face {
+    font-family: 'Gilroy';
+    src: url('/fonts/gilroy/gilroy-light-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-light-webfont.woff') format('woff');
+    font-weight: 200;
+}
+@font-face {
+    font-family: 'Gilroy';
+    src: url('/fonts/gilroy/gilroy-medium-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-medium-webfont.woff') format('woff');
+    font-weight: 400;
+}
+@font-face {
+    font-family: 'Gilroy';
+    src: url('/fonts/gilroy/gilroy-regular-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-regular-webfont.woff') format('woff');
+    font-weight: 300;
+}
+@font-face {
+    font-family: 'Gilroy';
+    src: url('/fonts/gilroy/gilroy-semibold-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-semibold-webfont.woff') format('woff');
+    font-weight: 500;
+}
+
+a,
+button,
+div,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+label,
+p,
+span {
+    transition: all 0.4s;
+    // font-family: 'Roboto', sans-serif;
+    font-family: 'Gilroy'!important;
+    margin: 0;
+    line-height: 1.5;
+    // font-weight: 900;
+}
+
+h1 {
+    font-size: 3rem;
+}
+
+h2 {
+    font-size: 2.5rem;
+}
+
+h3 {
+    font-size: 2rem;
+}
+
+h4 {
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+h5 {
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+h6 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+input[type="text"] {
+    font-weight: 300;
+}
+
+button {
+    padding: 4px !important;
+    border-radius: 4px!important;
+    min-width: 0!important;
+
+    span {
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.5;
+    }
+}
+button:hover {
+    background-color: #c5ccd0;
+}
+
+.mybtn {
+    padding: 6px 12px!important;
+    border-radius: 4px;
+
+    span {
+        @media (min-width: 1600px) {
+            font-size: 1.1rem;
+        }
+    }
+    @media (min-width: 1600px) {
+        padding: 8px 16px!important;
+    }
+}
+
+a,
+span {
+    text-decoration: none;
+}
+
+.main-content {
+    position: relative!important;
+    min-height: 100vh;
+    padding: 0 !important;
+}
+
+.alert {
+    position: absolute!important;
+    width: 96%;
+
+    span {
+        position: relative;
+        display: flex;
+        z-index: 10;
+    }
+
+    .MuiButtonBase-root {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: 50px;
+        margin-right: 10px;
+    }
+}
+
+.MuiCircularProgress-root {
+    margin: 10vh 0 12vh !important;
+}
+
+div::-webkit-scrollbar {
+    width: 8px;
+    /* width of the entire scrollbar */
+}
+
+div::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 20px;
+}
+
+div::-webkit-scrollbar-thumb {
+    background-color: #c7c7c7;
+    /* color of the scroll thumb */
+    border-radius: 20px;
+    border-right: solid 2px white;
+}
+
+@import 'Navbar.module.scss';
+@import 'Home.module.scss';
+@import 'Subject.module.scss';
+@import 'Material.module.scss';
+@import 'Sign.module.scss';

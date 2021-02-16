@@ -28,7 +28,11 @@ require("./models/AnswerSheet");
 require("./models/Exam");
 require("./models/TeacherApplication");
 require("./models/BankNotification");
+require("./models/Discussion");
 require("./models/Attachment")
+require("./models/Payment")
+require("./models/Review")
+require('./models/DiscussionAnswer');
 
 const routes = require("./routes");
 const { callbackify } = require("util");
@@ -54,7 +58,7 @@ mongoose.set('useUnifiedTopology', true);
 mongoose.set('runValidators', true);
 mongoose
   .connect(process.env.MONGO_URI, mongooseOptions)
-  .then(() => console.log("DB connected"));
+  .then(() => console.log("app connected to DB"));
 
 mongoose.connection.on("error", (err) => {
   console.log(`DB connection error: ${err.message}`);

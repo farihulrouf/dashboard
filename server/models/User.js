@@ -1,103 +1,164 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema;
+const {ObjectId} = mongoose.Schema;
 const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passportLocalMongoose = require("passport-local-mongoose");
 
-
 const emailValidator = (v) => {
-  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return re.test(String(v).toLowerCase());
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(String(v).toLowerCase());
 }
 
 const userNotificationSchema = mongoose.Schema({
-  bankNotification: {type: ObjectId, ref: "BankNotification"},
-  status: {type: String, enum: ['read','unread'], default: 'unread'}
+    bankNotification: {
+        type: ObjectId,
+        ref: "BankNotification"
+    },
+    status: {
+        type: String,
+        enum: [
+            'read', 'unread'
+        ],
+        default: 'unread'
+    }
 })
 
-const userSchema = new mongoose.Schema(
-  {
+const userSchema = new mongoose.Schema({
     email: {
-      type: String,
-      trim: true,
-      lowercase: true,
-      unique: true,
-      required: "Email is required",
-      validate: {
-        validator: emailValidator,
-        message: props => `${props.value} is not a valid email!`
-      }
+        type: String,
+        trim: true,
+        lowercase: true,
+        unique: true,
+        required: "Email is required",
+        validate: {
+            validator: emailValidator,
+            message: props => `${props.value} is not a valid email!`
+        }
     },
+    active: {type: Boolean, default: false},
     name: {
-      type: String,
-      trim: true,
-      required: "Name is required",
-      validate: {
-        validator: (v) => {return (v.length>4 && v.length<15)},
-        message: props => `${props.value} should be > 4 and <15 chars`
-      }
+        type: String,
+        trim: true,
+        required: "Name is required",
+        validate: {
+            validator: (v) => {
+                return (v.length > 4 && v.length < 15)
+            },
+            message: props => `${props.value} should be > 4 and <15 chars`
+        }
     },
     avatar: {
-      type: String
+        type: String
     },
     about: {
-      type: String,
-      trim: true,
-      default: "",
+        type: String,
+        trim: true,
+        default: ""
     },
     linkedIn: {
-      type: String,
-      trim: true,
-      default: ""
+        type: String,
+        trim: true,
+        default: ""
     },
-    isAnOrganization: {type: Boolean, default: false, required: "Organization field is required"},
-    teachers: [{
-      type: ObjectId, 
-      ref: "User"
-    }],
+    isAnOrganization: {
+        type: Boolean,
+        default: false,
+        required: "Organization field is required"
+    },
+    teachers: [
+        {
+            type: ObjectId,
+            ref: "User"
+        }
+    ],
     notifications: {
-      total: {type: Number, default: 0},
-      unread: {type: Number, default: 0},
-      list: [{type: userNotificationSchema}]
+        total: {
+            type: Number,
+            default: 0
+        },
+        unread: {
+            type: Number,
+            default: 0
+        },
+        list: [
+            {
+                type: userNotificationSchema
+            }
+        ]
     },
-    organization: [{ type: ObjectId, ref: "User" }],
-    following: [{ type: ObjectId, ref: "User" }],
-    followers: [{ type: ObjectId, ref: "User" }]
-  },
-  /* gives us "createdAt" and "updatedAt" fields automatically */
-  { timestamps: true }
-);
+    organization: [
+        {
+            type: ObjectId,
+            ref: "User"
+        }
+    ],
+    following: [
+        {
+            type: ObjectId,
+            ref: "User"
+        }
+    ],
+    followers: [
+        {
+            type: ObjectId,
+            ref: "User"
+        }
+    ]
+},
 
-const autoPopulateFollowingAndFollowers = function(next){
-  this.populate("following", "_id name avatar");
-  this.populate("followers", "_id name avatar");
-  this.populate("teachers", "_id name avatar");
-  next();
+/* gives us "createdAt" and "updatedAt" fields automatically */
+{timestamps: true});
+
+const autoPopulateFollowingAndFollowers = function (next) {
+    this.populate("following", "_id name avatar");
+    this.populate("followers", "_id name avatar");
+    this.populate("teachers", "_id name avatar");
+    next();
 };
 
 userSchema.methods.canCreateCourse = function () {
-  //A organization or a user without any organization
-  return this.isAnOrganization || this.organization.length==0;
+    //A organization or a user without any organization
+    return this.isAnOrganization || this.organization.length == 0;
 };
 
-userSchema.methods.isInstructor = function (course) {
-  //isInstructor is true if user is a creator or an instructor of a given course
-  const {creator, instructors} = course;
-  return !!(creator._id.equals(this._id) || instructors.find(e=> e._id.equals(this._id)) || creator.teachers.includes(this._id));
+userSchema.methods.canEditDiscussion = function(discussion){
+  return this._id.equals(discussion.creator._id)
 }
 
-userSchema.pre("findOne", function(next){
-  const populatedPaths = this.getPopulatedPaths();
-  if(populatedPaths.length === 0){
-      return autoPopulateFollowingAndFollowers.bind(this)(next);
-  } 
-  next();
-}); 
+userSchema.methods.canDeleteDiscussion = function(discussion){
+  let canDelete = false;
+  [discussion.creator._id, discussion.creator._id].forEach((e) => {
+    if(e.equals(this._id)) canDelete = true;
+  })
+  return canDelete;
+}
+
+userSchema.methods.canCreateDiscussion = function(course) {
+  //Check if a user can create a discussion on the given courseId
+  return true;
+}
+
+//Teacher untuk sebuah organisasi --> user.organiztion ! =[]
+//Private teacher ---> user.organization = [] && user.courses != []
+userSchema.methods.isInstructor = function (course) {
+    //isInstructor is true if user is a creator or an instructor of a given course
+    const {creator, instructors} = course;
+    return !!(creator._id.equals(this._id) || instructors.find(e => e._id.equals(this._id)) || creator.teachers.includes(this._id));
+}
+
+userSchema.pre("findOne", function (next) {
+    const populatedPaths = this.getPopulatedPaths();
+    if (populatedPaths.length === 0) {
+        return autoPopulateFollowingAndFollowers.bind(this)(next);
+    }
+    next();
+});
+
+userSchema.index({ name: "text"});
 
 /* passportLocalMongoose takes our User schema and sets up a passport "local" authentication strategy using our email as the username field */
-userSchema.plugin(passportLocalMongoose, { usernameField: "email" });
+userSchema.plugin(passportLocalMongoose, {usernameField: 'email'});
 
 /* The MongoDBErrorHandler plugin gives us a better 'unique' error, rather than: "11000 duplicate key" */
 userSchema.plugin(mongodbErrorHandler);
-
 
 module.exports = mongoose.model("User", userSchema);

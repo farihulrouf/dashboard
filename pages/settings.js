@@ -2,7 +2,7 @@ import React from "react";
 import {withStyles, Container, Grid, List, ListItem, ListItemText, createMuiTheme, Paper} from "@material-ui/core";
 import { authInitialProps } from "../lib/auth"
 import {AccountCircle, Book, Person, Business, Star} from "@material-ui/icons";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/Navbar/NavBar";
 import { ThemeProvider } from '@material-ui/core/styles';
 import MyProfile from '../components/settings/MyProfile';
 import MyCourses from '../components/settings/MyCourses';
@@ -76,7 +76,7 @@ class Settings extends React.Component{
     const {selectedIndex} = this.state;
 
     return(
-      <NavBar auth={auth}>
+      <NavBar auth={auth} mode={1}>
         <div style={{backgroundColor: 'rgb(247, 249, 250)'}}>
           <div style={{backgroundColor: '#3f51b5'}}>
                 <Container maxWidth="lg" style={{padding: '96px 48px'}}>

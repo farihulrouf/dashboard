@@ -3,7 +3,7 @@ const bail = (err) => {
         console.log(err);
         process.exit();
     }
-    console.log("RABBIT READY")
+    console.log("Producer connect to RABBIT")
 }
 
 let channel = null;

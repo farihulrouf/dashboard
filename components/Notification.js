@@ -7,27 +7,24 @@ import id from 'javascript-time-ago/locale/id';
 
 TimeAgo.addLocale(id)
 
-
-export default function Notification(props){
-    const {data}  = props;
+export default function Notification(props) {
+    const {data} = props;
     const timeAgo = new TimeAgo('id-ID')
-    return(
-        <Grid container style={{width: 300}}>
-            <Grid xs={2} item>
-                <Grid alignItems="center" style={{height: '100%'}} container>
-                    <Avatar src={data.bankNotification.photo} />
-                </Grid>
+    return (
+        <Grid container className="notification-item">
+            <Grid item className="avatar-container">
+                <Avatar src={data.bankNotification.photo}/>
             </Grid>
-            <Grid xs={9} item>
-                <p style={{padding: 0, margin: 0, whiteSpace: 'normal'}}>
-                <span>{`${data.bankNotification.message}`}</span><br/>
-                <span><b>{timeAgo.format(new Date(data.bankNotification.createdAt))}</b></span>
+            <Grid item>
+                <p>
+                    {`${data.bankNotification.message}`}<br/>
                 </p>
+                <span>
+                    {timeAgo.format(new Date(data.bankNotification.createdAt))}
+                </span>
             </Grid>
-            <Grid xs={1} item>
-                <Grid alignItems="center" justify="center" style={{height: '100%'}} container>
-                    {data.status === "unread" && <FiberManualRecord color="primary" style={{fontSize: 10}} />}
-                </Grid>
+            <Grid item  className="unread-container">
+                {data.status === "unread" && <FiberManualRecord className="unread" />}
             </Grid>
         </Grid>
     )

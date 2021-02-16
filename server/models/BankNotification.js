@@ -5,7 +5,7 @@ const { ObjectId } = mongoose.Schema;
 
 const bankNotifSchema = mongoose.Schema({
     photo: {type: String, required: 'Notif photo is required'},
-    url: {type: String, reuired: 'Notif url is required'},
+    url: {type: String, required: 'Notif url is required'},
     message: {type: String, required: true},
     notifOn: {type: ObjectId, required: true, ref: 'onModel'},
     processed: {type: Boolean, default: false},

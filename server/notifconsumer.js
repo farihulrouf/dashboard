@@ -23,7 +23,7 @@ mongoose
     process.env.MONGO_URI,
     mongooseOptions
 )
-.then(() => console.log("DB connected"));
+.then(() => console.log("Notifconsumer connected to DB"));
 
 mongoose.connection.on("error", err => {
 console.log(`DB connection error: ${err.message}`);
@@ -34,7 +34,7 @@ const bail = (err) => {
         console.log(err);
         process.exit();
     }
-    console.log("RABBIT READY")
+    console.log("Notifconsumer connected to RABBIT")
 }
 
 const connectRabbitCallback = (conn) => {

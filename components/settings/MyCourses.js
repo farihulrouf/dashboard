@@ -3,6 +3,7 @@ import {Add} from "@material-ui/icons";
 import CourseItem from "./CourseItem";
 import {getMyCourses, getMyTeachers} from "../../lib/api";
 import CreateEditCourseDialog from "./CreateEditCourseDialog";
+import React from 'react';
   
 export default class MyCourses extends React.Component{
   constructor(props){

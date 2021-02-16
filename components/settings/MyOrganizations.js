@@ -3,6 +3,7 @@ import { red } from '@material-ui/core/colors';
 import SearchBar from "material-ui-search-bar";
 import {getOrganizations, createApplication, cancelApplication} from "../../lib/api";
 import {makeStyles} from "@material-ui/core/styles";
+import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
     orgButton: {width: '80%', margin: 20},

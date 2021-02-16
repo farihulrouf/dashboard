@@ -2,6 +2,7 @@ import {TextField, Grid, IconButton, Avatar, Button} from '@material-ui/core';
 import {CameraAlt} from '@material-ui/icons'
 import {getMyProfile, updateUserProfile} from "../../lib/api"
 import AvatarPicker from "../AvatarPicker";
+import React from 'react';
 
 class MyProfile extends React.Component{
     constructor(props){

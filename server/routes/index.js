@@ -10,6 +10,8 @@ const fileController = require("../controllers/fileController");
 const examController = require("../controllers/examController");
 const attachmentController = require("../controllers/attachmentController");
 const applicationController = require("../controllers/applicationController");
+const paymentController = require("../controllers/paymentController");
+const discussionController = require('../controllers/discussionController.js');
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 const fs = require('fs');
@@ -140,21 +142,41 @@ router.get(
   catchErrors(courseController.getPosts)
 );
 
+
 router.param("courseId", courseController.getCourseById);
+
+router.get(
+  "/api/courses/:courseId/discussions",
+  authController.checkAuth,
+  catchErrors(courseController.getDiscussions)
+)
+
+router.post(
+  "/api/courses/:courseId/discussions",
+  authController.checkAuth,
+  discussionController.validateDiscussion,
+  courseController.createCourseDiscussion,
+  catchErrors(courseController.getDiscussions)
+)
 
 //Unregistered user can see courses and course info
 router.post(
-  "/api/courses/create",
-  authController.checkAuth,
-  catchErrors(courseController.createCourse),
-  catchErrors(courseController.getMyCourses)
-);
-
-router.get(
   "/api/courses",
-  authController.checkAuth,
+  // authController.checkAuth,
   catchErrors(courseController.getCourses)
 );
+
+// router.post(
+//   "/api/courses/create",
+//   authController.checkAuth,
+//   catchErrors(courseController.createCourse),
+//   catchErrors(courseController.getMyCourses)
+// );
+
+router.get(
+  "/api/courses/favourite",
+  catchErrors(courseController.getFavouriteCourse)
+)
 
 router.get(
   "/api/courses/mycourses",
@@ -171,6 +193,12 @@ router.get(
   "/api/courses/:courseId",
   catchErrors(courseController.getCourse)
 );
+
+router.post(
+  "/api/courses/review",
+  // authController.checkAuth,
+  catchErrors(courseController.createReview)
+)
 
 router.put(
   "/api/courses/:courseId/edit",
@@ -190,7 +218,7 @@ router.put(
 );
 
 router.post(
-  "/api/courses/:courseId/posts/create",
+  "/api/courses/:courseId/posts",
   authController.checkAuth,
   postController.validatePost,
   catchErrors(courseController.createCoursePost),
@@ -235,24 +263,51 @@ router.post(
   catchErrors(postController.createComment)
 );
 
-// router.post(
-//   "/api/posts/new/:userId",
-//   authController.checkAuth
-//   postController.uploadImage,
-//   catchErrors(postController.resizeImage),
-//   catchErrors(postController.addPost)
-// );
+/**
+ * /api/discussions
+ */
+
+router.put(
+  "/api/discussions/:discussionid",
+  authController.checkAuth,
+  discussionController.validateDiscussion,
+  discussionController.updateDiscussion
+)
+
+router.post(
+  "/api/discussions/:discussionid/answers",
+  authController.checkAuth,
+  discussionController.createAnswer
+)
+
+router.put(
+  "/api/discussions/:discussionid/vote",
+  authController.checkAuth,
+  catchErrors(discussionController.voteDiscussion)
+)
 
 /**
  * USER ROUTES: /api/users
  */
 
 
-router.get("/api/users/me", (req,res)=>{
+router.get(
+  "/api/users/me",
+  authController.checkAuth, 
+  (req,res)=>{
+    res.json({status: "ok", user: req.user});
+  }
+);
+
+router.get("/api/users/instructors", (req,res)=>{
   res.json({status: "ok", user: req.user});
 });
 
-router.get("/api/users/me/notifications", catchErrors(userController.getMyNotifications))
+router.get(
+  "/api/users/me/notifications", 
+  authController.checkAuth,
+  catchErrors(userController.getMyNotifications)
+)
 
 router.put(
   '/api/users/me/notifications/:notificationId',
@@ -260,7 +315,11 @@ router.put(
   catchErrors(userController.readMyNotification)
 )
 
-router.get("/api/users/me/myteachers",catchErrors(userController.getMyTeachers));
+router.get(
+  "/api/users/me/myteachers",
+  authController.checkAuth,
+  catchErrors(userController.getMyTeachers)
+);
 
 router.param("userId", userController.getUserById);
 
@@ -273,6 +332,17 @@ router.get(
   authController.checkAuth,
   catchErrors(userController.getUsers)
 )
+
+router.get(
+  "/api/instructors",
+  catchErrors(userController.getAllInstructors)
+)
+
+router.get(
+  "/api/organizations",
+  catchErrors(userController.getAllOrganizations)
+)
+
 
 router.put(
   "/api/users/updateprofile",
@@ -293,7 +363,7 @@ router.get(
 )
 
 router.post(
-  "/api/teacher-applications/create",
+  "/api/teacher-applications",
   authController.checkAuth,
   catchErrors(applicationController.createApplication),
   catchErrors(userController.getUsers)
@@ -330,10 +400,41 @@ router.get(
   catchErrors(fileController.getPreSignedUrl)
 )
 
+router.get(
+  "/course_logo/:filePath",
+  catchErrors(fileController.getPreSignedUrl)
+)
+
+router.post(
+  "/api/course_logo/generate-put-url",
+  catchErrors(fileController.putPreSignedUrl)
+)
+
 router.post(
   "/api/files/generate-put-url",
   authController.checkAuth,
   catchErrors(fileController.putPreSignedUrl)
 )
+
+/**
+ * PAYMENT Routes: /api/payment
+ */
+router.get(
+  "/api/payment/mypayments",
+  authController.checkAuth,
+  catchErrors(paymentController.getMyPayment)
+)
+
+
+ router.post(
+   "/api/payment/create",
+   authController.checkAuth,
+   catchErrors(paymentController.createPayment)
+ )
+
+ router.post(
+   '/api/payment/callback',
+   catchErrors(paymentController.paymentCallback)
+ )
 
 module.exports = router;

@@ -2,11 +2,15 @@ require("dotenv").config();
 var repl = require("repl");
 var replServer = repl.start({prompt: "Node Console > "});
 var User = require('./server/models/User');
+var Review = require('./server/models/Review');
 var Course = require('./server/models/Course');
+var Payment = require('./server/models/Payment')
 var Post = require('./server/models/Post');
 var Comment = require('./server/models/Comment');
 var TeacherApplication = require('./server/models/TeacherApplication');
 var BankNotification = require('./server/models/BankNotification');
+var Discussion = require('./server/models/Discussion');
+var DiscussionAnswer = require('./server/models/DiscussionAnswer');
 const mongoose = require("mongoose");
 
 const mongooseOptions = {
@@ -86,9 +90,13 @@ const seeds = async function(){
 }
 
 replServer.context.User = User;
+replServer.context.Review = Review;
+replServer.context.Payment = Payment;
 replServer.context.Course = Course;
 replServer.context.Post = Post;
 replServer.context.Comment = Comment;
 replServer.context.TeacherApplication = TeacherApplication;
 replServer.context.BankNotification = BankNotification;
+replServer.context.Discussion = Discussion;
+replServer.context.DiscussionAnswer = DiscussionAnswer;
 replServer.context.seeds = seeds;
