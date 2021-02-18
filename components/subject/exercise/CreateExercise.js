@@ -1,7 +1,8 @@
 
-import { List, ListItem } from "@material-ui/core";
+import { List, ListItem, Button } from "@material-ui/core";
 import React from "react";
 import XLSX from "xlsx";
+import { createMultipleExercise } from "../../../lib/api";
 class CreateExercise extends React.Component{
 
     TYPE_CELL       = 'C2'
@@ -72,7 +73,7 @@ class CreateExercise extends React.Component{
             solution: this.getCellValue(worksheet, this.ANSWER_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             type: 'Multiple Choice',
             tag: 'No Tag',
-            attachments : this.getCellValue(worksheet, this.MEDIA_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
+            //attachments : this.getCellValue(worksheet, this.MEDIA_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             playbackTimes: this.getCellValue(worksheet, this.PLAYBACK_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             correctScore: this.getCellValue(worksheet, this.CORRECT_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             wrongScore: this.getCellValue(worksheet, this.WRONG_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
@@ -84,8 +85,15 @@ class CreateExercise extends React.Component{
         return (cell ? cell.v : undefined);
     }
 
+    uploadExercises(){
+        createMultipleExercise(this.props.courseId,this.state.exercises)
+        .then(result=>console.log('result',result))
+        .catch(error=>console.log('error',error))
+    }
+
     render(){
         console.log('exercises state', this.state.exercises)
+        console.log('this.props.courseId', this.props.courseId)
         return(
             <div className="subject-exercise-create">
                 <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
@@ -112,6 +120,14 @@ class CreateExercise extends React.Component{
                         )
                     }
                 </List>
+                <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                    <Button
+                        onClick={this.uploadExercises.bind(this)} 
+                        style={{width: 165, height: 50, marginTop: 21, marginBottom: 34}} 
+                        variant="contained" color="primary">
+                            UPLOAD
+                    </Button>
+                </div>
             </div>
         )
     }
