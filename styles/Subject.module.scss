@@ -670,18 +670,71 @@
       display: flex;
       flex: 1;
       flex-direction: row;
+      margin-top: 35px;
+      padding: 8px;
       
       .item-exam-stats {
-        flex: 2;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        flex: 1;
+
+        .divider {
+          margin-top: 16px;
+          margin-bottom: 8px;
+          width: 100%;
+        }
+        .text-score {
+          font-family: Lato;
+          font-style: normal;
+          font-weight: bold;
+          font-size: 24px;
+          line-height: 24px;
+          text-align: center;
+          color: #1B1642;
+        }
+        .text-pass {
+          color: #8DC883;
+          font-family: Lato;
+          font-style: normal;
+          font-weight: bold;
+          font-size: 24px;
+          line-height: 24px;
+        }
       }
 
       .item-exam-name {
         flex: 4;
+        margin-left: 40px;
+
+        .item-exam-name-title {
+          font-family: Lato;
+          font-style: normal;
+          font-weight: 700;
+          font-size: 18px;
+          line-height: 22px;
+          color: #1B1642;
+        }
+        .item-exam-name-desc {
+          font-family: Lato;
+          font-style: normal;
+          font-weight: 400;
+          font-size: 14px;
+          line-height: 22px;
+          color: #1B1642;
+        }
       }
 
       .item-exam-about {
+        display: flex;
         flex: 2;
+        flex-direction: column;
+        justify-content: space-between;
+
         .item-exam-about-problem {
+          padding: 8px;
+          align-content: center;
+          justify-content: center;
           width: fit-content;
           background: #FFB562;
           border-radius: 16px;
@@ -689,6 +742,7 @@
       }
 
       .light-label {
+        margin-top: 8px;
         font-family: Lato;
         font-style: italic;
         font-weight: 300;
