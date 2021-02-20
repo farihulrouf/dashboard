@@ -18,6 +18,8 @@ import Home from "../../components/subject/Home";
 import Discussion from "../../components/subject/Discussion";
 import ExerciseSetting from "../../components/subject/ExerciseSetting";
 import CreateExercise from "../../components/subject/exercise/CreateExercise";
+import ExerciseList from "../../components/subject/exercise/ExerciseList";
+import ExamList from "../../components/subject/exam/ExamList";
 import InstructorItem from "../../components/subject/InstructorItem";
 import {
   getCourseById,
@@ -265,6 +267,7 @@ class Subject extends React.Component {
             <Tab label="Home" {...a11yProps(0)} />
             <Tab label="Discussion" {...a11yProps(1)} />
             <Tab label="Exercise" {...a11yProps(2)} />
+            <Tab label="Exam" {...a11yProps(3)} />
           </Tabs>
           <React.Fragment>
             <TabPanel value={tabIndex} index={0}>
@@ -286,11 +289,19 @@ class Subject extends React.Component {
               />
             </TabPanel>
             <TabPanel value={tabIndex} index={2}>
-              <CreateExercise
+              <ExerciseList
                 auth={auth}
                 courseId={router.query.id}
                 isInstructor={course.isInstructor}
-                className="subject-exercise-create"
+                className="subject-exercise-list"
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={3}>
+              <ExamList
+                auth={auth}
+                courseId={router.query.id}
+                isInstructor={course.isInstructor}
+                className="subject-exam-list"
               />
             </TabPanel>
           </React.Fragment>

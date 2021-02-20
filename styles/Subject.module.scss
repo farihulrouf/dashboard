@@ -664,6 +664,41 @@
       }
     }
   }
+
+  .subject-exam-list {
+    .item-exam {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      
+      .item-exam-stats {
+        flex: 2;
+      }
+
+      .item-exam-name {
+        flex: 4;
+      }
+
+      .item-exam-about {
+        flex: 2;
+        .item-exam-about-problem {
+          width: fit-content;
+          background: #FFB562;
+          border-radius: 16px;
+        }
+      }
+
+      .light-label {
+        font-family: Lato;
+        font-style: italic;
+        font-weight: 300;
+        font-size: 12px;
+        line-height: 14px;
+        color: #1B1642;
+      }
+    }
+
+  }
 }
 
 .purple {
