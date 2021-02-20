@@ -82,7 +82,7 @@ class Home extends React.Component {
   };
 
   render() {
-    const { isInstructor, auth, instructors, createdAt } = this.props;
+    const { isInstructor, auth, instructors, createdAt, creator } = this.props;
     const { posts, deleteDialogOpen } = this.state;
 
     return (
@@ -100,6 +100,7 @@ class Home extends React.Component {
           auth={auth}
           isInstructor={isInstructor}
           instructors={instructors}
+          creator={creator}
           createdAt={createdAt}
         />
 

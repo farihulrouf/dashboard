@@ -272,6 +272,7 @@ class Subject extends React.Component {
                 courseId={router.query.id}
                 isInstructor={course.isInstructor}
                 instructors={instructors}
+                creator = {creator}
                 createdAt={createdAt}
                 className="subject-home"
               />

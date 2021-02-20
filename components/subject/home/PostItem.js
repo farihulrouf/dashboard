@@ -39,8 +39,6 @@ const PostItem = (props) => {
     setAnchorEl(anchorEl ? null : event.currentTarget);
   };
 
-  console.log(data);
-
   const open = Boolean(anchorEl);
   const id = open ? "simple-popper" : undefined;
 

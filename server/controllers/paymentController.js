@@ -14,7 +14,7 @@ exports.getMyPayment = async (req, res) => {
 }
 
 exports.createPayment = async (req, res) => {
-  const username = 'xnd_development_qE1ZiLePBPhcVCQ6MzjsKkP0IShuE9j7gdcd8YQttXHnwCJhq6Ludtg5XCzaQ7';
+  const username = process.env.XENDIT_API_KEY;
   const password = '';
 
   const token = Buffer.from(`${username}:${password}`, 'utf8').toString('base64');
@@ -76,30 +76,6 @@ exports.createPayment = async (req, res) => {
         }
       }
     );
-
-    // payment.payment_number = '';
-    // payment.invoice_url = data.invoice_url;
-    // payment.status = data.status;
-    // payment.blob_response = JSON.stringify(data);
-    // payment.external_id = data.external_id;
-    // payment.expiry_date = data.expiry_date;
-    // var payment = new Payment({
-    //   payment_number : data.external_id, 
-    //   user : user,
-    //   course : course,
-    //   invoice_url : data.invoice_url,
-    //   status : data.status,
-    //   blob_response : JSON.stringify(data),
-    //   external_id : '121',
-    //   expiry_date : data.expiry_date
-    // });
-
-    // payment.save( function (err) {
-    //   if (err) {
-    //     return res.json({error : err});
-    //   }
-    // })
-
     res.json(data);
   })
   .catch(err => {
@@ -108,18 +84,21 @@ exports.createPayment = async (req, res) => {
 };
 
 exports.paymentCallback = async (req, res) => {
-  var payment = await Payment.findOneAndUpdate(
-    {xendit_id : req.body.id,
-    external_id: req.body.external_id},
-    {status : req.body.status},
-    function (err){
-      if (err){
-        return res.json({error : err});
+  if (req.headers['x-callback-token'] === process.env.XENDIT_VERIF_KEY){
+    var payment = await Payment.findOneAndUpdate(
+      {xendit_id : req.body.id,
+      external_id: req.body.external_id},
+      {status : req.body.status},
+      function (err){
+        if (err){
+          return res.json({error : err});
+        }
       }
-    }
-  )
-
-  return res.json({status: "ok", payment: payment})
+    )
+  
+    return res.json({status: "ok", payment: payment});
+  }
+  return res.json({status: "error", message: "permission denied"});
 }
 
 createExternalId = (email, desc) => {

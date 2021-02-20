@@ -96,6 +96,7 @@ class FilterDialog extends React.Component {
       onCloseFilter,
       onFilterChange,
       instructors,
+      creator
     } = this.props;
     const categories = [
       { id: 1, name: "Berita" },
@@ -105,8 +106,9 @@ class FilterDialog extends React.Component {
     const { dateStart, dateEnd } = this.state;
     // const dateStart = query.dateStart || Date.now();
     // const dateEnd = query.dateEnd || Date.now();
-    const creators = instructors
-      ? instructors.map((value, index) => ({ id: index + 1, creator: value }))
+    const postCreator = Array.isArray(instructors) && instructors.concat(creator);
+    const creators = postCreator
+      ? postCreator.map((value, index) => ({ id: index + 1, creator: value }))
       : [];
     // const creators = [];
 

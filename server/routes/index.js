@@ -154,14 +154,14 @@ router.post(
 )
 
 //Unregistered user can see courses and course info
-router.post(
+router.get(
   "/api/courses",
   // authController.checkAuth,
   catchErrors(courseController.getCourses)
 );
 
 // router.post(
-//   "/api/courses/create",
+//   "/api/courses",
 //   authController.checkAuth,
 //   catchErrors(courseController.createCourse),
 //   catchErrors(courseController.getMyCourses)
