@@ -11,8 +11,11 @@ import {ArrowRightAlt} from "@material-ui/icons";
 import NavBar from "../components/Navbar/NavBar";
 import Link from "next/link";
 import MuiAlert from '@material-ui/lab/Alert';
-import {signupUser, authInitialProps} from '../lib/auth';
+import {signupUser, authInitialProps, requestOTP, validateEmail} from '../lib/auth';
 import Router from "next/router"
+import OtpInput from 'react-otp-input';
+import Countdown from 'react-countdown';
+import { color } from 'jimp';
 
 function Alert(props) {
     return <MuiAlert elevation={6} variant="filled" {...props} className="alert" />;
@@ -31,6 +34,8 @@ class SignUp extends React.Component {
         this.state = {
             user: user,
             error: {},
+            fill_otp: false,
+            otp: '',
             isLoading: false
         }
         this.handleChange = this
@@ -39,6 +44,8 @@ class SignUp extends React.Component {
         this.closeAlert = this
             .closeAlert
             .bind(this);
+        this.requestAnotherOTP = this.requestAnotherOTP.bind(this);
+        this.otpHandleChange = this.otpHandleChange.bind(this)
     }
 
     handleChange = (event) => {
@@ -74,14 +81,20 @@ class SignUp extends React.Component {
         const {user, error} = this.state;
         let newError = this.errorCheck(user, error);
         this.setState({error: newError});
-        console.log(newError)
         if (Object.values(newError).reduce((c, n) => {
             return (c && (n === ""))
         }, true)) {
             this.setState({isLoading: true})
             return signupUser(user).then(response => {
-                Router.push("/signin");
-                // this.setState({isLoading: false})
+                const {countdown_time, email, name, otp_length} = response;
+                this.setState({
+                    isLoading: false, 
+                    fill_otp: true, 
+                    countdown_time: countdown_time, 
+                    email: email, 
+                    name: name, 
+                    otp_length: otp_length
+                })
             }).catch(err => {
                 let newError = {
                     ...error
@@ -100,9 +113,68 @@ class SignUp extends React.Component {
         this.setState({error: newError})
     }
 
+    otpHandleChange = (updatedOtp) => {
+        this.setState({otp: updatedOtp})
+        const {email, otp_length} = this.state;
+        if(updatedOtp.length === otp_length){
+            validateEmail({email, otp: updatedOtp}).then(data => {
+                const {message, redirect_at} = data;
+                this.setState({otp_success: true, otp_success_message: message, redirect_at: redirect_at})
+            }).catch(err => {
+                let newError = {server: err.response.data};
+                this.setState({error: newError})
+            })
+        }
+    }
+
+    requestAnotherOTP = (e) => {
+        e.preventDefault();
+        requestOTP(this.state.email).then((response)=>{
+            const {countdown_time, otp_length} = response;
+            this.setState({
+                countdown_time: countdown_time, 
+                otp_length: otp_length
+            })
+        }).catch(err => {
+            let newError = {server: err.response.data}
+            this.setState({error: newError})
+        })
+    }
+
+    renderer = ({ hours, minutes, seconds, completed }) => {
+        if (completed) {
+          // Render a completed state
+          return <span>Token expired. Click <a href="#" style={{display: 'inline'}} onClick={this.requestAnotherOTP}>here</a> to request another token</span>;
+        } else {
+          // Render a countdown
+          return <span>It is valid for {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')} minutes</span>;
+        }
+    };
+
+    onOTPSuccess = ({hours, minutes, seconds, completed}) => {
+        if(completed){
+            //redirect to signin page
+            Router.push("/signin");
+            return (null)
+        }else{
+            return (<span>
+                {this.state.otp_success_message}. 
+                You will be redirected to sign in page in {String(minutes).padStart(2, '0')}:{String(seconds).padStart(2, '0')} seconds
+                </span>)
+        }
+    }
+      
     render() {
-        const {error, user, isLoading} = this.state;
-        console.log(error.server);
+        const {
+            error, 
+            user, 
+            isLoading, 
+            fill_otp, 
+            countdown_time, 
+            otp_length,
+            otp_success,
+            redirect_at
+        } = this.state;
 
         return (
             <NavBar onlyLogo={true}>
@@ -120,7 +192,7 @@ class SignUp extends React.Component {
                                     </h5>
                                 </Grid>
                             </Grid>
-                            <Grid justify="center" container spacing={2}>
+                            {!fill_otp && <Grid justify="center" container spacing={2}>
                                 {isLoading && <CircularProgress thickness={6} size="6rem" />}
                                 {!isLoading && <React.Fragment>
                                     <Grid xs={12} item className="input-container">
@@ -194,7 +266,7 @@ class SignUp extends React.Component {
                                     <h6>
                                         <div className="desc">Already have an account ?</div>
                                         <div className="desc-link">
-                                            <Link href="./signin">
+                                            <Link href="/signin">
                                                 <a>
                                                     <div>
                                                         &nbsp; Sign in.
@@ -206,7 +278,26 @@ class SignUp extends React.Component {
                                         </div>
                                     </h6>
                                 </Grid>
-                            </Grid>
+                            </Grid>}
+                            {fill_otp && <Grid justify="center" container spacing={2}>
+                                {!isLoading && fill_otp && !otp_success && <React.Fragment>
+                                    <div style={{fontSize: 20, margin: 20, textAlign: 'center'}}>
+                                    We sent an OTP to your email.<br/>
+                                    <Countdown key={countdown_time} renderer={this.renderer} date={countdown_time} />
+                                    </div>
+                                    <OtpInput
+                                        value={this.state.otp}
+                                        onChange={this.otpHandleChange}
+                                        numInputs={otp_length}
+                                        containerStyle={{margin: 40}}
+                                        separator={<span>-</span>}
+                                        inputStyle={{fontSize: 50}}
+                                    />
+                                </React.Fragment>}
+                                {otp_success && <React.Fragment>
+                                    <Countdown date={redirect_at} renderer={this.onOTPSuccess} key={"otp_success"} />
+                                </React.Fragment>}
+                            </Grid>}
                         </Container>
                     </Grid>
                 </Container>

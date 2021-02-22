@@ -25,8 +25,7 @@ import footerMenu from './FooterMenu';
 function NavBar(props) {
 
     const {children, onlyLogo, auth} = props;
-    const [active,
-        setActive] = useState("");
+    const [active, setActive] = useState("");
 
     return (
         <React.Fragment>

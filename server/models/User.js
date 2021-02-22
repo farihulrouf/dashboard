@@ -34,6 +34,8 @@ const userSchema = new mongoose.Schema({
             message: props => `${props.value} is not a valid email!`
         }
     },
+    otp: {type: String, trim: true},
+    otpValidUntil: {type: Date},
     active: {type: Boolean, default: false},
     name: {
         type: String,
@@ -147,9 +149,10 @@ userSchema.methods.isInstructor = function (course) {
 
 userSchema.pre("findOne", function (next) {
     const populatedPaths = this.getPopulatedPaths();
-    if (populatedPaths.length === 0) {
-        return autoPopulateFollowingAndFollowers.bind(this)(next);
-    }
+    // if (populatedPaths.length === 0) {
+    //     return autoPopulateFollowingAndFollowers.bind(this)(next);
+    // }
+    if(!this._fields) this.select("-notifications")
     next();
 });
 

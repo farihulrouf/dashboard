@@ -58,9 +58,9 @@ const Carousel = ({ course }) => {
     <Grid className="carousel">
       <Slider {...settings}>
       {course.map((item, index) => {
-          console.log(index, itemIndex)
+          //console.log(index, itemIndex)
           return (
-            <Grid item className={index === itemIndex ? "slide activeSlide" : "slide"}>
+            <Grid key={index} item className={index === itemIndex ? "slide activeSlide" : "slide"}>
                 <Course courseItem={item} />
             </Grid>
           );

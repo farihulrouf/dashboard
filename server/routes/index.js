@@ -66,6 +66,17 @@ router.post(
 router.post("/api/auth/signin", authController.signin);
 router.get("/api/auth/signout", authController.signout);
 
+router.post(
+  '/api/auth/validate',
+  catchErrors(authController.validateEmail)
+)
+
+//Generate new otp
+router.get(
+  '/api/auth/otp',
+  catchErrors(authController.generateNewOTP)
+)
+
 /**
  * QUESTION POOL ROUTES
  */
