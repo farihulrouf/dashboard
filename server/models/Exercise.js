@@ -4,11 +4,10 @@ const { ObjectId } = mongoose.Schema;
 
 const exerciseSchema = new Schema(
   {
-    questionType: { type: String, required: true },
-    difficulty: { type: String, required: true },
     questionPools: [{ type: ObjectId, ref: "QuestionPool" }],
     numberOfQuestions: { type: Number, required: true },
-    timeLimit: { type: Number, required: true },
+    name: { type: String, required: true },
+    description: { type: String, required: true },
     courseId: {type: ObjectId, ref: "Course"}
   },
   {

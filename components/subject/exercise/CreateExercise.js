@@ -5,19 +5,20 @@ import XLSX from "xlsx";
 import { createMultipleExercise } from "../../../lib/api";
 class CreateExercise extends React.Component{
 
-    TYPE_CELL       = 'C2'
-    DIFFICULTY_CELL  = 'C3'
-    TIME_LIMIT_CELL   = 'C4'
+    TYPE_CELL           = 'C2'
+    EXERCISE_NAME_CELL  = 'C3'
+    DESCRIPTION_CELL    = 'C4'
 
-    FIRST_QUESTION_DATA_ROW  = 6
-    NUMBER_QUESTION_COLUMN   = 'B'
-    PROBLEM_QUESTION_COLUMN  = 'C'
-    MEDIA_QUESTION_COLUMN    = 'D'
-    PLAYBACK_QUESTION_COLUMN = 'E'
-    OPTIONS_QUESTION_COLUMN  = 'F'
-    ANSWER_QUESTION_COLUMN   = 'G'
-    CORRECT_QUESTION_COLUMN  = 'H'
-    WRONG_QUESTION_COLUMN    = 'I'
+    FIRST_QUESTION_DATA_ROW    = 6
+    NUMBER_QUESTION_COLUMN     = 'B'
+    PROBLEM_QUESTION_COLUMN    = 'C'
+    MEDIA_QUESTION_COLUMN      = 'D'
+    PLAYBACK_QUESTION_COLUMN   = 'E'
+    OPTIONS_QUESTION_COLUMN    = 'F'
+    ANSWER_QUESTION_COLUMN     = 'G'
+    CORRECT_QUESTION_COLUMN    = 'H'
+    WRONG_QUESTION_COLUMN      = 'I'
+    DIFFICULTY_QUESTION_COLUMN = 'J'
 
     state={
         exercises: [],
@@ -56,23 +57,24 @@ class CreateExercise extends React.Component{
 
         let exercises = this.state.exercises
         exercises.push({
-            questionType : 'Multiple Choice',
-            difficulty : "Easy",
+            name : this.getCellValue(worksheet, this.EXERCISE_NAME_CELL),
+            description : this.getCellValue(worksheet, this.DESCRIPTION_CELL),
             numberOfQuestions : questionPools.length,
             questionPools : questionPools,
-            timeLimit : this.getCellValue(worksheet, this.TIME_LIMIT_CELL)
+            courseId: this.props.courseId
         })
         this.setState({exercises: exercises})
     }
 
     getQuestionPool(worksheet, number){
         return {
-            difficultyLabel: "Easy",
+            courseId: this.props.courseId,
+            difficultyLabel: this.getCellValue(worksheet, this.DIFFICULTY_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             question: this.getCellValue(worksheet, this.PROBLEM_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
-            multipleChoices: this.getCellValue(worksheet, this.OPTIONS_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
+            multipleChoices: JSON.parse(this.getCellValue(worksheet, this.OPTIONS_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number))),
             solution: this.getCellValue(worksheet, this.ANSWER_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
-            type: 'Multiple Choice',
-            tag: 'No Tag',
+            type: 'exercise',
+            //tag: 'No Tag',
             //attachments : this.getCellValue(worksheet, this.MEDIA_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             playbackTimes: this.getCellValue(worksheet, this.PLAYBACK_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             correctScore: this.getCellValue(worksheet, this.CORRECT_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
