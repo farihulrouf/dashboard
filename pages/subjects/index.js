@@ -105,7 +105,7 @@ class Subject extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { tabIndex: 0, course: {}, joined: 0 };
+    this.state = { tabIndex: 0, course: {}, joined: 0, exercise_page_active: 'ExerciseList', exam_page_active: 'ExamList' };
     this.handleEnroll = this.handleEnroll.bind(this);
   }
 
@@ -171,6 +171,14 @@ class Subject extends React.Component {
       });
     }
   };
+
+  changeTabPage = (tabIndex, pageName) => {
+    if(tabIndex === 2){
+      this.setState({exercise_page_active: pageName})
+    }else if(tabIndex === 3){
+      this.setState({exam_page_active: pageName})
+    }
+  }
 
   render() {
     const { auth, router } = this.props;
@@ -291,20 +299,48 @@ class Subject extends React.Component {
               />
             </TabPanel>
             <TabPanel value={tabIndex} index={2}>
-              <ExerciseList
-                auth={auth}
-                courseId={router.query.id}
-                isInstructor={course.isInstructor}
-                className="subject-exercise-list"
-              />
+              {this.state.exercise_page_active === 'ExerciseList'&&
+                <ExerciseList
+                  tabIndex = {2}
+                  changeTabPage = {this.changeTabPage.bind(this)}
+                  auth={auth}
+                  courseId={router.query.id}
+                  isInstructor={course.isInstructor}
+                  className="subject-exercise-list"
+                />
+              }
+              {this.state.exercise_page_active === 'CreateExercise'&&
+                <CreateExercise
+                  tabIndex = {2}
+                  changeTabPage = {this.changeTabPage.bind(this)}
+                  auth={auth}
+                  courseId={router.query.id}
+                  isInstructor={course.isInstructor}
+                  className="subject-exercise-create"
+                />
+              }
             </TabPanel>
             <TabPanel value={tabIndex} index={3}>
-              <CreateExam
-                auth={auth}
-                courseId={router.query.id}
-                isInstructor={course.isInstructor}
-                className="subject-exercise-create"
-              />
+              {this.state.exam_page_active === 'ExamList'&&
+                <ExamList
+                  tabIndex = {3}
+                  changeTabPage = {this.changeTabPage.bind(this)}
+                  auth={auth}
+                  courseId={router.query.id}
+                  isInstructor={course.isInstructor}
+                  className="subject-exam-list"
+                />
+              }
+              {this.state.exam_page_active === 'CreateExam'&&
+                <CreateExam
+                  tabIndex = {3}
+                  changeTabPage = {this.changeTabPage.bind(this)}
+                  auth={auth}
+                  courseId={router.query.id}
+                  isInstructor={course.isInstructor}
+                  className="subject-exercise-create"
+                />
+              }
             </TabPanel>
           </React.Fragment>
         </Container>
