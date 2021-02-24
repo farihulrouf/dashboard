@@ -95,7 +95,7 @@ class CreateExam extends React.Component{
 
     uploadExams(){
         createMultipleExam(this.props.courseId,this.state.exams)
-        .then(result=>console.log('result',result))
+        .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExamList'))
         .catch(error=>console.log('error',error))
     }
 

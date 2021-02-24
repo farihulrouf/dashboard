@@ -87,7 +87,7 @@ class CreateExercise extends React.Component{
 
     uploadExercises(){
         createMultipleExercise(this.props.courseId,this.state.exercises)
-        .then(result=>console.log('result',result))
+        .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExerciseList'))
         .catch(error=>console.log('error',error))
     }
 
