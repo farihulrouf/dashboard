@@ -191,20 +191,20 @@ exports.addMultipleExam = async (req, res) => {
   const courseId = req.params.courseId
   let newExams = []
   const saveAllExam = () =>{
-    Exam.insertMany(newExams,(error, savedExams)=>{
-      if(error) res.status(400).json("Error " + error)
-      else res.json(savedExams)
+    Exam.insertMany(newExams,(error, savedExercises)=>{
+      if(error) res.status(400).json("Error Exam Insertion" + error)
+      else res.json(savedExercises)
     })
   }
   exams.forEach(exam =>{
     QuestionPool.insertMany(exam.questionPools, (error,questionPools)=>{
       if(error) {
-        res.status(400).json("Error " + error)
+        res.status(400).json("Error QuestionPool Insertion" + error)
         return
       }
       let questionPoolIds = []
       questionPools.forEach(questionPool=>{
-        questionPoolIds.push(questionPool.id);
+        questionPoolIds.push(questionPool._id);
       })
       exam.questionPools = questionPoolIds;
       exam.courseId = courseId

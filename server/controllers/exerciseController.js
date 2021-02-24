@@ -74,7 +74,7 @@ exports.addMultipleExercise = async (req, res) => {
       }
       let questionPoolIds = []
       questionPools.forEach(questionPool=>{
-        questionPoolIds.push(questionPool.id);
+        questionPoolIds.push(questionPool._id);
       })
       exercise.questionPools = questionPoolIds;
       exercise.courseId = courseId

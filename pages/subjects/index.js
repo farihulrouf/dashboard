@@ -19,6 +19,7 @@ import Discussion from "../../components/subject/Discussion";
 import ExerciseSetting from "../../components/subject/ExerciseSetting";
 import CreateExercise from "../../components/subject/exercise/CreateExercise";
 import ExerciseList from "../../components/subject/exercise/ExerciseList";
+import CreateExam from "../../components/subject/exam/CreateExam";
 import ExamList from "../../components/subject/exam/ExamList";
 import InstructorItem from "../../components/subject/InstructorItem";
 import {
@@ -101,6 +102,7 @@ function CourseStatus(props) {
 }
 
 class Subject extends React.Component {
+
   constructor(props) {
     super(props);
     this.state = { tabIndex: 0, course: {}, joined: 0 };
@@ -297,11 +299,11 @@ class Subject extends React.Component {
               />
             </TabPanel>
             <TabPanel value={tabIndex} index={3}>
-              <ExamList
+              <CreateExam
                 auth={auth}
                 courseId={router.query.id}
                 isInstructor={course.isInstructor}
-                className="subject-exam-list"
+                className="subject-exercise-create"
               />
             </TabPanel>
           </React.Fragment>
