@@ -225,6 +225,7 @@ exports.getExams = async (req, res) => {
 
   Exam.find()
   .skip((page - 1) * limit)
+  .sort({ createdAt: -1 })
   .limit(limit).exec((err,result)=>{
     if(err)res.status(400).json(err)
     else res.json(result)
