@@ -216,6 +216,21 @@ exports.addMultipleExam = async (req, res) => {
   })
 }
 
+exports.getExams = async (req, res) => {
+  let page = parseInt(req.query.page)
+  let limit = parseInt(req.query.limit)
+  
+  if(!!!page)page = 0
+  if(!!!limit)limit = 10
+
+  Exam.find()
+  .skip((page - 1) * limit)
+  .limit(limit).exec((err,result)=>{
+    if(err)res.status(400).json(err)
+    else res.json(result)
+  })
+}
+
 function getDateDiffInMinutes(d1, d2) {
   var diff = d2 - d1;
   diffMinnutes = diff / (60 * 1000);

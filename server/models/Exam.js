@@ -9,7 +9,10 @@ const examSchema = new Schema(
     duration: { type: Number },
     startTime: {type: Date},
     endTime: {type: Date},
-    courseId: {type: ObjectId, ref: "Course"}
+    courseId: {type: ObjectId, ref: "Course"},
+    description: { type: String },
+    avarageScore: { type: Number },
+    studentPass: { type: Number }
   },
   {
     timestamps: true,

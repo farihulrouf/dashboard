@@ -126,6 +126,7 @@ router.get("/api/exams/:id", examController.fetchSingleExam);
 router.post("/api/courses/:courseId/exams/:id/question-pools", examController.addQuestionPoolToExam)
 router.get("/api/courses/:courseId/exams/:id/start", examController.startExam)
 router.post("/api/courses/:courseId/exams/multiple", examController.addMultipleExam);
+router.get("/api/courses/:courseId/exams",examController.getExams)
 
 /**
  * EXERCISE ROUTES
