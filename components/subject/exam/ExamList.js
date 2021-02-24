@@ -15,6 +15,7 @@ class ExamList extends React.Component{
     }
 
     render(){
+        const { changeTabPage, tabIndex } = this.props
         return(
             <div className="subject-exam-list">
                 <div style={{display: "flex", flexDirection: "row"}}>
@@ -23,6 +24,7 @@ class ExamList extends React.Component{
                         variant="contained"
                         color="primary"
                         endIcon={<AddIcon />}
+                        onClick={()=>changeTabPage(tabIndex, 'CreateExam')}
                     >
                         CREATE AN EXAM
                     </Button>

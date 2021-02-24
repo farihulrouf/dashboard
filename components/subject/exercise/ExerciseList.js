@@ -5,6 +5,7 @@ import AddIcon from '@material-ui/icons/Add';
 
 class ExerciseList extends React.Component{
     render(){
+        const { changeTabPage, tabIndex } = this.props
         return(
             <div className="subject-exercise-list">
                 <div style={{display: "flex", flexDirection: "row"}}>
@@ -13,6 +14,7 @@ class ExerciseList extends React.Component{
                         variant="contained"
                         color="primary"
                         endIcon={<AddIcon />}
+                        onClick={()=>changeTabPage(tabIndex, 'CreateExercise')}
                     >
                         CREATE AN EXERCISE
                     </Button>
