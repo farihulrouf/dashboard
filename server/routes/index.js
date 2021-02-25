@@ -132,6 +132,7 @@ router.get("/api/courses/:courseId/exams",examController.getExams)
  * EXERCISE ROUTES
  */
 router.post("/api/courses/:courseId/exercises/multiple", exerciseController.addMultipleExercise);
+router.get("/api/courses/:courseId/exercises", exerciseController.getExercises)
 
 /**
  * COURSE ROUTES /api/courses

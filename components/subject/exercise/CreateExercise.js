@@ -61,7 +61,9 @@ class CreateExercise extends React.Component{
             description : this.getCellValue(worksheet, this.DESCRIPTION_CELL),
             numberOfQuestions : questionPools.length,
             questionPools : questionPools,
-            courseId: this.props.courseId
+            courseId: this.props.courseId,
+            avarageScore: 0,
+            studentPass: 0            
         })
         this.setState({exercises: exercises})
     }

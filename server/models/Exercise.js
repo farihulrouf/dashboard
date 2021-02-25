@@ -8,7 +8,9 @@ const exerciseSchema = new Schema(
     numberOfQuestions: { type: Number, required: true },
     name: { type: String, required: true },
     description: { type: String, required: true },
-    courseId: {type: ObjectId, ref: "Course"}
+    courseId: {type: ObjectId, ref: "Course"},
+    avarageScore: { type: Number },
+    studentPass: { type: Number }
   },
   {
     timestamps: true,
