@@ -89,6 +89,7 @@ router.put(
   authController.checkAuth,
   questionPoolController.updateQuestionPool
 );
+router.get("/api/courses/:courseId/questionpools",questionPoolController.getQuestionPools);
 
 /**
  * ATTACHMENT ROUTE

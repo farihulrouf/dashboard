@@ -134,6 +134,22 @@ exports.updateQuestionPool = async (req, res) => {
     .catch((err) => res.Status(400).json("Error " + err));
 };
 
+exports.getQuestionPools = async (req, res) => {
+  let page = parseInt(req.query.page)
+  let limit = parseInt(req.query.limit)
+  
+  if(!!!page)page = 0
+  if(!!!limit)limit = 10
+
+  QuestionPool.find()
+  .skip((page - 1) * limit)
+  .sort({ createdAt: -1 })
+  .limit(limit).exec((err,result)=>{
+    if(err)res.status(400).json(err)
+    else res.json(result)
+  })
+}
+
 function getPresignURL(key) {
   const Key = key;
   const params = {

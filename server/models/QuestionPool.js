@@ -22,7 +22,9 @@ const questionPoolSchema = new Schema(
     attachments: [{type: ObjectId, ref: "Attachment"}],
     playbackTimes: {type: Number, required: true},
     correctScore: {type: Number, required: true},
-    wrongScore: {type: Number, required: true}
+    wrongScore: {type: Number, required: true},
+    totalStudent: { type: Number },
+    studentPass: { type: Number }
   },
   {
     timestamps: true,
