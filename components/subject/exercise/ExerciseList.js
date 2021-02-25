@@ -1,4 +1,4 @@
-import { List, ListItem, Button, Icon, TextField, Card, CardContent, Typography, Divider, IconButton, Menu, MenuItem } from "@material-ui/core";
+import { List, Chip, Button, Icon, TextField, Card, CardContent, Typography, Divider, IconButton, Menu, MenuItem } from "@material-ui/core";
 import React from "react";
 import { getExercises } from "../../../lib/api";
 import AddIcon from '@material-ui/icons/Add';
@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 
 class ExerciseList extends React.Component{
     state = {
+        displayAsDocuments: true,
         exercises: []
     }
 
@@ -31,6 +32,10 @@ class ExerciseList extends React.Component{
                     <form style={{flex:1, marginLeft: 22}} noValidate autoComplete="off">
                         <TextField style={{width: "100%"}} id="outlined-basic" label="Search courses" variant="outlined" />
                     </form>
+                </div>
+                <div style={{display: "flex", flexDirection: "row", justifyContent:"flex-end", marginTop: 22}}>
+                    <Chip label="Documents" component="a" onClick={()=>this.setState({displayAsDocuments: !this.state.displayAsDocuments})} disabled={this.state.displayAsDocuments} clickable variant="outlined" />
+                    <Chip label="Questions" component="a" onClick={()=>this.setState({displayAsDocuments: !this.state.displayAsDocuments})} disabled={!this.state.displayAsDocuments} clickable variant="outlined" style={{marginLeft:4}}/>
                 </div>
                 <List>
                     {
