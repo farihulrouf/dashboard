@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Discussion = mongoose.model("Discussion");
+const Course = mongoose.model("Course");
 const DiscussionAnswer = mongoose.model("DiscussionAnswer");
 const {sendNotification} = require("../rabbitmq");
 
@@ -32,6 +33,33 @@ exports.updateDiscussion = (req,res) => {
             res.json({status: "ok", discussion: updatedDiscussion})
         }
     )
+}
+
+exports.deleteDiscussion = async (req, res, next) => {
+  const {discussionid} = req.params;
+  console.log(discussionid);
+  const {user} = req
+  const discussion = await Discussion.findById(discussionid);
+  if (!discussion){
+    return res.status(404).json({status: "error", message: "Discussion is not found"})
+  }
+  if(!user.canDeleteDiscussion(discussion)){
+    return res.status(404).json({status: "error", message: "Cannot delete discussion"})
+  }
+
+  Discussion.findByIdAndRemove(discussionid, (err, val) =>{
+    console.log(val);
+    if (err){
+      return res.status(404).json({status: "error", message: err.message})
+    }
+    if (val){
+      Course.findById(val.postedOn, (err, course) => {
+        req.course = course; 
+        next();
+      });
+    }
+  })
+
 }
 
 exports.getDiscussionById = async (req,res,next) => {

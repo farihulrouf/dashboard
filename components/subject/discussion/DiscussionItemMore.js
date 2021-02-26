@@ -29,7 +29,7 @@ class DiscussionItemMore extends React.Component{
         const {anchorEl, openEditor, discussion} = this.state;
         const open = anchorEl;
         const id = open ? 'simple-popper' : undefined;
-        const {canEdit, canDelete} = this.props;
+        const {canEdit, canDelete, deleteDiscussion} = this.props;
         return(
             <React.Fragment>
                 <DiscussionForm
@@ -49,7 +49,7 @@ class DiscussionItemMore extends React.Component{
                             style={{marginRight: 50}}
                         >
                             {canEdit && <Button variant="outlined" style={{background: 'white'}} onClick={this.showEditMode}>Edit</Button>}
-                            {canDelete && <Button variant="outlined" style={{background: 'white'}} value={-1} onClick={() => alert("open delete dialog")}>Delete</Button>}
+                            {canDelete && <Button variant="outlined" style={{background: 'white'}} value={-1} onClick={() => deleteDiscussion( this.props.discussion._id)}>Delete</Button>}
                         </ButtonGroup>
                     </Popper>
                 </IconButton>

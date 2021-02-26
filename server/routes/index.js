@@ -271,6 +271,12 @@ router.post(
 /**
  * /api/discussions
  */
+router.delete(
+  '/api/discussions/:discussionid',
+  authController.checkAuth,
+  catchErrors(discussionController.deleteDiscussion),
+  catchErrors(courseController.getDiscussions)
+)
 
 router.put(
   "/api/discussions/:discussionid",
@@ -403,6 +409,12 @@ router.get(
   "/files/:filePath",
   authController.checkAuth,
   catchErrors(fileController.getPreSignedUrl)
+)
+
+router.get(
+  '/api/files/:postId',
+  authController.checkAuth,
+  catchErrors(fileController.getAllPreSignedUrl)
 )
 
 router.get(
