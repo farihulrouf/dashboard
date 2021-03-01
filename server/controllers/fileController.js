@@ -1,4 +1,9 @@
 const AWS = require('aws-sdk'); // Requiring AWS SDK.
+const mongoose = require("mongoose");
+const Post = mongoose.model("Post");
+const s3Zip = require('s3-zip');
+const request = require('request');
+const ZipStream = require('zip-stream');
 
 // Configuring AWS
 AWS.config = new AWS.Config({
@@ -23,9 +28,60 @@ exports.getPreSignedUrl = async (req,res) => {
         if (err) {
           res.send(err);
         } else {
+          console.log(url);
           res.redirect(url);
         }
     });
+}
+
+exports.getAllPreSignedUrl = async(req, res) =>{
+  const postId = req.params.postId;
+  const post = await Post.findById(postId);
+  if (post){
+    let filenames = [];
+
+    for (let i = 0; i < post.attachments.length; i++){
+      let Key = post.attachments[i].key;
+      let params = {
+        Bucket,
+        Key,
+        Expires : 120
+      };
+      let signedUrl = await s3.getSignedUrlPromise('getObject', params);
+      filenames.push({name : post.attachments[i].name, url:signedUrl});
+    };
+    
+    var zip = new ZipStream();
+    zip.pipe(res);
+
+    function addNextFile() {
+      try{
+        var elem = filenames.shift()
+        var stream = request(elem.url)
+        stream.on('error', function (err){
+          console.log(err);
+        })
+        zip.entry(stream, { name: elem.name }, err => {
+            if(err){
+              return;
+            }
+            if(filenames.length > 0){
+              addNextFile()
+            }
+            else{
+              zip.finalize()
+            }
+
+        })
+      }catch(err){
+        return res.json({status:'error'})
+      }
+    }
+    addNextFile()
+  }
+  else{
+    return res.json({status : 'error', message:'Post not found'})
+  }
 }
 
 exports.putPreSignedUrl = async (req,res) => {

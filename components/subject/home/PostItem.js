@@ -75,6 +75,10 @@ const PostItem = (props) => {
     return date.slice(0, 19).replace("T", " at ");
   };
 
+  const onDownloadAll = async (postId) =>{
+    window.open(`archive/${postId}.zip`)
+  }
+
   useEffect(() => {
     setData(props.data);
   }, [props.data]);
@@ -174,9 +178,9 @@ const PostItem = (props) => {
                 </span>
               </Grid>
               {data.attachments.length > 0 && (
-                <Grid item className="download">
+                <Grid item className="download"  >
                   <GetApp />
-                  <span>Download All Attachment</span>
+                  <span onClick={() => onDownloadAll(props.data._id)}>Download All Attachment</span>
                 </Grid>
               )}
             </Grid>

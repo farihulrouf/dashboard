@@ -412,7 +412,7 @@ router.get(
 )
 
 router.get(
-  '/api/files/:postId',
+  '/archive/:postId.zip',
   authController.checkAuth,
   catchErrors(fileController.getAllPreSignedUrl)
 )
