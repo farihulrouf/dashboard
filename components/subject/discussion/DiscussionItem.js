@@ -46,12 +46,14 @@ class DiscussionItem extends React.Component{
         const {discussion} = this.state;
         const {canEdit, canDelete} = discussion;
         const {showCreateAnAnswer, showBestAnswer} = this.state;
+        const {deleteDiscussion} = this.props;
         return(
         <div style={{position: 'relative'}}>
             {(canEdit || canDelete ) && 
                 <DiscussionItemMore 
                     discussion={discussion} 
                     afterUpdateDiscussion={this.afterUpdateDiscussion}
+                    deleteDiscussion = {deleteDiscussion}
                     canEdit={canEdit}
                     canDelete={canDelete}
                 />
