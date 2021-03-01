@@ -52,6 +52,7 @@ exports.getAllPreSignedUrl = async(req, res) =>{
     };
     
     var zip = new ZipStream();
+    res.setHeader('Content-Type', 'application/zip, application/octet-stream');
     zip.pipe(res);
 
     function addNextFile() {
