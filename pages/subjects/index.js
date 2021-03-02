@@ -279,6 +279,29 @@ class Subject extends React.Component {
             <Tab label="Exercise" {...a11yProps(2)} />
             <Tab label="Exam" {...a11yProps(3)} />
           </Tabs>
+          {!course.isInstructor &&
+          <React.Fragment>
+            <TabPanel value={tabIndex} index={0}>
+              <Home
+                auth={auth}
+                courseId={router.query.id}
+                isInstructor={course.isInstructor}
+                instructors={instructors}
+                createdAt={createdAt}
+                className="subject-home"
+              />
+            </TabPanel>
+            <TabPanel value={tabIndex} index={1}>
+              <Discussion
+                auth={auth}
+                courseId={router.query.id}
+                isInstructor={course.isInstructor}
+                className="subject-discussion"
+              />
+            </TabPanel>
+          </React.Fragment>
+          }
+          {course.isInstructor &&
           <React.Fragment>
             <TabPanel value={tabIndex} index={0}>
               <Home
@@ -343,6 +366,7 @@ class Subject extends React.Component {
               }
             </TabPanel>
           </React.Fragment>
+          }
         </Container>
       </NavBar>
     );
