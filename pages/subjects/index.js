@@ -299,6 +299,15 @@ class Subject extends React.Component {
                 className="subject-discussion"
               />
             </TabPanel>
+            <TabPanel value={tabIndex} index={2}>
+              <ExerciseSetting
+                tabIndex = {2}
+                auth={auth}
+                courseId={router.query.id}
+                isInstructor={course.isInstructor}
+                className="subject-exercise"
+                />
+            </TabPanel>
           </React.Fragment>
           }
           {course.isInstructor &&
