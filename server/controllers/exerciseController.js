@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Exercise = mongoose.model("Exercise");
 const QuestionPool = mongoose.model("QuestionPool");
+const { ObjectId } = mongoose.Types;
 
 exports.fetchAllExercise = async (req, res) => {
   Exercise.find()
@@ -93,7 +94,7 @@ exports.getExercises = async (req, res) => {
   if(!!!page)page = 0
   if(!!!limit)limit = 10
 
-  Exercise.find()
+  Exercise.find({courseId: ObjectId(req.params.courseId)})
   .skip((page - 1) * limit)
   .sort({ createdAt: -1 })
   .limit(limit).exec((err,result)=>{

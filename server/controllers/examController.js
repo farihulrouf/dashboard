@@ -223,7 +223,7 @@ exports.getExams = async (req, res) => {
   if(!!!page)page = 0
   if(!!!limit)limit = 10
 
-  Exam.find()
+  Exam.find({courseId: ObjectId(req.params.courseId)})
   .skip((page - 1) * limit)
   .sort({ createdAt: -1 })
   .limit(limit).exec((err,result)=>{
