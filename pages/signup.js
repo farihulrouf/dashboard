@@ -1,13 +1,13 @@
-import React from 'react';
+import React from "react";
 import {
     Container,
     Grid,
     IconButton,
     Button,
     TextField,
-    CircularProgress
+    CircularProgress,
 } from "@material-ui/core";
-import {ArrowRightAlt} from "@material-ui/icons";
+import { ArrowRightAlt } from "@material-ui/icons";
 import NavBar from "../components/Navbar/NavBar";
 import Link from "next/link";
 import MuiAlert from '@material-ui/lab/Alert';
@@ -18,7 +18,9 @@ import Countdown from 'react-countdown';
 import { color } from 'jimp';
 
 function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} className="alert" />;
+    return (
+        <MuiAlert elevation={6} variant="filled" {...props} className="alert" />
+    );
 }
 
 class SignUp extends React.Component {
@@ -29,8 +31,8 @@ class SignUp extends React.Component {
             email: "",
             occupation: "",
             password: "",
-            confPass: ""
-        }
+            confPass: "",
+        };
         this.state = {
             user: user,
             error: {},
@@ -49,36 +51,34 @@ class SignUp extends React.Component {
     }
 
     handleChange = (event) => {
-        const {name, value} = event.target;
+        const { name, value } = event.target;
         let newUser = {
-            ...this.state.user
+            ...this.state.user,
         };
         newUser[name] = value;
         let newError = this.errorCheck(newUser, this.state.error);
-        this.setState({user: newUser, error: newError})
-    }
+        this.setState({ user: newUser, error: newError });
+    };
 
     errorCheck = (user, error) => {
-        const required = ["name", "email", "password"]
+        const required = ["name", "email", "password"];
         let newError = {
-            ...error
-        }
+            ...error,
+        };
         required.forEach((field) => {
-            if (user[field] === "") 
-                newError[field] = "This field should not be empty"
-            else 
-                newError[field] = ""
-        })
-        if (user.password !== user.confPass) 
-            newError["confPass"] = "Should matched password"
-        else 
-            newError["confPass"] = ""
+            if (user[field] === "")
+                newError[field] = "This field should not be empty";
+            else newError[field] = "";
+        });
+        if (user.password !== user.confPass)
+            newError["confPass"] = "Should matched password";
+        else newError["confPass"] = "";
         return newError;
-    }
+    };
 
     handleSubmit = (event) => {
         event.preventDefault();
-        const {user, error} = this.state;
+        const { user, error } = this.state;
         let newError = this.errorCheck(user, error);
         this.setState({error: newError});
         if (Object.values(newError).reduce((c, n) => {
@@ -97,21 +97,21 @@ class SignUp extends React.Component {
                 })
             }).catch(err => {
                 let newError = {
-                    ...error
+                    ...error,
                 };
-                newError["server"] = err.response.data
-                this.setState({error: newError, isLoading: false})
-            })
-        }
+                newError["server"] = err.response.data;
+                this.setState({ error: newError, isLoading: false });
+            });
+        };
     }
 
     closeAlert = (event) => {
         let newError = {
-            ...this.state.error
-        }
+            ...this.state.error,
+        };
         newError["server"] = "";
-        this.setState({error: newError})
-    }
+        this.setState({ error: newError });
+    };
 
     otpHandleChange = (updatedOtp) => {
         this.setState({otp: updatedOtp})
@@ -179,7 +179,12 @@ class SignUp extends React.Component {
         return (
             <NavBar onlyLogo={true}>
                 <Container maxWidth="lg" className="sign-up-page">
-                    {!!error.server && <Alert onClose={this.closeAlert} severity="error">{`${error.server}`}</Alert>}
+                    {!!error.server && (
+                        <Alert
+                            onClose={this.closeAlert}
+                            severity="error"
+                        >{`${error.server}`}</Alert>
+                    )}
                     <Grid className="container" container>
                         <Container maxWidth="sm">
                             <Grid container>
@@ -187,9 +192,10 @@ class SignUp extends React.Component {
                                     <h1>Sign Up</h1>
                                 </Grid>
                                 <Grid xs={12} item className="field-container">
-                                    <h5 className="sign-up-sub">
-                                        Create an account to start teaching and learning in our platform
-                                    </h5>
+                                    <p className="sign-up-sub">
+                                        Create an account to start teaching and
+                                        learning in our platform
+                                    </p>
                                 </Grid>
                             </Grid>
                             {!fill_otp && <Grid justify="center" container spacing={2}>
@@ -258,20 +264,26 @@ class SignUp extends React.Component {
                                     </Grid>
                                 </React.Fragment>}
                                 <Grid xs={12} item>
-                                    <Button onClick={this.handleSubmit} variant="contained" size="large" className="sign-btn">
+                                    <Button
+                                        onClick={this.handleSubmit}
+                                        variant="contained"
+                                        size="large"
+                                        className="sign-btn"
+                                    >
                                         Create An Account
                                     </Button>
                                 </Grid>
                                 <Grid xs={12} item className="field-container">
                                     <h6>
-                                        <div className="desc">Already have an account ?</div>
+                                        <div className="desc">
+                                            Already have an account ?
+                                        </div>
                                         <div className="desc-link">
                                             <Link href="/signin">
                                                 <a>
                                                     <div>
                                                         &nbsp; Sign in.
-
-                                                        <ArrowRightAlt/>
+                                                        <ArrowRightAlt />
                                                     </div>
                                                 </a>
                                             </Link>
@@ -302,7 +314,7 @@ class SignUp extends React.Component {
                     </Grid>
                 </Container>
             </NavBar>
-        )
+        );
     }
 }
 

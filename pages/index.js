@@ -1,4 +1,5 @@
 
+import React, { useState } from 'react'
 import NavBar from '../components/Navbar/NavBar.js';
 import CONSTANTS from '../components/constant';
 import MaterialPage from './dashboard/material';
@@ -21,6 +22,7 @@ const Body = ({active, auth}) => {
 }
 
 const Index = ({auth, userId}) => {
+
     if(!!auth.user && Object.keys(auth.user).length !== 0 && auth.constructor === Object)
       return(
         <NavBar mode={0} auth={auth}>

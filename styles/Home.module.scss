@@ -134,6 +134,7 @@
         border: solid 1.5px #C5CCD0;
         border-radius: 8px;
         display: inline-block;
+        background-color: white;
         
         @media (min-width: 1537px) {
             width: 332px;
@@ -369,10 +370,15 @@
         width: 100%;
         text-align: center;
         margin: 0 auto;
+        outline: none !important;
         
         @media (max-width: 1160px) {
             transform: scale(1)!important;
         }
+    }
+
+    .slide:active {
+        outline: none !important;
     }
 
     .activeSlide {

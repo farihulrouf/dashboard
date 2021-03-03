@@ -5,9 +5,10 @@ import NavBar from "../components/Navbar/NavBar";
 import Link from "next/link";
 import {signInUser, authInitialProps} from "../lib/auth"
 import MuiAlert from '@material-ui/lab/Alert';
+import Router from 'next/router'
 
 function Alert(props) {
-    return <MuiAlert elevation={6} variant="filled" {...props} className="alert"/>;
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 class SignIn extends React.Component {
@@ -31,19 +32,19 @@ class SignIn extends React.Component {
         const {user} = this.state;
         this.setState({isLoading: true})
         signInUser(user).then((response) => {
-            window.location.href = "/";
+            Router.back();
         }).catch((err) => {
             this.setState({isLoading: false, error: err.response.data})
         })
     };
 
-    handleEnter = e => {
-        if (e.key === 'Enter') {
+    handleEnter = event => {
+        if (event.key === 'Enter') {
             event.preventDefault();
             const {user} = this.state;
             this.setState({isLoading: true})
             signInUser(user).then((response) => {
-                window.location.href = "/";
+                Router.back();
             }).catch((err) => {
                 this.setState({isLoading: false, error: err.response.data})
             })
@@ -66,6 +67,7 @@ class SignIn extends React.Component {
 
     render() {
         const {error, isLoading} = this.state;
+
         return (
             <NavBar onlyLogo={true}>
                 <Container maxWidth="lg" className="sign-in-page">
@@ -80,7 +82,7 @@ class SignIn extends React.Component {
                                     <h4>
                                         <div className="desc">Don't have account ?</div>
                                         <div className="desc-link">
-                                            <Link href="./signup">
+                                            <Link href="/signup">
                                                 <a>
                                                     <div>
                                                         &nbsp; Sign up.

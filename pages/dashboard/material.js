@@ -107,7 +107,6 @@ const Material = ({ auth }) => {
         setIsLoading(false);
         setData(res.courses);
         setLoadMoreAvail(res.avail);
-        console.log(res);
       })
       .catch((err) => {
         setIsLoading(true);

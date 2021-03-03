@@ -43,7 +43,6 @@ class Post extends React.Component{
     fetchPost = () => {
         const {id} = this.props.router.query;
         getPostById(id).then((data)=> {
-            console.log(data);
             this.setState({status: data.status, post: data.post})
         }).catch(err=>{
            this.setState({status: err.response.data.status})

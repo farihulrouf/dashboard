@@ -1,4 +1,5 @@
-import React, {useState} from 'react';
+import React, { useState } from "react";
+import Router from 'next/router';
 import {
     AppBar,
     Toolbar,
@@ -8,7 +9,7 @@ import {
     Grid,
     Button,
     Container,
-    Hidden
+    Hidden,
 } from "@material-ui/core";
 import {
     Facebook,
@@ -20,87 +21,106 @@ import {
 } from "@material-ui/icons";
 import Link from "next/link";
 import MyMenu from "./Menu";
-import footerMenu from './FooterMenu';
+import footerMenu from "./FooterMenu";
 
 function NavBar(props) {
-
-    const {children, onlyLogo, auth} = props;
+    const { children, onlyLogo, auth } = props;
     const [active, setActive] = useState("");
+
+    let user = null;
+
+    if (auth) {
+        if (auth.user) {
+            user = auth.user;
+        }
+    }
 
     return (
         <React.Fragment>
             <AppBar
                 position="static"
-                className={props.mode
-                ? "navbar"
-                : "navbar-1"}>
+                className={props.mode ? "navbar" : "navbar-1"}
+            >
                 <Container className="container">
                     <Grid item className="brands">
                         <Link href="/">
-                            <a><img
-                                src={props.mode
-            ? "images/white-logo.png"
-            : "images/purple-logo.png"}/></a>
+                            <a>
+                                <img
+                                    src={
+                                        props.mode
+                                            ? "images/white-logo.png"
+                                            : "images/purple-logo.png"
+                                    }
+                                />
+                            </a>
                         </Link>
                     </Grid>
                     <Grid item className="nav-menu">
-                        {!onlyLogo && <Grid container justify="flex-start" spacing={2}>
-                            <React.Fragment>
-                                <Grid item>
-                                    <MyMenu name="Landings"/>
-                                </Grid>
-                                <Grid item>
-                                    <MyMenu name="Pages"/>
-                                </Grid>
-                                <Grid item>
-                                    <MyMenu name="Account"/>
-                                </Grid>
-                            </React.Fragment>
-                        </Grid>}
+                        {!onlyLogo && (
+                            <Grid container justify="flex-start" spacing={2}>
+                                <React.Fragment>
+                                    <Grid item>
+                                        <MyMenu name="Landings" />
+                                    </Grid>
+                                    <Grid item>
+                                        <MyMenu name="Pages" />
+                                    </Grid>
+                                    <Grid item>
+                                        <MyMenu name="Account" />
+                                    </Grid>
+                                </React.Fragment>
+                            </Grid>
+                        )}
 
                         <Hidden xsDown>
-                            {!auth && !onlyLogo
-                                ? <Grid item className="navbar-end">
-                                        <Link href="/signin">
-                                            <a >
-                                                <Button className="sign-btn mybtn">Sign in</Button>
-                                            </a>
-                                        </Link>
+                            {!user && !onlyLogo && (
+                                <Grid item className="navbar-end">
+                                    <Link href="/signin">
+                                        <a>
+                                            <Button className="sign-btn mybtn">
+                                                Sign in
+                                            </Button>
+                                        </a>
+                                    </Link>
+                                </Grid>
+                            )}
+
+                            {user && !onlyLogo ? (
+                                <Grid item className="right-nav">
+                                    <Grid item>
+                                        <IconButton>
+                                            <Search />
+                                        </IconButton>
                                     </Grid>
-                                : null}
-
-                            {auth && !onlyLogo && <Grid item className="right-nav">
-                                <Grid item>
-                                    <IconButton>
-                                        <Search/>
-                                    </IconButton>
+                                    <Grid item>
+                                        <MyMenu name="Notifications" />
+                                    </Grid>
+                                    <Grid item>
+                                        <MyMenu name="Settings" />
+                                    </Grid>
+                                    <Grid item className="profile-picture">
+                                        <MyMenu
+                                            name="Profile"
+                                            avatar={auth.user.avatar}
+                                        />
+                                    </Grid>
                                 </Grid>
-                                <Grid item>
-                                    <MyMenu name="Notifications" />
-                                </Grid>
-                                <Grid item>
-                                    <MyMenu name="Settings" />
-                                </Grid>
-                                <Grid item className="profile-picture">
-                                    <MyMenu name="Profile" avatar={auth.user.avatar}/>
-                                </Grid>
-                            </Grid>}
-
+                            ) : null}
                         </Hidden>
                     </Grid>
 
                     <Hidden smUp>
                         <Grid container justify="flex-end">
                             <IconButton aria-label="menu">
-                                <Menu/>
+                                <Menu />
                             </IconButton>
                         </Grid>
                     </Hidden>
                 </Container>
             </AppBar>
-            <main >
+            <main>
                 <Container maxWidth={false} className="main-content">
-                    {React.cloneElement(children, {active: active})}
+                    {React.cloneElement(children, { active: active })}
                 </Container>
             </main>
             <Container maxWidth={false} className="footer">
@@ -109,22 +129,27 @@ function NavBar(props) {
                         <Grid item className="left-footer">
                             <List>
                                 <ListItem className="footer-logo">
-                                    <div >
-                                        <a href="/"><img width="100%" src="images/white-logo.png"/></a>
+                                    <div>
+                                        <a href="/">
+                                            <img
+                                                width="100%"
+                                                src="images/white-logo.png"
+                                            />
+                                        </a>
                                     </div>
                                 </ListItem>
                                 <ListItem className="social">
                                     <IconButton>
-                                        <Facebook/>
+                                        <Facebook />
                                     </IconButton>
-                                    <IconButton >
-                                        <Instagram/>
+                                    <IconButton>
+                                        <Instagram />
                                     </IconButton>
-                                    <IconButton >
-                                        <Twitter/>
+                                    <IconButton>
+                                        <Twitter />
                                     </IconButton>
-                                    <IconButton >
-                                        <Pinterest/>
+                                    <IconButton>
+                                        <Pinterest />
                                     </IconButton>
                                 </ListItem>
                             </List>
@@ -133,25 +158,41 @@ function NavBar(props) {
                             <Grid container>
                                 {footerMenu.map((MyMenu, index) => {
                                     return (
-                                        <Grid key={index} item className="footer-item">
+                                        <Grid
+                                            key={index}
+                                            item
+                                            className="footer-item"
+                                        >
                                             <Link href={MyMenu.url}>
-                                                <a className="heading">{MyMenu.heading}</a>
+                                                <a className="heading">
+                                                    {MyMenu.heading}
+                                                </a>
                                             </Link>
                                             <List>
-                                                {MyMenu
-                                                    .items
-                                                    .map((item, index) => {
+                                                {MyMenu.items.map(
+                                                    (item, index) => {
                                                         return (
-                                                            <ListItem key={index}>
-                                                                <Link href={item.url}>
-                                                                    <a>{item.name}</a>
+                                                            <ListItem
+                                                                key={index}
+                                                            >
+                                                                <Link
+                                                                    href={
+                                                                        item.url
+                                                                    }
+                                                                >
+                                                                    <a>
+                                                                        {
+                                                                            item.name
+                                                                        }
+                                                                    </a>
                                                                 </Link>
                                                             </ListItem>
-                                                        )
-                                                    })}
+                                                        );
+                                                    }
+                                                )}
                                             </List>
                                         </Grid>
-                                    )
+                                    );
                                 })}
                             </Grid>
                         </Grid>
@@ -159,7 +200,7 @@ function NavBar(props) {
                 </Container>
             </Container>
         </React.Fragment>
-    )
+    );
 }
 
-export default NavBar
+export default NavBar;
