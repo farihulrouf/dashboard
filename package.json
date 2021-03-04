@@ -60,6 +60,7 @@
     "react-avatar-editor": "11.0.9",
     "react-countdown": "^2.3.1",
     "react-dom": "latest",
+    "react-google-recaptcha": "^2.1.0",
     "react-mathjax-preview": "^2.0.2",
     "react-notifications-component": "^2.4.0",
     "react-otp-input": "^2.3.0",

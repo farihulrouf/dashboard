@@ -15,6 +15,7 @@ import {signupUser, authInitialProps, requestOTP, validateEmail} from '../lib/au
 import Router from "next/router"
 import OtpInput from 'react-otp-input';
 import Countdown from 'react-countdown';
+import ReCAPTCHA from "react-google-recaptcha";
 import { color } from 'jimp';
 
 function Alert(props) {
@@ -32,13 +33,14 @@ class SignUp extends React.Component {
             occupation: "",
             password: "",
             confPass: "",
+            recaptcha: undefined
         };
         this.state = {
             user: user,
             error: {},
             fill_otp: false,
             otp: '',
-            isLoading: false
+            isLoading: false,
         }
         this.handleChange = this
             .handleChange
@@ -47,7 +49,8 @@ class SignUp extends React.Component {
             .closeAlert
             .bind(this);
         this.requestAnotherOTP = this.requestAnotherOTP.bind(this);
-        this.otpHandleChange = this.otpHandleChange.bind(this)
+        this.otpHandleChange = this.otpHandleChange.bind(this);
+        this.onRecaptchaChange = this.onRecaptchaChange.bind(this);
     }
 
     handleChange = (event) => {
@@ -61,6 +64,7 @@ class SignUp extends React.Component {
     };
 
     errorCheck = (user, error) => {
+        console.log(user);
         const required = ["name", "email", "password"];
         let newError = {
             ...error,
@@ -73,6 +77,9 @@ class SignUp extends React.Component {
         if (user.password !== user.confPass)
             newError["confPass"] = "Should matched password";
         else newError["confPass"] = "";
+        if(!user.recaptcha)
+            newError["recaptcha"] = "Please complete the captcha"
+        else newError["recaptcha"] = ""
         return newError;
     };
 
@@ -163,7 +170,17 @@ class SignUp extends React.Component {
                 </span>)
         }
     }
-      
+    
+    onRecaptchaChange = (value) => {
+        let {user, error} = this.state;
+        let newUser =  {
+            ...user
+        }
+        newUser["recaptcha"] = value
+        let newError =  this.errorCheck(newUser, error);
+        this.setState({ user: newUser, error: newError })
+    }
+
     render() {
         const {
             error, 
@@ -173,7 +190,8 @@ class SignUp extends React.Component {
             countdown_time, 
             otp_length,
             otp_success,
-            redirect_at
+            redirect_at,
+            recaptcha
         } = this.state;
 
         return (
@@ -263,6 +281,11 @@ class SignUp extends React.Component {
                                         </h6>
                                     </Grid>
                                 </React.Fragment>}
+                                <ReCAPTCHA
+                                    sitekey={process.env.RECAPTCHA_SITE_KEY}
+                                    onChange={this.onRecaptchaChange}
+                                />
+                                <h5 style={{color: 'red'}} >{error.recaptcha}</h5>
                                 <Grid xs={12} item>
                                     <Button
                                         onClick={this.handleSubmit}

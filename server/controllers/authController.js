@@ -5,6 +5,8 @@ const Course = mongoose.model("Course");
 var otpGenerator = require('otp-generator');
 const { updateUser } = require("./userController");
 const {sendEmail} = require("../rabbitmq");
+const request = require("request")
+const util = require('util');
 
 exports.validateSignup = (req, res, next) => {
   req.sanitizeBody("name");
@@ -34,8 +36,35 @@ exports.validateSignup = (req, res, next) => {
   next();
 };
 
+validateRecaptcha = (resolve, reject, recaptcha, ip) => {
+  request.post({
+    url: process.env.RECAPTCHA_VERIFY_URL,
+    form: {secret: process.env.RECAPTCHA_SECRET_KEY, response: recaptcha, remote_ip: ip}
+  },(e, r, body)=> {
+    if (!e && r.statusCode == 200) {
+      resolve(JSON.parse(body))
+    }else{
+      resolve({success: false, message: e.message})
+    }
+  })
+}
+
+const validateRecaptchaPromise = (recaptcha, ip) => {
+  return new Promise((resolve,reject) => {
+    validateRecaptcha(resolve, reject, recaptcha,ip)
+  })
+}
+
 exports.signup = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, recaptcha } = req.body;
+  //Validate recaptcha first
+
+  let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const recaptcha_status = await validateRecaptchaPromise(recaptcha, ip)
+  if(!recaptcha_status.success){
+    return res.status(500).send("Recaptcha error");
+  }
+  return res.status(500).send("Recaptcha in Test")
   const otp = otpGenerator.generate(process.env.OTP_DIGIT)
   const otpValidUntil = Date.now() + process.env.OTP_VALIDITY_IN_MINUTES*60*1000;
   const user = await new User({ name, email, password, otp, otpValidUntil});

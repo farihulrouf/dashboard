@@ -16,6 +16,7 @@ const withSass = require('@zeit/next-sass');
 module.exports = {
   env: {
       TINYMCE_APIKEY: process.env.TINYMCE_APIKEY,
-      SOCKET_URL: process.env.PRODUCTION_URL
+      SOCKET_URL: process.env.PRODUCTION_URL,
+      RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY
   }
 }
