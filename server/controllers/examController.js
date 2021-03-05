@@ -3,6 +3,7 @@ const { diff } = require("jimp");
 const Exam = mongoose.model("Exam");
 const AnswerSheet = mongoose.model("AnswerSheet");
 const QuestionPool = mongoose.model("QuestionPool");
+const Attachment = mongoose.model("Attachment");
 const { ObjectId } = mongoose.Types;
 
 const AWS = require("aws-sdk"); // Requiring AWS SDK.
@@ -196,8 +197,8 @@ exports.addMultipleExam = async (req, res) => {
       else res.json(savedExercises)
     })
   }
-  exams.forEach(exam =>{
-    QuestionPool.insertMany(exam.questionPools, (error,questionPools)=>{
+  const saveQuestionPoolExam = (newQPools,exam)=>{
+    QuestionPool.insertMany(newQPools, (error,questionPools)=>{
       if(error) {
         res.status(400).json("Error QuestionPool Insertion" + error)
         return
@@ -212,6 +213,26 @@ exports.addMultipleExam = async (req, res) => {
       if(newExams.length == exams.length){
         saveAllExam()
       }
+    })
+  }
+  exams.forEach(exam =>{
+    let newQPools = []
+    exam.questionPools.forEach((questionPoolData)=>{
+      Attachment.insertMany(questionPoolData.attachments, (error,attachments)=>{
+        if(error) {
+          res.status(400).json("Error Attachment Insertion" + error)
+          return
+        }
+        let attachmentIds = []
+        attachments.forEach(attachment=>{
+          attachmentIds.push(attachment._id)
+        })
+        questionPoolData.attachments=attachmentIds
+        newQPools.push(questionPoolData)
+        if(newQPools.length == exam.questionPools.length){
+          saveQuestionPoolExam(newQPools,exam)
+        }
+      })
     })
   })
 }

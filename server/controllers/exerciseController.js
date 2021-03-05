@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Exercise = mongoose.model("Exercise");
 const QuestionPool = mongoose.model("QuestionPool");
+const Attachment = mongoose.model("Attachment");
 const { ObjectId } = mongoose.Types;
 
 exports.fetchAllExercise = async (req, res) => {
@@ -67,8 +68,8 @@ exports.addMultipleExercise = async (req, res) => {
       else res.json(savedExercises)
     })
   }
-  exercises.forEach(exercise =>{
-    QuestionPool.insertMany(exercise.questionPools, (error,questionPools)=>{
+  const saveQuestionPoolExercise = (newQPools,exercise)=>{
+    QuestionPool.insertMany(newQPools, (error,questionPools)=>{
       if(error) {
         res.status(400).json("Error " + error)
         return
@@ -83,6 +84,26 @@ exports.addMultipleExercise = async (req, res) => {
       if(newExercises.length == exercises.length){
         saveAllExercise()
       }
+    })
+  }
+  exercises.forEach(exercise =>{
+    let newQPools = []
+    exercise.questionPools.forEach(questionPoolData=>{
+      Attachment.insertMany(questionPoolData.attachments, (error,attachments)=>{
+        if(error) {
+          res.status(400).json("Error Attachment Insertion" + error)
+          return
+        }
+        let attachmentIds = []
+        attachments.forEach(attachment=>{
+          attachmentIds.push(attachment._id)
+        })
+        questionPoolData.attachments=attachmentIds
+        newQPools.push(questionPoolData)
+        if(newQPools.length == exercise.questionPools.length){
+          saveQuestionPoolExercise(newQPools,exercise)
+        }
+      })
     })
   })
 }
