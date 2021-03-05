@@ -33,7 +33,8 @@ class SignUp extends React.Component {
             occupation: "",
             password: "",
             confPass: "",
-            recaptcha: undefined
+            recaptcha: undefined,
+            recaptchaKey: Date.now()
         };
         this.state = {
             user: user,
@@ -107,7 +108,8 @@ class SignUp extends React.Component {
                     ...error,
                 };
                 newError["server"] = err.response.data;
-                this.setState({ error: newError, isLoading: false });
+                user["recaptcha"] = undefined;
+                this.setState({ error: newError, isLoading: false, recaptchaKey: Date.now(), user });
             });
         };
     }
@@ -191,7 +193,7 @@ class SignUp extends React.Component {
             otp_length,
             otp_success,
             redirect_at,
-            recaptcha
+            recaptchaKey
         } = this.state;
 
         return (
@@ -282,6 +284,7 @@ class SignUp extends React.Component {
                                     </Grid>
                                 </React.Fragment>}
                                 <ReCAPTCHA
+                                    key={recaptchaKey}
                                     sitekey={process.env.RECAPTCHA_SITE_KEY}
                                     onChange={this.onRecaptchaChange}
                                 />
