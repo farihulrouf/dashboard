@@ -119,7 +119,7 @@ exports.getMyNotifications = async (req, res) => {
       }, 
       {$project:{notifications: {bankNotification: {processed: 0, notifOn: 0, creator: 0, onModel: 0, updatedAt: 0, version: 0} }, _id: 0}}
     ])
-    const {total, unread, list} = result[0]
+    const {total, unread, list} = result[0] || {total: 0, unread: 0, list: []}
     list.forEach(e => e.bankNotification = e.bankNotification[0]) //array with only 1 object, just convert it to object
     return res.json({ status: "ok", notifications: {total, unread, list}});
   }
