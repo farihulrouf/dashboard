@@ -64,7 +64,6 @@ exports.signup = async (req, res) => {
   if(!recaptcha_status.success){
     return res.status(500).send("Recaptcha error");
   }
-  return res.status(500).send("Recaptcha in Test")
   const otp = otpGenerator.generate(process.env.OTP_DIGIT)
   const otpValidUntil = Date.now() + process.env.OTP_VALIDITY_IN_MINUTES*60*1000;
   const user = await new User({ name, email, password, otp, otpValidUntil});

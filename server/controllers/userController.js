@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const User = mongoose.model("User");
 const TeacherApplication = mongoose.model("TeacherApplication");
+const BankNotification = mongoose.model("BankNotification")
 const passport = require("passport");
 
 exports.getUsers = async (req, res) => {
@@ -88,14 +89,39 @@ exports.getMyTeachers = async (req, res) => {
 };
 
 exports.getMyNotifications = async (req, res) => {
+  const {page, limit} = req.body;
   if (!!req.user) {
-    const { notifications } = await User.findById(req.user.id)
-      .populate({
-        path: "notifications.list.bankNotification",
-        select: "photo message createdAt url",
-      })
-      .select("notifications");
-    return res.json({ status: "ok", notifications: notifications });
+    const result = await User.aggregate([
+      {$match:{_id: req.user._id}},
+      {$unwind:"$notifications.list"},
+      {
+        $lookup:{
+          from:BankNotification.collection.name,
+          localField:'notifications.list.bankNotification',
+          foreignField:'_id',
+          as:'notifications.list.bankNotification'
+        }
+      },
+      {
+        $sort: {
+          "notifications.list.bankNotification.createdAt": -1
+        }
+      },
+      {$skip: 0},
+      {$limit: 10}, 
+      {
+        $group: {
+          _id: '$_id', 
+          total: {$first: '$notifications.total'}, 
+          unread:  {$first: '$notifications.unread'}, 
+          list: {$push: "$notifications.list"}
+        }
+      }, 
+      {$project:{notifications: {bankNotification: {processed: 0, notifOn: 0, creator: 0, onModel: 0, updatedAt: 0, version: 0} }, _id: 0}}
+    ])
+    const {total, unread, list} = result[0]
+    list.forEach(e => e.bankNotification = e.bankNotification[0]) //array with only 1 object, just convert it to object
+    return res.json({ status: "ok", notifications: {total, unread, list}});
   }
   res.json({ status: "error", notifications: [] });
 };
