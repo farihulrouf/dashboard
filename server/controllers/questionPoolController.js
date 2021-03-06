@@ -137,11 +137,14 @@ exports.updateQuestionPool = async (req, res) => {
 exports.getQuestionPools = async (req, res) => {
   let page = parseInt(req.query.page)
   let limit = parseInt(req.query.limit)
-  
+  let searchKeyword = req.query.searchKeyword
+  let query = {courseId: ObjectId(req.params.courseId)}
+
+  if(!!searchKeyword)query.question = { $regex: searchKeyword }
   if(!!!page)page = 0
   if(!!!limit)limit = 10
 
-  QuestionPool.find()
+  QuestionPool.find(query)
   .skip((page - 1) * limit)
   .sort({ createdAt: -1 })
   .limit(limit).exec((err,result)=>{

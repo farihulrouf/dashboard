@@ -240,11 +240,14 @@ exports.addMultipleExam = async (req, res) => {
 exports.getExams = async (req, res) => {
   let page = parseInt(req.query.page)
   let limit = parseInt(req.query.limit)
-  
+  let searchKeyword = req.query.searchKeyword
+  let query = {courseId: ObjectId(req.params.courseId)}
+
+  if(!!searchKeyword)query.name = { $regex: searchKeyword }
   if(!!!page)page = 0
   if(!!!limit)limit = 10
 
-  Exam.find({courseId: ObjectId(req.params.courseId)})
+  Exam.find(query)
   .skip((page - 1) * limit)
   .sort({ createdAt: -1 })
   .limit(limit).exec((err,result)=>{

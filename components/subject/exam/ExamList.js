@@ -14,6 +14,10 @@ class ExamList extends React.Component{
         getExams(this.props.courseId,1,10).then(result=>this.setState({exams: result}))
     }
 
+    search(searchKeyword) {
+        getExams(this.props.courseId,1,10,searchKeyword).then(result=>this.setState({exams: result}))
+    }
+
     render(){
         const { changeTabPage, tabIndex } = this.props
         return(
@@ -29,7 +33,7 @@ class ExamList extends React.Component{
                         CREATE AN EXAM
                     </Button>
                     <form style={{flex:1, marginLeft: 22}} noValidate autoComplete="off">
-                        <TextField style={{width: "100%"}} id="outlined-basic" label="Search exam" variant="outlined" />
+                        <TextField style={{width: "100%"}} id="outlined-basic" label="Search exam" variant="outlined" onChange={(event)=>this.search(event.target.value)} />
                     </form>
                 </div>
                 <List>

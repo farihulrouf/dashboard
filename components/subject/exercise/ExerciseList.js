@@ -17,6 +17,11 @@ class ExerciseList extends React.Component{
         getQuestionPools(this.props.courseId,1,10).then(result=>this.setState({questions: result}))
     }
 
+    search(searchKeyword) {
+        getExercises(this.props.courseId,1,10,searchKeyword).then(result=>this.setState({exercises: result}))
+        getQuestionPools(this.props.courseId,1,10,searchKeyword).then(result=>this.setState({questions: result}))
+    }
+
     render(){
         const { changeTabPage, tabIndex } = this.props
         return(
@@ -32,7 +37,7 @@ class ExerciseList extends React.Component{
                         CREATE AN EXERCISE
                     </Button>
                     <form style={{flex:1, marginLeft: 22}} noValidate autoComplete="off">
-                        <TextField style={{width: "100%"}} id="outlined-basic" label="Search courses" variant="outlined" />
+                        <TextField style={{width: "100%"}} id="outlined-basic" label="Search courses" variant="outlined" onChange={(event)=>this.search(event.target.value)} />
                     </form>
                 </div>
                 <div style={{display: "flex", flexDirection: "row", justifyContent:"flex-end", marginTop: 22}}>
