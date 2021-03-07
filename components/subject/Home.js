@@ -132,7 +132,7 @@ class Home extends React.Component {
                     <Grid item xs={12}>
                         <List>
                             {currentPost.map((value, index) => {
-                                if (index === length - 1 && isEnrolled !== 2) {
+                                if (index === 3 && isEnrolled !== 2) {
                                     return (
                                         <Grid item className="post-item-container">
                                             <PostItem
