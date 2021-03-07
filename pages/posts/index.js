@@ -46,8 +46,8 @@ class Post extends React.Component {
         return (
             <NavBar auth={this.props.auth}>
                 <Container className="post-item-page">
-                    <Grid container justify="center">
-                        <Grid item>
+                    <Grid container justify="center" >
+                        <Grid item className="post-item-page-content">
                             {this.state.status === "ok" &&
                                 !!this.state.post && (
                                     <PostItem
