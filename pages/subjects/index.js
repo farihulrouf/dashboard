@@ -177,6 +177,8 @@ class Subject extends React.Component {
       this.setState({exercise_page_active: pageName})
     }else if(tabIndex === 3){
       this.setState({exam_page_active: pageName})
+    }else{
+      this.setState({tabIndex: tabIndex})
     }
   }
 
