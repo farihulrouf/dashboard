@@ -1,5 +1,6 @@
 
 import { List, ListItem, Button } from "@material-ui/core";
+import Image from 'next/image'
 import React from "react";
 import XLSX from "xlsx";
 import { createMultipleExercise } from "../../../lib/api";
@@ -108,7 +109,7 @@ class CreateExercise extends React.Component{
                 </div>
                 
                 <h3>Upload Exercise File(s)</h3>
-                <p>Download sample exercise file <a href="/images/profile.jpg">here</a>, then upload your exercise file</p>
+                <p>Download sample exercise file <a href="/excel/Sample-Exercise.xlsx">here</a>, then upload your exercise file</p>
                 <List className="file-container">
                     {
                         this.state.fileNames.map((fileName)=>(
@@ -118,9 +119,10 @@ class CreateExercise extends React.Component{
                     {
                         this.state.fileNames.length === 0 && (
                             <div style={{display: "flex", flex: 1, minHeight:400 , flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+                                <Image src="/images/upload_icon.svg" height={100} width={100} />
                                 <h4>Drag and Drop File</h4>
                                 <h4>or</h4>
-                                <label for="browse"><h4 style={{textDecorationLine: "underline"}}>Browse</h4></label>
+                                <label for="browse"><h4 style={{textDecorationLine: "underline", color: "#3F51B5"}}>Browse</h4></label>
                                 <input id="browse" type="file" onChange={this.onFilesSelected.bind(this)}/>
                             </div>
                         )
