@@ -4,6 +4,8 @@ import Image from 'next/image'
 import React from "react";
 import XLSX from "xlsx";
 import { createMultipleExercise } from "../../../lib/api";
+import Dropzone from 'react-dropzone';
+
 class CreateExercise extends React.Component{
 
     TYPE_CELL           = 'C2'
@@ -24,6 +26,20 @@ class CreateExercise extends React.Component{
     state={
         exercises: [],
         fileNames: []
+    }
+  
+    handleDrop(e) {
+        e.stopPropagation(); e.preventDefault();
+        var fileList = e.dataTransfer.files
+        for(let i = 0; i<fileList.length; i++){
+            var reader = new FileReader()
+            reader.onload = this.getExercise
+            reader.readAsArrayBuffer(fileList[i])
+            
+            let newFileNames = this.state.fileNames
+            newFileNames.push([fileList[i].name])
+            this.setState({fileNames:newFileNames})
+        }
     }
 
     onFilesSelected(e){
@@ -110,24 +126,31 @@ class CreateExercise extends React.Component{
                 
                 <h3>Upload Exercise File(s)</h3>
                 <p>Download sample exercise file <a href="/excel/Sample-Exercise.xlsx">here</a>, then upload your exercise file</p>
-                <List className="file-container">
-                    {
-                        this.state.fileNames.map((fileName)=>(
-                            <ListItem key={fileName} className="file-item"><p className="text-file-item">{fileName}</p></ListItem>
-                        ))
-                    }
-                    {
-                        this.state.fileNames.length === 0 && (
-                            <div style={{display: "flex", flex: 1, minHeight:400 , flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
-                                <Image src="/images/upload_icon.svg" height={100} width={100} />
-                                <h4>Drag and Drop File</h4>
-                                <h4>or</h4>
-                                <label for="browse"><h4 style={{textDecorationLine: "underline", color: "#3F51B5"}}>Browse</h4></label>
-                                <input id="browse" type="file" onChange={this.onFilesSelected.bind(this)}/>
-                            </div>
-                        )
-                    }
-                </List>
+                <Dropzone className="file-container">
+                {({getRootProps, getInputProps}) => (
+                    <div {...getRootProps({className: 'dropzone'})}>
+                        <input {...getInputProps()} />
+                        <List className="file-container">
+                            {
+                                this.state.fileNames.map((fileName)=>(
+                                    <ListItem key={fileName} className="file-item"><p className="text-file-item">{fileName}</p></ListItem>
+                                ))
+                            }
+                            {
+                                this.state.fileNames.length === 0 && (
+                                    <div onDrop={(e)=>this.handleDrop(e)} style={{display: "flex", flex: 1, minHeight:400 , flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+                                        <Image src="/images/upload_icon.svg" height={100} width={100} />
+                                        <h4>Drag and Drop File</h4>
+                                        <h4>or</h4>
+                                        <label for="browse"><h4 style={{textDecorationLine: "underline", color: "#3F51B5"}}>Browse</h4></label>
+                                        <input id="browse" type="file" onChange={this.onFilesSelected.bind(this)}/>
+                                    </div>
+                                )
+                            }
+                        </List>
+                    </div>
+                    )}
+                </Dropzone>
                 <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                     <Button
                         onClick={this.uploadExercises.bind(this)} 
