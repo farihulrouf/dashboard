@@ -7,7 +7,7 @@ const Review = mongoose.model("Review");
 const CourseRequest = mongoose.model("CourseRequest");
 
 exports.getCourses = async (req, res) => {
-  const {
+  var {
     query,
     instructor,
     organization,
@@ -15,10 +15,12 @@ exports.getCourses = async (req, res) => {
     rating,
     page,
     limit,
-  } = req.body;
+  } = req.query;
 
   const match = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
   const [low, high] = price;
+  limit = parseInt(limit);
+  page = parseInt(page);
 
   let filter = {
     price: {
@@ -45,13 +47,13 @@ exports.getCourses = async (req, res) => {
     ];
   }
 
-  if (instructor.length) {
+  if (instructor) {
     filter["instructors"] = {
       $in: instructor,
     };
   }
 
-  if (organization.length) {
+  if (organization) {
     filter["creator"] = {
       $in: organization,
     };
@@ -62,17 +64,7 @@ exports.getCourses = async (req, res) => {
   const courses = await Course.find(filter)
     .skip((page - 1) * limit)
     .limit(limit);
-
-  courses.forEach(async function (course, idx) {
-    var countReview = await Review.countDocuments({ course: course._id });
-    console.log(countReview);
-    course._doc.countReview = countReview;
-    console.log(course.countReview);
-    if (idx === courses.length - 1) {
-      res.json({ avail, courses });
-    }
-  });
-  // res.json({instructor, organization})
+  res.json({ avail, courses });
 };
 
 exports.getFavouriteCourse = async (req, res) => {
@@ -363,6 +355,7 @@ exports.createReview = async (req, res) => {
         $group: {
           _id: "$course",
           average: { $avg: "$rating" },
+          count : { $sum : 1}
         },
       },
     ]).then((rating) => {
@@ -370,7 +363,10 @@ exports.createReview = async (req, res) => {
 
       Course.findOneAndUpdate(
         { _id: mongoose.Types.ObjectId(rating[0]._id) },
-        { rating: rating[0].average },
+        { 
+          rating: rating[0].average.toFixed(2),
+          countReview : rating[0].count
+        },
         function (err, course) {
           if (err) return res.json({ status: "error", message: err.message });
           console.log(course);
@@ -387,7 +383,10 @@ exports.createReview = async (req, res) => {
 };
 
 exports.getDiscussions = async (req,res) => {
+    console.log('get course')
     const {course, user} = req;
+    console.log(course);
+    console.log(user);
     const discussions = await Discussion.aggregate([
         {$match: {postedOn: course._id}},
         {$addFields: {  
@@ -398,5 +397,6 @@ exports.getDiscussions = async (req,res) => {
         {$sort: {createdAt: -1}},
         {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}}
     ])
+    console.log(discussions);
     res.json({status: "ok", discussions: discussions});
 }

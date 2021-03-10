@@ -3,7 +3,7 @@ import DiscussionFilter from "./discussion/DiscussionFilter";
 import DiscussionForm from "./discussion/DiscussionForm";
 import DiscussionItem from "./discussion/DiscussionItem";
 import {Grid, Divider} from "@material-ui/core";
-import {getCourseDiscussions} from "../../lib/api";
+import {getCourseDiscussions, deleteCourseDiscussion} from "../../lib/api";
 
 class Discussion extends React.Component{
     constructor(props){
@@ -27,12 +27,18 @@ class Discussion extends React.Component{
         this.setState({open: false})
     }
 
+    deleteDiscussion = async (discussionId) => {
+      const data = await deleteCourseDiscussion(discussionId);
+      this.setState({discussions : data.discussions});
+    }
+
     afterCreateDiscussion = (discussions) => {
         this.setState({open: false, discussions: discussions})
     }
 
     render(){
         const {open, discussions} = this.state;
+        console.log(discussions);
         return(
             <React.Fragment>
                 <DiscussionFilter openDiscussionForm={this.openDiscussionForm} />
@@ -46,7 +52,7 @@ class Discussion extends React.Component{
                 <Grid container style={{marginTop: 20}}>
                     {discussions.map((e) =>
                         <Grid key={e._id} item xs={12}>
-                            <DiscussionItem data={e} />
+                            <DiscussionItem data={e} deleteDiscussion={this.deleteDiscussion}/>
                             <Divider />
                         </Grid>
                     )}

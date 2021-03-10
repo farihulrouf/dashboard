@@ -11,6 +11,7 @@ var TeacherApplication = require('./server/models/TeacherApplication');
 var BankNotification = require('./server/models/BankNotification');
 var Discussion = require('./server/models/Discussion');
 var DiscussionAnswer = require('./server/models/DiscussionAnswer');
+var otpGenerator = require('otp-generator')
 const mongoose = require("mongoose");
 
 const mongooseOptions = {
@@ -99,4 +100,5 @@ replServer.context.TeacherApplication = TeacherApplication;
 replServer.context.BankNotification = BankNotification;
 replServer.context.Discussion = Discussion;
 replServer.context.DiscussionAnswer = DiscussionAnswer;
+replServer.context.otpGenerator = otpGenerator;
 replServer.context.seeds = seeds;

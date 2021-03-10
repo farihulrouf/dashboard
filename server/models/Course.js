@@ -36,6 +36,10 @@ const courseSchema = new mongoose.Schema(
             type: Number,
             default: 0
         },
+        countReview:{
+          type : Number,
+          default : 0
+        },
         instructors: [{type: ObjectId, ref: "User"}],
         participants: [{ type: ObjectId, ref: "User"}],
         posts: [{type: ObjectId, ref: "Post"}],

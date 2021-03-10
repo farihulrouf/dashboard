@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Head from 'next/head';
 import { ThemeProvider } from '@material-ui/core/styles';
@@ -12,14 +12,16 @@ import { Provider, connect } from "react-redux";
 import reduxStore from "../redux/store";
 import { fetchNotifications } from "../redux/"
 import ScrollToTop from "../components/ScrollToTop";
-import '../styles/global.scss'
+import '../styles/global.scss';
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 function MyApp(props){
   const { Component, pageProps } = props;
   const ENDPOINT = process.env.SOCKET_URL;
   const { fetchNotifications } = props;
 
-  React.useEffect(() => {
+  useEffect(() => {
     // Remove the server-side injected CSS.
     const jssStyles = document.querySelector('#jss-server-side');
     if (jssStyles) {
@@ -51,6 +53,20 @@ function MyApp(props){
     fetchNotifications();
 
   }, [ENDPOINT, fetchNotifications]);
+
+  useEffect(() => {
+    AOS.init({
+      // Global settings:
+      disable: false, // accepts following values: 'phone', 'tablet', 'mobile', boolean, expression or function
+      startEvent: 'DOMContentLoaded', // name of the event dispatched on the document, that AOS should initialize on
+      initClassName: 'aos-init', // class applied after initialization
+      animatedClassName: 'aos-animate', // class applied on animation
+      useClassNames: false, // if true, will add content of `data-aos` as classes on scroll
+      disableMutationObserver: false, // disables automatic mutations' detections (advanced)
+      debounceDelay: 50, // the delay on debounce used while resizing window (advanced)
+      throttleDelay: 99, // the delay on throttle used while scrolling the page (advanced)
+    });
+  }, [])
 
   return(
     <React.Fragment>

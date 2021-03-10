@@ -1,37 +1,46 @@
-@import "~slick-carousel/slick/slick.css"; 
+@import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
 
 @font-face {
-    font-family: 'Gilroy';
-    src: url('/fonts/gilroy/gilroy-bold-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-bold-webfont.woff') format('woff');
+    font-family: "Gilroy";
+    src: url("/fonts/gilroy/gilroy-bold-webfont.woff2") format("woff2"),
+        url("/fonts/gilroy/gilroy-bold-webfont.woff") format("woff");
     font-weight: 600;
     font-style: normal;
-
 }
 @font-face {
-    font-family: 'Gilroy';
-    src: url('/fonts/gilroy/gilroy-extrabold-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-extrabold-webfont.woff') format('woff');
+    font-family: "Gilroy";
+    src: url("/fonts/gilroy/gilroy-extrabold-webfont.woff2") format("woff2"),
+        url("/fonts/gilroy/gilroy-extrabold-webfont.woff") format("woff");
     font-weight: 700;
 }
 @font-face {
-    font-family: 'Gilroy';
-    src: url('/fonts/gilroy/gilroy-light-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-light-webfont.woff') format('woff');
+    font-family: "Gilroy";
+    src: url("/fonts/gilroy/gilroy-light-webfont.woff2") format("woff2"),
+        url("/fonts/gilroy/gilroy-light-webfont.woff") format("woff");
     font-weight: 200;
 }
 @font-face {
-    font-family: 'Gilroy';
-    src: url('/fonts/gilroy/gilroy-medium-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-medium-webfont.woff') format('woff');
+    font-family: "Gilroy";
+    src: url("/fonts/gilroy/gilroy-medium-webfont.woff2") format("woff2"),
+        url("/fonts/gilroy/gilroy-medium-webfont.woff") format("woff");
     font-weight: 400;
 }
 @font-face {
-    font-family: 'Gilroy';
-    src: url('/fonts/gilroy/gilroy-regular-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-regular-webfont.woff') format('woff');
+    font-family: "Gilroy";
+    src: url("/fonts/gilroy/gilroy-regular-webfont.woff2") format("woff2"),
+        url("/fonts/gilroy/gilroy-regular-webfont.woff") format("woff");
     font-weight: 300;
 }
 @font-face {
-    font-family: 'Gilroy';
-    src: url('/fonts/gilroy/gilroy-semibold-webfont.woff2') format('woff2'), url('/fonts/gilroy/gilroy-semibold-webfont.woff') format('woff');
+    font-family: "Gilroy";
+    src: url("/fonts/gilroy/gilroy-semibold-webfont.woff2") format("woff2"),
+        url("/fonts/gilroy/gilroy-semibold-webfont.woff") format("woff");
     font-weight: 500;
+}
+
+html {
+    scroll-behavior: smooth;
 }
 
 a,
@@ -48,7 +57,7 @@ p,
 span {
     transition: all 0.4s;
     // font-family: 'Roboto', sans-serif;
-    font-family: 'Gilroy'!important;
+    font-family: "Gilroy" !important;
     margin: 0;
     line-height: 1.5;
     // font-weight: 900;
@@ -87,8 +96,8 @@ input[type="text"] {
 
 button {
     padding: 4px !important;
-    border-radius: 4px!important;
-    min-width: 0!important;
+    border-radius: 4px !important;
+    min-width: 0 !important;
 
     span {
         font-size: 1rem;
@@ -101,7 +110,7 @@ button:hover {
 }
 
 .mybtn {
-    padding: 6px 12px!important;
+    padding: 6px 12px !important;
     border-radius: 4px;
 
     span {
@@ -110,7 +119,7 @@ button:hover {
         }
     }
     @media (min-width: 1600px) {
-        padding: 8px 16px!important;
+        padding: 8px 16px !important;
     }
 }
 
@@ -120,29 +129,29 @@ span {
 }
 
 .main-content {
-    position: relative!important;
+    position: relative !important;
     min-height: 100vh;
     padding: 0 !important;
 }
 
-.alert {
-    position: absolute!important;
-    width: 96%;
+// .alert {
+//     position: absolute!important;
+//     width: 96%;
 
-    span {
-        position: relative;
-        display: flex;
-        z-index: 10;
-    }
+//     span {
+//         position: relative;
+//         display: flex;
+//         z-index: 10;
+//     }
 
-    .MuiButtonBase-root {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        width: 50px;
-        margin-right: 10px;
-    }
-}
+//     .MuiButtonBase-root {
+//         display: flex;
+//         justify-content: flex-end;
+//         align-items: center;
+//         width: 50px;
+//         margin-right: 10px;
+//     }
+// }
 
 .MuiCircularProgress-root {
     margin: 10vh 0 12vh !important;
@@ -165,8 +174,8 @@ div::-webkit-scrollbar-thumb {
     border-right: solid 2px white;
 }
 
-@import 'Navbar.module.scss';
-@import 'Home.module.scss';
-@import 'Subject.module.scss';
-@import 'Material.module.scss';
-@import 'Sign.module.scss';
+@import "Navbar.module.scss";
+@import "Home.module.scss";
+@import "Subject.module.scss";
+@import "Material.module.scss";
+@import "Sign.module.scss";

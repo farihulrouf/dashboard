@@ -44,7 +44,6 @@ export default class DeleteDialog extends React.Component{
                     margin="dense"
                     id="name"
                     label="Keyword"
-                    type="password"
                     fullWidth
                     onChange={(event)=>this.setState({type: event.target.value})}
                   />

@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const BankNotification = require('../models/BankNotification');
 const User = require('../models/User');
 const {createSocketConsumer, disconnectConsumer} = require('./consumer')
-const {producer, sendNotification} = require('./producer');
+const {producer, sendNotification, sendEmail} = require('./producer');
 
 const amqplib = require("amqplib/callback_api");
 
@@ -12,4 +12,4 @@ const connectRabbit = (callback=null) => {
     })
 }
 
-module.exports = {connectRabbit, producer, createSocketConsumer, disconnectConsumer, sendNotification}
+module.exports = {connectRabbit, producer, createSocketConsumer, disconnectConsumer, sendNotification, sendEmail}

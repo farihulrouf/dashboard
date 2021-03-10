@@ -18,7 +18,7 @@ const CommentItem = (props) => {
           />
         </Grid>
         <Grid item>
-          <Grid container classname="commentator-name">
+          <Grid container className="commentator-name">
             <span className="commentator-name">{data.commentator.name}</span>
             <span className="comment-date">{formatDate(data.createdAt)}</span>
           </Grid>

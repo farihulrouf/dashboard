@@ -188,9 +188,6 @@ export default function CustomizedHook({
     }
   }, [value, valueSet]);
 
-  console.log("value", value);
-  console.log("state", filter.instructor);
-
   const [valueSet, setValueSet] = useState([]);
 
   useEffect(() => {
@@ -220,8 +217,6 @@ export default function CustomizedHook({
       });
     }
   };
-
-  console.log(valueSet);
 
   return (
     <NoSsr>

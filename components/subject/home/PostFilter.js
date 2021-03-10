@@ -92,6 +92,7 @@ class PostFilter extends React.Component {
       auth,
       isInstructor,
       instructors,
+      creator,
       createdAt,
     } = this.props;
     const { showFilter, showPostForm } = this.state;
@@ -144,6 +145,7 @@ class PostFilter extends React.Component {
               open={showFilter}
               query={query}
               instructors={instructors}
+              creator={creator}
               dateStart={createdAt}
               onClearFilters={this.onClearFilters}
               onFilterChange={this.onQueryChange}

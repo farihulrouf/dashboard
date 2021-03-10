@@ -85,20 +85,6 @@
         padding: 25px 35px;
     }
 
-    div[role="dialog"] {
-        width: 400px;
-        height: 535px;
-        max-width: 100%;
-
-        input {
-            width: 100%!important;
-        }
-
-        @media (max-width: 448px) {
-            width: 90%;
-        }   
-    }
-
     div[class^="MuiDialogTitle-root"] {
         display: flex;
         align-items: center;
@@ -281,4 +267,14 @@ ul[role^="listbox"] {
     100% {
         opacity: 1;
     }
+}
+
+div[role="dialog"] {
+    width: 400px;
+    min-height: 535px;
+    max-width: 100%;
+
+    input {
+        width: 100%!important;
+    } 
 }

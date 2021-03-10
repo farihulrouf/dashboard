@@ -66,6 +66,17 @@ router.post(
 router.post("/api/auth/signin", authController.signin);
 router.get("/api/auth/signout", authController.signout);
 
+router.post(
+  '/api/auth/validate',
+  catchErrors(authController.validateEmail)
+)
+
+//Generate new otp
+router.get(
+  '/api/auth/otp',
+  catchErrors(authController.generateNewOTP)
+)
+
 /**
  * QUESTION POOL ROUTES
  */
@@ -163,14 +174,14 @@ router.post(
 )
 
 //Unregistered user can see courses and course info
-router.post(
+router.get(
   "/api/courses",
   // authController.checkAuth,
   catchErrors(courseController.getCourses)
 );
 
 // router.post(
-//   "/api/courses/create",
+//   "/api/courses",
 //   authController.checkAuth,
 //   catchErrors(courseController.createCourse),
 //   catchErrors(courseController.getMyCourses)
@@ -269,6 +280,12 @@ router.post(
 /**
  * /api/discussions
  */
+router.delete(
+  '/api/discussions/:discussionid',
+  authController.checkAuth,
+  catchErrors(discussionController.deleteDiscussion),
+  catchErrors(courseController.getDiscussions)
+)
 
 router.put(
   "/api/discussions/:discussionid",
@@ -401,6 +418,12 @@ router.get(
   "/files/:filePath",
   authController.checkAuth,
   catchErrors(fileController.getPreSignedUrl)
+)
+
+router.get(
+  '/archive/:postId.zip',
+  authController.checkAuth,
+  catchErrors(fileController.getAllPreSignedUrl)
 )
 
 router.get(

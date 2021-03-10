@@ -119,7 +119,7 @@ function Menu({name, avatar, notifications, fetchNotifications}) {
                     aria-controls={open
                     ? 'menu-list-grow'
                     : undefined}>
-                    <StyledBadge badgeContent={notifications.unread}>
+                    <StyledBadge badgeContent={notifications ? notifications.unread : null}>
                         <Notifications
                             style={{
                             fontSize: 20
