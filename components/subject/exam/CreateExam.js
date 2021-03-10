@@ -133,6 +133,7 @@ class CreateExam extends React.Component{
         console.log('this.props.courseId', this.props.courseId)
         return(
             <div className="subject-exercise-create">
+                <Image src="/images/close_icon.svg" height={25} width={25} onClick={()=>this.props.changeTabPage(this.props.tabIndex, 'ExamList')}/>
                 <div style={{display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
                     <h2>Create Exams</h2>
                     <p>Guidance</p>
