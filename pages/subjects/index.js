@@ -277,6 +277,19 @@ class Subject extends React.Component {
                                     handleEnroll={this.handleEnroll}
                                 />
                             </Grid>
+                            <Grid item container>
+                                {lengthInstructors ? (
+                                    instructors.map((instructor) => (
+                                        <InstructorItem
+                                            key={instructor._id}
+                                            id={instructor._id}
+                                            data={instructor}
+                                        />
+                                    ))
+                                ) : (
+                                    <span>No available instructors</span>
+                                )}
+                            </Grid>
                         </Grid>
                     </Grid>
                     <Grid className="subject-instructors" container>

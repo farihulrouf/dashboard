@@ -74,14 +74,14 @@ const PostItem = (props) => {
     useEffect(() => {
         setData(props.data);
     }, [props.data]);
-    
-    const { auth } = props;
+
+    const { auth, blur } = props;
     
     const onDownloadAll = async (postId) =>{
         window.open(`archive/${postId}.zip`)
     }
 
-    const { auth, blur } = props;
+    console.log(blur)
 
     return (
         <Grid className={blur ? "post-box blurred" : "post-box"} id={props.data._id}>

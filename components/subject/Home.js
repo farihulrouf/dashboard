@@ -134,10 +134,9 @@ class Home extends React.Component {
                             {currentPost.map((value, index) => {
                                 if (index === 3 && isEnrolled !== 2) {
                                     return (
-                                        <Grid item className="post-item-container">
+                                        <Grid item  key={value._id} className="post-item-container">
                                             <PostItem
                                                 blur={true}
-                                                key={value._id}
                                                 auth={auth}
                                                 data={value}
                                                 openDeleteDialog={
@@ -150,6 +149,7 @@ class Home extends React.Component {
                                 }
                                 return (
                                     <PostItem
+                                        blur={false}
                                         key={value._id}
                                         auth={auth}
                                         data={value}

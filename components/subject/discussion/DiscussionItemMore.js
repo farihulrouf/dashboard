@@ -41,16 +41,33 @@ class DiscussionItemMore extends React.Component{
                 />
                 <IconButton onClick={this.handleClick} style={{position: 'absolute', right: 0}}>
                     <MoreVert />
-                    <Popper id={this.id} open={open} anchorEl={anchorEl}>
-                        <ButtonGroup
-                            orientation="vertical"
-                            color="primary"
-                            aria-label="vertical outlined primary button group"
-                            style={{marginRight: 50}}
-                        >
-                            {canEdit && <Button variant="outlined" style={{background: 'white'}} onClick={this.showEditMode}>Edit</Button>}
-                            {canDelete && <Button variant="outlined" style={{background: 'white'}} value={-1} onClick={() => deleteDiscussion( this.props.discussion._id)}>Delete</Button>}
-                        </ButtonGroup>
+                    <Popper
+                        id={this.id}
+                        open={open}
+                        anchorEl={anchorEl}
+                        placement="left-start"
+                    >
+                        <Paper className="edit-discussion">
+                            {canEdit && (
+                                <Button
+                                    variant="outlined"
+                                    style={{ background: "white" }}
+                                    onClick={this.showEditMode}
+                                >
+                                    Edit
+                                </Button>
+                            )}
+                            {canDelete && (
+                                <Button
+                                    variant="outlined"
+                                    style={{ background: "white" }}
+                                    value={-1}
+                                    onClick={() => {() => deleteDiscussion( this.props.discussion._id)}}
+                                >
+                                    Delete
+                                </Button>
+                            )}
+                        </Paper>
                     </Popper>
                 </IconButton>
             </React.Fragment>
