@@ -7,6 +7,7 @@ import MathJax from "react-mathjax-preview";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
 import CreateAnswer from "./CreateAnswer";
+import DiscussionAnswer from "./DiscussionAnswer";
 
 const Transition = forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
