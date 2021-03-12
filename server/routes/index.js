@@ -12,6 +12,7 @@ const attachmentController = require("../controllers/attachmentController");
 const applicationController = require("../controllers/applicationController");
 const paymentController = require("../controllers/paymentController");
 const discussionController = require('../controllers/discussionController.js');
+const tagController = require('../controllers/tagController')
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 const fs = require('fs');
@@ -443,15 +444,36 @@ router.get(
 )
 
 
- router.post(
-   "/api/payment/create",
-   authController.checkAuth,
-   catchErrors(paymentController.createPayment)
- )
+router.post(
+  "/api/payment/create",
+  authController.checkAuth,
+  catchErrors(paymentController.createPayment)
+)
 
- router.post(
-   '/api/payment/callback',
-   catchErrors(paymentController.paymentCallback)
- )
+router.post(
+  '/api/payment/callback',
+  catchErrors(paymentController.paymentCallback)
+)
 
+/**
+ * PAYMENT Routes: /api/tag
+ */
+
+router.get(
+  "/api/tag",
+  // authController.checkAuth,
+  catchErrors(tagController.getTags)
+)
+
+router.post(
+  "/api/tag",
+  // authController.checkAuth,
+  catchErrors(tagController.addTags)
+)
+
+router.delete(
+  "/api/tag",
+  // authController.checkAuth,
+  catchErrors(tagController.deleteTags)
+)
 module.exports = router;

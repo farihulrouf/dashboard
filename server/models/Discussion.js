@@ -7,6 +7,7 @@ var discussionSchema = mongoose.Schema({
     body: {type: String, required: "Discussion body is required"},
     postedOn: {type: ObjectId, ref: "Course", required: "Discussion posted on is required"},
     creator: {type: ObjectId, ref: "User", required: "Discussion creator is required"},
+    tag : [{type:ObjectId, ref:'Tag'}],
     votes: {
         total: {type: Number, default: 0},
         voters: [{type: ObjectId, ref: "User"}]
@@ -23,7 +24,8 @@ discussionSchema.pre("find", function(next){
     this.populate(
         "answers.topAnswers",
         "creator body status votes createdAt"
-    )
+    );
+    this.populate('tag', '_id name');
     next();
 })
 

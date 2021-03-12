@@ -182,7 +182,7 @@ class Subject extends React.Component {
         const { creator, instructors, createdAt, name } = course;
         let lengthInstructors = 0;
 
-        if (instructors){
+        if (instructors) {
             lengthInstructors = instructors.length;
         }
 
@@ -193,109 +193,114 @@ class Subject extends React.Component {
         return (
             <NavBar auth={auth}>
                 <Container className="subject-container">
-                    <Grid
-                        name="course-header"
-                        container
-                        className="subject-header"
-                    >
-                        <Grid item className="breadcrumb">
-                            <Breadcrumb courseName={name} />
-                        </Grid>
-                        <Grid item className="subject">
-                            <Grid item className="subject-header-desc">
-                                {creator ? (
-                                    <Grid item className="creator-container">
+                    <Container className="subject-header-container">
+                        <Grid
+                            name="course-header"
+                            container
+                            className="subject-header"
+                        >
+                            <Grid item className="breadcrumb">
+                                <Breadcrumb courseName={name} />
+                            </Grid>
+                            <Grid item className="subject">
+                                <Grid item className="subject-header-desc">
+                                    {creator ? (
                                         <Grid
-                                            className="creator-logo"
                                             item
-                                            container
+                                            className="creator-container"
                                         >
-                                            <a href={creator.linkedIn}>
-                                                <Avatar
-                                                    alt={creator.name}
-                                                    src={creator.avatar}
-                                                    className="logo"
-                                                />
-                                            </a>
-                                        </Grid>
-                                        {creator.isAnOrganization ? (
-                                            <Grid className="org-desc" item>
-                                                {creator ? (
-                                                    <h5>{creator.name}</h5>
-                                                ) : (
-                                                    ""
-                                                )}
-                                            </Grid>
-                                        ) : (
                                             <Grid
-                                                className="creator-desc"
+                                                className="creator-logo"
                                                 item
-                                                xs={10}
+                                                container
                                             >
-                                                <h6>Personal Course</h6>
-                                                {creator ? (
-                                                    <h6 className="creator-name">
-                                                        by: {creator.name}
-                                                    </h6>
-                                                ) : (
-                                                    ""
-                                                )}
+                                                <a href={creator.linkedIn}>
+                                                    <Avatar
+                                                        alt={creator.name}
+                                                        src={creator.avatar}
+                                                        className="logo"
+                                                    />
+                                                </a>
                                             </Grid>
-                                        )}
+                                            {creator.isAnOrganization ? (
+                                                <Grid className="org-desc" item>
+                                                    {creator ? (
+                                                        <h5>{creator.name}</h5>
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </Grid>
+                                            ) : (
+                                                <Grid
+                                                    className="creator-desc"
+                                                    item
+                                                    xs={10}
+                                                >
+                                                    <h6>Personal Course</h6>
+                                                    {creator ? (
+                                                        <h6 className="creator-name">
+                                                            by: {creator.name}
+                                                        </h6>
+                                                    ) : (
+                                                        ""
+                                                    )}
+                                                </Grid>
+                                            )}
+                                        </Grid>
+                                    ) : (
+                                        ""
+                                    )}
+                                    <Grid className="subject-title" item>
+                                        <h2>{course.name}</h2>
                                     </Grid>
-                                ) : (
-                                    ""
-                                )}
-                                <Grid className="subject-title" item>
-                                    <h2>{course.name}</h2>
-                                </Grid>
-                                <Grid className="subject-desc" item>
-                                    <h5>{course.about}</h5>
-                                </Grid>
-                                <Grid item>
-                                    <div>
-                                        <div className="subject-rating">
-                                            <Star
-                                                style={{ color: "#f9a825" }}
-                                            />
-                                            <span className="rating">
-                                                {`${course.rating} `}&nbsp;
-                                            </span>
-                                            <span className="review">{`(${
-                                                course.countReview
-                                                    ? course.countReview
-                                                    : 0
-                                            } reviews)`}</span>
+                                    <Grid className="subject-desc" item>
+                                        <h5>{course.about}</h5>
+                                    </Grid>
+                                    <Grid item>
+                                        <div>
+                                            <div className="subject-rating">
+                                                <Star
+                                                    style={{ color: "#f9a825" }}
+                                                />
+                                                <span className="rating">
+                                                    {`${course.rating} `}&nbsp;
+                                                </span>
+                                                <span className="review">{`(${
+                                                    course.countReview
+                                                        ? course.countReview
+                                                        : 0
+                                                } reviews)`}</span>
+                                            </div>
                                         </div>
-                                    </div>
+                                    </Grid>
+                                </Grid>
+                                <Grid className="subject-header-button" item>
+                                    <CourseStatus
+                                        status={joined}
+                                        price={course.price}
+                                        handleEnroll={this.handleEnroll}
+                                    />
                                 </Grid>
                             </Grid>
-                            <Grid className="subject-header-button" item>
-                                <CourseStatus
-                                    status={joined}
-                                    price={course.price}
-                                    handleEnroll={this.handleEnroll}
-                                />
+                        </Grid>
+                        <Grid className="subject-instructors" container>
+                            <Grid className="instructors-title" item>
+                                <p>Instructors:</p>
+                            </Grid>
+                            <Grid item container>
+                                {lengthInstructors ? (
+                                    instructors.map((instructor) => (
+                                        <InstructorItem
+                                            id={instructor._id}
+                                            data={instructor}
+                                        />
+                                    ))
+                                ) : (
+                                    <span>No available instructors</span>
+                                )}
                             </Grid>
                         </Grid>
-                    </Grid>
-                    <Grid className="subject-instructors" container>
-                        <Grid className="instructors-title" item>
-                            <p>Instructors:</p>
-                        </Grid>
-                        <Grid item container>
-                            {lengthInstructors ? (
-                                instructors.map((instructor) => (
-                                    <InstructorItem
-                                        id={instructor._id}
-                                        data={instructor}
-                                    />
-                                ))
-                            ) : (
-                                <span>No available instructors</span>
-                            )}
-                        </Grid>
-                    </Grid>
+                    </Container>
                     <Tabs
                         value={tabIndex}
                         onChange={(e, value) => {

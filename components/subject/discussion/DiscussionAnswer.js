@@ -10,12 +10,7 @@ import MathJax from "react-mathjax-preview";
 class DiscussionAnswer extends React.Component{
     render(){
         const {data} = this.props;
-        if(!data){
-            return(
-            <div style={{backgroundColor: '#F6F8FB', padding: 5, textAlign: 'center'}}>
-                <p style={{fontStyle: 'italic'}}>No answer yet</p>
-            </div>)
-        }
+        
         return(
             <div style={{position: 'relative', backgroundColor: '#F6F8FB'}}>
                 <IconButton style={{position: 'absolute', right: 0}}>

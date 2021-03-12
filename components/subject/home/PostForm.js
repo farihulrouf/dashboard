@@ -251,6 +251,7 @@ class PostForm extends React.Component {
                         ],
                         toolbar:
                             "tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | table | image | help",
+                        toolbar_mode: 'sliding'
                     }}
                     value={newPost.body}
                     onEditorChange={this.handleEditorChange}

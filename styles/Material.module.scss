@@ -60,16 +60,16 @@
         }
 
         .filter {
-            font-size: 1.25rem;
-            color: #C5CCD0;
+            font-size: 1.5rem;
+            color: rgba(0,0,0,.54)
+        }
+
+        button {
+            border-radius: 100% !important;
         }
 
         button:hover {
             background-color: transparent;
-
-            .filter:hover {
-                color: #3F51B5;
-            }
         }
     }
 }

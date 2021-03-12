@@ -15,6 +15,12 @@
         }
     }
 
+    .subject-header-container {
+        @media (min-width: 1536px) {
+            padding: 0 !important;
+        }
+    }
+
     .subject-header {
         position: relative;
         background-image: url("../public/images/subject-bg.png");
@@ -165,7 +171,7 @@
 
                 .join-btn {
                     background-color: #3f51b5;
-                    border: none !important;
+                    border: solid .5px #3f51b5 !important;
 
                     span {
                         color: white;
@@ -189,6 +195,10 @@
 
     .subject-instructors {
         padding: 16px 18px;
+
+        @media (max-width: 1535px) {
+            padding: 16px 0;
+        }
 
         .instructors-title {
             padding-bottom: 10px;
@@ -227,14 +237,36 @@
         }
     }
 
-    .subject-home {
+    .subject-home, .subject-discussion {
         padding: 1%;
+
+        .tag {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: #4494C1;
+            background-color: #e3ecf185;
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: solid 1px #4494C1;
+
+            svg {
+                font-size: 1rem;
+                margin-left: 5px;
+                color: rgba(0,0,0,0.5);
+            }
+
+            svg:hover {
+                transform: scale(1.1);
+                cursor: pointer;
+            }
+        }
 
         .filter-dialog {
             position: fixed !important;
         }
 
-        .post-filter {
+        .post-filter, .discussion-filter {
             display: flex;
             align-items: center;
             justify-content: flex-start;
@@ -243,21 +275,21 @@
 
             .create-post-container {
                 height: auto;
-                width: 280px;
+                min-width: 205px;
                 margin-right: 15px;
 
                 @media (max-width: 1024px) {
-                    width: 230px;
+                    min-width: 180px;
                 }
 
                 .create-post-btn {
                     color: white;
-                    width: 100%;
                     background-color: #3f51b5;
                     padding: 8px 16px !important;
 
                     span {
                         font-weight: 400;
+                        width: auto;
                     }
 
                     @media (max-width: 1024px) {
@@ -280,7 +312,7 @@
                     display: flex;
                     align-items: center;
 
-                    input {
+                    .MuiInputBase-root, input {
                         width: 100%;
                     }
                 }
@@ -294,7 +326,7 @@
         .second-row {
             display: flex;
             align-items: center;
-            justify-content: flex-start;
+            justify-content: space-between;
             margin-bottom: 30px;
 
             .syllabus {
@@ -578,6 +610,7 @@
                 }
             }
         }
+    }
 
         .comment-container {
             margin: 20px 0 0;
@@ -652,7 +685,6 @@
                 }
             }
         }
-    }
 
     .tab-container {
         margin-bottom: 2% !important;
@@ -743,6 +775,32 @@
 .MuiMenuItem-root {
     font-family: "Gilroy", sans-serif !important;
 }
+
+.tox {
+    border-radius: 4px !important;
+}
+
+div[role="toolbar"]:nth-child(2) {
+    flex-grow: 1;
+
+    button {
+        width: 100%;
+    }
+
+    .tox-tbtn__select-chevron {
+        margin-left: auto;
+        display: inline-block;
+    }
+}
+
+.tox-statusbar__text-container {
+    align-items: center;
+}
+
+.tox-editor-header {
+    width: 100%;
+}
+
 .create-post,
 .post-box {
     .MuiInputBase-input {
@@ -788,6 +846,8 @@
 
     .MuiPaper-root {
         width: 70%;
+        min-width: 330px;
+        max-width: 1200px;
     }
 
     .form-foot {
@@ -839,31 +899,16 @@
         margin-bottom: 20px;
     }
 
-    div[role="toolbar"]:nth-child(2) {
-        flex-grow: 1;
-
-        button {
-            width: 100%;
-        }
-
-        .tox-tbtn__select-chevron {
-            margin-left: auto;
-            display: inline-block;
-        }
-    }
-
-    .tox-statusbar__text-container {
-        align-items: center;
-    }
-
-    .tox-editor-header {
-        width: 100%;
-    }
-
     .create-post-btn {
         padding-top: 4px !important;
         padding-bottom: 4px !important;
         margin-left: 15px;
+        background-color: #3f51b5;
+        color: white;
+    }
+
+    .create-post-btn:hover {
+        background-color: #3f51b5;
     }
 }
 
@@ -924,13 +969,319 @@
         }
 
         .attachment-btn {
-            //display: none !important;
+            display: none !important;
         }
 
         .right-foot {
             width: 100%;
             justify-content: flex-end;
         }
+    }
+
+    
+}
+
+.discussion-tag {
+    margin-top: 25px;
+
+    label {
+        top: -6px;
+        background-color: white;
+        padding-right: 4px;
+    }
+
+    .Mui-focused,
+    .MuiFormLabel-filled {
+        top: 0;
+    }
+
+    .MuiInputBase-root {
+        padding: 2px 5px !important;
+    }
+
+    .MuiInputBase-input {
+        margin: 5px !important;
+        padding: 0 !important;
+        width: 0 !important;
+    }
+
+    button {
+        box-shadow: none !important;
+    }
+
+    .MuiInputBase-root {
+        display: flex;
+    }
+}
+
+.discussion-post {
+    .form-foot {
+        position: relative;
+        bottom: 25px;
+        padding: 0;
+
+        .right-foot {
+            margin-left: auto;
+        }
+    }
+}
+
+.discussion-filter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.edit-discussion {
+    padding: 25px;
+    position: relative;
+    border: solid 1px #c5ccd0;
+
+    button {
+        display: block;
+        width: 150px;
+        background-color: #3f51b5 !important;
+
+        span {
+            color: white;
+        }
+    }
+
+    button:first-child {
+        margin-bottom: 20px;
+    }
+}
+
+.item-container {
+    position: relative;
+    
+    .edit-delete button {
+        margin-top: 25px;
+        margin-right: 25px;
+    }
+}
+
+.editor {
+    padding-top: 30px;
+}
+
+.no-answer {
+    text-align: center;
+    color: rgba(0,0,0,0.5);
+}
+
+
+.rec-arrow {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    color: white !important;
+    position: fixed;
+    z-index: 1500;
+    top: 45vh;
+
+    // @media (min-width: 1280px) {
+    //     top: 42.5%;
+    // }
+
+    // @media (min-width: 1537px) {
+    //     top: 50%;
+    // }
+}
+
+.MuiDialog-container {
+    height: 100vh !important;
+}
+
+.rec-arrow-left {
+    left: 5%;   
+
+    @media (min-width: 1537px) {
+        left: 10%;
+    }
+}
+
+.hide {
+    display: none;
+}
+
+.rec-arrow-right {
+    right: 5%;
+
+    @media (min-width: 1537px) {
+        right: 10%;
+    }
+}
+
+.rec-arrow:hover {
+    transform: scale(1.1);
+}
+
+.discussion-modal .MuiPaper-root{
+    width: 70%;
+    min-width: 335px;
+    max-width: 1200px;
+
+    .discussion-item-con {
+        padding: 30px;
+
+        hr {
+            margin: 0 -30px;
+        }
+
+        .comment-section {
+            margin: 0 -30px -30px;
+            padding: 30px 30px;
+            background-color: #F3F6F9;
+        }
+    }
+
+    .discussion-item {
+        border-radius: 0;
+        border: none;
+        padding: 0;
+
+        .header-modal {
+            width: 100% ;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            .my-btn {
+                span {
+                    font-size: .8rem !important;
+                }
+            }
+
+            .left-btn {
+                color: #3f51b5;
+                border: solid 1px #3f51b5;
+                padding: 6px 12px !important;
+            }
+        }
+    }
+}
+
+.discussion-item-container, .discussion-modal {
+    margin-bottom: 40px;
+
+    .discussion-item {
+        border: solid 1px #c5ccd0;
+        display: flex;
+        align-items: flex-start;
+        padding: 30px;
+        border-radius: 8px;
+
+        .left {
+            padding: 0 10px 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+
+            h3, span {
+                display: flex;
+                justify-content: center;
+            }
+
+            h3 {
+                font-size: 1.85rem;
+                margin-block: 0 !important;
+                font-weight: 600;
+            }
+            
+            span {
+                font-size: .8rem;
+            }
+
+            .top, .bottom {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+
+            hr {
+                margin: 10px 0 0;
+            }
+
+            .solved {
+                color: #8DC883 !important;
+            }
+        }
+
+        .right {
+            padding: 0 25px;
+            width: 100%;
+
+            .header {
+                margin-bottom: 20px;
+
+                h6 {
+                    color: #3f51b5;
+                    margin-bottom: 2px;
+                    font-weight: 500;
+                    display: inline-block;
+                    line-height: 2;
+                }
+
+                h6:hover {
+                    cursor: pointer;
+                    text-decoration: underline;
+                }
+    
+                .created-at {
+                    span {
+                        font-size: .8rem;
+                    }
+                }
+            }
+
+            .body-discussion {
+                margin-bottom: 25px;
+            }
+
+            .tag-container {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                margin-bottom: 30px;
+
+                .tag {
+                    padding: 3px 8px;
+                    font-size: .65rem;
+                    margin-right: 10px;
+                    // border: none;
+                    background-color: #afcddd85;;
+                }
+            }
+
+            .btn-container {
+                .my-btn {
+                    span {
+                        font-size: .9rem !important;
+                    }
+                }
+
+                .left-btn {
+                    color: #3f51b5;
+                    border: solid 1px #3f51b5;
+                    padding: 6px 12px !important;
+                    margin-right: 20px;
+                }
+
+                .right-btn {
+                    color: white;
+                    border: solid 1px #3f51b5;
+                    padding: 6px 12px !important;
+                    margin-right: 20px;
+                    background-color: #3f51b5;
+                }
+            }
+        }
+    }
+}
+
+.is-voted {
+    h3, svg, span {
+        color: #3f51b5;
     }
 }
 

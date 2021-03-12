@@ -108,14 +108,19 @@ class FilterDialog extends React.Component {
 
         let postCreator = instructors || [];
         if (instructors !== undefined) {
+          if(postCreator.length === 0){
+            postCreator.push(creator);
+          }
+          else{
             for (let i = 0; i < instructors.length; i++) {
                 if (instructors[i]._id === creator._id) {
                     break;
                 }
                 if (i === instructors.length - 1) {
-                    postCreator.concat(creator);
+                    postCreator.push(creator);
                 }
             }
+          }
         }
         postCreator = postCreator
             ? postCreator.map((value, index) => ({
@@ -123,7 +128,6 @@ class FilterDialog extends React.Component {
                   creator: value,
               }))
             : [];
-
         return (
             <Dialog
                 onClose={onCloseFilter}

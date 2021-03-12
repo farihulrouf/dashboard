@@ -44,7 +44,7 @@ class SignIn extends React.Component {
             const {user} = this.state;
             this.setState({isLoading: true})
             signInUser(user).then((response) => {
-                window.location.replace("/")
+                Router.back();
             }).catch((err) => {
                 this.setState({isLoading: false, error: err.response.data})
             })

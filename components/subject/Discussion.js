@@ -1,65 +1,115 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import DiscussionFilter from "./discussion/DiscussionFilter";
 import DiscussionForm from "./discussion/DiscussionForm";
 import DiscussionItem from "./discussion/DiscussionItem";
+import ModalDiscussion from "./discussion/ModalDiscussion";
 import {Grid, Divider} from "@material-ui/core";
+import { ArrowBackIos, ArrowForwardIos } from "@material-ui/icons";
 import {getCourseDiscussions, deleteCourseDiscussion} from "../../lib/api";
+import Carousel from "react-elastic-carousel";
 
-class Discussion extends React.Component{
-    constructor(props){
-        super(props);
-        this.state = {open: false, discussions: []}
-        this.openDiscussionForm = this.openDiscussionForm.bind(this);
-        this.closeDiscussionForm = this.closeDiscussionForm.bind(this);
-    }
 
-    componentDidMount(){
-        getCourseDiscussions(this.props.courseId).then(res => {
-            this.setState({discussions: res.discussions})
-        })
-    }
+const Discussion = (props) => {
+    const [discussions, setDiscussions] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+    const [openForm, setOpenForm] = useState(false);
+    const [selected, setSelected] = useState(null);
 
-    openDiscussionForm = () => {
-        this.setState({open: true})
-    }
+    useEffect(() => {
+        getCourseDiscussions(props.courseId).then((res) => {
+            setDiscussions(res.discussions);
+        });
+    }, []);
 
-    closeDiscussionForm = () => {
-        this.setState({open: false})
-    }
+    const openDiscussionForm = () => {
+        setOpenForm(true);
+    };
 
-    deleteDiscussion = async (discussionId) => {
+    const closeDiscussionForm = () => {
+        setOpenForm(false);
+    };
+
+    const afterCreateDiscussion = (discussions) => {
+        setOpenForm(false);
+        setDiscussions(discussions);
+    };
+
+    const deleteDiscussion = async (discussionId) => {
       const data = await deleteCourseDiscussion(discussionId);
-      this.setState({discussions : data.discussions});
+      setDiscussions(data.discussions);
     }
 
-    afterCreateDiscussion = (discussions) => {
-        this.setState({open: false, discussions: discussions})
+    const openDiscussionModal = (id) => {
+        setOpenModal(true);
+        setSelected(discussions.find((item) => item._id === id));
+    };
+
+    const getIndexSelected = () => {
+        if (selected) {
+            return discussions.findIndex(item => item._id === selected._id);
+        }
+
+        return 0;
     }
 
-    render(){
-        const {open, discussions} = this.state;
-        console.log(discussions);
-        return(
-            <React.Fragment>
-                <DiscussionFilter openDiscussionForm={this.openDiscussionForm} />
-                <DiscussionForm 
-                    auth={this.props.auth} 
-                    closeDiscussionForm={this.closeDiscussionForm} 
-                    afterCreateDiscussion={this.afterCreateDiscussion}
-                    open={open}
-                    courseId={this.props.courseId}
-                />
-                <Grid container style={{marginTop: 20}}>
-                    {discussions.map((e) =>
-                        <Grid key={e._id} item xs={12}>
-                            <DiscussionItem data={e} deleteDiscussion={this.deleteDiscussion}/>
-                            <Divider />
-                        </Grid>
-                    )}
-                </Grid>
-            </React.Fragment>
-        )
-    }
-}
+    const closeDiscussionModal = () => {
+        setOpenModal(false);
+    };
+
+    console.log(openModal);
+
+    return (
+        <div className="subject-discussion">
+            <DiscussionFilter openDiscussionForm={openDiscussionForm} />
+            <DiscussionForm
+                auth={props.auth}
+                closeDiscussionForm={closeDiscussionForm}
+                afterCreateDiscussion={afterCreateDiscussion}
+                open={openForm}
+                courseId={props.courseId}
+            />
+            <Grid container className="discussion-item-container">
+                {discussions.map((e) => (
+                    <Grid key={e._id} item xs={12}>
+                        <DiscussionItem
+                            data={e}
+                            handleOpen={openDiscussionModal}
+                            setSelected={setSelected}
+                            deleteDiscussion={deleteDiscussion}
+                        />
+                    </Grid>
+                ))}
+            </Grid>
+            <Grid item className="modal-container">
+            {selected && openModal ? (
+                <Carousel
+                    itemsToShow={1}
+                    tiltEasing="ease"
+                    easing="ease"
+                    enableTilt = {true}
+                    enableMouseSwipe={true}
+                    enableSwipe={true}
+                    initialActiveIndex={getIndexSelected()}
+                    renderPagination={({ pages, activePage, onClick }) => <span>{null}</span>}
+                    // renderArrow={({type, onClick}) => <Grid onClick={onClick}>{type === `prev` ? <ArrowBackIos onClick/> : <ArrowForwardIos />}</Grid>}
+                >
+                    {discussions.map((item, index) => {
+                        return (
+                            <ModalDiscussion
+                                key={index}
+                                selected={item}
+                                open={openModal}
+                                handleClose={closeDiscussionModal}
+                                setSelected={setSelected}
+                                deleteDiscussion={deleteDiscussion}
+                            />
+                        );
+                    })}
+                </Carousel>
+            ) : null}
+            </Grid>
+        </div>
+    );
+};
 
 export default Discussion;

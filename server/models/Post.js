@@ -26,6 +26,7 @@ var postSchema = mongoose.Schema({
     likes: {type: likesSchema, default: {total: 0, likedBy: []}},
     body: {type: String, required: "Body is required"},
     category: {type: String, enum: ["Announcement","Materials","Exam"], required: "Post category is required"},
+    tag : [{type:ObjectId, ref:'Tag'}],
     postedBy: {type: ObjectId, ref: "User"},
     postedOn: {type: ObjectId, ref: "Course"},
     comments: {type: commentsSchema, default: {total: 0, listComments: []}},
@@ -36,6 +37,7 @@ postSchema.plugin(mongoosePaginate); //For example Post.paginate(conditions,{pag
 const autoPopulate = function(next){
     this.populate("postedBy", "_id name avatar");
     this.populate("comments.listComments","_id content commentator createdAt")
+    this.populate('tag', '_id name');
     next();
 }
 
