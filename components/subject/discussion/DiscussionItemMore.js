@@ -1,5 +1,5 @@
 import React from "react";
-import {IconButton, Popper, ButtonGroup, Button} from "@material-ui/core";
+import {IconButton, Popper, ButtonGroup, Button, Paper} from "@material-ui/core";
 import {MoreVert} from "@material-ui/icons";
 import DiscussionForm from "./DiscussionForm";
 
@@ -62,7 +62,7 @@ class DiscussionItemMore extends React.Component{
                                     variant="outlined"
                                     style={{ background: "white" }}
                                     value={-1}
-                                    onClick={() => {() => deleteDiscussion( this.props.discussion._id)}}
+                                    onClick={() => {deleteDiscussion( this.props.discussion._id)}}
                                 >
                                     Delete
                                 </Button>
