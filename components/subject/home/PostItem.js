@@ -201,8 +201,8 @@ const PostItem = (props) => {
                                 </Grid>
                             )}
                         </Grid>
-                        {data.attachments.map((e, idx) => (
-                            <Grid key={e._id} item>
+                        <Grid className="attached-files" item>
+                            {data.attachments.map((e, idx) => (
                                 <a
                                     href={`/files/${encodeURIComponent(e.key)}`}
                                     className="attached-file"
@@ -211,8 +211,8 @@ const PostItem = (props) => {
                                     <Description />
                                     <p>{e.name}</p>
                                 </a>
-                            </Grid>
-                        ))}
+                            ))}
+                        </Grid>
                     </Grid>
                 </React.Fragment>
             )}
@@ -282,7 +282,7 @@ const PostItem = (props) => {
                 <TextareaAutosize
                     placeholder="Write your comments"
                     // multiline="true"
-                    rowsMin={2}
+                    rowsMin={1}
                     rowsMax={10}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}

@@ -1,6 +1,8 @@
 .home-landing-bg {
+    position: relative;
     width: 100%;
     margin-bottom: 5%;
+    top: -4px;
 }
 
 .home-container {
@@ -34,6 +36,7 @@
         font-weight: 300;
         padding: 2.5% 5%;
         margin-bottom: 2%;
+        position: relative;
     }
 
     .sign-btn {
