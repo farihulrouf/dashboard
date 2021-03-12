@@ -18,7 +18,7 @@ import {
     ClassOutlined,
     AttachFile,
     GetApp,
-    Update,
+    Lock
 } from "@material-ui/icons";
 import { likeAPost, postComment } from "../../../lib/api";
 import CommentItem from "./CommentItem";
@@ -81,8 +81,10 @@ const PostItem = (props) => {
         window.open(`archive/${postId}.zip`)
     }
 
+    const { auth, blur } = props;
+
     return (
-        <Grid className="post-box" id={props.data._id}>
+        <Grid className={blur ? "post-box blurred" : "post-box"} id={props.data._id}>
             {!editMode && (
                 <React.Fragment>
                     <Grid item className="post-header">
@@ -296,6 +298,7 @@ const PostItem = (props) => {
                     <Send />
                 </Grid>
             </Grid>
+            
         </Grid>
     );
 };

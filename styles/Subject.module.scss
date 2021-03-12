@@ -322,6 +322,7 @@
         }
 
         .post-box {
+            position: relative;
             margin-bottom: 50px;
             padding: 0 35px 35px;
             border: solid 1px #c5ccd0;
@@ -930,5 +931,55 @@
             width: 100%;
             justify-content: flex-end;
         }
+    }
+}
+
+.not-enrolled-box {
+    text-align: center;
+    margin-top: -210px !important;
+    background-color: white !important;
+
+    h3 {
+        margin-top: 60px;
+        color: #3f51b5;
+        font-weight: 600;
+    }
+
+    p {
+        margin-top: 5px;
+        font-size: 1.35rem;
+        color: #8a8a8a;
+
+        span {
+            color: black;
+            font-weight: 500;
+        }
+    }
+
+    .join-btn {
+        margin: 20px auto 10px;
+        background-color: #3f51b5;
+        border: solid .5px #3f51b5 !important;
+
+        span {
+            color: white;
+            font-size: 1.4rem;
+        }
+    }
+}
+
+.blurred {
+    filter: blur(3px);
+}
+
+.post-item-container {
+    position: relative;
+
+    .locked-post {
+        position: absolute;
+        font-size: 8rem;
+        top: calc(50% - 5rem);
+        left: calc(50% - 3.5rem);
+        color:rgba(63,81,181, .5);
     }
 }

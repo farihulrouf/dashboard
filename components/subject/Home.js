@@ -6,6 +6,8 @@ import DeleteDialog from "./DeleteDialog";
 import PostItem from "./home/PostItem";
 import PostFilter from "./home/PostFilter";
 import React from "react";
+import NotEnrolled from "./home/NotEnrolled";
+import { Lock } from "@material-ui/icons";
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -85,8 +87,20 @@ class Home extends React.Component {
     };
 
     render() {
-        const { isInstructor, auth, instructors, createdAt, creator } = this.props;
+        const {
+            isInstructor,
+            auth,
+            instructors,
+            createdAt,
+            creator,
+            isEnrolled,
+        } = this.props;
         const { posts, deleteDialogOpen } = this.state;
+
+        const currentPost =
+            isEnrolled === 2 ? posts.docs : posts.docs.slice(0, 4);
+
+        const length = currentPost.length;
 
         return (
             <div className="subject-home">
@@ -117,15 +131,40 @@ class Home extends React.Component {
           </Grid> */}
                     <Grid item xs={12}>
                         <List>
-                            {posts.docs.map((value) => (
-                                <PostItem
-                                    key={value._id}
-                                    auth={auth}
-                                    data={value}
-                                    openDeleteDialog={this.openDeleteDialog}
-                                />
-                            ))}
+                            {currentPost.map((value, index) => {
+                                if (index === length - 1 && isEnrolled !== 2) {
+                                    return (
+                                        <Grid item className="post-item-container">
+                                            <PostItem
+                                                blur={true}
+                                                key={value._id}
+                                                auth={auth}
+                                                data={value}
+                                                openDeleteDialog={
+                                                    this.openDeleteDialog
+                                                }
+                                            />
+                                            <Lock className="locked-post" />
+                                        </Grid>
+                                    );
+                                }
+                                return (
+                                    <PostItem
+                                        key={value._id}
+                                        auth={auth}
+                                        data={value}
+                                        openDeleteDialog={this.openDeleteDialog}
+                                    />
+                                );
+                            })}
                         </List>
+
+                        {isEnrolled !== 2 && (
+                            <NotEnrolled
+                                price={this.props.price}
+                                enroll={this.props.enroll}
+                            />
+                        )}
                     </Grid>
                 </Grid>
             </div>

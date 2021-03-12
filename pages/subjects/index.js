@@ -319,7 +319,10 @@ class Subject extends React.Component {
                                 isInstructor={course.isInstructor}
                                 instructors={instructors}
                                 creator={creator}
+                                price={course.price}
                                 createdAt={createdAt}
+                                isEnrolled={joined}
+                                enroll={this.handleEnroll}
                                 className="subject-home"
                             />
                         </TabPanel>

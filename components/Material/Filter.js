@@ -107,10 +107,10 @@ const Filter = ({
 
   const valueLabelFormat = (value) => {
     const array = String(value).split("");
-
-    return `Rp${array
+    const length = array.length;
+    return `Rp. ${array
       .map((char, index) => {
-        if (index > 2 && array.length - (index % 3) === 0) {
+        if (index > 0 && index % 3 === length % 3) {
           return `.${char}`;
         } else {
           return char;
@@ -169,7 +169,7 @@ const Filter = ({
                   max={500000}
                   step={1000}
                   value={filter.price}
-                  valueLabelFormat={(x) => <div>{valueLabelFormat(x)}</div>}
+                  valueLabelFormat={(x) => <div>{x}</div>}
                 />
               </Grid>
               <br />
