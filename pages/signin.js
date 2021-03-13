@@ -32,7 +32,7 @@ class SignIn extends React.Component {
         const {user} = this.state;
         this.setState({isLoading: true})
         signInUser(user).then((response) => {
-            Router.back();
+            window.location.href="/"
         }).catch((err) => {
             this.setState({isLoading: false, error: err.response.data})
         })
@@ -40,14 +40,7 @@ class SignIn extends React.Component {
 
     handleEnter = event => {
         if (event.key === 'Enter') {
-            event.preventDefault();
-            const {user} = this.state;
-            this.setState({isLoading: true})
-            signInUser(user).then((response) => {
-                Router.back();
-            }).catch((err) => {
-                this.setState({isLoading: false, error: err.response.data})
-            })
+            this.handleSubmit(event);
         }
     }
 
