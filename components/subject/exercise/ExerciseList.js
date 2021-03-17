@@ -44,7 +44,7 @@ class ExerciseList extends React.Component{
                     <Chip label="Documents" component="a" onClick={()=>this.setState({displayAsDocuments: !this.state.displayAsDocuments})} disabled={this.state.displayAsDocuments} clickable variant="outlined" />
                     <Chip label="Questions" component="a" onClick={()=>this.setState({displayAsDocuments: !this.state.displayAsDocuments})} disabled={!this.state.displayAsDocuments} clickable variant="outlined" style={{marginLeft:4}}/>
                 </div>
-                <List>
+                <List style={{paddingBottom: 40}}>
                     {this.state.displayAsDocuments &&
                         this.state.exercises.map((exercise)=>(
                             <ExerciseItem key={exercise._id} exercise={exercise}></ExerciseItem>
