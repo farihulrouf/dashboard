@@ -8,190 +8,37 @@ const footerMenu = [
                 url: "/"
             },
             {
-                name: "Bimbel Online",
+                name: "Bank Soal",
                 url: "/"
             },
             {
-                name: "Bimbel Online",
+                name: "Materi Pelajaran",
                 url: "/"
             },
             {
-                name: "Bimbel Online",
+                name: "Bimbingan Konseling",
                 url: "/"
             }
         ]
     },
     {
-        heading: "LAYANAN",
+        heading: "COMPANY",
         url: "/",
         items: [
             {
-                name: "Bimbel Online",
+                name: "About Us",
                 url: "/"
             },
             {
-                name: "Bimbel Online",
+                name: "Contact Us",
                 url: "/"
             },
             {
-                name: "Bimbel Online",
+                name: "Partners",
                 url: "/"
             },
             {
-                name: "Bimbel Online",
-                url: "/"
-            }
-        ]
-    },
-    {
-        heading: "LAYANAN",
-        url: "/",
-        items: [
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            }
-        ]
-    },
-    {
-        heading: "LAYANAN",
-        url: "/",
-        items: [
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            }
-        ]
-    },
-    {
-        heading: "LAYANAN",
-        url: "/",
-        items: [
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            }
-        ]
-    },
-    {
-        heading: "LAYANAN",
-        url: "/",
-        items: [
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            }
-        ]
-    },
-    {
-        heading: "LAYANAN",
-        url: "/",
-        items: [
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            }
-        ]
-    },{
-        heading: "LAYANAN",
-        url: "/",
-        items: [
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            }
-        ]
-    },
-    {
-        heading: "LAYANAN",
-        url: "/",
-        items: [
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
-                url: "/"
-            },
-            {
-                name: "Bimbel Online",
+                name: "Other",
                 url: "/"
             }
         ]
