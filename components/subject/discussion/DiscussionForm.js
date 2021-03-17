@@ -139,7 +139,7 @@ export default function DiscussionForm(props) {
                             file_picker_types: "file image media",
                             images_upload_handler: uploadImage,
                             external_plugins: {
-                                tiny_mce_wiris: "/static/js/plugin.min.js",
+                                tiny_mce_wiris: "/js/plugin.min.js",
                             },
                             plugins: [
                                 "advlist autolink lists link image charmap print preview anchor",
