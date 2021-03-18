@@ -111,13 +111,13 @@ exports.getMyNotifications = async (req, res) => {
       {$limit: 10}, 
       {
         $group: {
-          _id: '$_id', 
+          _id: null, //_id: '$_id'
           total: {$first: '$notifications.total'}, 
           unread:  {$first: '$notifications.unread'}, 
           list: {$push: "$notifications.list"}
         }
       }, 
-      {$project:{notifications: {bankNotification: {processed: 0, notifOn: 0, creator: 0, onModel: 0, updatedAt: 0, version: 0} }, _id: 0}}
+      //{$project:{notifications: {bankNotification: {processed: 0, notifOn: 0, creator: 0, onModel: 0, updatedAt: 0, version: 0} }, _id: 0}}
     ])
     const {total, unread, list} = result[0] || {total: 0, unread: 0, list: []}
     list.forEach(e => e.bankNotification = e.bankNotification[0]) //array with only 1 object, just convert it to object
