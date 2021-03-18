@@ -93,7 +93,7 @@ exports.getMyNotifications = async (req, res) => {
   if (!!req.user) {
     const result = await User.aggregate([
       {$match:{_id: req.user._id}},
-      {$unwind:"$notifications.list"},
+      {$unwind:"$notifications.list"}, 
       {
         $lookup:{
           from:BankNotification.collection.name,
@@ -102,6 +102,7 @@ exports.getMyNotifications = async (req, res) => {
           as:'notifications.list.bankNotification'
         }
       },
+      {$unwind: "$notifications.list.bankNotification"}, //it is guaranteed to have only one related bankNotification
       {
         $sort: {
           "notifications.list.bankNotification.createdAt": -1
@@ -116,11 +117,10 @@ exports.getMyNotifications = async (req, res) => {
           unread:  {$first: '$notifications.unread'}, 
           list: {$push: "$notifications.list"}
         }
-      }, 
+      }
       //{$project:{notifications: {bankNotification: {processed: 0, notifOn: 0, creator: 0, onModel: 0, updatedAt: 0, version: 0} }, _id: 0}}
     ])
     const {total, unread, list} = result[0] || {total: 0, unread: 0, list: []}
-    list.forEach(e => e.bankNotification = e.bankNotification[0]) //array with only 1 object, just convert it to object
     return res.json({ status: "ok", notifications: {total, unread, list}});
   }
   res.json({ status: "error", notifications: [] });
