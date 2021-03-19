@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Router from 'next/router';
+import Router from "next/router";
 import {
     AppBar,
     Toolbar,
@@ -17,7 +17,7 @@ import {
     Twitter,
     Instagram,
     Menu,
-    Search
+    Search,
 } from "@material-ui/icons";
 import Link from "next/link";
 import MyMenu from "./Menu";
@@ -125,75 +125,60 @@ function NavBar(props) {
             </main>
             <Container maxWidth={false} className="footer">
                 <Container maxWidth="lg">
-                    <Grid container spacing={4}>
-                        <Grid item className="left-footer">
-                            <List>
-                                <ListItem className="footer-logo">
-                                    <div>
-                                        <a href="/">
-                                            <img
-                                                width="100%"
-                                                src="images/white-logo.png"
-                                            />
-                                        </a>
-                                    </div>
-                                </ListItem>
-                                <ListItem className="social">
-                                    <IconButton>
-                                        <Facebook />
-                                    </IconButton>
-                                    <IconButton>
-                                        <Instagram />
-                                    </IconButton>
-                                    <IconButton>
-                                        <Twitter />
-                                    </IconButton>
-                                    <IconButton>
-                                        <Pinterest />
-                                    </IconButton>
-                                </ListItem>
-                            </List>
+                    <Grid item className="footer-content">
+                        <Grid item className="identity">
+                            <img
+                                alt="klassiq-logo"
+                                src="images/full-white-logo.png"
+                            />
+                            <p className="address">
+                                Jl. Tebet Timur Dalam Raya No.133, RT.4/RW.9
+                                <br /> Tebet Timur, Kec. Tebet
+                                <br /> Kota Jakarta Selatan <br />
+                                DKI Jakarta, 12820
+                            </p>
                         </Grid>
-                        <Grid item className="right-footer">
-                            <Grid container>
-                                {footerMenu.map((MyMenu, index) => {
-                                    return (
-                                        <Grid
-                                            key={index}
-                                            item
-                                            className="footer-item"
-                                        >
-                                            <Link href={MyMenu.url}>
-                                                <a className="heading">
-                                                    {MyMenu.heading}
-                                                </a>
-                                            </Link>
-                                            <List>
-                                                {MyMenu.items.map(
-                                                    (item, index) => {
-                                                        return (
-                                                            <ListItem
-                                                                key={index}
-                                                            >
-                                                                <Link
-                                                                    href={
-                                                                        item.url
-                                                                    }
-                                                                >
-                                                                    <a>
-                                                                        {
-                                                                            item.name
-                                                                        }
-                                                                    </a>
-                                                                </Link>
-                                                            </ListItem>
-                                                        );
-                                                    }
-                                                )}
-                                            </List>
-                                        </Grid>
-                                    );
-                                })}
+
+                        {footerMenu.map((item, index) => {
+                            return (
+                                <Grid item key={index}>
+                                    <h5>{item.heading}</h5>
+                                    <List>
+                                        {item.items.map((item, index) => {
+                                            return (
+                                                <ListItem key={index}>
+                                                    {item.name}
+                                                </ListItem>
+                                            );
+                                        })}
+                                    </List>
+                                </Grid>
+                            );
+                        })}
+
+                        <Grid item className="social-media-container">
+                            <h6>Follow Us</h6>
+                            <Grid item className="social-media">
+                                <Link href="/">
+                                    <a>
+                                        <Facebook />
+                                    </a>
+                                </Link>
+                                <Link href="/">
+                                    <a>
+                                        <Twitter />
+                                    </a>
+                                </Link>
+                                <Link href="/">
+                                    <a>
+                                        <Instagram />
+                                    </a>
+                                </Link>
+                                <Link href="/">
+                                    <a>
+                                        <Pinterest />
+                                    </a>
+                                </Link>
                             </Grid>
                         </Grid>
                     </Grid>
