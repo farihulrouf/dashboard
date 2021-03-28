@@ -31,28 +31,28 @@ class CreateExercise extends React.Component{
     handleDrop(e) {
         e.stopPropagation(); e.preventDefault();
         var fileList = e.dataTransfer.files
+        let newFileNames = this.state.fileNames
         for(let i = 0; i<fileList.length; i++){
             var reader = new FileReader()
             reader.onload = this.getExercise
             reader.readAsArrayBuffer(fileList[i])
-            
-            let newFileNames = this.state.fileNames
             newFileNames.push([fileList[i].name])
-            this.setState({fileNames:newFileNames})
         }
+        console.log('filesDropped',newFileNames)
+        this.setState({fileNames:newFileNames})
     }
 
     onFilesSelected(e){
         let fileList = e.target.files;
+        let newFileNames = this.state.fileNames
         for(let i = 0; i<fileList.length; i++){
             var reader = new FileReader()
             reader.onload = this.getExercise
             reader.readAsArrayBuffer(fileList[i])
-
-            let newFileNames = this.state.fileNames
             newFileNames.push([fileList[i].name])
-            this.setState({fileNames:newFileNames})
         }
+        console.log('filesSelected',newFileNames)
+        this.setState({fileNames:newFileNames})
     }
 
     getExercise = (e) => {
@@ -109,6 +109,7 @@ class CreateExercise extends React.Component{
     }
 
     uploadExercises(){
+        console.log('this.state.exercises',this.state.exercises)
         createMultipleExercise(this.props.courseId,this.state.exercises)
         .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExerciseList'))
         .catch(error=>alert(error.response.message))
