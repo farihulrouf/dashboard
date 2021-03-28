@@ -378,6 +378,7 @@ class Subject extends React.Component {
                             isInstructor={course.isInstructor}
                             instructors={instructors}
                             createdAt={createdAt}
+                            creator={creator}
                             className="subject-home"
                         />
                         </TabPanel>
