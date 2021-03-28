@@ -111,12 +111,10 @@ class CreateExercise extends React.Component{
     uploadExercises(){
         createMultipleExercise(this.props.courseId,this.state.exercises)
         .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExerciseList'))
-        .catch(error=>console.log('error',error))
+        .catch(error=>alert(error.response.message))
     }
 
     render(){
-        console.log('exercises state', this.state.exercises)
-        console.log('this.props.courseId', this.props.courseId)
         return(
             <div className="subject-exercise-create">
                 <Image src="/images/close_icon.svg" height={25} width={25} onClick={()=>this.props.changeTabPage(this.props.tabIndex, 'ExerciseList')}/>

@@ -38,10 +38,8 @@ class ExamList extends React.Component{
                 this.setState({publishPopup: false})
                 this.props.changeTabPage(0)
             }).catch(error=>{
-                console.log(error)
+                alert(error.response.message)
             })
-        }else{
-            console.log('Publish : No exam selected')
         }
     }
 
@@ -112,7 +110,6 @@ class ExamItem extends React.Component{
         this.setState({anchorEl: null})
     };
     handleMenuSelected = (menuName) => {
-        console.log('close',menuName)
         if(menuName === 'Publish')this.props.openPublishPopup(this.props.exam)
         this.setState({anchorEl: null})
     };

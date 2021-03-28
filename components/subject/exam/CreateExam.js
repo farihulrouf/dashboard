@@ -79,12 +79,8 @@ class CreateExam extends React.Component{
         let exams = this.state.exams
         let startString = this.getCellValue(worksheet, this.START_TIME_CELL)
         let endString = this.getCellValue(worksheet, this.END_TIME_CELL)
-        console.log('startString',startString)
-        console.log('endString',endString)
         let start = parse(startString,'dd/MM/yyyy kk.mm', new Date())
         let end = parse(endString,'dd/MM/yyyy kk.mm', new Date())
-        console.log('start',start)
-        console.log('end',end)
         exams.push({ 
             questionPools: questionPools,
             name: this.getCellValue(worksheet, this.NAME_CELL),
@@ -125,12 +121,10 @@ class CreateExam extends React.Component{
     uploadExams(){
         createMultipleExam(this.props.courseId,this.state.exams)
         .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExamList'))
-        .catch(error=>console.log('error',error))
+        .catch(error=>alert(error.response.message))
     }
 
     render(){
-        console.log('exams state', this.state.exams)
-        console.log('this.props.courseId', this.props.courseId)
         return(
             <div className="subject-exercise-create">
                 <Image src="/images/close_icon.svg" height={25} width={25} onClick={()=>this.props.changeTabPage(this.props.tabIndex, 'ExamList')}/>
