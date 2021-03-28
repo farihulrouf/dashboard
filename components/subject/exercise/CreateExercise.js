@@ -38,7 +38,6 @@ class CreateExercise extends React.Component{
             reader.readAsArrayBuffer(fileList[i])
             newFileNames.push([fileList[i].name])
         }
-        console.log('filesDropped',newFileNames)
         this.setState({fileNames:newFileNames})
     }
 
@@ -51,7 +50,6 @@ class CreateExercise extends React.Component{
             reader.readAsArrayBuffer(fileList[i])
             newFileNames.push([fileList[i].name])
         }
-        console.log('filesSelected',newFileNames)
         this.setState({fileNames:newFileNames})
     }
 
@@ -109,7 +107,6 @@ class CreateExercise extends React.Component{
     }
 
     uploadExercises(){
-        console.log('this.state.exercises',this.state.exercises)
         createMultipleExercise(this.props.courseId,this.state.exercises)
         .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExerciseList'))
         .catch(error=>alert(error.response.message))

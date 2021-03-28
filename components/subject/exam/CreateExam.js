@@ -35,28 +35,26 @@ class CreateExam extends React.Component{
     handleDrop(e) {
         e.stopPropagation(); e.preventDefault();
         var fileList = e.dataTransfer.files
-        for(let i = 0; i<fileList.length; i++){
-            var reader = new FileReader()
-            reader.onload = this.getExercise
-            reader.readAsArrayBuffer(fileList[i])
-            
-            let newFileNames = this.state.fileNames
-            newFileNames.push([fileList[i].name])
-            this.setState({fileNames:newFileNames})
-        }
-    }
-
-    onFilesSelected(e){
-        let fileList = e.target.files;
+        let newFileNames = this.state.fileNames
         for(let i = 0; i<fileList.length; i++){
             var reader = new FileReader()
             reader.onload = this.getExams
             reader.readAsArrayBuffer(fileList[i])
-
-            let newFileNames = this.state.fileNames
             newFileNames.push([fileList[i].name])
-            this.setState({fileNames:newFileNames})
         }
+        this.setState({fileNames:newFileNames})
+    }
+
+    onFilesSelected(e){
+        let fileList = e.target.files;
+        let newFileNames = this.state.fileNames
+        for(let i = 0; i<fileList.length; i++){
+            var reader = new FileReader()
+            reader.onload = this.getExams
+            reader.readAsArrayBuffer(fileList[i])
+            newFileNames.push([fileList[i].name])
+        }
+        this.setState({fileNames:newFileNames})
     }
 
     getExams = (e) => {
@@ -135,31 +133,33 @@ class CreateExam extends React.Component{
                 
                 <h3>Upload Exam File(s)</h3>
                 <p>Download sample exam file <a href="/excel/Sample-Exam.xlsx">here</a>, then upload your exam file</p>
-                <Dropzone className="file-container">
-                {({getRootProps, getInputProps}) => (
-                    <div {...getRootProps({className: 'dropzone'})}>
-                        <input {...getInputProps()} />
-                        <List className="file-container">
-                            {
-                                this.state.fileNames.map((fileName)=>(
-                                    <ListItem key={fileName} className="file-item"><p className="text-file-item">{fileName}</p></ListItem>
-                                ))
-                            }
-                            {
-                                this.state.fileNames.length === 0 && (
-                                    <div onDrop={(e)=>this.handleDrop(e)} style={{display: "flex", flex: 1, minHeight:400 , flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
-                                        <Image src="/images/upload_icon.svg" height={100} width={100} />
-                                        <h4>Drag and Drop File</h4>
-                                        <h4>or</h4>
-                                        <label for="browse"><h4 style={{textDecorationLine: "underline"}}>Browse</h4></label>
-                                        <input id="browse" type="file" onChange={this.onFilesSelected.bind(this)}/>
+                <List className="file-container">
+                    {
+                        this.state.fileNames.map((fileName)=>(
+                            <ListItem key={fileName} className="file-item"><p className="text-file-item">{fileName}</p></ListItem>
+                        ))
+                    }
+                    {
+                        this.state.fileNames.length === 0 && (
+                            <div style={{display: "flex", flex: 1, minHeight:400 , flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+                                <Dropzone className="file-container">
+                                    {({getRootProps, getInputProps}) => (
+                                    <div {...getRootProps()}>
+                                        <input {...getInputProps()} />
+                                        <div onDrop={(e)=>this.handleDrop(e)} style={{display: "flex", flex: 1, minHeight:100 , flexDirection: "column", justifyContent: "center", alignItems: "center"}}>
+                                            <Image src="/images/upload_icon.svg" height={100} width={100} />
+                                            <h4>Drag and Drop File</h4>
+                                            <h4>or</h4>
+                                        </div>                
                                     </div>
-                                )
-                            }
-                        </List>
-                        </div>
-                    )}
-                </Dropzone>
+                                    )}
+                                </Dropzone>
+                                <label for="browse"><h4 style={{textDecorationLine: "underline", color: "#3F51B5"}}>Browse</h4></label>
+                                <input multiple id="browse" type="file" onChange={this.onFilesSelected.bind(this)}/>
+                            </div>
+                        )
+                    }
+                </List>
                 <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                     <Button
                         onClick={this.uploadExams.bind(this)} 
