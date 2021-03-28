@@ -1,11 +1,9 @@
 import {
   Grid,
-  Paper,
   IconButton,
   InputBase,
   Button,
   withStyles,
-  Popper,
 } from "@material-ui/core";
 import {
   FilterList,
@@ -14,7 +12,7 @@ import {
   Add,
 } from "@material-ui/icons";
 import FilterDialog from "./FilterDialog";
-import PostFormDialog from "../PostFormDialog";
+import PostFormDialog from "./PostFormDialog";
 import React from "react";
 
 const styles = (theme) => ({
@@ -114,7 +112,7 @@ class PostFilter extends React.Component {
             </Grid>
           )}
           <Grid item className="search-post">
-            <Grid container className="input-container">
+            <Grid item className="input-container">
               <InputBase
                 placeholder="Search for post?"
                 name="content"

@@ -18,7 +18,7 @@ import {
     ClassOutlined,
     AttachFile,
     GetApp,
-    Update,
+    Lock
 } from "@material-ui/icons";
 import { likeAPost, postComment } from "../../../lib/api";
 import CommentItem from "./CommentItem";
@@ -74,15 +74,17 @@ const PostItem = (props) => {
     useEffect(() => {
         setData(props.data);
     }, [props.data]);
-    
-    const { auth } = props;
+
+    const { auth, blur } = props;
     
     const onDownloadAll = async (postId) =>{
         window.open(`archive/${postId}.zip`)
     }
 
+    console.log(blur)
+
     return (
-        <Grid className="post-box" id={props.data._id}>
+        <Grid className={blur ? "post-box blurred" : "post-box"} id={props.data._id}>
             {!editMode && (
                 <React.Fragment>
                     <Grid item className="post-header">
@@ -199,8 +201,8 @@ const PostItem = (props) => {
                                 </Grid>
                             )}
                         </Grid>
-                        {data.attachments.map((e, idx) => (
-                            <Grid key={e._id} item>
+                        <Grid className="attached-files" item>
+                            {data.attachments.map((e, idx) => (
                                 <a
                                     href={`/files/${encodeURIComponent(e.key)}`}
                                     className="attached-file"
@@ -209,8 +211,8 @@ const PostItem = (props) => {
                                     <Description />
                                     <p>{e.name}</p>
                                 </a>
-                            </Grid>
-                        ))}
+                            ))}
+                        </Grid>
                     </Grid>
                 </React.Fragment>
             )}
@@ -280,7 +282,7 @@ const PostItem = (props) => {
                 <TextareaAutosize
                     placeholder="Write your comments"
                     // multiline="true"
-                    rowsMin={2}
+                    rowsMin={1}
                     rowsMax={10}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
@@ -296,6 +298,7 @@ const PostItem = (props) => {
                     <Send />
                 </Grid>
             </Grid>
+            
         </Grid>
     );
 };

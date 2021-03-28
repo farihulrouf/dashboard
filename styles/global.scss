@@ -123,6 +123,10 @@ button:hover {
     }
 }
 
+.join-btn:hover {
+    background-color: #3f51b5 !important;
+}
+
 a,
 span {
     text-decoration: none;
@@ -179,3 +183,4 @@ div::-webkit-scrollbar-thumb {
 @import "Subject.module.scss";
 @import "Material.module.scss";
 @import "Sign.module.scss";
+@import "Post.module.scss";

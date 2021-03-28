@@ -33,6 +33,7 @@ require("./models/Attachment")
 require("./models/Payment")
 require("./models/Review")
 require('./models/DiscussionAnswer');
+require('./models/Tag');
 
 const routes = require("./routes");
 const { callbackify } = require("util");

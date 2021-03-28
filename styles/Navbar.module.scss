@@ -101,72 +101,82 @@
 }
 
 .footer {
-    background-color: #1B1642;
+    background-color:#1B1642;
+    padding: 40px 0;
     position: relative;
     z-index: 10;
 
-    .left-footer {
-        max-width: 16.666667%!important;
+    .footer-content {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-flow: row wrap;
 
-        ul {
-            margin-top: 1rem;
+        @media (max-width: 875px) {
+            justify-content: flex-start;
         }
-    }
 
-    .right-footer {
-        max-width: 83.33333%!important;
-        padding: 2rem !important;
-        margin: 0;
-    }
-
-    .footer-logo {
-        width: 100%;
-        padding: 10px 4px;
-    }
-
-    .social {
-        position: relative;
-        padding-left: 0;
-        padding-right: 0;
-        width: 65%;
-
-        button {
-            padding: 3px;
-            margin-right: 2px;
-            width: 25%;
-            min-width: 0!important;
-
-            svg {
-                color: white;
-                font-size: 1.5vw;
-            }
+        & > div {
+            min-width: 150px;
+            width: auto;
+            max-width: 180px;
+            margin: 15px 50px;
         }
-        button:hover {
-            transform: scale(1.1);
+
+        .identity {
+            min-width: 180px;
         }
-    }
 
-    .footer-item {
-        padding: 0 1.5rem;
-        margin: 1rem 0;
-        min-width: 20%;
+        img {
+            width: 100%;
+            margin-bottom: 10px;
+        }
 
-        a {
+        p, h5, h6, svg {
             color: white;
-            text-decoration: none;
-            font-weight: 300;
-            font-size: 1.05vw;
-            // margin: 5%;
+        }
+
+        h5, h6 {
+            font-weight: 400;
+        }
+
+        .address {
+            font-size: 14px;
+            margin-bottom: 5px;
         }
 
         li {
-            padding: 4px 0;
+            padding: 0;
+            color: rgba(255,255,255, .6);
+            font-size: 14px;
+            margin: 5px 0;
         }
 
-        .heading {
-            font-weight: 500;
-            margin: 15px 0;
+        .social-media-container {
+            min-width: 100px;
+            width: 100px !important;
+            margin-right: 30px;
+
+            @media (min-width: 625px) and (max-width: 875px) {
+                margin-left: 80px;
+            }
+            
+            h6 {
+                margin-bottom: 20px;
+            }
+
+            .social-media {
+                display: flex;
+                flex-flow: wrap;
+
+                svg {
+                    font-size: 28px;
+                    margin-right: 20px;
+                    margin-bottom: 20px;
+                }
+            }
         }
+        
     }
 }
 

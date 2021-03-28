@@ -1,6 +1,8 @@
 .home-landing-bg {
+    position: relative;
     width: 100%;
     margin-bottom: 5%;
+    top: -4px;
 }
 
 .home-container {
@@ -34,6 +36,7 @@
         font-weight: 300;
         padding: 2.5% 5%;
         margin-bottom: 2%;
+        position: relative;
     }
 
     .sign-btn {
@@ -196,7 +199,7 @@
             align-items: center;
 
             .price-tag-container {
-                width: 39%;
+                width: 45%;
                 text-align: center;
                 background-color: rgb(135,150,231,0.13);
                 border: solid 2px #3F51B5;
@@ -204,10 +207,11 @@
                 padding: 5px;
                 color: #3F51B5;
                 font-weight: 500;
+                margin-right: 10px;
             }
 
             .join-btn-container {
-                width: 58%!important;
+                width: 55%!important;
                 margin-left: auto;
 
                 .join-btn {

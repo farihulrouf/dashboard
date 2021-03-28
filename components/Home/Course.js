@@ -7,16 +7,17 @@ import React, { useEffect } from "react";
 const Course = ({ courseItem }) => {
     const valueLabelFormat = (value) => {
         const array = String(value).split("");
+        const length = array.length;
 
-        return `Rp${array
+        return `Rp. ${array
             .map((char, index) => {
-                if (index > 2 && array.length - (index % 3) === 0) {
-                    return `.${char}`;
+                if (index > 0 && index % 3 === length % 3) {
+                    return `.${char}`
                 } else {
                     return char;
                 }
             })
-            .join("")}`;
+            .join("")},00`;
     };
 
     const goToCourse = (id) => {
@@ -76,7 +77,7 @@ const Course = ({ courseItem }) => {
                         } more instructors`}
                 </span>
             </Grid>
-            <Grid container className="btm-container">
+            <Grid item className="btm-container">
                 <Grid item className="price-tag-container">
                     <div className="price-tag">
                         {!courseItem.price
