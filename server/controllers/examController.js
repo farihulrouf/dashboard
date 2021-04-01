@@ -3,6 +3,7 @@ const { diff } = require("jimp");
 const Exam = mongoose.model("Exam");
 const AnswerSheet = mongoose.model("AnswerSheet");
 const QuestionPool = mongoose.model("QuestionPool");
+const Attachment = mongoose.model("Attachment");
 const { ObjectId } = mongoose.Types;
 
 const AWS = require("aws-sdk"); // Requiring AWS SDK.
@@ -185,6 +186,75 @@ exports.startExam = async (req, res) => {
   });
   // .catch((err) => res.Status(400).json("Error " + err));
 };
+
+exports.addMultipleExam = async (req, res) => {
+  const exams = req.body
+  const courseId = req.params.courseId
+  let newExams = []
+  const saveAllExam = () =>{
+    Exam.insertMany(newExams,(error, savedExercises)=>{
+      if(error) res.status(400).json("Error Exam Insertion" + error)
+      else res.json(savedExercises)
+    })
+  }
+  const saveQuestionPoolExam = (newQPools,exam)=>{
+    QuestionPool.insertMany(newQPools, (error,questionPools)=>{
+      if(error) {
+        res.status(400).json("Error QuestionPool Insertion" + error)
+        return
+      }
+      let questionPoolIds = []
+      questionPools.forEach(questionPool=>{
+        questionPoolIds.push(questionPool._id);
+      })
+      exam.questionPools = questionPoolIds;
+      exam.courseId = courseId
+      newExams.push(exam)
+      if(newExams.length == exams.length){
+        saveAllExam()
+      }
+    })
+  }
+  exams.forEach(exam =>{
+    let newQPools = []
+    exam.questionPools.forEach((questionPoolData)=>{
+      Attachment.insertMany(questionPoolData.attachments, (error,attachments)=>{
+        if(error) {
+          res.status(400).json("Error Attachment Insertion" + error)
+          return
+        }
+        let attachmentIds = []
+        attachments.forEach(attachment=>{
+          attachmentIds.push(attachment._id)
+        })
+        questionPoolData.attachments=attachmentIds
+        newQPools.push(questionPoolData)
+        if(newQPools.length == exam.questionPools.length){
+          saveQuestionPoolExam(newQPools,exam)
+        }
+      })
+    })
+  })
+}
+
+exports.getExams = async (req, res) => {
+  let page = parseInt(req.query.page)
+  let limit = parseInt(req.query.limit)
+  let searchKeyword = req.query.searchKeyword
+  let query = {courseId: ObjectId(req.params.courseId)}
+
+  if(!!searchKeyword)query.name = { $regex: searchKeyword }
+  if(!!!page)page = 0
+  if(!!!limit)limit = 10
+
+  Exam.find(query)
+  .skip((page - 1) * limit)
+  .sort({ createdAt: -1 })
+  .limit(limit).exec((err,result)=>{
+    if(err)res.status(400).json(err)
+    else res.json(result)
+  })
+}
 
 function getDateDiffInMinutes(d1, d2) {
   var diff = d2 - d1;

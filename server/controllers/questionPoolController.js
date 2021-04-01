@@ -83,6 +83,9 @@ exports.addNewQuestionPools = async (req, res, next) => {
   const type = req.body.type;
   const attachments = req.body.attachments;
   const tag = req.body.tag;
+  const playbackTimes = req.body.playbackTimes;
+  const correctScore = req.body.correctScore;
+  const wrongScore = req.body.wrongScore;
 
   const newQuestionPool = new QuestionPool({
     difficultyLabel,
@@ -92,7 +95,10 @@ exports.addNewQuestionPools = async (req, res, next) => {
     solution,
     type,
     attachments,
-    tag
+    tag,
+    playbackTimes,
+    correctScore,
+    wrongScore
   });
 
   newQuestionPool
@@ -127,6 +133,25 @@ exports.updateQuestionPool = async (req, res) => {
     })
     .catch((err) => res.Status(400).json("Error " + err));
 };
+
+exports.getQuestionPools = async (req, res) => {
+  let page = parseInt(req.query.page)
+  let limit = parseInt(req.query.limit)
+  let searchKeyword = req.query.searchKeyword
+  let query = {courseId: ObjectId(req.params.courseId)}
+
+  if(!!searchKeyword)query.question = { $regex: searchKeyword }
+  if(!!!page)page = 0
+  if(!!!limit)limit = 10
+
+  QuestionPool.find(query)
+  .skip((page - 1) * limit)
+  .sort({ createdAt: -1 })
+  .limit(limit).exec((err,result)=>{
+    if(err)res.status(400).json(err)
+    else res.json(result)
+  })
+}
 
 function getPresignURL(key) {
   const Key = key;

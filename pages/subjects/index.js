@@ -17,6 +17,10 @@ import NavBar from "../../components/Navbar/NavBar";
 import Home from "../../components/subject/Home";
 import Discussion from "../../components/subject/Discussion";
 import ExerciseSetting from "../../components/subject/ExerciseSetting";
+import CreateExercise from "../../components/subject/exercise/CreateExercise";
+import ExerciseList from "../../components/subject/exercise/ExerciseList";
+import CreateExam from "../../components/subject/exam/CreateExam";
+import ExamList from "../../components/subject/exam/ExamList";
 import InstructorItem from "../../components/subject/InstructorItem";
 import {
     getCourseById,
@@ -104,11 +108,12 @@ function CourseStatus(props) {
 }
 
 class Subject extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = { tabIndex: 0, course: {}, joined: 0 };
-        this.handleEnroll = this.handleEnroll.bind(this);
-    }
+
+  constructor(props) {
+    super(props);
+    this.state = { tabIndex: 0, course: {}, joined: 0, exercise_page_active: 'ExerciseList', exam_page_active: 'ExamList' };
+    this.handleEnroll = this.handleEnroll.bind(this);
+  }
 
     componentDidMount() {
         const { id } = this.props.router.query;
@@ -176,10 +181,22 @@ class Subject extends React.Component {
         }
     };
 
+
+    changeTabPage = (tabIndex, pageName) => {
+        if(tabIndex === 2){
+            this.setState({exercise_page_active: pageName})
+        }else if(tabIndex === 3){
+            this.setState({exam_page_active: pageName})
+        }else{
+            this.setState({tabIndex: tabIndex})
+        }
+    }
+
     render() {
         const { auth, router } = this.props;
         const { tabIndex, course, joined } = this.state;
         const { creator, instructors, createdAt, name } = course;
+
         let lengthInstructors = 0;
 
         if (instructors) {
@@ -315,7 +332,9 @@ class Subject extends React.Component {
                         <Tab label="Home" {...a11yProps(0)} />
                         <Tab label="Discussion" {...a11yProps(1)} />
                         <Tab label="Exercise" {...a11yProps(2)} />
+                        <Tab label="Exam" {...a11yProps(3)} />
                     </Tabs>
+                    {!course.isInstructor &&
                     <React.Fragment>
                         <TabPanel value={tabIndex} index={0}>
                             <Home
@@ -332,22 +351,91 @@ class Subject extends React.Component {
                             />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={1}>
-                            <Discussion
-                                auth={auth}
-                                courseId={router.query.id}
-                                isInstructor={course.isInstructor}
-                                className="subject-discussion"
-                            />
+                        <Discussion
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-discussion"
+                        />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={2}>
-                            <ExerciseSetting
-                                auth={auth}
-                                courseId={router.query.id}
-                                isInstructor={course.isInstructor}
-                                className="subject-exercise"
+                        <ExerciseSetting
+                            tabIndex = {2}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exercise"
                             />
                         </TabPanel>
                     </React.Fragment>
+                    }
+                    {course.isInstructor &&
+                    <React.Fragment>
+                        <TabPanel value={tabIndex} index={0}>
+                        <Home
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            instructors={instructors}
+                            createdAt={createdAt}
+                            creator={creator}
+                            className="subject-home"
+                        />
+                        </TabPanel>
+                        <TabPanel value={tabIndex} index={1}>
+                        <Discussion
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-discussion"
+                        />
+                        </TabPanel>
+                        <TabPanel value={tabIndex} index={2}>
+                        {this.state.exercise_page_active === 'ExerciseList'&&
+                            <ExerciseList
+                            tabIndex = {2}
+                            changeTabPage = {this.changeTabPage.bind(this)}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exercise-list"
+                            />
+                        }
+                        {this.state.exercise_page_active === 'CreateExercise'&&
+                            <CreateExercise
+                            tabIndex = {2}
+                            changeTabPage = {this.changeTabPage.bind(this)}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exercise-create"
+                            />
+                        }
+                        </TabPanel>
+                        <TabPanel value={tabIndex} index={3}>
+                        {this.state.exam_page_active === 'ExamList'&&
+                            <ExamList
+                            tabIndex = {3}
+                            changeTabPage = {this.changeTabPage.bind(this)}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exam-list"
+                            />
+                        }
+                        {this.state.exam_page_active === 'CreateExam'&&
+                            <CreateExam
+                            tabIndex = {3}
+                            changeTabPage = {this.changeTabPage.bind(this)}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exercise-create"
+                            />
+                        }
+                        </TabPanel>
+                    </React.Fragment>
+                    }
                 </Container>
             </NavBar>
         );
