@@ -101,7 +101,7 @@ exports.updatePost = async (req,res) => {
     //Only poster can edit his own post
     const {title, category, body, attachments} = req.body;
     let {post} = req;
-    post.title = title, post.category = category, post.body = body, post.attachments = attachments;
+    post.title = title, post.category = category, post.body = body, post.attachments = attachments, post.tag = req.newtags;
     let updatedPost = await post.save()
     updatedPost._doc.owned = true;
     return res.json({status: "ok", message: "post is updated", post: updatedPost})

@@ -48,8 +48,6 @@ const Tag = styled(({ label, onDelete, ...props }) => (
 
 
 export default function TagsForm({ tags, setTags }) {
-    
-    console.log(tags)
 
     return (
         <Autocomplete

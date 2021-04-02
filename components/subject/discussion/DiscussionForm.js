@@ -40,6 +40,13 @@ export default function DiscussionForm(props) {
 
     React.useEffect(() => {
         setOpen(props.open);
+        let wrs = document.querySelectorAll(".wrs_stack");
+
+        if (wrs) {
+            for (let item of wrs) {
+                item.parentNode.removeChild(item);
+            }
+        }
     }, [props.open]);
 
     const onValueChange = (event) => {
@@ -54,7 +61,7 @@ export default function DiscussionForm(props) {
     };
 
     const onCreateClick = () => {
-        console.log(discussion)
+        console.log(discussion);
         createCourseDiscussion(discussion)
             .then((res) => {
                 afterCreateDiscussion(res.discussions);
@@ -132,23 +139,24 @@ export default function DiscussionForm(props) {
                     <Editor
                         className="editor"
                         initialValue=""
-                        id='body'
+                        id="body"
                         init={{
                             height: 225,
-                            menubar: false,
+                            menubar: true,
                             file_picker_types: "file image media",
                             images_upload_handler: uploadImage,
                             external_plugins: {
                                 tiny_mce_wiris: "/js/plugin.min.js",
                             },
                             plugins: [
+                                "codesample",
                                 "advlist autolink lists link image charmap print preview anchor",
                                 "searchreplace visualblocks code fullscreen",
                                 "insertdatetime media table paste table code help image wordcount",
                             ],
                             toolbar:
-                                "tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | table | image | help",
-                            toolbar_mode: 'sliding'
+                                "codesample | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | table | image | help",
+                            toolbar_mode: "sliding",
                         }}
                         value={discussion.body}
                         onEditorChange={handleEditorChange}
@@ -170,9 +178,15 @@ export default function DiscussionForm(props) {
                             }
                             className="create-post-btn mybtn"
                         >
-                            {!!discussion._id
-                                ? <span><Update /> Update</span>
-                                : <span><Add /> Post</span>}
+                            {!!discussion._id ? (
+                                <span>
+                                    <Update /> Update
+                                </span>
+                            ) : (
+                                <span>
+                                    <Add /> Post
+                                </span>
+                            )}
                         </Button>
                     </Grid>
                 </DialogActions>

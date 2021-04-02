@@ -52,12 +52,22 @@ class DiscussionItem extends React.Component {
         return date.slice(0, 19).replace("T", " at ");
     };
 
+    componentDidUpdate(prev) {
+        if (this.state.showCreateAnAnswer !== prev.showCreateAnAnswer) {
+            let wrs = document.querySelectorAll(".wrs_stack");
+
+            if (wrs) {
+                for (let item of wrs) {
+                    item.parentNode.removeChild(item);
+                }
+            }
+        }
+    }
+
     render() {
         const { discussion, showCreateAnAnswer, showBestAnswer } = this.state;
         const { canEdit, canDelete } = discussion;
         const { deleteDiscussion } = this.props;
-
-        console.log(discussion);
 
         return (
             <div className="item-container">

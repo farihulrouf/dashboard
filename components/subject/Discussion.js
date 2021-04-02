@@ -56,7 +56,16 @@ const Discussion = (props) => {
         setOpenModal(false);
     };
 
-    console.log(openModal);
+    useEffect(() => {
+        let wrs = document.querySelectorAll(".wrs_stack");
+        console.log(wrs)
+        if (wrs) {
+            for (let item of wrs) {
+                item.parentNode.removeChild(item);
+            }
+        }
+        console.log(openModal)
+    }, [openModal]);
 
     return (
         <div className="subject-discussion">

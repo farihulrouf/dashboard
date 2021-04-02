@@ -153,7 +153,7 @@ router.get("/api/courses/:courseId/exercises", exerciseController.getExercises)
 
 router.get(
   "/api/courses/:courseId/posts",
-  authController.checkAuth,
+  // authController.checkAuth,
   catchErrors(courseController.getPosts)
 );
 
@@ -211,7 +211,7 @@ router.get(
 
 router.post(
   "/api/courses/review",
-  // authController.checkAuth,
+  authController.checkAuth,
   catchErrors(courseController.createReview)
 )
 
@@ -236,6 +236,7 @@ router.post(
   "/api/courses/:courseId/posts",
   authController.checkAuth,
   postController.validatePost,
+  catchErrors(tagController.addTags),
   catchErrors(courseController.createCoursePost),
   catchErrors(courseController.getPosts)
 );
@@ -261,12 +262,15 @@ router.put(
   "/api/posts/:postId",
   authController.checkAuth,
   postController.validatePost,
+  catchErrors(tagController.deleteTags),
+  catchErrors(tagController.addTags),
   catchErrors(postController.updatePost)
 )
 
 router.delete(
   "/api/posts/:postId",
   authController.checkAuth,
+  catchErrors(tagController.deleteTags),
   catchErrors(postController.deletePost),
   catchErrors(courseController.getPosts)
 )
@@ -474,15 +478,15 @@ router.get(
   catchErrors(tagController.getTags)
 )
 
-router.post(
-  "/api/tag",
-  // authController.checkAuth,
-  catchErrors(tagController.addTags)
-)
+// router.post(
+//   "/api/tag",
+//   // authController.checkAuth,
+//   catchErrors(tagController.addTags)
+// )
 
-router.delete(
-  "/api/tag",
-  // authController.checkAuth,
-  catchErrors(tagController.deleteTags)
-)
+// router.delete(
+//   "/api/tag",
+//   // authController.checkAuth,
+//   catchErrors(tagController.deleteTags)
+// )
 module.exports = router;

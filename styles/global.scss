@@ -55,9 +55,9 @@ h6,
 label,
 p,
 span {
-    transition: all 0.4s;
+    // transition: all 0.4s;
     // font-family: 'Roboto', sans-serif;
-    font-family: "Gilroy" !important;
+    font-family: "Gilroy", sans-serif;
     margin: 0;
     line-height: 1.5;
     // font-weight: 900;
@@ -97,7 +97,6 @@ input[type="text"] {
 button {
     padding: 4px !important;
     border-radius: 4px !important;
-    min-width: 0 !important;
 
     span {
         font-size: 1rem;
@@ -136,26 +135,27 @@ span {
     position: relative !important;
     min-height: 100vh;
     padding: 0 !important;
+    top: -3px;
 }
 
-// .alert {
-//     position: absolute!important;
-//     width: 96%;
+.alert {
+    position: absolute!important;
+    width: 96%;
 
-//     span {
-//         position: relative;
-//         display: flex;
-//         z-index: 10;
-//     }
+    span {
+        position: relative;
+        display: flex;
+        z-index: 10;
+    }
 
-//     .MuiButtonBase-root {
-//         display: flex;
-//         justify-content: flex-end;
-//         align-items: center;
-//         width: 50px;
-//         margin-right: 10px;
-//     }
-// }
+    .MuiButtonBase-root {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        width: 50px;
+        margin-right: 10px;
+    }
+}
 
 .MuiCircularProgress-root {
     margin: 10vh 0 12vh !important;
@@ -176,6 +176,24 @@ div::-webkit-scrollbar-thumb {
     /* color of the scroll thumb */
     border-radius: 20px;
     border-right: solid 2px white;
+}
+
+pre[class*="language-"]{
+    max-height: 800px
+}
+
+input {
+    font-family: 'Gilroy', sans-serif !important;
+}
+
+div[class*="Mui"] {
+    font-family: "Gilroy", sans-serif !important;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
+}
+
+.MuiInputBase-input, .MuiTypography-body1 {
+    font-family: "Gilroy", sans-serif !important;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
 }
 
 @import "Navbar.module.scss";

@@ -27,6 +27,8 @@ import PostForm from "./PostForm";
 import MathJax from "react-mathjax-preview";
 import Router from "next/router";
 import React, { useState, useEffect, useRef } from "react";
+import Prism from "prismjs";
+import "prismjs/components/prism-c";
 
 const PostItem = (props) => {
     // const [showComment, setShowComment] = useState(false);
@@ -73,15 +75,14 @@ const PostItem = (props) => {
 
     useEffect(() => {
         setData(props.data);
-    }, [props.data]);
+        //Prism.highlightAll();
+    }, [props.data, readMore]);
 
     const { auth, blur } = props;
     
     const onDownloadAll = async (postId) =>{
         window.open(`archive/${postId}.zip`)
     }
-
-    console.log(blur)
 
     return (
         <Grid className={blur ? "post-box blurred" : "post-box"} id={props.data._id}>
@@ -156,7 +157,10 @@ const PostItem = (props) => {
                     <hr />
                     <Grid item className="post-body">
                         {readMore ? (
-                            <MathJax math={data.body} />
+                            <MathJax math={data.body} 
+                                onDisplay={() => Prism.highlightAll()} 
+                            />
+                            //<div dangerouslySetInnerHTML={{__html: data.body}}></div>
                         ) : (
                             <MathJax
                                 math={
@@ -164,6 +168,7 @@ const PostItem = (props) => {
                                         ? `${data.body.slice(0, 1000)}`
                                         : data.body
                                 }
+                                onDisplay={() => Prism.highlightAll()}
                             />
                         )}
 

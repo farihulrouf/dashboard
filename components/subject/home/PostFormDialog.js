@@ -13,9 +13,9 @@ class PostFormDialog extends React.Component{
   render(){
     const {open, courseId, callback, auth, onClosePostForm} = this.props;
     return(
-      <Dialog className="create-post" open={open} onClose={onClosePostForm} fullWidth={true} maxWidth='md' aria-labelledby="form-dialog-title" >
+      <Dialog disableEnforceFocus={true} className="create-post" open={open} onClose={onClosePostForm} fullWidth={true} maxWidth='md' aria-labelledby="form-dialog-title" >
         <DialogContent>
-          <PostForm courseId={courseId} callback={callback} auth={auth} open={open} closeDialog={onClosePostForm}/>
+          <PostForm courseId={courseId} callback={callback} auth={auth} open={open} closeDialog={onClosePostForm} wrsReady={open} />
         </DialogContent>
       </Dialog>
     )

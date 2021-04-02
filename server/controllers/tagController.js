@@ -6,37 +6,42 @@ exports.getTags = async (req, res) =>{
   res.status(200).json({status : "ok", tags: tags});
 }
 
-exports.addTags = async(req, res) =>{
-  const {tagnames} = req.body;
+exports.addTags = async(req, res, next) =>{
+  const {tag} = req.body;
   let newtags = []
   let newtag
-
-  for (let i = 0; i <tagnames.length; i++){
-    newtag = await Tag.findOneAndUpdate(
-      {name:tagnames[i]},
-      {$inc : {frequency : 1}},
-      {new : true, upsert:true},
-    );
-    newtags.push(newtag);
+  if(tag){
+    for (let i = 0; i <tag.length; i++){
+      newtag = await Tag.findOneAndUpdate(
+        {name:tag[i]},
+        {$inc : {frequency : 1}},
+        {new : true, upsert:true},
+      );
+      newtags.push(newtag);
+    }
   }
+  req.newtags = newtags
+  next()
 
-  return res.status(200).json({status : "ok", tag: newtags})
+  // return res.status(200).json({status : "ok", tag: newtags})
 }
 
-exports.deleteTags = async(req, res) =>{
-  const {tagnames} = req.body;
+exports.deleteTags = async(req, res, next) =>{
+  const {tag} = req.post;
 
-  let newtags = []
+  // let newtags = []
   let newtag
-
-  for (let i = 0; i <tagnames.length; i++){
-    newtag = await Tag.findOneAndUpdate(
-      {name:tagnames[i]},
-      {$inc : {frequency : -1}},
-      {new : true},
-    );
-    newtags.push(newtag);
+  if(tag){
+    for (let i = 0; i <tag.length; i++){
+      newtag = await Tag.findOneAndUpdate(
+        {name:tag[i].name},
+        {$inc : {frequency : -1}},
+        {new : true},
+      );
+      // newtags.push(newtag);
+    }
   }
 
-  return res.status(200).json({status : "ok", tag: newtags})
+  next()
+  // return res.status(200).json({status : "ok", tag: newtags})
 }

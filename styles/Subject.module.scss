@@ -51,7 +51,6 @@
         }
 
         .subject-header-desc {
-            width: 65% !important;
 
             .creator-container {
                 display: flex;
@@ -60,18 +59,18 @@
                 margin-bottom: 15px;
 
                 .creator-logo {
-                    height: 100%;
+                    height: auto;
                     display: flex;
                     width: auto;
                     justify-content: center;
                     align-items: center;
                     margin-right: 20px;
 
-                    .logo {
-                        width: 54px;
-                        height: 54px;
-                        border: 3px solid white;
-                        background-color: #3f51b5;
+                    div {
+                        width: 55px;
+                        height: 55px;
+                        font-size: 14px;
+                        font-weight: 300;
                     }
                 }
 
@@ -140,6 +139,7 @@
             margin: 0;
             align-items: flex-start;
             margin-left: auto;
+            width: 50%;
 
             .btn-container {
                 display: flex;
@@ -149,6 +149,7 @@
                 .price-tag {
                     display: block;
                     text-align: center;
+                    width: auto
                 }
 
                 .mybtn {
@@ -158,10 +159,7 @@
                     padding-left: 20px !important;
                     padding-right: 20px !important;
                     margin-bottom: 20px;
-
-                    @media (max-width: 1024px) {
-                        min-width: 175px !important;
-                    }
+                    width: auto;
 
                     span {
                         color: #3f51b5;
@@ -181,6 +179,10 @@
 
             .enrolled-tag {
                 border: solid 2px #2cb98f !important;
+                
+                span {
+                    color: #2cb98f !important;
+                }
             }
 
             .pending-tag {
@@ -991,18 +993,15 @@
     border-radius: 4px !important;
 }
 
-div[role="toolbar"]:nth-child(2) {
-    flex-grow: 1;
+// div[role="toolbar"]:nth-child(3) {
+//     flex-grow: 1;
 
-    button {
-        width: 100%;
-    }
-
-    .tox-tbtn__select-chevron {
-        margin-left: auto;
-        display: inline-block;
-    }
-}
+//     button {
+//         width: 100%;
+//         display: flex;
+//         justify-content: space-between;
+//     }
+// }
 
 .tox-statusbar__text-container {
     align-items: center;
@@ -1263,6 +1262,7 @@ div[role="toolbar"]:nth-child(2) {
 
 .item-container {
     position: relative;
+    margin-bottom: 30px;
 
     .edit-delete button {
         margin-top: 25px;
@@ -1547,3 +1547,37 @@ div[role="toolbar"]:nth-child(2) {
         color:rgba(63,81,181, .5);
     }
 }
+
+// .wrs_editor {
+//     .wrs_toolbar {
+//         display: block !important;
+//     }
+
+//     .wrs_formulaDisplay{
+//         bottom: 0;
+//         // height: 153px !important;
+//         height: 100%;
+//         margin-right: 5px;
+//     }
+
+//     .wrs_handWrapper input[title="Go to handwritten mode"] {
+//        width: 28px !important;
+//        top: 99px;
+//     }
+
+//     button {
+//         padding: 0 !important;
+//     }
+
+//     .wrs_modal_button_accept, wrs_modal_button_cancel {
+//         width: 80px !important;
+//     }
+// }
+
+// .tox-collection__item{
+//     padding: 8px !important;
+// }
+
+// .wrs_maximized {
+//     // width: 1200px;
+// }

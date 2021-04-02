@@ -72,7 +72,7 @@ class Attachments extends React.Component {
 class PostForm extends React.Component {
     constructor(props) {
         super(props);
-     
+
         const { _id, title, body, category, attachments } = props.post || {};
         this.state = {
             newPost: {
@@ -199,10 +199,21 @@ class PostForm extends React.Component {
         closeDialog();
     };
 
+    componentDidUpdate(prev) {
+        if (this.props.wrsReady !== prev.wrsReady) {
+            let wrs = document.querySelectorAll(".wrs_stack");
+
+            if (wrs) {
+                for (let item of wrs) {
+                    item.parentNode.removeChild(item);
+                }
+            }
+        }
+    }
+
     render() {
         const { newPost } = this.state;
         const { auth } = this.props;
-        console.log(this.props);
 
         return (
             <form onSubmit={(e) => this.onSubmit(e, this.props.courseId)}>
@@ -238,20 +249,21 @@ class PostForm extends React.Component {
                     initialValue=""
                     init={{
                         height: 225,
-                        menubar: false,
+                        menubar: true,
                         file_picker_types: "file image media",
                         images_upload_handler: this.uploadImage,
                         external_plugins: {
                             tiny_mce_wiris: "/js/plugin.min.js",
                         },
                         plugins: [
+                            "codesample",
                             "advlist autolink lists link image charmap print preview anchor",
                             "searchreplace visualblocks code fullscreen",
                             "insertdatetime media table paste table code help image wordcount",
                         ],
                         toolbar:
-                            "tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | table | image | help",
-                        toolbar_mode: 'sliding'
+                            "codesample | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | table | image | help",
+                        toolbar_mode: "sliding",
                     }}
                     value={newPost.body}
                     onEditorChange={this.handleEditorChange}
@@ -287,8 +299,18 @@ class PostForm extends React.Component {
                         </Grid>
                     </Grid>
                     <Grid item className="right-foot">
-                        <label htmlFor={`files/${newPost._id ? newPost._id : ''}`}>
-                            <input style={{display: 'none'}} value="" id={`files/${newPost._id ? newPost._id : ''}`} type="file" name="files" onChange={this.onFileChange} multiple />
+                        <label
+                            htmlFor={`files/${newPost._id ? newPost._id : ""}`}
+                        >
+                            <input
+                                style={{ display: "none" }}
+                                value=""
+                                id={`files/${newPost._id ? newPost._id : ""}`}
+                                type="file"
+                                name="files"
+                                onChange={this.onFileChange}
+                                multiple
+                            />
                             <Button
                                 color="primary"
                                 size="small"

@@ -33,7 +33,7 @@ export default class DeleteDialog extends React.Component{
         const {open, handleClose, onDelete} = this.props;
         return (
             <div>
-              <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+              <Dialog disableEnforceFocus={true} open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
                 <DialogTitle id="form-dialog-title">Delete Post</DialogTitle>
                 <DialogContent>
                   <DialogContentText>

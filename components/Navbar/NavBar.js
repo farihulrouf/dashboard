@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Router from "next/router";
 import {
     AppBar,
-    Toolbar,
     List,
     ListItem,
     IconButton,

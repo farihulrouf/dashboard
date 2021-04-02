@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const crypto = require('crypto');
 const {ObjectId} = require("mongodb");
 const Payment = mongoose.model("Payment");
+const Course = mongoose.model('Course');
 const dev = process.env.NODE_ENV !== "production";
 const port = process.env.PORT || 3000;
 const ROOT_URL = dev ? `http://localhost:${port}` : process.env.PRODUCTION_URL;
@@ -95,10 +96,23 @@ exports.paymentCallback = async (req, res) => {
         }
       }
     )
-  
+    if(req.body.status === 'PAID'){
+      Course.findByIdAndUpdate(
+        payment.course, 
+        {$push : {participants : payment.user}},
+        (err, res) =>{
+          if(err){
+            return res.json({error : err});
+          }
+        }
+      )
+    }
+
     return res.json({status: "ok", payment: payment});
   }
-  return res.json({status: "error", message: "permission denied"});
+  else{
+    return res.json({status: "error", message: "permission denied"});
+  }
 }
 
 createExternalId = (email, desc) => {

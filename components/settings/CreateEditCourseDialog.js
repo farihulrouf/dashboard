@@ -118,7 +118,7 @@ export default function CreateEditCourseDialog(props) {
 
   return (
     <div>
-      <Dialog onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
+      <Dialog disableEnforceFocus={true} onClose={handleClose} aria-labelledby="customized-dialog-title" open={open}>
         <MyDialogTitle id="customized-dialog-title" onClose={handleClose}>
           {title}
         </MyDialogTitle>

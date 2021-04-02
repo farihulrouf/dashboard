@@ -11,10 +11,8 @@ import { set } from "js-cookie";
 const Material = ({ auth }) => {
     const [data, setData] = useState([]);
     const [loadMoreAvail, setLoadMoreAvail] = useState(false);
-
-    const [isLoading, setIsLoading] = useState(false);
-
     const [open, setOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [filter, setFilter] = useState({
         query: "",
@@ -41,6 +39,7 @@ const Material = ({ auth }) => {
 
     useEffect(() => {
         getCourses(filter).then((res) => {
+            console.log(res)
             setIsLoading(false);
             setData((prev) => [...prev, ...res.courses]);
             setLoadMoreAvail(res.avail);

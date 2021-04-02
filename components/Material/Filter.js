@@ -106,18 +106,18 @@ const Filter = ({
   const [low, high] = filter.price;
 
   const valueLabelFormat = (value) => {
-    const array = String(value).split("");
-    const length = array.length;
-    return `Rp. ${array
-      .map((char, index) => {
-        if (index > 0 && index % 3 === length % 3) {
-          return `.${char}`;
-        } else {
-          return char;
-        }
-      })
-      .join("")}`;
-  };
+        const array = String(value).split("");
+
+        return `Rp. ${array
+            .map((char, index) => {
+                if (index > 0 && index % 3 === array.length % 3) {
+                    return `.${char}`;
+                } else {
+                    return char;
+                }
+            })
+            .join("")},00`;
+    };
 
   return (
     <Dialog

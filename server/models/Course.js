@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { ObjectId } = mongoose.Schema;
+const CONSTANT = require('../../constant');
 
 const courseSchema = new mongoose.Schema(
     {
@@ -65,6 +66,20 @@ courseSchema.index({ about: 1 })
 courseSchema.index({createdAt: 1 });
 courseSchema.index({instructors: 1})
 
-
+courseSchema.methods.getStatus = function(payment, user){
+  //Check user enrollment status
+  //2 = Enrolled
+  //1 = Pending
+  //0 = Not enrolled
+  if(this.participants.find(e=> e._id.equals(user._id)) || payment.find(e => e.user.equals(user._id) && (e.status === "PAID") )){
+    return CONSTANT.PAYMENT_STATUS_PAID;
+  }
+  else if(payment.find(e => e.user.equals(user._id) && (e.status === "PENDING") )){
+    return CONSTANT.PAYMENT_STATUS_PENDING;
+  }
+  else{
+    return CONSTANT.PAYMENT_STATUS_UNREGISTERED;
+  }
+}
 
 module.exports = mongoose.model("Course", courseSchema);

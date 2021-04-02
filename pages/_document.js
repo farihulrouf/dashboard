@@ -17,6 +17,7 @@ export default class MyDocument extends Document {
                         rel="stylesheet"
                         href="https://fonts.googleapis.com/css?family=Lato:300,400,500,600,700&display=swap"
                     />
+                    <link rel="stylesheet" href="/static/css/prism.css" />
                 </Head>
                 <body>
                     <Main />

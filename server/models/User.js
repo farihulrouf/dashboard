@@ -144,7 +144,8 @@ userSchema.methods.canCreateDiscussion = function(course) {
 userSchema.methods.isInstructor = function (course) {
     //isInstructor is true if user is a creator or an instructor of a given course
     const {creator, instructors} = course;
-    return !!(creator._id.equals(this._id) || instructors.find(e => e._id.equals(this._id)) || creator.teachers.includes(this._id));
+    console.log(creator._id);
+    return !!(creator._id.equals(this._id) || instructors.find(e => e._id.equals(this._id)) );
 }
 
 userSchema.pre("findOne", function (next) {

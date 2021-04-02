@@ -8,6 +8,11 @@
     align-items: flex-start;
     justify-content: center;
     z-index: 5!important;
+
+    button {
+        min-width: 0 !important;
+    }
+
     // height:100%
     .container {
         display: flex;

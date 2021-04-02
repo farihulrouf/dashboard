@@ -5,6 +5,8 @@ const Post = mongoose.model("Post");
 const Discussion = mongoose.model("Discussion");
 const Review = mongoose.model("Review");
 const CourseRequest = mongoose.model("CourseRequest");
+const Payment = mongoose.model("Payment");
+const User = mongoose.model('User');
 
 exports.getCourses = async (req, res) => {
   var {
@@ -17,15 +19,17 @@ exports.getCourses = async (req, res) => {
     limit,
   } = req.query;
 
-  const match = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
+  if(query){
+    const match = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
+  }
   const [low, high] = price;
   limit = parseInt(limit);
   page = parseInt(page);
 
   let filter = {
     price: {
-      $lte: high,
-      $gte: low,
+      $lte: parseInt(high),
+      $gte: parseInt(low),
     },
     rating: {
       $gte: parseInt(rating) || 0,
@@ -61,9 +65,77 @@ exports.getCourses = async (req, res) => {
 
   const length = await Course.countDocuments(filter);
   const avail = page * limit < length;
-  const courses = await Course.find(filter)
-    .skip((page - 1) * limit)
-    .limit(limit);
+
+  let user_id = req.user ? req.user._id : ""
+  console.log(filter)
+  console.log("get Courses")
+  let courses = await Course.aggregate([
+    {$match: filter}, 
+    {$lookup: 
+      {from: Payment.collection.name, 
+        let: {"id": "$_id"}, 
+        as: 'user_payment', 
+        "pipeline": [
+          {$match: {$expr: 
+            {$eq: ["$course","$$id"]}, 
+            "user": user_id
+          }},
+          {$sort : {"createdAt":-1, "_id" : -1}}, 
+          {$limit : 1},
+          {$project: {'status': 1}}] 
+      }
+    },
+    //populate instructors
+    {$unwind : {path : "$instructors", preserveNullAndEmptyArrays: true}},
+    {$lookup : {
+      from : User.collection.name,
+      let : {"id" : "$instructors"},
+      as : "instructors",
+      "pipeline" : [
+        {$match : {$expr : {$eq : ["$_id", "$$id"]}}},
+        {$project : {"_id":1, "name":1, "avatar":1, "linkedIn":1}}
+      ]
+    }},
+    {$unwind : {path : "$instructors", preserveNullAndEmptyArrays: true}},
+    {$group : { 
+      _id : "$_id",
+      instructorsDet : {$push : "$instructors"},
+      doc : {$first : "$$ROOT"}
+    }},
+    {$sort : {"doc.createdAt" : 1}},
+    {$replaceRoot:{"newRoot": {"$mergeObjects" : ["$doc", {instructors : "$instructorsDet"}]}}},
+    //populate creator
+    {$lookup : {
+      from : User.collection.name,
+      let : {"id" : "$creator"},
+      as : "creator",
+      "pipeline" : [
+        {$match : {$expr : {$eq : ["$_id", "$$id"]}}},
+        {$project : {"_id":1, "name":1, "avatar":1, "linkedIn":1, "isAnOrganization":1}}
+      ]
+    }},
+    {$unwind : {path : "$creator", preserveNullAndEmptyArrays: true}}
+  ])
+  .skip((page - 1) * limit)
+  .limit(limit);
+
+  console.log(courses);
+
+  courses.forEach(function(course){
+    try{
+      if (req.user){
+        course.isInstructor = req.user.isInstructor(course);
+      }
+      else{
+        course.isInstructor = false;
+      }
+    }catch(err){
+      console.log(err);
+    }
+  })
+  console.log("finish adding isInstructor")
+
+  // console.log(courses);
   res.json({ avail, courses });
 };
 
@@ -98,6 +170,8 @@ exports.getCourseById = async (req, res, next, id) => {
   const course = await Course.findById(id);
   req.course = course;
   if (req.course && req.user) {
+    let payment = await Payment.find({course:course._id})
+    req.course._doc.enrollStatus = req.course.getStatus(payment, req.user);
     req.course._doc.isInstructor = req.user.isInstructor(course);
     return next();
   }
@@ -108,6 +182,8 @@ exports.getCourse = async (req, res) => {
   const course = await Course.findById(req.course.id);
   req.course = course;
   if (req.course && req.user) {
+    let payment = await Payment.find({course:course._id})
+    req.course._doc.enrollStatus = req.course.getStatus(payment, req.user);
     req.course._doc.isInstructor = req.user.isInstructor(course);
     return res.json({ course: req.course });
   }
@@ -230,11 +306,12 @@ exports.updateCourse = (req, res, next) => {
 // res.json({status: "error", message: firstError});     } next(); }
 
 exports.createCoursePost = async (req, res, next) => {
-  const { title, body, category, attachments } = req.body;
+  const { title, body, category, attachments, } = req.body;
   let post = new Post({
     title: title,
     body: body,
     category: category,
+    tag:req.newtags,
     postedOn: req.course,
     postedBy: req.user,
   });
@@ -251,7 +328,7 @@ exports.createCoursePost = async (req, res, next) => {
 exports.getPosts = async (req, res) => {
   const courseId = req.params.courseId || req.post.postedOn;
   console.log(req.query);
-  let { category, content, page, dateStart, dateEnd, creator } = req.query;
+  let { category, content, page, dateStart, dateEnd, creator, tag } = req.query;
   const options = {
     page: parseInt(page),
     limit: 10,
@@ -322,15 +399,24 @@ exports.getPosts = async (req, res) => {
     };
   }
 
+  if(tag){
+    params.tag = {
+      $elemMatch : {$in : tag.map((e) => ObjectId(e._id))}
+    }
+  }
+
   console.log(params);
   // console.log(test);
 
   const posts = await Post.paginate(params, options);
-  posts.docs.forEach((post) => {
-    idx = post.likes.likedBy.indexOf(req.user._id);
-    post._doc.isLike = idx >= 0 ? true : false;
-    post._doc.owned = post.postedBy.id == req.user.id;
-  });
+  if(req.user){
+    posts.docs.forEach((post) => {
+      idx = post.likes.likedBy.indexOf(req.user._id);
+      post._doc.isLike = idx >= 0 ? true : false;
+      post._doc.owned = post.postedBy.id == req.user.id;
+    });
+  }
+
   if (req.user) {
     res.json({ status: "ok", posts: posts });
   } else {

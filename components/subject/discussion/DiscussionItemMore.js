@@ -7,7 +7,7 @@ class DiscussionItemMore extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            anchorEl: null,
+            anchorEl: false,
             discussion_id: this.props.discussion._id,
             openEditor: false,
         };
