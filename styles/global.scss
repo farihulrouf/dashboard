@@ -196,6 +196,9 @@ div[class*="Mui"] {
     transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
 }
 
+.MathJax {
+    font-size: 26px !important;
+}
 @import "Navbar.module.scss";
 @import "Home.module.scss";
 @import "Subject.module.scss";
