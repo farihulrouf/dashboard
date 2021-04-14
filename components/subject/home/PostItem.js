@@ -28,7 +28,9 @@ import MathJax from "react-mathjax-preview";
 import Router from "next/router";
 import React, { useState, useEffect, useRef } from "react";
 import Prism from "prismjs";
+//List all highlightable languages
 import "prismjs/components/prism-c";
+import "prismjs/components/prism-cpp";
 
 const PostItem = (props) => {
     // const [showComment, setShowComment] = useState(false);
@@ -159,8 +161,9 @@ const PostItem = (props) => {
                         {readMore ? (
                             <MathJax math={data.body} 
                                 onDisplay={() => Prism.highlightAll()} 
+                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"]}}
                             />
-                            //<div dangerouslySetInnerHTML={{__html: data.body}}></div>
+                            // <div dangerouslySetInnerHTML={{__html: data.body}}></div>
                         ) : (
                             <MathJax
                                 math={
@@ -169,7 +172,9 @@ const PostItem = (props) => {
                                         : data.body
                                 }
                                 onDisplay={() => Prism.highlightAll()}
+                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"]}}
                             />
+                            // <div dangerouslySetInnerHTML={{__html: data.body}}></div>
                         )}
 
                         {data.body.length > 1000 ? (
