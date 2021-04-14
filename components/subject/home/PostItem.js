@@ -161,7 +161,7 @@ const PostItem = (props) => {
                         {readMore ? (
                             <MathJax math={data.body} 
                                 onDisplay={() => Prism.highlightAll()} 
-                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"]}}
+                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ["allowfullscreen"]}}
                             />
                             // <div dangerouslySetInnerHTML={{__html: data.body}}></div>
                         ) : (
@@ -172,7 +172,7 @@ const PostItem = (props) => {
                                         : data.body
                                 }
                                 onDisplay={() => Prism.highlightAll()}
-                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"]}}
+                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ["allowfullscreen"]}}
                             />
                             // <div dangerouslySetInnerHTML={{__html: data.body}}></div>
                         )}
