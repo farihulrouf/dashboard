@@ -197,7 +197,11 @@ div[class*="Mui"] {
 }
 
 .MathJax {
-    font-size: 26px !important;
+    font-size:  0.9rem !important;
+
+    span {
+        font-size: 100% !important;
+    }
 }
 @import "Navbar.module.scss";
 @import "Home.module.scss";
