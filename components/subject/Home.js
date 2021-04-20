@@ -101,6 +101,7 @@ class Home extends React.Component {
             isEnrolled === 2 ? posts.docs : posts.docs.slice(0, 4);
 
         const length = currentPost.length;
+        console.log(length)
 
         return (
             <div className="subject-home">
@@ -132,7 +133,7 @@ class Home extends React.Component {
                     <Grid item xs={12}>
                         <List>
                             {currentPost.map((value, index) => {
-                                if (index === 3 && isEnrolled !== 2) {
+                                if (index === 3 && isEnrolled !== 2 && !isInstructor) {
                                     return (
                                         <Grid item key={value._id} className="post-item-container">
                                             <PostItem
@@ -159,7 +160,7 @@ class Home extends React.Component {
                             })}
                         </List>
 
-                        {isEnrolled !== 2 && (
+                        {length >= 4 && isEnrolled !== 2 && !isInstructor && (
                             <NotEnrolled
                                 price={this.props.price}
                                 enroll={this.props.enroll}

@@ -68,9 +68,8 @@ const valueLabelFormat = (value) => {
 };
 
 function CourseStatus(props) {
-    const {status, price, handleEnroll, isInstructor} = props;
-    if (isInstructor) 
-        return "";
+    const { status, price, handleEnroll, isInstructor } = props;
+    if (isInstructor) return "";
     if (status === CONSTANT.PAYMENT_STATUS_PENDING) {
         return (
             <Grid container className="btn-container">
@@ -156,7 +155,7 @@ class Subject extends React.Component {
 
             createInvoice(payload).then((res) => {
                 if (!res.data.error) {
-                    this.setState({joined: CONSTANT.PAYMENT_STATUS_PENDING});
+                    this.setState({ joined: CONSTANT.PAYMENT_STATUS_PENDING });
                     window.open(res.data.invoice_url, "_blank");
                 } else {
                     console.log(res.data.error);
@@ -188,7 +187,9 @@ class Subject extends React.Component {
     render() {
         const { auth, router } = this.props;
         const { tabIndex, course, joined } = this.state;
-        const { creator, instructors, createdAt, name } = course;
+        const { creator, instructors, createdAt, name, isInstructor } = course;
+
+        console.log(course);
 
         let lengthInstructors = 0;
 
@@ -318,7 +319,7 @@ class Subject extends React.Component {
                             <Home
                                 auth={auth}
                                 courseId={router.query.id}
-                                isInstructor={course.isInstructor}
+                                isInstructor={isInstructor}
                                 instructors={instructors}
                                 creator={creator}
                                 price={course.price}

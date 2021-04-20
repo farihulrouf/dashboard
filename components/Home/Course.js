@@ -29,6 +29,7 @@ function getRandomColor(name) {
   }
 
 const Course = ({ courseItem }) => {
+
     const valueLabelFormat = (value) => {
         const array = String(value).split("");
         const length = array.length;
@@ -50,14 +51,13 @@ const Course = ({ courseItem }) => {
 
     const getStatusCourse = () => {
         const { user_payment } = courseItem;
-        let payment_status = (user_payment[0] || {}).status;
-        if (payment_status === PAYMENT_STATUS_EXPIRED)
-            payment_status = PAYMENT_STATUS_UNREGISTERED;
-        return payment_status || PAYMENT_STATUS_UNREGISTERED;
+        let payment_status = (user_payment[0] || {}).status ;
+        if(payment_status === PAYMENT_STATUS_EXPIRED) payment_status = PAYMENT_STATUS_UNREGISTERED;
+        return ( payment_status || PAYMENT_STATUS_UNREGISTERED);
     };
 
     let courseStatus = getStatusCourse();
-
+    
     return (
         <Grid className="course-container">
             <Grid container className="course-content">

@@ -116,7 +116,7 @@ exports.getCourses = async (req, res) => {
     }},
     {$unwind : {path : "$creator", preserveNullAndEmptyArrays: true}}
   ])
-  .skip((page - 1) * limit)
+  .skip(Math.max(0, page - 1) * limit)
   .limit(limit);
 
   console.log(courses);
