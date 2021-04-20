@@ -58,9 +58,11 @@ function a11yProps(index) {
 const valueLabelFormat = (value) => {
     const array = String(value).split("");
 
-    return `Rp. ${array.map((char, index) => {
-        if (index > 0 && index % 3 === array.length % 3) {
-            return `.${char}`;} else {
+    return `Rp. ${array
+        .map((char, index) => {
+            if (index > 0 && index % 3 === array.length % 3) {
+                return `.${char}`;
+            } else {
                 return char;
             }
         })
@@ -291,11 +293,17 @@ class Subject extends React.Component {
                                 <p>Instructors:</p>
                             </Grid>
                             <Grid item container>
-                                {lengthInstructors
-                                    ? (instructors.map((instructor, index) => (<InstructorItem key={index} id={instructor._id} data={instructor}/>)))
-                                    : (
-                                        <span>No available instructors</span>
-                                    )}
+                                {lengthInstructors ? (
+                                    instructors.map((instructor, index) => (
+                                        <InstructorItem
+                                            key={index}
+                                            id={instructor._id}
+                                            data={instructor}
+                                        />
+                                    ))
+                                ) : (
+                                    <span>No available instructors</span>
+                                )}
                             </Grid>
                         </Grid>
                     </Container>

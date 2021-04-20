@@ -79,14 +79,6 @@
             cursor: pointer;
         }
 
-        p,
-        ul,
-        li {
-            font-weight: 300;
-            font-size: 0.9rem;
-            line-height: 1.67;
-        }
-
         h1,
         h2,
         h3,
@@ -99,6 +91,7 @@
 
         h1 {
             font-size: 2.5rem;
+            margin-bottom: 15px;
         }
 
         h2 {
@@ -118,7 +111,9 @@
         }
 
         strong {
+            // display: block;
             font-weight: 600;
+            // margin-top: 5px;
         }
 
         p + p {
@@ -153,6 +148,10 @@
 
         td {
             padding: 5px 10px !important;
+        }
+
+        img {
+            margin-bottom: 15px;
         }
 
         .read-less {

@@ -45,7 +45,8 @@ html {
 
 a,
 button,
-div,
+.nav-item,
+.MuiTab-wrapper,
 h1,
 h2,
 h3,
@@ -53,14 +54,10 @@ h4,
 h5,
 h6,
 label,
-p,
-span {
-    // transition: all 0.4s;
-    // font-family: 'Roboto', sans-serif;
+p {
     font-family: "Gilroy", sans-serif;
     margin: 0;
     line-height: 1.5;
-    // font-weight: 900;
 }
 
 h1 {
@@ -113,6 +110,8 @@ button:hover {
     border-radius: 4px;
 
     span {
+        font-family: 'Gilroy', sans-serif;
+
         @media (min-width: 1600px) {
             font-size: 1.1rem;
         }
@@ -136,25 +135,6 @@ span {
     min-height: 100vh;
     padding: 0 !important;
     top: -3px;
-}
-
-.alert {
-    position: absolute!important;
-    width: 96%;
-
-    span {
-        position: relative;
-        display: flex;
-        z-index: 10;
-    }
-
-    .MuiButtonBase-root {
-        display: flex;
-        justify-content: flex-end;
-        align-items: center;
-        width: 50px;
-        margin-right: 10px;
-    }
 }
 
 .MuiCircularProgress-root {
@@ -186,23 +166,11 @@ input {
     font-family: 'Gilroy', sans-serif !important;
 }
 
-div[class*="Mui"] {
+.MuiInputBase-input, .MuiTypography-colorTextPrimary {
     font-family: "Gilroy", sans-serif !important;
     transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
 }
 
-.MuiInputBase-input, .MuiTypography-body1 {
-    font-family: "Gilroy", sans-serif !important;
-    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
-}
-
-.MathJax {
-    font-size:  0.9rem !important;
-
-    span {
-        font-size: 100% !important;
-    }
-}
 @import "Navbar.module.scss";
 @import "Home.module.scss";
 @import "Subject.module.scss";
