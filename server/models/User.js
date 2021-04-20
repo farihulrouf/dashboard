@@ -181,6 +181,10 @@ function parseStringSync (str) {
     return result;
 }
 
+userSchema.methods.canCreateRoom = async function(course){
+    return course.instructors.includes(this._id) || course.creator._id === this._id
+}
+
 userSchema.methods.join = async function(room){
     await room.getLink();
     let userParams = {
