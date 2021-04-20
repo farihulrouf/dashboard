@@ -16,7 +16,7 @@ const RoomItem = (props) => {
         <Paper style={{minWidth: 500, padding: 20}} elevation={4}>
             <Grid container>
                 <Grid item xs={10}>
-                    <h5>Matematika XII</h5>
+                    <h5>{data.name}</h5>
                     <span>Max participants: {data.maxParticipants}</span>
                 </Grid> 
                 <Grid item xs={2} style={{alignSelf: 'center'}}>

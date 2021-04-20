@@ -17,10 +17,11 @@ export default function FormDialog({onCloseLiveStream, open, isInstructor, cours
   const [listRooms, setListRooms] = React.useState([])
   const [loading, setLoading] = React.useState(false)
   
-  function createClassRoom(){
+  async function createClassRoom(){
     setLoading(true);
-    const res = createRoom(room)
-    setListRooms(res)
+    const res = await createRoom(courseId, room)
+    setListRooms(res.rooms)
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -76,7 +77,7 @@ export default function FormDialog({onCloseLiveStream, open, isInstructor, cours
             />
           </DialogContent>
           <DialogActions>
-            <Button color="primary">
+            <Button onClick={createClassRoom} color="primary">
               Create Live Class
             </Button>
           </DialogActions>

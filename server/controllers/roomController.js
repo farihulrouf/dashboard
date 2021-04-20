@@ -11,6 +11,18 @@ exports.getRoomById = async (req, res, next, roomId) => {
     next();
 }
 
+exports.createRoom = async (req, res) => {
+    const course = req.course;
+    const {name, welcomeMessage} = req.body;
+    const room = new Room({name, welcomeMessage, course: course._id})
+    room.save().then(async (result)=>{
+        rooms = await Room.find({course: course._id})
+        res.json({status: "ok", rooms: rooms})
+    }).catch((err)=>{
+        res.json({status: "error", message: err.message})
+    })
+}
+
 exports.getRooms = async (req,res) => {
     const {course, user} = req;
     //Check if user can access the rooms

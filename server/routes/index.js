@@ -506,7 +506,6 @@ router.get(
 router.post(
   "/api/courses/:courseId/room",
   authController.checkAuth,
-  catchErrors(courseController.getCourseById),
   catchErrors(roomController.createRoom)
 )
 

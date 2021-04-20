@@ -119,8 +119,6 @@ exports.getCourses = async (req, res) => {
   .skip(((page || 1)-1) * limit)
   .limit(limit);
 
-  console.log(courses);
-
   courses.forEach(function(course){
     try{
       if (req.user){

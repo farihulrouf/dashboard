@@ -17,6 +17,9 @@ var roomSchema = mongoose.Schema({
 
 const preValidated = function(next){
   if(!this.meetingID) this.meetingID = `${this.name}_${Date.now()}`
+  this.logoutURL = this.logoutURL || `${process.env.PRODUCTION_URL}subjects?id=${this.course._id || this.course}`
+  this.attendeePW = this.attendeePW || Math.random().toString(36).substring(7);
+  this.moderatorPW = this.moderatorPW || Math.random().toString(36).substring(7);
   next();
 }
 
@@ -37,7 +40,8 @@ roomSchema.methods.getLink = async function(){
     "meetingID",
     "attendeePW", 
     "moderatorPW", 
-    "welcomeMessage"
+    "welcomeMessage",
+    "logoutURL"
   ]
   let entries = Object.entries(this._doc)
   entries = entries.filter(([k,v]) => attributes.includes(k))
