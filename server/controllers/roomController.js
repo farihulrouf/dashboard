@@ -12,8 +12,9 @@ exports.getRoomById = async (req, res, next, roomId) => {
 }
 
 exports.createRoom = async (req, res) => {
-    const course = req.course;
+    const {course, user} = req;
     const {name, welcomeMessage} = req.body;
+    if(!user.canCreateRoom(course)) return res.status(401).json({status: "error", message: "unauthorized"})
     const room = new Room({name, welcomeMessage, course: course._id})
     room.save().then(async (result)=>{
         rooms = await Room.find({course: course._id})

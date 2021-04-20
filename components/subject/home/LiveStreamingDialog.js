@@ -19,9 +19,12 @@ export default function FormDialog({onCloseLiveStream, open, isInstructor, cours
   
   async function createClassRoom(){
     setLoading(true);
-    const res = await createRoom(courseId, room)
-    setListRooms(res.rooms)
-    setLoading(false)
+    createRoom(courseId, room).then((res)=>{
+      setListRooms(res.rooms)
+      setLoading(false)
+    }).catch((err)=>{
+      setLoading(false)
+    })
   }
 
   useEffect(() => {
