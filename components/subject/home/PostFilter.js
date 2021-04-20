@@ -13,7 +13,9 @@ import {
 } from "@material-ui/icons";
 import FilterDialog from "./FilterDialog";
 import PostFormDialog from "./PostFormDialog";
+import LiveStreamingDialog from "./LiveStreamingDialog";
 import React from "react";
+import HomeMenu from "./HomeMenu"
 
 const styles = (theme) => ({
   input: { flex: 1 },
@@ -26,12 +28,13 @@ class PostFilter extends React.Component {
       query: this.props.query,
       showFilter: false,
       showPostForm: false,
+      showLiveStream: false
     };
     this.onQueryChange = this.onQueryChange.bind(this);
     this.onCloseFilter = this.onCloseFilter.bind(this);
     this.onClearFilters = this.onClearFilters.bind(this);
-    this.showPostForm = this.showPostForm.bind(this);
-    this.onClosePostForm = this.onClosePostForm.bind(this);
+    this.showModal = this.showModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
   }
 
   onQueryChange = (e) => {
@@ -73,14 +76,32 @@ class PostFilter extends React.Component {
     this.props.onSearchQueryChange(newQuery);
   };
 
-  showPostForm = () => {
-    this.setState({ showPostForm: true });
-  };
+  showModal = (form_type) => {
+    let obj = {}
+    switch(form_type){
+      case "showPostForm":
+        obj = {showPostForm: true}
+        break;
+      case "showLiveStream":
+        obj = {showLiveStream: true}
+        break;
+    }
+    this.setState(obj)
+  }
 
-  onClosePostForm = () => {
-    this.setState({ showPostForm: false });
+  closeModal = (form_type) => {
+    let obj = {}
+    switch(form_type){
+      case "showPostForm":
+        obj = {showPostForm: false}
+        break;
+      case "showLiveStream":
+        obj = {showLiveStream: false}
+        break;
+    }
+    this.setState(obj)
   };
-
+  
   render() {
     const {
       classes,
@@ -93,24 +114,26 @@ class PostFilter extends React.Component {
       creator,
       createdAt,
     } = this.props;
-    const { showFilter, showPostForm } = this.state;
+    const { showFilter, showPostForm, showLiveStream} = this.state;
     return (
       <div>
         <Grid item className="post-filter">
-          {isInstructor && (
-            <Grid item className="create-post-container">
-              <Button onClick={this.showPostForm} className="create-post-btn">
-                CREATE NEW POST <Add />
-              </Button>
-              <PostFormDialog
+          <Grid item className="syllabus">
+            <HomeMenu showModal={this.showModal} isInstructor={isInstructor} />
+            <PostFormDialog
                 open={showPostForm}
                 auth={auth}
                 courseId={courseId}
                 callback={callback}
-                onClosePostForm={this.onClosePostForm}
-              />
-            </Grid>
-          )}
+                onClosePostForm={this.closeModal}
+            />
+            <LiveStreamingDialog
+              open={showLiveStream}
+              isInstructor={isInstructor}
+              courseId={courseId}
+              onCloseLiveStream={this.closeModal}
+            />
+          </Grid>
           <Grid item className="search-post">
             <Grid item className="input-container">
               <InputBase
@@ -120,16 +143,6 @@ class PostFilter extends React.Component {
               />
               <Search color="disabled" />
             </Grid>
-          </Grid>
-        </Grid>
-        <Grid container className="second-row">
-          <Grid item className="syllabus">
-            <IconButton size="small">
-              <FormatListBulleted />
-            </IconButton>
-            <p>
-              Syllabus
-            </p>
           </Grid>
           <Grid item className="filter">
             <IconButton

@@ -11,6 +11,7 @@ var TeacherApplication = require('./server/models/TeacherApplication');
 var BankNotification = require('./server/models/BankNotification');
 var Discussion = require('./server/models/Discussion');
 var DiscussionAnswer = require('./server/models/DiscussionAnswer');
+var Room = require('./server/models/Room')
 var otpGenerator = require('otp-generator')
 const mongoose = require("mongoose");
 
@@ -90,6 +91,12 @@ const seeds = async function(){
     })
 }
 
+const joinTest = async function(){
+    u = await User.findOne();
+    r = await Room.find();
+    return await u.join(r[0])
+}
+
 replServer.context.User = User;
 replServer.context.Review = Review;
 replServer.context.Payment = Payment;
@@ -100,5 +107,7 @@ replServer.context.TeacherApplication = TeacherApplication;
 replServer.context.BankNotification = BankNotification;
 replServer.context.Discussion = Discussion;
 replServer.context.DiscussionAnswer = DiscussionAnswer;
+replServer.context.Room = Room;
 replServer.context.otpGenerator = otpGenerator;
 replServer.context.seeds = seeds;
+replServer.context.joinTest = joinTest;

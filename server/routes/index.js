@@ -11,8 +11,9 @@ const examController = require("../controllers/examController");
 const attachmentController = require("../controllers/attachmentController");
 const applicationController = require("../controllers/applicationController");
 const paymentController = require("../controllers/paymentController");
-const discussionController = require('../controllers/discussionController.js');
+const discussionController = require('../controllers/discussionController');
 const tagController = require('../controllers/tagController')
+const roomController = require('../controllers/roomController')
 const multer = require('multer');
 const {uuid} = require('uuidv4');
 const fs = require('fs');
@@ -469,7 +470,7 @@ router.post(
 )
 
 /**
- * PAYMENT Routes: /api/tag
+ * Tag Routes: /api/tag
  */
 
 router.get(
@@ -489,4 +490,30 @@ router.get(
 //   // authController.checkAuth,
 //   catchErrors(tagController.deleteTags)
 // )
+
+
+/**
+ * Room Routes: /api/room
+ */
+ router.param("roomId", roomController.getRoomById);
+
+router.get(
+  "/api/courses/:courseId/rooms",
+  authController.checkAuth,
+  catchErrors(roomController.getRooms)
+)
+
+router.post(
+  "/api/courses/:courseId/room",
+  authController.checkAuth,
+  catchErrors(courseController.getCourseById),
+  catchErrors(roomController.createRoom)
+)
+
+router.get(
+  "/api/room/:roomId",
+  authController.checkAuth,
+  catchErrors(roomController.joinRoom)
+)
+
 module.exports = router;

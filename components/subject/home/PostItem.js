@@ -214,6 +214,7 @@ const PostItem = (props) => {
                         <Grid className="attached-files" item>
                             {data.attachments.map((e, idx) => (
                                 <a
+                                    key={e.key}
                                     href={`/files/${encodeURIComponent(e.key)}`}
                                     className="attached-file"
                                 >

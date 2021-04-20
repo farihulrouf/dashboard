@@ -31,6 +31,7 @@
     "express-session": "^1.17.1",
     "express-validator": "^5.3.1",
     "formik": "^2.2.6",
+    "hasha": "^5.2.2",
     "helmet": "^3.22.0",
     "i": "^0.3.6",
     "install": "^0.13.0",
@@ -90,11 +91,12 @@
     "validator": "^13.0.0",
     "webpack": "^5.21.2",
     "xlsx": "^0.16.9",
+    "xml2js": "^0.4.23",
     "zip-stream": "^4.0.4"
   },
   "scripts": {
     "console": "node --experimental-repl-await ./console.js",
-    "dev": "nodemon server/notifconsumer.js & nodemon server/app.js --watch server",
+    "dev": "nodemon server/notifconsumer.js & node server/emailconsumer.js & nodemon server/app.js --watch server",
     "dev:server": "nodemon server/app.js",
     "start": "node server/notifconsumer.js & node server/emailconsumer.js & node server/app.js",
     "build": "next build",

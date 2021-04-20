@@ -34,6 +34,7 @@ require("./models/Payment")
 require("./models/Review")
 require('./models/DiscussionAnswer');
 require('./models/Tag');
+require('./models/Room')
 
 const routes = require("./routes");
 const { callbackify } = require("util");

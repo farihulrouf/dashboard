@@ -134,7 +134,7 @@ class Home extends React.Component {
                             {currentPost.map((value, index) => {
                                 if (index === 3 && isEnrolled !== 2) {
                                     return (
-                                        <Grid item  key={value._id} className="post-item-container">
+                                        <Grid item key={value._id} className="post-item-container">
                                             <PostItem
                                                 blur={true}
                                                 auth={auth}

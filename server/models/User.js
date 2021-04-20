@@ -2,6 +2,9 @@ const mongoose = require("mongoose");
 const {ObjectId} = mongoose.Schema;
 const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passportLocalMongoose = require("passport-local-mongoose");
+const xml2js = require('xml2js')
+const hasha = require('hasha');
+const { default: axios } = require("axios");
 
 const emailValidator = (v) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -122,6 +125,13 @@ userSchema.methods.canCreateCourse = function () {
     return this.isAnOrganization || this.organization.length == 0;
 };
 
+//canAccessCourse true if a user can access all course stuffs (materials, video, room conference, etc..)
+userSchema.methods.canAccessCourse = function (c) {
+    const instructor_ids = c.instructors.map((v)=> (typeof v === "object") ? v._id : v)
+    const participant_ids = c.participants.map((v) => (typeof v === "object" ? v._id : v))
+    return instructor_ids.includes(this._id) || participant_ids.includes(this._id)
+}
+
 userSchema.methods.canEditDiscussion = function(discussion){
   return this._id.equals(discussion.creator._id)
 }
@@ -142,10 +152,9 @@ userSchema.methods.canCreateDiscussion = function(course) {
 //Teacher untuk sebuah organisasi --> user.organiztion ! =[]
 //Private teacher ---> user.organization = [] && user.courses != []
 userSchema.methods.isInstructor = function (course) {
-    //isInstructor is true if user is a creator or an instructor of a given course
-    const {creator, instructors} = course;
-    console.log(creator._id);
-    return !!(creator._id.equals(this._id) || instructors.find(e => e._id.equals(this._id)) );
+    //isInstructor is true if a user is an instructor of a given course
+    const instructor_ids = course.instructors.map((val) => typeof val === "object" ? val._id : val)
+    return instructor_ids.includes(this._id);
 }
 
 userSchema.pre("findOne", function (next) {
@@ -164,5 +173,30 @@ userSchema.plugin(passportLocalMongoose, {usernameField: 'email'});
 
 /* The MongoDBErrorHandler plugin gives us a better 'unique' error, rather than: "11000 duplicate key" */
 userSchema.plugin(mongodbErrorHandler);
+
+
+function parseStringSync (str) {
+    var result;
+    new xml2js.Parser({explicitArray: false}).parseString(str, (e, r) => { result = r });
+    return result;
+}
+
+userSchema.methods.join = async function(room){
+    await room.getLink();
+    let userParams = {
+        fullName: this.name,
+        userID: this._id
+    }
+    let roomParams = {
+        meetingID: room.meetingID,
+        password: this.isInstructor(room.course)? room.moderatorPW : room.attendeePW,
+        redirect: true
+    }
+    const params = Object.entries({...userParams, ...roomParams}).map(([k,v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&")
+    const checksum = hasha(`join${params}${process.env.BBB_SECRET_KEY}`,{algorithm: 'sha1'})
+    const queryString = `${process.env.BBB_END_POINT}api/join?${params}&checksum=${checksum}`
+    //const {data} = await axios.get(queryString)
+    return queryString;
+}
 
 module.exports = mongoose.model("User", userSchema);
