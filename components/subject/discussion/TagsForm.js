@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import useAutocomplete from "@material-ui/lab/useAutocomplete";
 import NoSsr from "@material-ui/core/NoSsr";
 import CheckIcon from "@material-ui/icons/Check";
@@ -8,6 +8,7 @@ import styled from "styled-components";
 import Chip from "@material-ui/core/Chip";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
+import {getTags } from '../../../lib/api'
 
 const Tag = styled(({ label, onDelete, ...props }) => (
     <div {...props}>
@@ -47,15 +48,34 @@ const Tag = styled(({ label, onDelete, ...props }) => (
 `;
 
 
-export default function TagsForm({ tags, setTags }) {
+export default function TagsForm({ tags, setTags, setErrors }) {
+
+    const [tagsOption, setTagsOption] = useState([])
+
+    useEffect(() =>{
+        getTags()
+        .then((res) =>{
+            if(res.status == "ok"){
+                setTagsOption(res.tags.map((val) => val.name))
+            }
+        })
+        .catch((err) =>{
+            console.error(err)
+    })
+    },[])
+
+    const handleChange = (event, value) =>{
+        setTags([...value])
+        console.log(tags)
+    }
 
     return (
         <Autocomplete
             className="discussion-tag"
             multiple
             id="tags-filled"
-            onChange={(event, value) => setTags([...value])}
-            options={top100Films.map((option) => option.title)}
+            onChange={handleChange}
+            options={tagsOption}
             defaultValue={[]}
             freeSolo
             renderTags={(value, getTagProps) => {

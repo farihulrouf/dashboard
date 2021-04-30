@@ -171,6 +171,7 @@ router.post(
   "/api/courses/:courseId/discussions",
   authController.checkAuth,
   discussionController.validateDiscussion,
+  catchErrors(tagController.addTags),
   courseController.createCourseDiscussion,
   catchErrors(courseController.getDiscussions)
 )

@@ -203,8 +203,8 @@ exports.getMyCourses = async (req, res) => {
 };
 
 exports.createCourseDiscussion = (req,res,next) => {
-  const {title, body, tags} = req.body;
-  const {user, course} = req;
+  const {title, body,} = req.body;
+  const {user, course, newtags} = req;
   if(!user.canCreateDiscussion(course)){
       return res.status(403).json({
           status: "error", 
@@ -214,7 +214,7 @@ exports.createCourseDiscussion = (req,res,next) => {
   let discussion = new Discussion({
       title: title,
       body: body,
-      tags: tags,
+      tag: newtags,
       postedOn: course,
       creator: user
   })
@@ -222,6 +222,7 @@ exports.createCourseDiscussion = (req,res,next) => {
       if(err){
           return res.json({status: "error", message: err.message})
       }
+      console.log("finish adding discussion")
       next();
   })
 }
@@ -479,7 +480,8 @@ exports.getDiscussions = async (req,res) => {
             canDelete: {$in: [user._id, ["$creator",course.creator._id]]}
         }},
         {$sort: {createdAt: -1}},
-        {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}}
+        {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}},
+        {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}}
     ])
     console.log(discussions);
     res.json({status: "ok", discussions: discussions});

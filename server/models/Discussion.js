@@ -23,7 +23,7 @@ var discussionSchema = mongoose.Schema({
 discussionSchema.pre("find", function(next){
     this.populate(
         "answers.topAnswers",
-        "creator body status votes createdAt"
+        "creator body status votes createdAt",
     );
     this.populate('tag', '_id name');
     next();

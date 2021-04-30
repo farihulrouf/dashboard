@@ -86,7 +86,7 @@ exports.voteDiscussion = async (req,res,next) => {
         isVoted = true;
     }
     const newDiscussion = await Discussion.findByIdAndUpdate(
-        discussionid, query, {new: true, populate: "answers.topAnswers"})
+        discussionid, query, {new: true, populate: "answers.topAnswers"}).populate('tag')
     if(!newDiscussion) 
         return res.status(404)
             .json({status: "error", message: "Discussion is not found"})

@@ -11,6 +11,7 @@ import { voteDiscussion } from "../../../lib/api";
 class DiscussionItem extends React.Component {
     constructor(props) {
         super(props);
+        console.log(this.props.data)
         this.state = {
             showCreateAnAnswer: false,
             showBestAnswer: false,
@@ -140,11 +141,11 @@ class DiscussionItem extends React.Component {
                             />
                         </Grid>
                         <Grid item className="tag-container">
-                            {["aljabar", "geometri", "trigonometri"].map(
+                            {discussion.tag.map(
                                 (item, index) => {
                                     return (
                                         <Grid key={index} className="tag" item>
-                                            {item}
+                                            {item.name}
                                         </Grid>
                                     );
                                 }
