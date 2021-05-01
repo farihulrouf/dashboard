@@ -124,12 +124,15 @@ exports.createAnswer = (req,res,next) => {
             populate: {
                 path: "answers.topAnswers", 
             }
-        }, (err,newDiscussion) => {
+        })
+        .populate("tag")
+        .populate("answers.topAnswers")
+        .exec((err,newDiscussion) => {
             if(err) return res.json({status: "error", message: err.message})
             newDiscussion._doc.newAnswer = savedAnswer;
             newDiscussion._doc.canEdit = user.canEditDiscussion(newDiscussion)
             newDiscussion._doc.canDelete = user.canDeleteDiscussion(newDiscussion)
             return  res.json({status: "ok", discussion: newDiscussion})
-        })
+        }) 
     })
 }
