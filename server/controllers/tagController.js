@@ -27,7 +27,8 @@ exports.addTags = async(req, res, next) =>{
 }
 
 exports.deleteTags = async(req, res, next) =>{
-  const {tag} = req.post;
+  const {tag} = req.post || req.discussion;
+  console.log(tag)
 
   // let newtags = []
   let newtag

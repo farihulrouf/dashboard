@@ -76,7 +76,7 @@ export default function TagsForm({ tags, setTags, setErrors }) {
             id="tags-filled"
             onChange={handleChange}
             options={tagsOption}
-            defaultValue={[]}
+            defaultValue={tags}
             freeSolo
             renderTags={(value, getTagProps) => {
                 return (value.map((option, index) => {

@@ -287,9 +287,12 @@ router.post(
 /**
  * /api/discussions
  */
+ router.param("discussionid", discussionController.getDiscussionById);
+
 router.delete(
   '/api/discussions/:discussionid',
   authController.checkAuth,
+  catchErrors(tagController.deleteTags),
   catchErrors(discussionController.deleteDiscussion),
   catchErrors(courseController.getDiscussions)
 )
@@ -298,6 +301,8 @@ router.put(
   "/api/discussions/:discussionid",
   authController.checkAuth,
   discussionController.validateDiscussion,
+  catchErrors(tagController.deleteTags),
+  catchErrors(tagController.addTags),
   discussionController.updateDiscussion
 )
 

@@ -30,7 +30,7 @@ export default function DiscussionForm(props) {
         !!props.courseId ? { postedOn: props.courseId } : props.discussion
     );
     const [errors, setErrors] = React.useState({});
-    const [tags, setTags] = React.useState([]);
+    const [tags, setTags] = React.useState(props.discussion ? props.discussion.tag.map((val) => val.name) : []);
     // const {user} = props.auth;
     const {
         afterCreateDiscussion,
@@ -81,6 +81,7 @@ export default function DiscussionForm(props) {
         console.log(newDis);
         updateCourseDiscussion(newDis)
             .then((res) => {
+                console.log(res)
                 closeDiscussionForm();
                 afterUpdateDiscussion(res.discussion);
             })

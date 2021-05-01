@@ -468,10 +468,7 @@ exports.createReview = async (req, res) => {
 };
 
 exports.getDiscussions = async (req,res) => {
-    console.log('get course')
     const {course, user} = req;
-    console.log(course);
-    console.log(user);
     const discussions = await Discussion.aggregate([
         {$match: {postedOn: course._id}},
         {$addFields: {  
@@ -483,6 +480,5 @@ exports.getDiscussions = async (req,res) => {
         {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}},
         {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}}
     ])
-    console.log(discussions);
     res.json({status: "ok", discussions: discussions});
 }

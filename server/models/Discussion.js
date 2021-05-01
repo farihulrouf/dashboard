@@ -19,14 +19,19 @@ var discussionSchema = mongoose.Schema({
     solved: {type: Boolean, default: false} //if there is an accepted answers solved is true
 }, {timestamps: true})
 
-
-discussionSchema.pre("find", function(next){
+const autoPopulate = function(next){
     this.populate(
         "answers.topAnswers",
         "creator body status votes createdAt",
     );
     this.populate('tag', '_id name');
     next();
-})
+}
+
+discussionSchema
+    .pre("findOne",autoPopulate)
+    .pre("find",autoPopulate)
+    .pre("findById", autoPopulate)
+    .pre("findByIdAndUpdate", autoPopulate)
 
 module.exports = mongoose.model("Discussion", discussionSchema);
