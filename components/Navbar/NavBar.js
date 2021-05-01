@@ -48,8 +48,9 @@ function NavBar(props) {
                                     src={
                                         props.mode
                                             ? "images/white-logo.png"
-                                            : "images/purple-logo.png"
+                                            : "images/white-logo.png"
                                     }
+                                    style={{maxHeight: 50, width: 'auto'}}
                                 />
                             </a>
                         </Link>
@@ -70,7 +71,8 @@ function NavBar(props) {
                                 </React.Fragment>
                             </Grid>
                         )}
-
+                    </Grid>
+                    <Grid item>
                         <Hidden xsDown>
                             {!user && !onlyLogo && (
                                 <Grid item className="navbar-end">
