@@ -155,7 +155,7 @@ class DiscussionItem extends React.Component {
                                 className="left-btn my-btn"
                                 onClick={this.onClickShowBestAnswer}
                             >
-                                SHOW RELEVANT ANSWERS
+                                MOST RELEVANT ANSWER
                             </Button>
                             <Button
                                 className="right-btn my-btn"
@@ -171,6 +171,9 @@ class DiscussionItem extends React.Component {
                                 discussionId={discussion._id}
                             />
                         )}
+                        {showBestAnswer && 
+                            <DiscussionAnswer data={discussion.answers.topAnswers[0]} />
+                        }
                     </Grid>
                 </Grid>
             </div>

@@ -12,7 +12,7 @@ class DiscussionAnswer extends React.Component{
         const {data} = this.props;
         
         return(
-            <div style={{position: 'relative', backgroundColor: '#F6F8FB'}}>
+            <div style={{position: 'relative', backgroundColor: '#F6F8FB', marginTop: 10}}>
                 <IconButton style={{position: 'absolute', right: 0}}>
                     <MoreVert />
                 </IconButton>
@@ -24,7 +24,7 @@ class DiscussionAnswer extends React.Component{
                         <h3 style={{margin: 0, padding: 0}}>{data.votes.total}</h3>
                         <span>Votes</span>
                     </Grid>
-                    <Grid xs={12} sm={10} item style={{flexGrow: 1, padding: 5}}>
+                    <Grid xs={12} sm={10} item style={{flexGrow: 1,padding: '20px 0px'}}>
                         <MathJax math={truncatise(data.body, {TruncateLength: 35})} />
                     </Grid>
                 </Grid>
