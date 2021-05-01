@@ -20,13 +20,12 @@ exports.validateDiscussion = (req,res,next) => {
 
 
 exports.updateDiscussion = (req,res) => {
-    console.log(req.discussion)
-    console.log(req.newtags)
     const discussionid = req.discussion._id;
     const {title, body} = req.body;
+    const tag = req.newtags;
     Discussion.findByIdAndUpdate(
         discussionid,
-        {$set: {title: title, body: body, tag: req.newtags}},
+        {$set: {title: title, body: body, tag: tag}},
         {new: true})
         .populate("tag")
         .exec((err,updatedDiscussion)=> {
@@ -66,8 +65,6 @@ exports.deleteDiscussion = async (req, res, next) => {
 }
 
 exports.getDiscussionById = async (req,res,next, id) => {
-    // const {discussionId} = req.params;
-    console.log(id)
     const discussion = await Discussion.findOne({_id: id});
     if(!discussion){
         return res.status(404).json({status: "error", message: "Discussion not found"});

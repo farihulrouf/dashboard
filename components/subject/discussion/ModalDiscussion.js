@@ -94,7 +94,7 @@ const ModalDiscussion = (props) => {
                                 />
                             </Grid>
                             <Grid item className="tag-container">
-                                {["aljabar", "geometri", "trigonometri"].map(
+                                {selected.tag.map(
                                     (item, index) => {
                                         return (
                                             <Grid
@@ -102,7 +102,7 @@ const ModalDiscussion = (props) => {
                                                 className="tag"
                                                 item
                                             >
-                                                {item}
+                                                {item.name}
                                             </Grid>
                                         );
                                     }

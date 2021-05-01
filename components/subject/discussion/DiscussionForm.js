@@ -57,6 +57,7 @@ export default function DiscussionForm(props) {
 
     const handleEditorChange = (content, editor) => {
         const newDiscussion = { ...discussion, [editor.id]: content };
+        console.log(newDiscussion)
         setDiscussion(newDiscussion);
     };
 

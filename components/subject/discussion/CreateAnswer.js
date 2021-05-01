@@ -14,14 +14,20 @@ class CreateAnswer extends React.Component {
     }
 
     handleEditorChange = (content, editor) => {
-        this.setState({ answer: { ...this.state.answer, body: content } });
+        const newAns = { ...this.state.answer, [editor.id]: content };
+        console.log(newAns)
+        this.setState({ answer: newAns });
     };
 
     createAnswer = () => {
         const { afterCreateAnswer } = this.props;
         const { answer } = this.state;
+        console.log(answer)
         createDiscussionAnswer(answer)
-            .then((res) => afterCreateAnswer(res.discussion))
+            .then((res) => {
+                console.log(res)
+                afterCreateAnswer(res.discussion)
+            })
             .catch((err) => console.log(err));
     };
 
@@ -32,8 +38,9 @@ class CreateAnswer extends React.Component {
                 {!createdAnswer && (
                     <div className="editor">
                         <Editor
-                            onChange={this.handleEditorChange}
+                            onEditorChange={this.handleEditorChange}
                             initialValue=""
+                            id="body"
                             init={{
                                 height: 160,
                                 menubar: true,
@@ -52,6 +59,8 @@ class CreateAnswer extends React.Component {
                                     "codesample | tiny_mce_wiris_formulaEditor tiny_mce_wiris_formulaEditorChemistry| undo redo | formatselect | bold italic backcolor |  alignleft aligncenter alignright alignjustify |  bullist numlist outdent indent | removeformat | table | image | help",
                                 toolbar_mode: "sliding",
                             }}
+                            value={this.state.answer.body}
+                            apiKey={process.env.TINYMCE_APIKEY}
                         />
                         <Button
                             onClick={this.createAnswer}
