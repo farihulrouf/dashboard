@@ -1,5 +1,6 @@
 import React from "react";
-import {Grid, Avatar} from "@material-ui/core";
+import {Grid} from "@material-ui/core";
+import Avatar from "./Avatar";
 import {FiberManualRecord} from "@material-ui/icons";
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
@@ -10,10 +11,11 @@ TimeAgo.addLocale(id)
 export default function Notification(props) {
     const {data} = props;
     const timeAgo = new TimeAgo('id-ID')
+    console.log(data)
     return (
         <Grid container className="notification-item">
             <Grid item className="avatar-container">
-                <Avatar src={data.bankNotification.photo}/>
+                <Avatar imgUrl={data.bankNotification.photo} />
             </Grid>
             <Grid item>
                 <p>

@@ -9,7 +9,6 @@ import {
     List,
     ListItem,
     ListItemAvatar,
-    Avatar,
     ListItemText,
     ListItemSecondaryAction,
     IconButton,
@@ -28,6 +27,7 @@ import {
     uploadToS3,
     updatePost,
 } from "../../../lib/api";
+import Avatar from '../../Avatar'
 import axios from "axios";
 import React from "react";
 
@@ -290,8 +290,8 @@ class PostForm extends React.Component {
                     <Grid container className="left-foot">
                         <Grid item className="creator-avatar">
                             <Avatar
-                                alt={auth.user.name}
-                                src={auth.user.avatar}
+                                name={auth.user.name}
+                                imgUrl={auth.user.avatar}
                             />
                         </Grid>
                         <Grid item>

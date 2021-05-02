@@ -11,6 +11,7 @@ import {
     Badge,
     withStyles
 } from '@material-ui/core';
+import Avatar from '../Avatar';
 import {Settings, Lock, Notifications, AccountCircleSharp} from "@material-ui/icons";
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import Router from "next/router";
@@ -20,7 +21,7 @@ import {fetchNotifications} from "../../redux/"
 import {connect} from "react-redux";
 import {readMyNotification} from "../../lib/api";
 
-function Menu({name, avatar, notifications, fetchNotifications}) {
+function Menu({name, avatar, username, notifications, fetchNotifications}) {
 
     const [open,
         setOpen] = useState(false);
@@ -135,9 +136,7 @@ function Menu({name, avatar, notifications, fetchNotifications}) {
                     aria-haspopup="true"
                     onClick={handleToggle}
                     endIcon={(name !== 'Profile' && name !== 'Settings') && < KeyboardArrowDownIcon />}>
-                    {name === 'Profile' && <div>{avatar
-                            ? <img src={avatar} alt=""/>
-                            : <AccountCircleSharp/>}</div>}
+                    {name === 'Profile' && <Avatar imgUrl={avatar} name={username} />}
                     {name === 'Settings' && <Settings/>}
                     {(name !== 'Profile' && name !== 'Settings') && <span className="nav-item">{name}</span>}
                 </Button>}

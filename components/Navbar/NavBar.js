@@ -103,6 +103,7 @@ function NavBar(props) {
                                         <MyMenu
                                             name="Profile"
                                             avatar={auth.user.avatar}
+                                            username={auth.user.name}
                                         />
                                     </Grid>
                                 </Grid>

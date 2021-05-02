@@ -3,13 +3,13 @@ import Router, {withRouter} from "next/router";
 import {
     Container,
     Grid,
-    Avatar,
     Tabs,
     Tab,
     Typography,
     Box,
     Button
 } from "@material-ui/core";
+import Avatar from "../../components/Avatar";
 import {Star, ArrowRightAlt} from "@material-ui/icons";
 import Breadcrumb from "../../components/subject/Breadcrumb";
 import {authInitialProps} from "../../lib/auth";
@@ -21,7 +21,7 @@ import CreateExercise from "../../components/subject/exercise/CreateExercise";
 import ExerciseList from "../../components/subject/exercise/ExerciseList";
 import CreateExam from "../../components/subject/exam/CreateExam";
 import ExamList from "../../components/subject/exam/ExamList";
-import {InstructorItem, getRandomColor} from "../../components/subject/InstructorItem";
+import InstructorItem from "../../components/subject/InstructorItem";
 import {
     getCourseById,
     getJoinedCourse,
@@ -219,15 +219,11 @@ class Subject extends React.Component {
                                                 <Grid className="creator-logo" item container>
                                                     <a href={creator.linkedIn}>
                                                         <Avatar
-                                                            style={{
-                                                            backgroundColor: getRandomColor(course.creator.name)
-                                                        }}
-                                                            alt={course.creator.name}
-                                                            src={course.creator.isAnOrganization
+                                                            name={course.creator.name}
+                                                            imgUrl={course.creator.isAnOrganization
                                                             ? course.creator.avatar
-                                                            : "images/personal-course.png"}>
-                                                            {course.creator.name}
-                                                        </Avatar>
+                                                            : "images/personal-course.png"} 
+                                                        />   
                                                     </a>
                                                 </Grid>
                                                 {creator.isAnOrganization

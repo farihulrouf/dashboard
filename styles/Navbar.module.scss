@@ -228,10 +228,15 @@
 
 .profile-picture {
     margin-left: 15px !important;
-    width: 15%;
+    width: auto;
 
     button {
         margin: 0 !important;
+
+        div {
+            width: 32px;
+            height: 32px;
+        }
 
         img {
             width: 100%;

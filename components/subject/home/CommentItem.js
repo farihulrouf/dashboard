@@ -1,4 +1,5 @@
-import { Grid, Avatar } from "@material-ui/core";
+import { Grid } from "@material-ui/core";
+import Avatar from "../../Avatar";
 import React from "react";
 
 const CommentItem = (props) => {
@@ -10,12 +11,8 @@ const CommentItem = (props) => {
   return (
     <Grid container className="comment-item">
       <Grid container>
-        <Grid item>
-          <Avatar
-            alt={data.commentator.name}
-            src={data.commentator.avatar}
-            className="commentator-ava"
-          />
+        <Grid item className="commentator-ava">
+          <Avatar  name={data.commentator.name} imgUrl={data.commentator.avatar} />
         </Grid>
         <Grid item>
           <Grid container className="commentator-name">
