@@ -20,19 +20,21 @@ exports.validateDiscussion = (req,res,next) => {
 
 
 exports.updateDiscussion = (req,res) => {
-    const {discussionid} = req.params;
+    const discussionid = req.discussion._id;
     const {title, body} = req.body;
+    const tag = req.newtags;
     Discussion.findByIdAndUpdate(
         discussionid,
-        {$set: {title: title, body: body}},
-        {new: true},
-        (err,updatedDiscussion)=> {
+        {$set: {title: title, body: body, tag: tag}},
+        {new: true})
+        .populate("tag")
+        .exec((err,updatedDiscussion)=> {
             if(err) return res.json({status: 'error', message: err.message})
             updatedDiscussion._doc.canEdit = true;
             updatedDiscussion._doc.canDelete = true;
+            console.log(updatedDiscussion)
             res.json({status: "ok", discussion: updatedDiscussion})
-        }
-    )
+        })
 }
 
 exports.deleteDiscussion = async (req, res, next) => {
@@ -62,10 +64,13 @@ exports.deleteDiscussion = async (req, res, next) => {
 
 }
 
-exports.getDiscussionById = async (req,res,next) => {
-    const {discussionId} = req.params;
-    const discussion = await Discussion.findById(discussionId);
-    res.json({status: "ok", discussion: discussion});
+exports.getDiscussionById = async (req,res,next, id) => {
+    const discussion = await Discussion.findOne({_id: id});
+    if(!discussion){
+        return res.status(404).json({status: "error", message: "Discussion not found"});
+      }
+    req.discussion = discussion;
+    next()
 }
 
 exports.voteDiscussion = async (req,res,next) => {
@@ -86,7 +91,7 @@ exports.voteDiscussion = async (req,res,next) => {
         isVoted = true;
     }
     const newDiscussion = await Discussion.findByIdAndUpdate(
-        discussionid, query, {new: true, populate: "answers.topAnswers"})
+        discussionid, query, {new: true, populate: "answers.topAnswers"}).populate('tag')
     if(!newDiscussion) 
         return res.status(404)
             .json({status: "error", message: "Discussion is not found"})
@@ -119,12 +124,15 @@ exports.createAnswer = (req,res,next) => {
             populate: {
                 path: "answers.topAnswers", 
             }
-        }, (err,newDiscussion) => {
+        })
+        .populate("tag")
+        .populate("answers.topAnswers")
+        .exec((err,newDiscussion) => {
             if(err) return res.json({status: "error", message: err.message})
             newDiscussion._doc.newAnswer = savedAnswer;
             newDiscussion._doc.canEdit = user.canEditDiscussion(newDiscussion)
             newDiscussion._doc.canDelete = user.canDeleteDiscussion(newDiscussion)
             return  res.json({status: "ok", discussion: newDiscussion})
-        })
+        }) 
     })
 }

@@ -30,7 +30,7 @@ export default function DiscussionForm(props) {
         !!props.courseId ? { postedOn: props.courseId } : props.discussion
     );
     const [errors, setErrors] = React.useState({});
-    const [tags, setTags] = React.useState([]);
+    const [tags, setTags] = React.useState(props.discussion ? props.discussion.tag.map((val) => val.name) : []);
     // const {user} = props.auth;
     const {
         afterCreateDiscussion,
@@ -57,26 +57,32 @@ export default function DiscussionForm(props) {
 
     const handleEditorChange = (content, editor) => {
         const newDiscussion = { ...discussion, [editor.id]: content };
+        console.log(newDiscussion)
         setDiscussion(newDiscussion);
     };
 
     const onCreateClick = () => {
-        console.log(discussion);
-        createCourseDiscussion(discussion)
+        const newDis = {...discussion, tag: tags}
+        console.log(newDis);
+        createCourseDiscussion(newDis)
             .then((res) => {
                 afterCreateDiscussion(res.discussions);
             })
             .catch((err) => {
                 const { data } = err.response;
                 let errors = {};
-                data.message.forEach((e) => (errors[e.param] = e.msg));
-                setErrors(errors);
+                console.log(data)
+                // data.message.forEach((e) => (errors[e.param] = e.msg));
+                // setErrors(errors);
             });
     };
 
     const onUpdateClick = () => {
-        updateCourseDiscussion(discussion)
+        const newDis = {...discussion, tag: tags}
+        console.log(newDis);
+        updateCourseDiscussion(newDis)
             .then((res) => {
+                console.log(res)
                 closeDiscussionForm();
                 afterUpdateDiscussion(res.discussion);
             })
@@ -167,7 +173,7 @@ export default function DiscussionForm(props) {
                     )}
 
                     <div>
-                        <TagsForm tags={tags} setTags={setTags} />
+                        <TagsForm tags={tags} setTags={setTags} setErrors={setErrors}/>
                     </div>
                 </DialogContent>
                 <DialogActions className="form-foot">

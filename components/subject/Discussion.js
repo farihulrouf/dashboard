@@ -36,7 +36,12 @@ const Discussion = (props) => {
 
     const deleteDiscussion = async (discussionId) => {
       const data = await deleteCourseDiscussion(discussionId);
-      setDiscussions(data.discussions);
+      if(data.status == "ok"){
+          setDiscussions(data.discussions);
+      }
+      else{
+          alert(data.message);
+      }
     }
 
     const openDiscussionModal = (id) => {

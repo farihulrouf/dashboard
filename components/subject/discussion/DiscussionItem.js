@@ -140,11 +140,11 @@ class DiscussionItem extends React.Component {
                             />
                         </Grid>
                         <Grid item className="tag-container">
-                            {["aljabar", "geometri", "trigonometri"].map(
+                            {discussion.tag.map(
                                 (item, index) => {
                                     return (
                                         <Grid key={index} className="tag" item>
-                                            {item}
+                                            {item.name}
                                         </Grid>
                                     );
                                 }
@@ -155,7 +155,7 @@ class DiscussionItem extends React.Component {
                                 className="left-btn my-btn"
                                 onClick={this.onClickShowBestAnswer}
                             >
-                                SHOW RELEVANT ANSWERS
+                                MOST RELEVANT ANSWER
                             </Button>
                             <Button
                                 className="right-btn my-btn"
@@ -171,6 +171,9 @@ class DiscussionItem extends React.Component {
                                 discussionId={discussion._id}
                             />
                         )}
+                        {showBestAnswer && 
+                            <DiscussionAnswer data={discussion.answers.topAnswers[0]} />
+                        }
                     </Grid>
                 </Grid>
             </div>
