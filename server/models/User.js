@@ -5,6 +5,7 @@ const passportLocalMongoose = require("passport-local-mongoose");
 const xml2js = require('xml2js')
 const hasha = require('hasha');
 const { default: axios } = require("axios");
+const util = require('util')
 
 const emailValidator = (v) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -68,6 +69,11 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
         required: "Organization field is required"
+    },
+    isAnInstructor: {
+        type: Boolean,
+        default: false,
+        required: "IsAnIstructor field is required"
     },
     teachers: [
         {
@@ -153,8 +159,8 @@ userSchema.methods.canCreateDiscussion = function(course) {
 //Private teacher ---> user.organization = [] && user.courses != []
 userSchema.methods.isInstructor = function (course) {
     //isInstructor is true if a user is an instructor of a given course
-    const instructor_ids = course.instructors.map((val) => typeof val === "object" ? val._id : val)
-    return instructor_ids.includes(this._id);
+    const instructor_ids = course.instructors.map((val) => typeof val === "object" ? val._id.toString() : val )   
+    return instructor_ids.includes(this._id.toString());
 }
 
 userSchema.pre("findOne", function (next) {

@@ -31,10 +31,7 @@ exports.getUsers = async (req, res) => {
 
 exports.getAllInstructors = async (req, res) => {
   let instructors = await User.find({
-    organization: {
-      $exists: true,
-      $ne: [],
-    },
+    isAnInstructor: true,
     name: {
       $regex: new RegExp(req.query.q, "i"),
     },

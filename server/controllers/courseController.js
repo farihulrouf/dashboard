@@ -18,9 +18,28 @@ exports.getCourses = async (req, res) => {
     page,
     limit,
   } = req.query;
+  var match = '';
 
+  //convert instructor query to array of objectid
+  if(instructor){
+    if(!Array.isArray(instructor)){
+      instructor = [ObjectId(instructor)]
+    }
+    else{
+      instructor = instructor.map((val) => ObjectId(val))
+    }
+  }
+  if(organization){
+    if(!Array.isArray(organization)){
+      organization = [ObjectId(organization)]
+    }
+    else{
+      organization = organization.map((val) => ObjectId(val))
+    }
+  }
+  
   if(query){
-    const match = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
+    match = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
   }
   const [low, high] = price;
   limit = parseInt(limit);
@@ -28,8 +47,8 @@ exports.getCourses = async (req, res) => {
 
   let filter = {
     price: {
-      $lte: parseInt(high),
       $gte: parseInt(low),
+      $lte: parseInt(high)
     },
     rating: {
       $gte: parseInt(rating) || 0,
@@ -53,7 +72,9 @@ exports.getCourses = async (req, res) => {
 
   if (instructor) {
     filter["instructors"] = {
-      $in: instructor,
+      $elemMatch: {
+        $in: instructor,
+      }
     };
   }
 
