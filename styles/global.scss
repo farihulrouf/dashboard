@@ -165,7 +165,7 @@ input {
     font-family: 'Gilroy', sans-serif !important;
 }
 
-.MuiInputBase-input, .MuiTypography-colorTextPrimary {
+.MuiInputBase-input, *[class^="MuiTypography"] {
     font-family: "Gilroy", sans-serif !important;
     transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
 }

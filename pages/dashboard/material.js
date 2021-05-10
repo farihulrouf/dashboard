@@ -39,7 +39,6 @@ const Material = ({ auth }) => {
 
     useEffect(() => {
         getCourses(filter).then((res) => {
-            console.log(res)
             setIsLoading(false);
             setData((prev) => [...prev, ...res.courses]);
             setLoadMoreAvail(res.avail);
@@ -59,6 +58,7 @@ const Material = ({ auth }) => {
 
     const applyFilter = () => {
         setIsLoading(true);
+        resetPagination();
         getCourses(filter)
             .then((res) => {
                 setIsLoading(false);
@@ -67,6 +67,15 @@ const Material = ({ auth }) => {
             })
             .catch((err) => setData([]));
         setOpen(false);
+    };
+
+    const resetPagination = () => {
+        setFilter((prev) => {
+            return {
+                ...prev,
+                page: 1
+            }; 
+        });
     };
 
     const clearFilter = () => {

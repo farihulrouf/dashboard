@@ -104,11 +104,11 @@
     position: absolute !important;
     top: 0;
     left: 0;
-    width: 100%;
-    margin: 0;
 
     div[class^="MuiDialogContent"] {
-        padding: 25px 35px;
+        padding: 15px 30px;     
+        width: clamp(350px, 40vw, 400px);
+        margin: 0 auto;
     }
 
     div[class^="MuiDialogTitle-root"] {
@@ -123,6 +123,8 @@
 
         h6 {
             width: 100%;
+            font-weight: 500 !important;
+            font-size: 1.25rem;
         }
     }
 
@@ -152,7 +154,10 @@
     }
 
     .price-range-dom {
-        margin-left: 25px;
+        font-family: 'Gilroy', sans-serif !important;
+        margin-left: 20px;
+        font-size: .75rem;
+        padding-top: 3px;
     }
 
     .rating-filter-container {
@@ -169,6 +174,12 @@
     .clear-filter {
         span {
             color: crimson;
+        }
+    }
+
+    button {
+        span {
+            font-family: 'Gilroy', sans-serif !important;
         }
     }
 }
