@@ -26,10 +26,16 @@ const ModalDiscussion = (props) => {
             .catch((err) => alert(err.message));
     };
 
+    const afterCreateAnswer = (newDiscussion) => {
+        console.log("running from modal", newDiscussion)
+        setSelected(newDiscussion);
+    };
+
     return (
         <div>
             <Dialog
                 className="discussion-modal"
+                disableEnforceFocus={true}
                 open={open}
                 TransitionComponent={Transition}
                 keepMounted
@@ -121,7 +127,7 @@ const ModalDiscussion = (props) => {
                         )}
                         <CreateAnswer
                             createdAnswer={selected.newAnswer}
-                            // afterCreateAnswer={this.afterCreateAnswer}
+                            afterCreateAnswer={afterCreateAnswer}
                             discussionId={selected._id}
                         />
                     </Grid>

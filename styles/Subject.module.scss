@@ -290,6 +290,7 @@
                     color: white;
                     background-color: #3f51b5;
                     padding: 8px 16px !important;
+                    font-family: 'Gilroy', sans-serif !important;
 
                     span {
                         font-weight: 400;
@@ -1437,6 +1438,7 @@
                 .created-at {
                     span {
                         font-size: 0.8rem;
+                        font-family: 'Gilroy', sans-serif !important;
                     }
                 }
             }
@@ -1557,11 +1559,16 @@
         align-items: center;
         justify-content: center;
         padding-bottom: 8px;
+
+        .MuiIconButton-root {
+            padding: 2px !important;
+        }
     }
 
     &-right {
-        margin-right: 20px !important;
+        font-family: 'Gilroy', sans-serif !important;
         border: solid 1px #c5ccd0;
+        background-color: white;
         border-radius: 8px;
         min-height: 135px;
         flex-grow: 1;
@@ -1572,6 +1579,7 @@
         justify-content: space-between;
         align-items: flex-start;
         flex-direction: column;
+        width: 528px;
     }
 
     &-creator {
@@ -1631,7 +1639,17 @@
 
     &-body {
         flex-grow: 1;
+        position: relative;
+        padding-right: 64px;
+        width: 100%;
+        display: inline-block !important;
     }
+}
+
+.react-mathjax-preview-result {
+    width: 100%;
+    display: inline-block;
+    word-wrap: break-word;
 }
 
 .no-discussion-answers {
@@ -1709,6 +1727,7 @@
 
 .post-answer-btn {
     margin-top: 10px !important;
+    background-color: white !important;
 }
 
 // .wrs_editor {

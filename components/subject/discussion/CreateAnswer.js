@@ -26,7 +26,7 @@ class CreateAnswer extends React.Component {
         console.log(answer);
         createDiscussionAnswer(answer)
             .then((res) => {
-                console.log(res);
+                console.log(res.discussion);
                 afterCreateAnswer(res.discussion);
             })
             .catch((err) => console.log(err));

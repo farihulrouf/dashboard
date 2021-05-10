@@ -7,6 +7,7 @@ import CreateAnswer from "./CreateAnswer";
 import DiscussionItemMore from "./DiscussionItemMore";
 import DiscussionAnswer from "./DiscussionAnswer";
 import { voteDiscussion } from "../../../lib/api";
+import ModalDiscussion from "./ModalDiscussion";
 
 class DiscussionItem extends React.Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class DiscussionItem extends React.Component {
             showCreateAnAnswer: false,
             showBestAnswer: false,
             discussion: this.props.data,
+            openModal: false
         };
     }
 
@@ -33,6 +35,7 @@ class DiscussionItem extends React.Component {
     };
 
     afterCreateAnswer = (newDiscussion) => {
+        console.log("running from item", newDiscussion);
         this.setState({ discussion: newDiscussion });
     };
 
@@ -50,6 +53,14 @@ class DiscussionItem extends React.Component {
 
     formatDate = (date) => {
         return date.slice(0, 19).replace("T", " at ");
+    };
+
+    closeDiscussionModal = () => {
+        this.setState({ openModal: false});
+    };
+
+    openDiscussionModal = () => {
+        this.setState({ openModal: true});
     };
 
     componentDidUpdate(prev) {
@@ -122,7 +133,7 @@ class DiscussionItem extends React.Component {
                             <Grid
                                 item
                                 onClick={() =>
-                                    this.props.handleOpen(discussion._id)
+                                    this.openDiscussionModal()
                                 }
                             >
                                 <h6>{discussion.title}</h6>
@@ -170,16 +181,30 @@ class DiscussionItem extends React.Component {
                                 discussionId={discussion._id}
                             />
                         )}
-                        {showBestAnswer && discussion.answers.topAnswers.length > 0 && (
-                            <DiscussionAnswer
-                                data={discussion.answers.topAnswers[0]}
-                            />
-                        )}
+                        {showBestAnswer &&
+                            discussion.answers.topAnswers.length > 0 && (
+                                <DiscussionAnswer
+                                    data={discussion.answers.topAnswers[0]}
+                                />
+                            )}
 
-                        {showBestAnswer && discussion.answers.topAnswers.length <= 0 && (
-                            <h6 className="no-discussion-answers">No answers yet!</h6>
-                        )}
+                        {showBestAnswer &&
+                            discussion.answers.topAnswers.length <= 0 && (
+                                <h6 className="no-discussion-answers">
+                                    No answers yet!
+                                </h6>
+                            )}
                     </Grid>
+                </Grid>
+                <Grid item className="modal-container">
+                    {this.state.openModal ? (
+                        <ModalDiscussion
+                            selected={this.state.discussion}
+                            open={this.state.openModal}
+                            handleClose={this.closeDiscussionModal}
+                            setSelected={this.afterCreateAnswer}
+                        />
+                    ) : null}
                 </Grid>
             </div>
         );

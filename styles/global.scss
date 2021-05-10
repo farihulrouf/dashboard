@@ -165,9 +165,13 @@ input {
     font-family: 'Gilroy', sans-serif !important;
 }
 
-.MuiInputBase-input, *[class^="MuiTypography"] {
+.MuiInputBase-input, *[class^="MuiTypography"],.MuiFormLabel-root {
     font-family: "Gilroy", sans-serif !important;
     transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
+}
+
+.react-mathjax-preview-result {
+    font-family: "Roboto", "Helvetica", sans-serif !important;
 }
 
 @import "Navbar.module.scss";
