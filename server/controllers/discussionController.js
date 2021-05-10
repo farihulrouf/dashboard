@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const User = require("../models/User");
 const Discussion = mongoose.model("Discussion");
 const Course = mongoose.model("Course");
 const DiscussionAnswer = mongoose.model("DiscussionAnswer");
@@ -26,9 +27,19 @@ exports.updateDiscussion = (req,res) => {
     Discussion.findByIdAndUpdate(
         discussionid,
         {$set: {title: title, body: body, tag: tag}},
-        {new: true})
+        {
+          new: true, 
+          populate: {
+              path: "answers.topAnswers", 
+              populate : {
+                path : "answers.topAnswers.creator"
+              }
+            }
+        })
         .populate("tag")
+        .populate("creator")
         .exec((err,updatedDiscussion)=> {
+            console.log(updatedDiscussion)
             if(err) return res.json({status: 'error', message: err.message})
             updatedDiscussion._doc.canEdit = true;
             updatedDiscussion._doc.canDelete = true;
@@ -91,7 +102,8 @@ exports.voteDiscussion = async (req,res,next) => {
         isVoted = true;
     }
     const newDiscussion = await Discussion.findByIdAndUpdate(
-        discussionid, query, {new: true, populate: "answers.topAnswers"}).populate('tag')
+        discussionid, query, {new: true, populate: "answers.topAnswers"})
+        .populate('tag').populate('creator').populate("answers.topAnswers.creator")
     if(!newDiscussion) 
         return res.status(404)
             .json({status: "error", message: "Discussion is not found"})
@@ -126,8 +138,11 @@ exports.createAnswer = (req,res,next) => {
             }
         })
         .populate("tag")
-        .populate("answers.topAnswers")
-        .exec((err,newDiscussion) => {
+        .populate("creator")
+        .exec( async (err,newDiscussion) => {
+          
+            await User.populate(newDiscussion, {path: "answers.topAnswers.creator"})
+            
             if(err) return res.json({status: "error", message: err.message})
             newDiscussion._doc.newAnswer = savedAnswer;
             newDiscussion._doc.canEdit = user.canEditDiscussion(newDiscussion)

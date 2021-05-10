@@ -69,6 +69,7 @@ class DiscussionItem extends React.Component {
         const { canEdit, canDelete } = discussion;
         const { deleteDiscussion } = this.props;
 
+        console.log(discussion);
         return (
             <div className="item-container">
                 <Grid item className="edit-delete">
@@ -140,15 +141,13 @@ class DiscussionItem extends React.Component {
                             />
                         </Grid>
                         <Grid item className="tag-container">
-                            {discussion.tag.map(
-                                (item, index) => {
-                                    return (
-                                        <Grid key={index} className="tag" item>
-                                            {item.name}
-                                        </Grid>
-                                    );
-                                }
-                            )}
+                            {discussion.tag.map((item, index) => {
+                                return (
+                                    <Grid key={index} className="tag" item>
+                                        {item.name}
+                                    </Grid>
+                                );
+                            })}
                         </Grid>
                         <Grid item className="btn-container">
                             <Button
@@ -171,9 +170,15 @@ class DiscussionItem extends React.Component {
                                 discussionId={discussion._id}
                             />
                         )}
-                        {showBestAnswer && 
-                            <DiscussionAnswer data={discussion.answers.topAnswers[0]} />
-                        }
+                        {showBestAnswer && discussion.answers.topAnswers.length > 0 && (
+                            <DiscussionAnswer
+                                data={discussion.answers.topAnswers[0]}
+                            />
+                        )}
+
+                        {showBestAnswer && discussion.answers.topAnswers.length <= 0 && (
+                            <h6 className="no-discussion-answers">No answers yet!</h6>
+                        )}
                     </Grid>
                 </Grid>
             </div>

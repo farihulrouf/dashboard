@@ -492,14 +492,79 @@ exports.getDiscussions = async (req,res) => {
     const {course, user} = req;
     const discussions = await Discussion.aggregate([
         {$match: {postedOn: course._id}},
-        {$addFields: {  
-            isVoted: {$in: [user._id, "$votes.voters"]},
-            canEdit: {$eq: [user._id, "$creator"]},
-            canDelete: {$in: [user._id, ["$creator",course.creator._id]]}
-        }},
         {$sort: {createdAt: -1}},
+        //Populate answers
         {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}},
-        {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}}
+        {$unwind : {
+          path : "$answers.topAnswers",
+          preserveNullAndEmptyArrays : true
+        }},
+        {$lookup: {from: 'users', localField: 'answers.topAnswers.creator', foreignField: '_id', as: 'answers.topAnswers.creator'}},
+        {$unwind : {
+          path : "$answers.topAnswers.creator",
+          preserveNullAndEmptyArrays : true
+        }},
+        {$project :{
+          "answers.topAnswers.creator" : {teachers:0, organization:0, following:0, followers:0,salt:0, hash:0, createdAt:0, updatedAt:0, notifications:0, active:0, }
+        }},
+        {$group : {
+          _id: "$_id",
+          title : {$first : "$title"},
+          body: {$first : "$body"},
+          createdAt: {$first : "$createdAt"},
+          creator : {$first : "$creator"},
+          postedOn : {$first : "$postedOn"},
+          solved : {$first : "$solved"},
+          tag : {$first : "$tag"},
+          votes: {$first : "$votes"},
+          answers : {$first : "$answers"},
+          answersTop : {
+            $push : "$answers.topAnswers"
+          },
+        }},
+        {$project : {
+          _id : 1,
+          title: 1,
+          body : 1,
+          createdAt : 1,
+          creator : 1,
+          postedOn : 1,
+          solved : 1,
+          tag : 1,
+          solved : 1,
+          votes : 1,
+          answers : {total : 1, 
+            topAnswers : {
+              $filter : {
+                input : "$answersTop",
+                as : "item",
+                cond : { $gt: ['$$item.creator', {} ]}}
+              }
+            }
+          }
+        },
+        //Populate Tags
+        {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}},
+        //Populate Discussion creator
+        {$lookup: {from: 'users', localField: 'creator', foreignField: '_id', as: 'creator'}},
+        {$unwind : {
+          path : "$creator",
+          preserveNullAndEmptyArrays : true
+        }},
+        //Populate Discussion postedOn
+        {$lookup: {from: 'courses', localField: 'postedOn', foreignField: '_id', as: 'postedOn'}},
+        {$unwind : {
+          path : "$postedOn",
+          preserveNullAndEmptyArrays : true
+        }},
+        {$project :{
+          creator : {teachers:0, organization:0, following:0, followers:0,salt:0, hash:0, createdAt:0, updatedAt:0, notifications:0, active:0, }
+        }},
+        {$addFields: {  
+          isVoted: {$in: [user._id, "$votes.voters"]},
+          canEdit: {$eq: [user._id, "$creator"]},
+          canDelete: {$in: [user._id, ["$creator",course.creator._id]]}
+        }},
     ])
     res.json({status: "ok", discussions: discussions});
 }

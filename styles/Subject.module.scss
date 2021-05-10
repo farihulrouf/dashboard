@@ -51,7 +51,6 @@
         }
 
         .subject-header-desc {
-
             .creator-container {
                 display: flex;
                 justify-content: flex-start;
@@ -149,7 +148,7 @@
                 .price-tag {
                     display: block;
                     text-align: center;
-                    width: auto
+                    width: auto;
                 }
 
                 .mybtn {
@@ -179,7 +178,7 @@
 
             .enrolled-tag {
                 border: solid 2px #2cb98f !important;
-                
+
                 span {
                     color: #2cb98f !important;
                 }
@@ -441,7 +440,8 @@
                     margin-bottom: 5px;
                 }
 
-                p, span {
+                p,
+                span {
                     margin-top: 0 !important;
                     line-height: 1.75;
                 }
@@ -616,79 +616,79 @@
         }
     }
 
-        .comment-container {
-            margin: 20px 0 0;
+    .comment-container {
+        margin: 20px 0 0;
 
-            .comment-item {
-                margin: 10px 0;
+        .comment-item {
+            margin: 10px 0;
 
-                .commentator-ava {
-                    width: 25px;
-                    height: 25px;
-                    margin-right: 15px;
-                }
-
-                .commentator-name {
-                    font-weight: 500;
-                    font-size: 0.9rem;
-                    margin-right: 15px;
-                }
-
-                .comment-date {
-                    color: #a6a3ba;
-                    font-size: 0.8rem;
-                    font-weight: 300;
-                }
-
-                .comment {
-                    color: #81808a;
-                    font-weight: 300;
-                    font-size: 0.9rem;
-                }
+            .commentator-ava {
+                width: 25px;
+                height: 25px;
+                margin-right: 15px;
             }
 
-            .comment-item:last-child {
-                margin-bottom: 20px;
+            .commentator-name {
+                font-weight: 500;
+                font-size: 0.9rem;
+                margin-right: 15px;
+            }
+
+            .comment-date {
+                color: #a6a3ba;
+                font-size: 0.8rem;
+                font-weight: 300;
+            }
+
+            .comment {
+                color: #81808a;
+                font-weight: 300;
+                font-size: 0.9rem;
             }
         }
 
-        .comment-input-box {
+        .comment-item:last-child {
+            margin-bottom: 20px;
+        }
+    }
+
+    .comment-input-box {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        border: solid 1px #c5ccd0;
+        border-radius: 4px;
+        padding: 0 15px;
+
+        textarea {
+            padding: 15px 0;
+            height: 46px !important;
             width: 100%;
+            resize: none;
+            border: none;
+            font-family: "Gilroy", sans-serif;
+            font-weight: 300;
+
+            ::placeholder {
+                color: #c5ccd0 !important;
+            }
+        }
+
+        textarea:focus {
+            border: none;
+            outline: none;
+        }
+
+        .send-btn {
             display: flex;
             align-items: center;
-            border: solid 1px #c5ccd0;
-            border-radius: 4px;
-            padding: 0 15px;
+            margin-left: auto;
 
-            textarea {
-                padding: 15px 0;
-                height: 46px !important;
-                width: 100%;
-                resize: none;
-                border: none;
-                font-family: "Gilroy", sans-serif;
-                font-weight: 300;
-
-                ::placeholder {
-                    color: #c5ccd0 !important;
-                }
-            }
-
-            textarea:focus {
-                border: none;
-                outline: none;
-            }
-
-            .send-btn {
-                display: flex;
-                align-items: center;
-                margin-left: auto;
-
-                svg {
-                    color: #c5ccd0;
-                }
+            svg {
+                color: #c5ccd0;
             }
         }
+    }
 
     .tab-container {
         margin-bottom: 2% !important;
@@ -703,212 +703,210 @@
 
     .subject-exercise {
     }
-  
+
     .subject-exercise-list {
-      .item-exam {
-        display: flex;
-        flex: 1;
-        flex-direction: row;
-        margin-top: 35px;
-        padding: 8px;
-        
-        .item-exam-stats {
-          display: flex;
-          align-items: center;
-          flex-direction: column;
-          flex: 1;
-  
-          .divider {
-            margin-top: 16px;
-            margin-bottom: 8px;
-            width: 100%;
-          }
-          .text-score {
-            font-family: Lato;
-            font-style: normal;
-            font-weight: bold;
-            font-size: 24px;
-            line-height: 24px;
-            text-align: center;
-            color: #1B1642;
-          }
-          .text-pass {
-            color: #8DC883;
-            font-family: Lato;
-            font-style: normal;
-            font-weight: bold;
-            font-size: 24px;
-            line-height: 24px;
-          }
-        }
-  
-        .item-exam-name {
-          flex: 4;
-          margin-left: 40px;
-  
-          .item-exam-name-title {
-            font-family: Lato;
-            font-style: normal;
-            font-weight: 700;
-            font-size: 18px;
-            line-height: 22px;
-            color: #1B1642;
-          }
-          .item-exam-name-desc {
-            font-family: Lato;
-            font-style: normal;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 22px;
-            color: #1B1642;
-          }
-        }
-  
-        .item-exam-about {
-          display: flex;
-          flex: 2;
-          flex-direction: column;
-          justify-content: space-between;
-  
-          .item-exam-about-problem {
+        .item-exam {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            margin-top: 35px;
             padding: 8px;
-            align-content: center;
-            justify-content: center;
-            width: fit-content;
-            background: #FFB562;
-            border-radius: 16px;
-          }
+
+            .item-exam-stats {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                flex: 1;
+
+                .divider {
+                    margin-top: 16px;
+                    margin-bottom: 8px;
+                    width: 100%;
+                }
+                .text-score {
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: bold;
+                    font-size: 24px;
+                    line-height: 24px;
+                    text-align: center;
+                    color: #1b1642;
+                }
+                .text-pass {
+                    color: #8dc883;
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: bold;
+                    font-size: 24px;
+                    line-height: 24px;
+                }
+            }
+
+            .item-exam-name {
+                flex: 4;
+                margin-left: 40px;
+
+                .item-exam-name-title {
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: 700;
+                    font-size: 18px;
+                    line-height: 22px;
+                    color: #1b1642;
+                }
+                .item-exam-name-desc {
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 22px;
+                    color: #1b1642;
+                }
+            }
+
+            .item-exam-about {
+                display: flex;
+                flex: 2;
+                flex-direction: column;
+                justify-content: space-between;
+
+                .item-exam-about-problem {
+                    padding: 8px;
+                    align-content: center;
+                    justify-content: center;
+                    width: fit-content;
+                    background: #ffb562;
+                    border-radius: 16px;
+                }
+            }
+
+            .light-label {
+                margin-top: 8px;
+                font-family: Lato;
+                font-style: italic;
+                font-weight: 300;
+                font-size: 12px;
+                line-height: 14px;
+                color: #1b1642;
+            }
         }
-  
-        .light-label {
-          margin-top: 8px;
-          font-family: Lato;
-          font-style: italic;
-          font-weight: 300;
-          font-size: 12px;
-          line-height: 14px;
-          color: #1B1642;
-        }
-      }
     }
-  
+
     .subject-exercise-create {
-  
-      .file-container {
-        min-height: 400px;
-        padding: 0 1rem;
-        margin: 3rem auto 0rem;
-        border: 1px solid #596A75;
-        border-radius: 20px;
-        background-color: rgba(242, 250, 255, 0.57);
-  
-        .file-item{
-          width: 100%;
-          height: 51px;
-          margin-top: 19px;
-          background: #FFFFFF;
-          box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
-          border-radius: 10px;
-  
-          .text-file-item{
-            padding-top: 11px;
-            padding-bottom: 7px;
-          }
+        .file-container {
+            min-height: 400px;
+            padding: 0 1rem;
+            margin: 3rem auto 0rem;
+            border: 1px solid #596a75;
+            border-radius: 20px;
+            background-color: rgba(242, 250, 255, 0.57);
+
+            .file-item {
+                width: 100%;
+                height: 51px;
+                margin-top: 19px;
+                background: #ffffff;
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
+                border-radius: 10px;
+
+                .text-file-item {
+                    padding-top: 11px;
+                    padding-bottom: 7px;
+                }
+            }
+
+            input[type="file"] {
+                display: none;
+            }
         }
-  
-        input[type="file"] {
-          display: none;
-        }
-      }
     }
-  
+
     .subject-exam-list {
-      .item-exam {
-        display: flex;
-        flex: 1;
-        flex-direction: row;
-        margin-top: 35px;
-        padding: 8px;
-        
-        .item-exam-stats {
-          display: flex;
-          align-items: center;
-          flex-direction: column;
-          flex: 1;
-  
-          .divider {
-            margin-top: 16px;
-            margin-bottom: 8px;
-            width: 100%;
-          }
-          .text-score {
-            font-family: Lato;
-            font-style: normal;
-            font-weight: bold;
-            font-size: 24px;
-            line-height: 24px;
-            text-align: center;
-            color: #1B1642;
-          }
-          .text-pass {
-            color: #8DC883;
-            font-family: Lato;
-            font-style: normal;
-            font-weight: bold;
-            font-size: 24px;
-            line-height: 24px;
-          }
-        }
-  
-        .item-exam-name {
-          flex: 4;
-          margin-left: 40px;
-  
-          .item-exam-name-title {
-            font-family: Lato;
-            font-style: normal;
-            font-weight: 700;
-            font-size: 18px;
-            line-height: 22px;
-            color: #1B1642;
-          }
-          .item-exam-name-desc {
-            font-family: Lato;
-            font-style: normal;
-            font-weight: 400;
-            font-size: 14px;
-            line-height: 22px;
-            color: #1B1642;
-          }
-        }
-  
-        .item-exam-about {
-          display: flex;
-          flex: 2;
-          flex-direction: column;
-          justify-content: space-between;
-  
-          .item-exam-about-problem {
+        .item-exam {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            margin-top: 35px;
             padding: 8px;
-            align-content: center;
-            justify-content: center;
-            width: fit-content;
-            background: #FFB562;
-            border-radius: 16px;
-          }
+
+            .item-exam-stats {
+                display: flex;
+                align-items: center;
+                flex-direction: column;
+                flex: 1;
+
+                .divider {
+                    margin-top: 16px;
+                    margin-bottom: 8px;
+                    width: 100%;
+                }
+                .text-score {
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: bold;
+                    font-size: 24px;
+                    line-height: 24px;
+                    text-align: center;
+                    color: #1b1642;
+                }
+                .text-pass {
+                    color: #8dc883;
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: bold;
+                    font-size: 24px;
+                    line-height: 24px;
+                }
+            }
+
+            .item-exam-name {
+                flex: 4;
+                margin-left: 40px;
+
+                .item-exam-name-title {
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: 700;
+                    font-size: 18px;
+                    line-height: 22px;
+                    color: #1b1642;
+                }
+                .item-exam-name-desc {
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: 400;
+                    font-size: 14px;
+                    line-height: 22px;
+                    color: #1b1642;
+                }
+            }
+
+            .item-exam-about {
+                display: flex;
+                flex: 2;
+                flex-direction: column;
+                justify-content: space-between;
+
+                .item-exam-about-problem {
+                    padding: 8px;
+                    align-content: center;
+                    justify-content: center;
+                    width: fit-content;
+                    background: #ffb562;
+                    border-radius: 16px;
+                }
+            }
+
+            .light-label {
+                margin-top: 8px;
+                font-family: Lato;
+                font-style: italic;
+                font-weight: 300;
+                font-size: 12px;
+                line-height: 14px;
+                color: #1b1642;
+            }
         }
-  
-        .light-label {
-          margin-top: 8px;
-          font-family: Lato;
-          font-style: italic;
-          font-weight: 300;
-          font-size: 12px;
-          line-height: 14px;
-          color: #1B1642;
-        }
-      }
-  
     }
 }
 
@@ -1521,7 +1519,7 @@
     .join-btn {
         margin: 20px auto 10px;
         background-color: #3f51b5;
-        border: solid .5px #3f51b5 !important;
+        border: solid 0.5px #3f51b5 !important;
 
         span {
             color: white;
@@ -1542,8 +1540,175 @@
         font-size: 8rem;
         top: calc(50% - 5rem);
         left: calc(50% - 3.5rem);
-        color:rgba(63,81,181, .5);
+        color: rgba(63, 81, 181, 0.5);
     }
+}
+
+.discussion-answer {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 20px;
+
+    &-left {
+        width: 70px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding-bottom: 8px;
+    }
+
+    &-right {
+        margin-right: 20px !important;
+        border: solid 1px #c5ccd0;
+        border-radius: 8px;
+        min-height: 135px;
+        flex-grow: 1;
+        position: relative;
+        padding: 20px;
+        padding-right: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    &-creator {
+        margin: 12px 32px 0 0 !important;
+        font-family: "Gilroy", sans-serif !important;
+        width: auto;
+        align-self: flex-end;
+        max-width: 185px;
+
+        &-photo {
+            width: auto;
+            margin-right: 10px !important;
+            padding: 4px 0;
+
+            .MuiAvatar-root {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        &-data {
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+
+        &-profile {
+            width: calc(100% - 55px);
+        }
+
+        &-name {
+            width: 100%;
+            color: #3f51b5 !important;
+
+            h6 {
+                white-space: nowrap;
+                font-weight: 500 !important;
+                overflow: hidden;
+                width: 100%;
+                text-overflow: ellipsis;
+                font-size: 0.8rem;
+            }
+        }
+
+        &-role {
+            width: 100%;
+            text-overflow: ellipsis;
+            font-size: 0.7rem;
+        }
+
+        &-date {
+            color: #7a7a7a;
+            font-size: 0.6rem;
+            text-overflow: ellipsis;
+        }
+    }
+
+    &-body {
+        flex-grow: 1;
+    }
+}
+
+.no-discussion-answers {
+    text-align: center;
+    background-color: #e2e2e2;
+    color: #7A7A7A;
+    font-weight: 400 !important;
+    border-radius: 4px;
+    padding: 8px;
+    margin-top: 25px;
+}
+
+.three-dots {
+    position: absolute !important;
+    top: 5px;
+    right: 0;
+
+    button {
+        min-width: 0 !important;
+    }
+}
+
+.popper-option {
+    position: relative;
+    padding: 16px;
+    padding-top: 12px;
+    width: 150px;
+    border: solid 2px #3f51b5 !important;
+    border-radius: 10px !important;
+
+    h6 {
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    button {
+        background-color: white !important;
+        display: block !important;
+        font-weight: 500;
+        font-family: "Gilroy", sans-serif !important;
+        width: 100%;
+        box-shadow: none !important;
+        padding: 2px !important;
+
+        span {
+            font-size: 0.9rem;
+        }
+
+        &.edit {
+            border: solid 2px #3f51b5 !important;
+            color: #3f51b5;
+            margin-bottom: 6px;
+        }
+
+        &.delete {
+            border: solid 2px maroon !important;
+            color: maroon;
+        }
+    }
+
+    &::after {
+        position: absolute;
+        content: "";
+        display: block;
+        width: 8px;
+        height: 8px;
+        top: 12px;
+        right: -4.8px;
+        background-color: white;
+        transform: rotate(-45deg);
+        border-right: solid 2px #3f51b5;
+        border-bottom: solid 2px #3f51b5;
+    }
+}
+
+.post-answer-btn {
+    margin-top: 10px !important;
 }
 
 // .wrs_editor {
