@@ -218,21 +218,28 @@ exports.addMultipleExam = async (req, res) => {
   exams.forEach(exam =>{
     let newQPools = []
     exam.questionPools.forEach((questionPoolData)=>{
-      Attachment.insertMany(questionPoolData.attachments, (error,attachments)=>{
-        if(error) {
-          res.status(400).json("Error Attachment Insertion" + error)
-          return
-        }
-        let attachmentIds = []
-        attachments.forEach(attachment=>{
-          attachmentIds.push(attachment._id)
-        })
-        questionPoolData.attachments=attachmentIds
+      if(questionPoolData.attachments.length === 0){
         newQPools.push(questionPoolData)
         if(newQPools.length == exam.questionPools.length){
           saveQuestionPoolExam(newQPools,exam)
         }
-      })
+      }else{
+        Attachment.insertMany(questionPoolData.attachments, (error,attachments)=>{
+          if(error) {
+            res.status(400).json("Error Attachment Insertion" + error)
+            return
+          }
+          let attachmentIds = []
+          attachments.forEach(attachment=>{
+            attachmentIds.push(attachment._id)
+          })
+          questionPoolData.attachments=attachmentIds
+          newQPools.push(questionPoolData)
+          if(newQPools.length == exam.questionPools.length){
+            saveQuestionPoolExam(newQPools,exam)
+          }
+        })
+      }
     })
   })
 }

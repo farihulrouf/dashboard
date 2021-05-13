@@ -89,21 +89,28 @@ exports.addMultipleExercise = async (req, res) => {
   exercises.forEach(exercise =>{
     let newQPools = []
     exercise.questionPools.forEach(questionPoolData=>{
-      Attachment.insertMany(questionPoolData.attachments, (error,attachments)=>{
-        if(error) {
-          res.status(400).json("Error Attachment Insertion" + error)
-          return
-        }
-        let attachmentIds = []
-        attachments.forEach(attachment=>{
-          attachmentIds.push(attachment._id)
-        })
-        questionPoolData.attachments=attachmentIds
+      if(questionPoolData.attachments.length === 0){
         newQPools.push(questionPoolData)
         if(newQPools.length == exercise.questionPools.length){
           saveQuestionPoolExercise(newQPools,exercise)
         }
-      })
+      }else{
+        Attachment.insertMany(questionPoolData.attachments, (error,attachments)=>{
+          if(error) {
+            res.status(400).json("Error Attachment Insertion" + error)
+            return
+          }
+          let attachmentIds = []
+          attachments.forEach(attachment=>{
+            attachmentIds.push(attachment._id)
+          })
+          questionPoolData.attachments=attachmentIds
+          newQPools.push(questionPoolData)
+          if(newQPools.length == exercise.questionPools.length){
+            saveQuestionPoolExercise(newQPools,exercise)
+          }
+        })
+      }
     })
   })
 }

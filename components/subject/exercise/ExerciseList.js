@@ -3,6 +3,7 @@ import React from "react";
 import { getExercises, getQuestionPools } from "../../../lib/api";
 import AddIcon from '@material-ui/icons/Add';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MathJax from "react-mathjax-preview";
 import { format } from 'date-fns'
 
 class ExerciseList extends React.Component{
@@ -203,14 +204,20 @@ class QuestionItem extends React.Component{
                 </CardContent>
                 <CardContent className="item-exam-name">                        
                     <Typography className="item-exam-name-title">
-                        {question}
+                        <MathJax
+                                math={
+                                    question.length > 1000
+                                        ? `${question.slice(0, 1000)}`
+                                        : question
+                                }
+                        />
                     </Typography>
                     
                     <Typography className="item-exam-name-desc">
-                    {multipleChoices.forEach(choice => {
-                        <br/>
-                        {choice}
-                    })}
+                        {multipleChoices.map((e,index)=>(
+                        <React.Fragment>
+                            <span>{String.fromCharCode("A".charCodeAt(0)+index)}:{e}</span><br/>
+                        </React.Fragment>))}
                     </Typography>
                 </CardContent>
                 <CardContent className="item-exam-about">

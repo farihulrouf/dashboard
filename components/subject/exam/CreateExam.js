@@ -102,13 +102,24 @@ class CreateExam extends React.Component{
             solution: this.getCellValue(worksheet, this.ANSWER_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             type: 'exam',
             //tag: 'No Tag',
-            attachments : { url: this.getCellValue(worksheet, this.MEDIA_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number))},
+            attachments : this.getAttachment(this.getCellValue(worksheet, this.MEDIA_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number))),
             playbackTimes: this.getCellValue(worksheet, this.PLAYBACK_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             correctScore: this.getCellValue(worksheet, this.CORRECT_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             wrongScore: this.getCellValue(worksheet, this.WRONG_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             totalStudent: 0,
             studentPass: 0
         }
+    }
+
+    getAttachment(cellValue){
+        let attachments = []
+        if(!!cellValue){
+            let attachmentsURLs = JSON.parse(cellValue)
+            attachmentsURLs.forEach(attachmentsURL => {
+                attachments.push({ url: attachmentsURL})
+            });
+        }
+        return attachments
     }
 
     getCellValue(worksheet, cellAddress){
@@ -119,7 +130,10 @@ class CreateExam extends React.Component{
     uploadExams(){
         createMultipleExam(this.props.courseId,this.state.exams)
         .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExamList'))
-        .catch(error=>alert(error.response.message))
+        .catch(error=>{
+            if(!!error.response)alert(error.response.data)
+            else alert(error.message)
+        })
     }
 
     render(){

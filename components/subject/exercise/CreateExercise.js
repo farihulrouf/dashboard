@@ -5,6 +5,7 @@ import React from "react";
 import XLSX from "xlsx";
 import { createMultipleExercise } from "../../../lib/api";
 import Dropzone from 'react-dropzone';
+import ExerciseUploadErrorDialog from "./ExerciseUploadErrorDialog";
 
 class CreateExercise extends React.Component{
 
@@ -23,9 +24,17 @@ class CreateExercise extends React.Component{
     WRONG_QUESTION_COLUMN      = 'I'
     DIFFICULTY_QUESTION_COLUMN = 'J'
 
-    state={
-        exercises: [],
-        fileNames: []
+
+    constructor(props){
+        super(props)
+        this.showErrorDialog = this.showErrorDialog.bind(this)
+        this.state={
+            exercises: [],
+            fileNames: [],
+            errorByFile: {}, // {fileName: errors}
+            showErrors: false
+        }
+    
     }
   
     handleDrop(e) {
@@ -34,7 +43,7 @@ class CreateExercise extends React.Component{
         let newFileNames = this.state.fileNames
         for(let i = 0; i<fileList.length; i++){
             var reader = new FileReader()
-            reader.onload = this.getExercise
+            reader.onload = (e) => this.getExercise(e,fileList[i].name)
             reader.readAsArrayBuffer(fileList[i])
             newFileNames.push([fileList[i].name])
         }
@@ -46,31 +55,32 @@ class CreateExercise extends React.Component{
         let newFileNames = this.state.fileNames
         for(let i = 0; i<fileList.length; i++){
             var reader = new FileReader()
-            reader.onload = this.getExercise
+            reader.onload = (e) => this.getExercise(e, fileList[i].name)
             reader.readAsArrayBuffer(fileList[i])
             newFileNames.push([fileList[i].name])
         }
         this.setState({fileNames:newFileNames})
     }
 
-    getExercise = (e) => {
+    getExercise = (e, fileName) => {
         var data = new Uint8Array(e.target.result);
         var workbook = XLSX.read(data, {type: 'array'});
         var worksheet = workbook.Sheets[workbook.SheetNames[0]];
         let questionPools = []
         let index = 0
+        let errors = []
         
         while(index != null){
             let numberCell = this.getCellValue(worksheet, this.NUMBER_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + index))
             if(numberCell){
-                questionPools.push(this.getQuestionPool(worksheet, index))
+                questionPools.push(this.getQuestionPool(worksheet, index, errors))
                 index++
             }else {
                 index = undefined
             }
         }
 
-        let exercises = this.state.exercises
+        let {exercises, errorByFile} = this.state
         exercises.push({
             name : this.getCellValue(worksheet, this.EXERCISE_NAME_CELL),
             description : this.getCellValue(worksheet, this.DESCRIPTION_CELL),
@@ -80,25 +90,60 @@ class CreateExercise extends React.Component{
             avarageScore: 0,
             studentPass: 0            
         })
-        this.setState({exercises: exercises})
+        if(errors.length) errorByFile[fileName] = errors // {fileName: [errors]}
+        this.setState({exercises: exercises, errorByFile: errorByFile, showErrors: Object.keys(errorByFile).length>0})
     }
 
-    getQuestionPool(worksheet, number){
+    getQuestionPool(worksheet, number, errors){
+        let multipleChoiceString = this.getCellValue(worksheet, this.OPTIONS_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number));
+        let multipleChoices = [];
+        let regex = /(".*?"|[^";]+)(?=\s*;|\s*$)/g
+        if(typeof multipleChoiceString === 'string'){
+            multipleChoices = multipleChoiceString.match(regex);
+            multipleChoices = multipleChoices.map(e => (e.toString().replace(/(^"|"$)/g,'').trim().toLowerCase()))
+        }else{
+            multipleChoices = [multipleChoiceString.toString().replace(/(^"|"$)/g,'')]
+        }
+        
+        const rowNumber = this.FIRST_QUESTION_DATA_ROW + number
+        let solutionString = this.getCellValue(worksheet, this.ANSWER_QUESTION_COLUMN + rowNumber);
+        let solutions = []
+        if(typeof solutionString === 'string'){
+            solutions = solutionString.match(regex);
+            solutions = solutions.map(e => (e.toString().replace(/(^"|"$)/g,'').trim().toLowerCase()))
+        }else{
+            solutions = [solutionString.toString().replace(/(^"|"$)/g,'')]
+        }
+        if(!solutions.reduce((prev,curr)=> (prev && multipleChoices.includes(curr)),true)){
+            //Answer doesn't exist in options array
+            const message = `${solutions} not in ${multipleChoices} as answer options`
+            errors.push({rowNumber: rowNumber, message: message})
+        }
+
         return {
             courseId: this.props.courseId,
             difficultyLabel: this.getCellValue(worksheet, this.DIFFICULTY_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             question: this.getCellValue(worksheet, this.PROBLEM_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
-            multipleChoices: JSON.parse(this.getCellValue(worksheet, this.OPTIONS_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number))),
-            solution: this.getCellValue(worksheet, this.ANSWER_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
+            multipleChoices: multipleChoices,
+            solution: solutions,
             type: 'exercise',
             //tag: 'No Tag',
-            attachments : { url: this.getCellValue(worksheet, this.MEDIA_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number))},
+            attachments : this.getAttachment(this.getCellValue(worksheet, this.MEDIA_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number))),
             playbackTimes: this.getCellValue(worksheet, this.PLAYBACK_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             correctScore: this.getCellValue(worksheet, this.CORRECT_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
             wrongScore: this.getCellValue(worksheet, this.WRONG_QUESTION_COLUMN + (this.FIRST_QUESTION_DATA_ROW + number)),
-            totalStudent: 0,
-            studentPass: 0
         }
+    }
+
+    getAttachment(cellValue){
+        let attachments = []
+        if(!!cellValue){
+            let attachmentsURLs = cellValue.match(/(".*?"|[^\s";][^";]+[^\s";])(?=\s*;|\s*$)/g)
+            attachmentsURLs.forEach(attachmentsURL => {
+                attachments.push({ url: attachmentsURL})
+            });
+        }
+        return attachments
     }
 
     getCellValue(worksheet, cellAddress){
@@ -109,10 +154,20 @@ class CreateExercise extends React.Component{
     uploadExercises(){
         createMultipleExercise(this.props.courseId,this.state.exercises)
         .then(result=>this.props.changeTabPage(this.props.tabIndex, 'ExerciseList'))
-        .catch(error=>alert(error.response.message))
+        .catch(error=>{
+            if(!!error.response)alert(error.response.data)
+            else alert(error.message)
+        })
+    }
+
+    showErrorDialog(e, open){
+        e.preventDefault();
+        this.setState({showErrors: open})
     }
 
     render(){
+        const {errorByFile, showErrors} = this.state;
+
         return(
             <div className="subject-exercise-create">
                 <Image src="/images/close_icon.svg" height={25} width={25} onClick={()=>this.props.changeTabPage(this.props.tabIndex, 'ExerciseList')}/>
@@ -123,6 +178,12 @@ class CreateExercise extends React.Component{
                 
                 <h3>Upload Exercise File(s)</h3>
                 <p>Download sample exercise file <a href="/excel/Sample-Exercise.xlsx">here</a>, then upload your exercise file</p>
+                {Object.keys(errorByFile).length > 0 && 
+                <p>
+                    You have some <a href="#" style={{color: 'red'}} onClick={(e)=>this.showErrorDialog(e,true)}>errors</a> in your uploaded file.
+                    Please <b>correct your files</b> and <b>reupload your files</b>.
+                </p>}
+                <ExerciseUploadErrorDialog open={showErrors} setOpen={this.showErrorDialog} errors={errorByFile} />
                 <List className="file-container">
                     {
                         this.state.fileNames.map((fileName)=>(
@@ -144,20 +205,20 @@ class CreateExercise extends React.Component{
                                     </div>
                                     )}
                                 </Dropzone>
-                                <label for="browse"><h4 style={{textDecorationLine: "underline", color: "#3F51B5"}}>Browse</h4></label>
+                                <label htmlFor="browse"><h4 style={{textDecorationLine: "underline", color: "#3F51B5"}}>Browse</h4></label>
                                 <input multiple id="browse" type="file" onChange={this.onFilesSelected.bind(this)}/>
                             </div>
                         )
                     }
                 </List>
-                <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                {!Object.keys(errorByFile).length && <div style={{display: "flex", flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
                     <Button
-                        onClick={this.uploadExercises.bind(this)} 
+                        onClick={this.uploadExercises.bind(this)}
                         style={{width: 165, height: 50, marginTop: 21, marginBottom: 34}} 
                         variant="contained" color="primary">
                             UPLOAD
                     </Button>
-                </div>
+                </div>}
             </div>
         )
     }
