@@ -136,8 +136,8 @@ const Course = ({ courseItem }) => {
                         <p>
                             {courseStatus === PAYMENT_STATUS_PAID ||
                             courseItem.isInstructor
-                                ? "OPEN COURSE"
-                                : "JOIN COURSE"}{" "}
+                                ? "OPEN"
+                                : "JOIN"}{" "}
                             &nbsp;
                         </p>
                         <ArrowRightAlt
