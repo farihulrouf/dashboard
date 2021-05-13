@@ -163,7 +163,7 @@ router.param("courseId", courseController.getCourseById);
 
 router.get(
   "/api/courses/:courseId/discussions",
-  authController.checkAuth,
+  // authController.checkAuth,
   catchErrors(courseController.getDiscussions)
 )
 
@@ -481,7 +481,7 @@ router.post(
 
 router.get(
   "/api/tag",
-  // authController.checkAuth,
+  authController.checkAuth,
   catchErrors(tagController.getTags)
 )
 

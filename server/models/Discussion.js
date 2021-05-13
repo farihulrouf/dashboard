@@ -33,6 +33,7 @@ discussionSchema
     .pre("findOne",autoPopulate)
     .pre("find",autoPopulate)
     .pre("findById", autoPopulate)
-    .pre("findByIdAndUpdate", autoPopulate)
+
+discussionSchema.index({ title: "text", body: "text"})
 
 module.exports = mongoose.model("Discussion", discussionSchema);
