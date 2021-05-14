@@ -510,10 +510,31 @@ exports.getDiscussions = async (req,res) => {
     try {
       const discussions = await Discussion.aggregate([
           {$match: filter},
-          {$addFields : field},
           {$sort: {createdAt: -1}},
           {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}},
-          {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}}
+          {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}},
+          {$unwind: {path: "$answers.topAnswers", preserveNullAndEmptyArrays: true}},
+          {$lookup: {from: 'users', localField: 'answers.topAnswers.creator', foreignField: '_id', as: 'answers.topAnswers.creator'}},
+          {$unwind: {path: "$answers.topAnswers.creator", preserveNullAndEmptyArrays: true}}, //since it's guaranteed that the creator is only on convert from array to object by unwind
+          {$group: {
+            _id : "$_id",
+            totalAnswers: {$first: "$answers.total"}, 
+            topAnswers: {$push: {$cond:[
+              { $ne: ["$answers.topAnswers", {}] }, //don't add empty object - empty object exist because of unwind with preserveNullAndEmptyArrays
+              "$answers.topAnswers",
+              "$$REMOVE"
+            ]}},
+            body: {$first: "$body"},
+            createdAt: {$first: "$createdAt"},
+            creator: {$first: "$creator"},
+            postedOn: {$first: "$postedOn"},
+            solved: {$first: "$solved"},
+            tag: {$first: "$tag"},
+            title: {$first: "$title"},
+            updatedAt: {$first: "$updatedAt"},
+            votes: {$first: "$votes"}
+          }},
+          {$addFields : field}
       ])
       .skip(((page || 1)-1) * limit)
       .limit(limit);

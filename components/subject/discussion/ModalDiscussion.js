@@ -73,7 +73,7 @@ const ModalDiscussion = (props) => {
                                 item
                             >
                                 <h3 className={selected.solve ? "solved" : ""}>
-                                    {selected.answers.total}
+                                    {selected.totalAnswers}
                                 </h3>
                                 <span>Answers</span>
                             </Grid>
@@ -118,8 +118,8 @@ const ModalDiscussion = (props) => {
                     </Grid>
                     <Divider />
                     <Grid className="comment-section">
-                        {selected.answers.topAnswers.length ? (
-                            selected.answers.topAnswers.map((item, index) => {
+                        {selected.topAnswers.length ? (
+                            selected.topAnswers.map((item, index) => {
                                 return <DiscussionAnswer key={index} data={item} />;
                             })
                         ) : (
