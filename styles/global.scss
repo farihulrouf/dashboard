@@ -39,6 +39,8 @@
     font-weight: 500;
 }
 
+@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap");
+
 html {
     scroll-behavior: smooth;
 }
@@ -104,12 +106,13 @@ button:hover {
     background-color: #c5ccd0;
 }
 
-.mybtn, .my-btn {
+.mybtn,
+.my-btn {
     padding: 6px 12px !important;
     border-radius: 4px;
 
     span {
-        font-family: 'Gilroy', sans-serif;
+        font-family: "Gilroy", sans-serif;
 
         @media (min-width: 1600px) {
             font-size: 1.1rem;
@@ -157,15 +160,17 @@ div::-webkit-scrollbar-thumb {
     border-right: solid 2px white;
 }
 
-pre[class*="language-"]{
-    max-height: 800px
+pre[class*="language-"] {
+    max-height: 800px;
 }
 
 input {
-    font-family: 'Gilroy', sans-serif !important;
+    font-family: "Gilroy", sans-serif !important;
 }
 
-.MuiInputBase-input, *[class^="MuiTypography"],.MuiFormLabel-root {
+.MuiInputBase-input,
+*[class^="MuiTypography"],
+.MuiFormLabel-root {
     font-family: "Gilroy", sans-serif !important;
     transition: cubic-bezier(0.075, 0.82, 0.165, 1) 0.3s;
 }
@@ -174,9 +179,14 @@ input {
     font-family: "Roboto", "Helvetica", sans-serif !important;
 }
 
+.MuiAvatar-root {
+    font-size: initial !important;
+}
+
 @import "Navbar.module.scss";
 @import "Home.module.scss";
 @import "Subject.module.scss";
 @import "Material.module.scss";
 @import "Sign.module.scss";
 @import "Post.module.scss";
+@import "Settings.module.scss";
