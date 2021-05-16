@@ -187,9 +187,8 @@
 
         .course-name {
             h5 {
-                margin: 0;
+                margin: 10px 0 5px;
                 text-align: left;
-                margin: 10px 0;
                 text-transform: capitalize;
                 font-size: 19px !important;
             }
@@ -200,6 +199,8 @@
             line-height: 1.5;
             font-size: 0.8rem;
             color: #8698a3;
+            overflow-y: hidden;
+            margin-bottom: 5px;
         }
 
         .btm-container {

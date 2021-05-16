@@ -33,11 +33,16 @@ const Course = ({ courseItem }) => {
 
     const getStatusCourse = () => {
         const { user_payment } = courseItem;
-        let payment_status = (user_payment[0] || {}).status;
-        if (payment_status === PAYMENT_STATUS_EXPIRED)
-            payment_status = PAYMENT_STATUS_UNREGISTERED;
-        return payment_status || PAYMENT_STATUS_UNREGISTERED;
-    };
+        
+        if (user_payment) {
+            let payment_status = (user_payment[0] || {}).status;
+            if (payment_status === PAYMENT_STATUS_EXPIRED)
+                payment_status = PAYMENT_STATUS_UNREGISTERED;
+            return payment_status || PAYMENT_STATUS_UNREGISTERED;
+        }
+
+        return null;
+    };  
 
     let courseStatus = getStatusCourse();
 
