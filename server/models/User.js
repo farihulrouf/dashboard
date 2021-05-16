@@ -126,6 +126,7 @@ const autoPopulateFollowingAndFollowers = function (next) {
     next();
 };
 
+//COURSE AUTHORIZATION
 userSchema.methods.canCreateCourse = function () {
     //A organization or a user without any organization
     return this.isAnOrganization || this.organization.length == 0;
@@ -136,6 +137,49 @@ userSchema.methods.canAccessCourse = function (c) {
     const instructor_ids = c.instructors.map((v)=> (typeof v === "object") ? v._id : v)
     const participant_ids = c.participants.map((v) => (typeof v === "object" ? v._id : v))
     return instructor_ids.includes(this._id) || participant_ids.includes(this._id)
+}
+
+//SUBJECT/HOME AUTHORIZATION
+userSchema.methods.canShowSyllabus = function (c){
+  return true
+}
+
+userSchema.methods.canJoinRoom = function (c){
+  return true
+}
+
+userSchema.methods.canCRUDRoom = function (c){
+  return true
+}
+
+userSchema.methods.canCreatePost = function (c){
+  return true
+}
+
+userSchema.methods.canUpdatePost = function (c){
+  return true
+}
+
+userSchema.methods.canDeletePost = function (c){
+  return true
+}
+
+userSchema.methods.canGetPost = function (c){
+  return true
+}
+
+userSchema.methods.canSearchPost = function (c){
+  return true
+}
+
+userSchema.methods.canFilterPost = function (c){
+  return true
+}
+
+//SUBJECT/DISCUSSION AUTHORIZATION
+userSchema.methods.canCreateDiscussion = function(d) {
+  //Check if a user can create a discussion on the given courseId
+  return true;
 }
 
 userSchema.methods.canEditDiscussion = function(discussion){
@@ -150,17 +194,43 @@ userSchema.methods.canDeleteDiscussion = function(discussion){
   return canDelete;
 }
 
-userSchema.methods.canCreateDiscussion = function(course) {
+userSchema.methods.canSearchDiscussion = function(d) {
   //Check if a user can create a discussion on the given courseId
   return true;
 }
 
+userSchema.methods.canFilterDiscussion = function(d) {
+  //Check if a user can create a discussion on the given courseId
+  return true;
+}
+
+userSchema.methods.canVoteDiscussion = function(d) {
+  //Check if a user can create a discussion on the given courseId
+  return true;
+}
+
+userSchema.methods.canVoteAnswer = function(d) {
+  //Check if a user can create a discussion on the given courseId
+  return true;
+}
+
+//ROLE IDENTIFIER
 //Teacher untuk sebuah organisasi --> user.organiztion ! =[]
 //Private teacher ---> user.organization = [] && user.courses != []
 userSchema.methods.isInstructor = function (course) {
     //isInstructor is true if a user is an instructor of a given course
     const instructor_ids = course.instructors.map((val) => typeof val === "object" ? val._id.toString() : val )   
     return instructor_ids.includes(this._id.toString());
+}
+
+userSchema.methods.isParticipant = function (course) {
+  const participant_ids = course.participants.map((v) => (typeof v === "object" ? v._id : v))
+  return participant_ids.includes(this._id)
+}
+
+userSchema.methods.isCreator = function (course) {
+  const creator_id = typeof (course.creator) === "object" ? course.creator._id : course.creator
+  return creator_id == this._id
 }
 
 userSchema.pre("findOne", function (next) {
