@@ -347,15 +347,28 @@ exports.createCoursePost = async (req, res, next) => {
 
 exports.getPosts = async (req, res) => {
   const courseId = req.params.courseId || req.post.postedOn;
-  console.log(req.query);
   let { category, content, page, dateStart, dateEnd, creator, tag } = req.query;
-  const options = {
-    page: parseInt(page),
-    limit: 10,
+  let options = {
     sort: {
       createdAt: -1,
     },
   };
+  const course = req.course || await Course.findById(courseId)
+  const canAccess = req.user ? req.user.canAccessCourse(course) : false
+  if(canAccess){
+    options = {
+      ...options, 
+      page: page ? parseInt(page):1,
+      limit: 10,
+    }
+  }
+  else{
+    options = {
+      ...options, 
+      page: 1,
+      limit: 4,
+    }
+  }
   const filters = [
     {
       id: 1,
@@ -372,7 +385,6 @@ exports.getPosts = async (req, res) => {
   ];
 
   let params = {};
-  let test = {};
 
   if (content) {
     //Filter title
@@ -425,9 +437,6 @@ exports.getPosts = async (req, res) => {
     }
   }
 
-  console.log(params);
-  // console.log(test);
-
   const posts = await Post.paginate(params, options);
   if(req.user){
     posts.docs.forEach((post) => {
@@ -438,7 +447,7 @@ exports.getPosts = async (req, res) => {
   }
 
   if (req.user) {
-    res.json({ status: "ok", posts: posts });
+    res.json({ status: "ok", canAccess, posts: posts });
   } else {
     res.json({ status: "error" });
   }
