@@ -536,82 +536,105 @@ exports.createReview = async (req, res) => {
 };
 
 exports.getDiscussions = async (req,res) => {
+  try {
     const {course, user} = req;
+    var {page, limit} = req.query;
+    limit = limit ? parseInt(limit) : 10;
+    page = page ? parseInt(page) : 1;
+  
+    const filter = getDiscussionFilter(req.query, course._id)
+    const length = await Discussion.countDocuments(filter);
+    const avail = page * limit < length;
+  
+    var field = {}
+    if(user){
+      field = {  
+        isVoted: {$in: [user._id, "$votes.voters"]},
+        canEdit: {$eq: [user._id, "$creator"]},
+        canDelete: {$in: [user._id, ["$creator",course.creator._id]]}
+      }
+    }
+    
     const discussions = await Discussion.aggregate([
-        {$match: {postedOn: course._id}},
+        {$match: filter},
         {$sort: {createdAt: -1}},
-        //Populate answers
         {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}},
-        {$unwind : {
-          path : "$answers.topAnswers",
-          preserveNullAndEmptyArrays : true
-        }},
-        {$lookup: {from: 'users', localField: 'answers.topAnswers.creator', foreignField: '_id', as: 'answers.topAnswers.creator'}},
-        {$unwind : {
-          path : "$answers.topAnswers.creator",
-          preserveNullAndEmptyArrays : true
-        }},
-        {$project :{
-          "answers.topAnswers.creator" : {teachers:0, organization:0, following:0, followers:0,salt:0, hash:0, createdAt:0, updatedAt:0, notifications:0, active:0, }
-        }},
-        {$group : {
-          _id: "$_id",
-          title : {$first : "$title"},
-          body: {$first : "$body"},
-          createdAt: {$first : "$createdAt"},
-          creator : {$first : "$creator"},
-          postedOn : {$first : "$postedOn"},
-          solved : {$first : "$solved"},
-          tag : {$first : "$tag"},
-          votes: {$first : "$votes"},
-          answers : {$first : "$answers"},
-          answersTop : {
-            $push : "$answers.topAnswers"
-          },
-        }},
-        {$project : {
-          _id : 1,
-          title: 1,
-          body : 1,
-          createdAt : 1,
-          creator : 1,
-          postedOn : 1,
-          solved : 1,
-          tag : 1,
-          solved : 1,
-          votes : 1,
-          answers : {total : 1, 
-            topAnswers : {
-              $filter : {
-                input : "$answersTop",
-                as : "item",
-                cond : { $gt: ['$$item.creator', {} ]}}
-              }
-            }
-          }
-        },
-        //Populate Tags
         {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}},
-        //Populate Discussion creator
-        {$lookup: {from: 'users', localField: 'creator', foreignField: '_id', as: 'creator'}},
-        {$unwind : {
-          path : "$creator",
-          preserveNullAndEmptyArrays : true
+        {$unwind: {path: "$answers.topAnswers", preserveNullAndEmptyArrays: true}},
+        {$lookup: {from: 'users', localField: 'answers.topAnswers.creator', foreignField: '_id', as: 'answers.topAnswers.creator'}},
+        {$unwind: {path: "$answers.topAnswers.creator", preserveNullAndEmptyArrays: true}}, //since it's guaranteed that the creator is only on convert from array to object by unwind
+        {$group: {
+          _id : "$_id",
+          doc : {$first : "$$ROOT"},
+          topAnswers: {$push: {$cond:[
+            { $ne: ["$answers.topAnswers", {}] }, //don't add empty object - empty object exist because of unwind with preserveNullAndEmptyArrays
+            "$answers.topAnswers",
+            "$$REMOVE"
+          ]}}
         }},
-        //Populate Discussion postedOn
-        {$lookup: {from: 'courses', localField: 'postedOn', foreignField: '_id', as: 'postedOn'}},
-        {$unwind : {
-          path : "$postedOn",
-          preserveNullAndEmptyArrays : true
-        }},
-        {$project :{
-          creator : {teachers:0, organization:0, following:0, followers:0,salt:0, hash:0, createdAt:0, updatedAt:0, notifications:0, active:0, }
-        }},
-        {$addFields: {  
-          isVoted: {$in: [user._id, "$votes.voters"]},
-          canEdit: {$eq: [user._id, "$creator"]},
-          canDelete: {$in: [user._id, ["$creator",course.creator._id]]}
-        }},
+        {$replaceRoot:{"newRoot": {"$mergeObjects" : ["$doc", {answers : {total: "$doc.answers.total", topAnswers: "$topAnswers"}}]}}},
+        {$addFields : field}
     ])
-    res.json({status: "ok", discussions: discussions});
+    .skip(((page || 1)-1) * limit)
+    .limit(limit);
+
+    res.json({status: "ok", discussions, avail});
+  }catch(err){
+    res.json({status:"error", message:err.message})
+  }
+}
+
+const getDiscussionFilter = (params, courseId) =>{
+  var {
+    query,
+    instructor,
+    dateStart,
+    dateEnd,
+  } = params;
+
+  var filter = {
+    postedOn: courseId,  
+  };
+
+  if(query){
+    query = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
+    filter["$or"] = [
+      {
+        title: {
+          $regex: query,
+        },
+      },
+      {
+        body: {
+          $regex: query,
+        },
+      },
+    ];
+  }
+
+  if(instructor){
+    if (!Array.isArray(instructor)){
+      instructor = [ObjectId(instructor)]
+    }else{
+      instructor = instructor.map(val => ObjectId(val))
+    }
+    filter["creator"] = {
+      $in: instructor
+    }
+  }
+
+  if (dateStart) {
+    dateStart = new Date(dateStart);
+    filter["createdAt"] = {
+      $gte: dateStart,
+    };
+  }
+
+  if (dateEnd) {
+    dateEnd = new Date(dateEnd);
+    filter["createdAt"] = {
+      $lte: dateEnd,
+    };
+  }
+  return filter
 }

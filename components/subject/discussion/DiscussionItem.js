@@ -123,7 +123,7 @@ class DiscussionItem extends React.Component {
                             item
                         >
                             <h3 className={discussion.solve ? "solved" : ""}>
-                                {discussion.totalAnswers}
+                                {discussion.answers.total}
                             </h3>
                             <span>Answers</span>
                         </Grid>
@@ -182,14 +182,14 @@ class DiscussionItem extends React.Component {
                             />
                         )}
                         {showBestAnswer &&
-                            discussion.topAnswers.length > 0 && (
+                            discussion.answers.topAnswers.length > 0 && (
                                 <DiscussionAnswer
-                                    data={discussion.topAnswers[0]}
+                                    data={discussion.answers.topAnswers[0]}
                                 />
                             )}
 
                         {showBestAnswer &&
-                            discussion.topAnswers.length <= 0 && (
+                            discussion.answers.topAnswers.length <= 0 && (
                                 <h6 className="no-discussion-answers">
                                     No answers yet!
                                 </h6>
