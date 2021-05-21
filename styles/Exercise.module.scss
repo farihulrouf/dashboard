@@ -1,0 +1,206 @@
+.exercise-container {
+    margin-top: 64px;
+    padding-top: 26px;
+    display: flex;
+    flex-direction: column;
+    
+    .question-container {
+        display: flex;
+        padding: 16px;
+        background: #FFFFFF;
+        border: 1px solid #C5CCD0;
+        box-sizing: border-box;
+        border-radius: 8px;
+        flex: 1;
+        flex-direction: column;
+
+        .header-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            .course-number-container {
+                display: flex;
+                flex-direction: row;
+
+                .course-title {
+                    font-family: Gilroy;
+                    font-size: 18px;
+                    line-height: 32px;
+                    color: #8698A3;
+                }
+    
+                .question-number {
+                    margin-left: 4px;
+                    font-family: Gilroy-SemiBold;
+                    font-size: 22px;
+                    line-height: 32px;
+                }
+            }
+
+            .time-container {
+                display: flex;
+                flex-direction: row;
+                align-items: flex-end;
+                
+                .time {
+                    font-family: Gilroy-Regular;
+                    font-size: 20px;
+                    line-height: normal;
+                }
+            }
+        }
+
+        .question {
+            margin-top: 20px;
+            font-family: Gilroy;
+            font-size: 20px;
+            line-height: 23px;
+            color: #1B1642;
+        }
+    }
+
+    .non-question-container {
+        display: flex;
+        margin-top: 24px;
+        flex: 2;
+        flex-direction: row;
+
+        .answers-container {
+            display: flex;
+            flex: 3;
+            flex-direction: column;
+
+            .answer-item-container {
+                padding: 11px;
+                margin-bottom: 15px;
+                background: #FFFFFF;
+                border: 1px solid #C5CCD0;
+                box-sizing: border-box;
+                border-radius: 8px;
+            }
+
+            .answer-item-selected-container {
+                padding: 11px;
+                margin-bottom: 15px;
+                background: #FFFFFF;
+                border: 4px solid #3F51B5;
+                box-sizing: border-box;
+                border-radius: 8px;
+            }
+
+            .answer-letter {
+                font-family: Gilroy-SemiBold;
+                font-size: 22px;
+                line-height: 26px;
+                color: #1B1642;
+            }
+
+            .answer {
+                font-family: Gilroy;
+                font-size: 20px;
+                line-height: 23px;
+                color: #1B1642;
+            }
+        }
+
+        .navigation-container {
+            display: flex;
+            margin-left: 24px;
+            flex: 1;
+            flex-direction: column;
+
+            .navigation-number-container {
+                padding: 16px;
+                display: flex;
+                flex: 1;
+                background: #FFFFFF;
+                border: 1px solid #C5CCD0;
+                box-sizing: border-box;
+                border-radius: 8px;
+                flex-direction: column;
+
+                .navigation-number-title {
+                    font-family: Gilroy-SemiBold;
+                    font-size: 22px;
+                    line-height: 32px;
+                    color: #8698A3;
+                    margin-bottom: 13px ;
+                }
+
+                .number {
+                    font-family: Gilroy-Regular;
+                    font-size: 22px;
+                    line-height: 32px;                    
+                    text-align: center;
+
+                    .number-unanswered {
+                        color: #000000;
+                        background-color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 16px;
+                        align-self: center;
+                    }
+    
+                    .number-answered {
+                        color: #3F51B5;
+                        background-color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 16px;
+                        align-self: center;
+                    }
+    
+                    .number-selected {
+                        color: white;
+                        background-color: #3F51B5;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 16px;
+                        align-self: center;
+                    }
+    
+                    .number-marked {
+                        color: #FE7C54;
+                        background-color: white;
+                        width: 32px;
+                        height: 32px;
+                        border-radius: 16px;
+                        align-self: center;
+                    }
+                }
+            }
+
+            .navigation-option-container {
+                display: flex;
+                flex: 1;
+                justify-content: flex-end;
+                margin-top: 15px;
+                margin-bottom: 15px;
+                flex-direction: column;
+                
+                .mark-button {
+                    margin-left: 4px;
+                    margin-right: 4px;
+                    color: #FE7C54;
+                    border-color: #FE7C54;
+                }
+
+                .navigation-prev-next-container {
+                    display: flex;
+                    margin-top: 10px;
+                    flex-direction: row;
+                    justify-content: space-between;
+
+                    .prev-next-button {
+                        margin-left: 4px;
+                        margin-right: 4px;
+                        display: flex;
+                        flex: 1;
+                    }
+                }
+            }
+        }
+    }
+}

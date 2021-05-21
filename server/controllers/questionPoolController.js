@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const QuestionPool = mongoose.model("QuestionPool");
 const AnswerSheet = mongoose.model("AnswerSheet");
+const ExerciseResult = mongoose.model("ExerciseResult");
 const { ObjectId } = mongoose.Types;
 
 const AWS = require("aws-sdk"); // Requiring AWS SDK.
@@ -150,6 +151,44 @@ exports.getQuestionPools = async (req, res) => {
   .limit(limit).exec((err,result)=>{
     if(err)res.status(400).json(err)
     else res.json(result)
+  })
+}
+
+exports.getRandomQuestionPools = async (req, res) => {
+  let limit = parseInt(req.query.limit)
+  let query = {
+    courseId: ObjectId(req.params.courseId),
+    difficultyLabel: req.query.difficulty
+    //type : 'exercise'
+  }
+  const timeLimit = parseInt(req.query.timeLimit)
+  const userId = req.user._id
+  if(!!!limit)limit = 10
+
+  QuestionPool
+  .aggregate([ {$match: query}, {$sample: {size: limit}} ])
+  .exec((err,result) => {
+    if (err) {
+      res.status(400).json(err)
+    } else {
+      const finalScore = 0
+      const rightAnswer = 0 
+      const totalQuestion = result.length
+      const courseId = query.courseId
+      const difficulty = query.difficultyLabel
+      const exerciseResult = new ExerciseResult({
+        finalScore,
+        rightAnswer,
+        totalQuestion,
+        timeLimit,
+        difficulty,
+        courseId,
+        userId
+      })
+      exerciseResult
+      .save()
+      .then((savedExerciseResult) => res.json({ questionPools: result, exerciseResult: savedExerciseResult }))
+    }
   })
 }
 

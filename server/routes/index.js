@@ -2,6 +2,7 @@ const express = require("express");
 const authController = require("../controllers/authController");
 const userController = require("../controllers/userController");
 const exerciseController = require("../controllers/exerciseController");
+const exerciseResultController = require("../controllers/exerciseResultController");
 const postController = require("../controllers/postController");
 const courseController = require("../controllers/courseController");
 const questionPoolController = require("../controllers/questionPoolController");
@@ -103,6 +104,7 @@ router.put(
   questionPoolController.updateQuestionPool
 );
 router.get("/api/courses/:courseId/questionpools",questionPoolController.getQuestionPools);
+router.get("/api/courses/:courseId/questionpools/random",authController.checkAuth,questionPoolController.getRandomQuestionPools);
 
 /**
  * ATTACHMENT ROUTE
@@ -148,6 +150,14 @@ router.get("/api/courses/:courseId/exams",examController.getExams)
 router.post("/api/courses/:courseId/exercises/multiple", exerciseController.addMultipleExercise);
 router.get("/api/courses/:courseId/exercises", exerciseController.getExercises)
 
+/**
+ * EXERCISE RESULT ROUTES
+ */
+ 
+ router.post(
+   "/api/courses/:courseId/exercise-result/submit",exerciseResultController.submitExerciseResult);
+ router.get("/api/courses/:courseId/exercise-results",exerciseResultController.getExerciseResults);
+ 
 /**
  * COURSE ROUTES /api/courses
  */

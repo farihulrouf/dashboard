@@ -28,6 +28,8 @@ import {
     createInvoice,
     getMyInvoice,
 } from "../../lib/api";
+import StudentExerciseList from "../../components/subject/exercise/StudentExerciseList";
+import StudentCreateExercise from "../../components/subject/exercise/StudentCreateExercise";
 import CONSTANT from "../../constant";
 
 function TabPanel(props) {
@@ -340,16 +342,31 @@ class Subject extends React.Component {
                                 className="subject-discussion"/>
                         </TabPanel>
                         <TabPanel value={tabIndex} index={2}>
-                            <ExerciseSetting
-                                tabIndex = {2}
-                                auth={auth}
-                                courseId={router.query.id}
-                                isInstructor={course.isInstructor}
-                                className="subject-exercise"
+                        {this.state.exercise_page_active === 'ExerciseList'&&
+                            <StudentExerciseList
+                            tabIndex = {2}
+                            changeTabPage = {this.changeTabPage.bind(this)}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exercise-list"
                             />
-                        </TabPanel>
-                    </React.Fragment>}
-                    {course.isInstructor && <React.Fragment>
+                        }
+                        {this.state.exercise_page_active === 'CreateExercise'&&
+                            <StudentCreateExercise
+                            tabIndex = {2}
+                            changeTabPage = {this.changeTabPage.bind(this)}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exercise-student-create"
+                            />
+                        }    
+                        </TabPanel>    
+                    </React.Fragment>
+                    }
+                    {course.isInstructor &&
+                    <React.Fragment>
                         <TabPanel value={tabIndex} index={0}>
                             <Home
                                 auth={auth}
