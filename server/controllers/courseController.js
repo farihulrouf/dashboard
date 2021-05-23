@@ -263,7 +263,7 @@ exports.getMyCourses = async (req, res) => {
     const results = await Course.aggregate([
       ...aggParams,
       {$lookup: {from : User.collection.name, localField: 'instructors', foreignField: '_id', as: 'instructors'}},
-      {$sort : {"doc.createdAt" : 1}},
+      {$sort : {"createdAt" : -1}},
       {$addFields: field}
     ])
     .skip(((page || 1)-1) * limit)
