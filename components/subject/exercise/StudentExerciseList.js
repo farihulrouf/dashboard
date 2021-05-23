@@ -81,7 +81,7 @@ class ExerciseResultItem extends React.Component{
 
         let menu = (finalScore) => {
             if(finalScore === 0)return ['Publish']
-            else return ['Statistics', 'Review']
+            else return ['Review']
         }
         return (
             <Card className="item-exam">
