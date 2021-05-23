@@ -1,14 +1,9 @@
 /* eslint-disable no-use-before-define */
 import React, { useEffect, useState } from "react";
-import useAutocomplete from "@material-ui/lab/useAutocomplete";
-import NoSsr from "@material-ui/core/NoSsr";
-import CheckIcon from "@material-ui/icons/Check";
 import CloseIcon from "@material-ui/icons/Close";
 import styled from "styled-components";
-import Chip from "@material-ui/core/Chip";
 import TextField from "@material-ui/core/TextField";
 import Autocomplete from "@material-ui/lab/Autocomplete";
-import {getTags } from '../../../lib/api';
 
 const Tag = styled(({ label, onDelete, ...props }) => (
     <div {...props}>
@@ -49,14 +44,15 @@ const Tag = styled(({ label, onDelete, ...props }) => (
 `;
 
 
-export default function TagsForm({ tags, setTags, variant }) {
+export default function TagsForm({ name, items, setItems, getItems }) {
 
     const [tagsOption, setTagsOption] = useState([])
-    const [courseTags] = useState(tags);
+    const [courseTags] = useState(items);
 
     useEffect(() =>{
-        getTags()
+        getItems()
         .then((res) =>{
+            console.log(res)
             if(res.status == "ok"){
                 setTagsOption(res.data.map((val) => val.name))
             }
@@ -66,15 +62,14 @@ export default function TagsForm({ tags, setTags, variant }) {
     })
     },[])
 
-    const handleChange = (event, value) =>{
-        setTags([...value])
+    const handleChange = (event, value) => {
+        setItems(name, [...value]);
     }
 
     return (
         <Autocomplete
-            className="discussion-tag"
+            className="tagform"
             multiple
-            id="tags-filled"
             onChange={handleChange}
             options={tagsOption}
             defaultValue={courseTags}
@@ -89,7 +84,7 @@ export default function TagsForm({ tags, setTags, variant }) {
                             />
                         );
                     } else {
-                        value.pop();
+                        value.unshift();
                     }
                 }))
             }}
@@ -97,7 +92,7 @@ export default function TagsForm({ tags, setTags, variant }) {
                 <TextField
                     {...params}
                     variant="outlined"
-                    placeholder="Add Up to 5 Tags"
+                    placeholder={`Add Up to 5 Tags`}
                 />
             )}
         />

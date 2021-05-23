@@ -1,17 +1,17 @@
 import { Grid, Button } from "@material-ui/core";
 import Avatar from "../Avatar"
-import { Star, ArrowRightAlt, FormatQuote } from "@material-ui/icons";
-import Link from "next/link";
+import { Star, ArrowRightAlt, MoreVert } from "@material-ui/icons";
 import Router from "next/router";
-import React, { useEffect } from "react";
+import React from "react";
 import {
     PAYMENT_STATUS_EXPIRED,
     PAYMENT_STATUS_PAID,
     PAYMENT_STATUS_PENDING,
     PAYMENT_STATUS_UNREGISTERED,
 } from "../../constant";
+import CourseMore from "../CourseMore";
 
-const Course = ({ courseItem }) => {
+const Course = ({ courseItem, onUpdate }) => {
     const valueLabelFormat = (value) => {
         const array = String(value).split("");
         const length = array.length;
@@ -45,9 +45,11 @@ const Course = ({ courseItem }) => {
     };  
 
     let courseStatus = getStatusCourse();
+    const { canEdit } = courseItem
 
     return (
         <Grid className="course-container">
+            {canEdit && <CourseMore course={courseItem} onUpdate={onUpdate} />}
             <Grid container className="course-content">
                 <Grid item className="img-container">
                     <Avatar

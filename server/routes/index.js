@@ -193,12 +193,13 @@ router.get(
   catchErrors(courseController.getCourses)
 );
 
-// router.post(
-//   "/api/courses",
-//   authController.checkAuth,
-//   catchErrors(courseController.createCourse),
-//   catchErrors(courseController.getMyCourses)
-// );
+router.post(
+  "/api/courses",
+  authController.checkAuth,
+  catchErrors(courseController.createCourse),
+  catchErrors(tagController.addTags),
+  catchErrors(courseController.getMyCourses)
+);
 
 router.get(
   "/api/courses/favourite",
@@ -231,6 +232,8 @@ router.put(
   "/api/courses/:courseId/edit",
   authController.checkAuth,
   courseController.updateCourse,
+  catchErrors(tagController.deleteTags),
+  catchErrors(tagController.addTags),
   catchErrors(courseController.getMyCourses)
 )
 

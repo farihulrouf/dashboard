@@ -169,10 +169,11 @@ exports.getFavouriteCourse = async (req, res) => {
 
 exports.createCourse = async (req, res, next) => {
   const { user } = req;
-  if (user.canCreateCourse) {
+  if (user.canCreateCourse()) {
     let course = new Course({
       ...req.body,
       creator: user,
+      instructors: !user.isAnOrganization ? [user._id] : [] //if a private instructor, assign himself as an instructor
     });
     course.save((err, savedCourse) => {
       if (err) {
@@ -211,21 +212,21 @@ exports.getCourse = async (req, res) => {
 exports.getMyCourses = async (req, res) => {
   try{
     const { user } = req;
-    req.query.limit = parseInt(req.query.limit);
-    req.query.page = parseInt(req.query.page);
+    req.query.limit = parseInt(req.query.limit) || 4;
+    req.query.page = parseInt(req.query.page) || 1;
     
     const { page, limit, query } = req.query;
     let aggParams = [];
-    let filter = {$and: []}
+    let filter = {}
     if(query){
       match = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
-      filter["$and"].push({$or: [
+      filter["$and"] = (filter["$and"] || []).concat({$or: [
         {name: {$regex: match}},
         {about: {$regex: match}}
       ]})
     }
     if(user.isAnOrganization || user.isAnInstructor){
-      filter["$and"].push({$or: [
+      filter["$and"] = (filter["$and"] || []).concat({$or: [
         {creator: user._id},
         {instructors: user._id}
       ]})
@@ -233,38 +234,41 @@ exports.getMyCourses = async (req, res) => {
     }else{
       filter["participants"] = user._id
       aggParams.push({$match: filter})
-      aggParams.push({$lookup: {
-        from: Payment.collection.name,
-        let: {"id":"$_id"},
-        as: 'user_payment',
-        "pipeline": [{
-          $match: {$expr:{$eq: ["$course","$$id"]}, "user": user._id}
-        },{
-          $sort: {createdAt: -1, _id: -1},
-        },{
-          $limit: 1
-        },{
-          $project: {status: 1}
-        }]
-      }})
+    }
+
+    aggParams.push({$lookup: {
+      from: Payment.collection.name,
+      let: {"id":"$_id"},
+      as: 'user_payment',
+      "pipeline": [{
+        $match: {$expr:{$eq: ["$course","$$id"]}, "user": user._id}
+      },{
+        $sort: {createdAt: -1, _id: -1},
+      },{
+        $limit: 1
+      },{
+        $project: {status: 1}
+      }]
+    }})
+
+    if(user){
+      field = {
+        isInstructor: {$in: [user._id, "$instructors._id"]},
+        canEdit: {$eq: [user._id, "$creator"]},
+        canDelete: {$eq: [user._id, "$creator"]}
+      }
     }
 
     const totalData = await Course.countDocuments(filter);
     const results = await Course.aggregate([
       ...aggParams,
-      {$unwind : {path : "$instructors", preserveNullAndEmptyArrays: true}},
       {$lookup: {from : User.collection.name, localField: 'instructors', foreignField: '_id', as: 'instructors'}},
-      {$group : { 
-        _id : "$_id",
-        instructorsDet : {$push : "$instructors"},
-        doc : {$first : "$$ROOT"}
-      }},
       {$sort : {"doc.createdAt" : 1}},
-      {$replaceRoot:{"newRoot": {"$mergeObjects" : ["$doc", {instructors : "$instructorsDet"}]}}}
+      {$addFields: field}
     ])
     .skip(((page || 1)-1) * limit)
     .limit(limit || 10);
-    return res.json({ status: "ok", courses: results, total: totalData });
+    return res.json({ status: "ok", data: results, total: totalData });
   }catch(err){
     return res.json({ status: "ok", message: err.message });
   }
@@ -348,19 +352,19 @@ exports.updateCourse = (req, res, next) => {
     logo,
     rating,
   } = req.body;
-  (course.name = name),
-    (course.about = about),
-    (course.prerequisites = prerequisites),
-    (course.materials = materials),
-    (course.price = price),
-    (course.rating = rating),
-    (course.instructors = instructors);
-  course.logo = logo;
+  course.name = name || course.name
+  course.about = about || course.about
+  course.prerequisites = prerequisites || course.prerequisites
+  course.materials = materials || course.materials
+  course.price = price || course.price
+  course.rating = rating || course.rating
+  course.instructors = instructors || course.instructors
+  course.logo = logo || course.logo
   course.save((err, response) => {
     if (!err) {
       return next();
     }
-    res.json({ status: "ok", course: response });
+    return res.json({ status: "error", error: err.message });
   });
 };
 

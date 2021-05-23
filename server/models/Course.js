@@ -44,7 +44,12 @@ const courseSchema = new mongoose.Schema(
         instructors: [{type: ObjectId, ref: "User"}],
         participants: [{ type: ObjectId, ref: "User"}],
         posts: [{type: ObjectId, ref: "Post"}],
-        creator: {type: ObjectId, ref: "User"}
+        creator: {type: ObjectId, ref: "User"},
+        syllabus : [{
+            title : {type: String, trim: true},
+            description : {type : String, trim : true},
+            date : {type : Date}
+        }]
 
     },
     {timestamps: true}

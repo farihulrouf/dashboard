@@ -183,6 +183,16 @@ input {
     font-size: initial !important;
 }
 
+.tagform {
+    input {
+        padding: 0 !important;
+    }
+}
+
+.required-symbol {
+    color: #dd5951;
+}
+
 @import "Exercise.module.scss";
 @import "Navbar.module.scss";
 @import "Home.module.scss";
