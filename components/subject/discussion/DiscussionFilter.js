@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import {
     Grid,
     IconButton,
-    withStyles,
+    Tooltip,
     InputBase,
     Button,
 } from "@material-ui/core";
@@ -23,12 +23,12 @@ const DiscussionFilter = (props) => {
     const onQueryChange = (e) => {
         if (e) {
             if (e.target.name == "content") {
-                setQuery(prev => {
+                setQuery((prev) => {
                     return {
                         ...prev,
-                        content: e.target.value
-                    }
-                })
+                        content: e.target.value,
+                    };
+                });
             }
         }
     };
@@ -39,27 +39,36 @@ const DiscussionFilter = (props) => {
         });
     };
 
+    const { canCreate, canSearch, canFilter, openDiscussionForm } = props;
+
     return (
         <Grid item>
             <Grid item className="discussion-filter">
-                <Grid item className="create-post-container">
-                    <Button
-                        onClick={props.openDiscussionForm}
-                        className="create-post-btn"
-                    >
-                        CREATE NEW POST <Add />
-                    </Button>
-                </Grid>
-                <Grid item className="search-post">
-                    <Grid item className="input-container">
-                        <InputBase
-                            placeholder="Search for discussions?"
-                            name="content"
-                            value={query.content}
-                            onChange={onQueryChange}
-                        />
-                        <Search color="disabled" />
+                {canCreate && (
+                    <Grid item className="create-post-container">
+                        <Button
+                            onClick={openDiscussionForm}
+                            className="create-post-btn"
+                        >
+                            CREATE NEW POST <Add />
+                        </Button>
                     </Grid>
+                )}
+                <Grid item className="search-post">
+                    <Tooltip
+                        title={!canSearch ? "Unable to search discussion" : ""}
+                    >
+                        <Grid item className="input-container">
+                            <InputBase
+                                placeholder="Search for discussions?"
+                                name="content"
+                                value={query.content}
+                                onChange={onQueryChange}
+                                disabled={!canSearch}
+                            />
+                            <Search color="disabled" />
+                        </Grid>
+                    </Tooltip>
                 </Grid>
             </Grid>
             <Grid item className="second-row">
@@ -74,9 +83,18 @@ const DiscussionFilter = (props) => {
                     })}
                 </Grid>
                 <Grid item>
-                    <IconButton aria-label="show-filter">
-                        <FilterList />
-                    </IconButton>
+                    <Tooltip
+                        title={!canFilter ? "Unable to filter discussion" : ""}
+                    >
+                        <Grid item>
+                            <IconButton
+                                aria-label="show-filter"
+                                disabled={!canFilter}
+                            >
+                                <FilterList />
+                            </IconButton>
+                        </Grid>
+                    </Tooltip>
                 </Grid>
             </Grid>
         </Grid>

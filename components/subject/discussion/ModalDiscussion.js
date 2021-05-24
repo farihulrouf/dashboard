@@ -100,7 +100,7 @@ const ModalDiscussion = (props) => {
                                 />
                             </Grid>
                             <Grid item className="tag-container">
-                                {selected.tag.map(
+                                {selected.tags.map(
                                     (item, index) => {
                                         return (
                                             <Grid

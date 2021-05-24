@@ -76,7 +76,7 @@ exports.addQuestionPoolToExam = async (req, res) => {
   const solution = req.body.solution;
   const type = req.body.type;
   const attachments = req.body.attachments;
-  const tag = req.body.tag; 
+  const tags = req.body.tags; 
 
   Exam.findById(req.params.id)
     .then((exam) => {

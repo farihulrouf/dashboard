@@ -113,13 +113,6 @@ button:hover {
 
     span {
         font-family: "Gilroy", sans-serif;
-
-        @media (min-width: 1600px) {
-            font-size: 1.1rem;
-        }
-    }
-    @media (min-width: 1600px) {
-        padding: 8px 16px !important;
     }
 }
 

@@ -1,5 +1,5 @@
 import { Grid, Button } from "@material-ui/core";
-import Avatar from "../Avatar"
+import Avatar from "../Avatar";
 import { Star, ArrowRightAlt, MoreVert } from "@material-ui/icons";
 import Router from "next/router";
 import React from "react";
@@ -7,11 +7,12 @@ import {
     PAYMENT_STATUS_EXPIRED,
     PAYMENT_STATUS_PAID,
     PAYMENT_STATUS_PENDING,
-    PAYMENT_STATUS_UNREGISTERED,
+    PAYMENT_STATUS_UNREGISTERED
 } from "../../constant";
 import CourseMore from "../CourseMore";
 
 const Course = ({ courseItem, onUpdate }) => {
+    console.log(courseItem);
     const valueLabelFormat = (value) => {
         const array = String(value).split("");
         const length = array.length;
@@ -31,21 +32,16 @@ const Course = ({ courseItem, onUpdate }) => {
         Router.push(`/subjects?id=${id}`);
     };
 
-    const getStatusCourse = () => {
-        const { user_payment } = courseItem;
-        
-        if (user_payment) {
-            let payment_status = (user_payment[0] || {}).status;
-            if (payment_status === PAYMENT_STATUS_EXPIRED)
-                payment_status = PAYMENT_STATUS_UNREGISTERED;
-            return payment_status || PAYMENT_STATUS_UNREGISTERED;
-        }
+    const {
+        canEdit,
+        isInstructor,
+        isOrganization,
+        isParticipant,
+        user_payment,
+    } = courseItem;
 
-        return null;
-    };  
-
-    let courseStatus = getStatusCourse();
-    const { canEdit } = courseItem
+    const lastPayment = user_payment[user_payment.length - 1];
+    const status = lastPayment ? lastPayment.status : PAYMENT_STATUS_UNREGISTERED;
 
     return (
         <Grid className="course-container">
@@ -116,23 +112,23 @@ const Course = ({ courseItem, onUpdate }) => {
                 </span>
             </Grid>
             <Grid item className="btm-container">
-                {courseStatus === PAYMENT_STATUS_PAID && (
+                {status === PAYMENT_STATUS_PAID && (
                     <Grid item className="price-tag-container enrolled-tag">
-                        <div>ENROLLED</div>
+                        ENROLLED
                     </Grid>
                 )}
-                {courseStatus === PAYMENT_STATUS_PENDING && (
+                {status === PAYMENT_STATUS_PENDING && (
                     <Grid item className="price-tag-container pending-tag">
-                        <div>PENDING</div>
+                        PENDING
                     </Grid>
                 )}
-                {courseStatus === PAYMENT_STATUS_UNREGISTERED && (
+                {(status === PAYMENT_STATUS_UNREGISTERED || status === PAYMENT_STATUS_EXPIRED) && (
                     <Grid item className="price-tag-container">
-                        <div className="price-tag">
+                        <Grid item className="price-tag">
                             {courseItem.price
                                 ? valueLabelFormat(courseItem.price)
                                 : "FREE"}
-                        </div>{" "}
+                        </Grid>{" "}
                     </Grid>
                 )}
                 <Grid item className="join-btn-container">
@@ -140,13 +136,9 @@ const Course = ({ courseItem, onUpdate }) => {
                         className="join-btn"
                         onClick={() => goToCourse(courseItem._id)}
                     >
-                        <p>
-                            {courseStatus === PAYMENT_STATUS_PAID ||
-                            courseItem.isInstructor
-                                ? "OPEN"
-                                : "JOIN"}{" "}
-                            &nbsp;
-                        </p>
+                        {isOrganization || isInstructor || isParticipant
+                            ? "OPEN"
+                            : "JOIN"}{" "}
                         <ArrowRightAlt
                             style={{
                                 color: "white",
