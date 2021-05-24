@@ -982,6 +982,45 @@
             }
         }
     }
+
+    .subject-exercise-student-review {
+        .header-close-container {
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+
+            .close-icon {
+                height: 36px;
+                width: 36px;
+            }
+        }
+        
+        .header-title-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            
+            .header-title {
+                font-family: Lato;
+                font-style: normal;
+                font-weight: 600;
+                font-size: 30px;
+                line-height: 36px;
+                color: #000000;
+            }
+
+            .header-subtitle {
+                font-family: Lato;
+                font-style: normal;
+                font-weight: 500;
+                font-size: 20px;
+                line-height: 24px;
+                text-align: center;
+                color: #565A5C;            
+            }
+        }
+    }
 }
 
 .purple {

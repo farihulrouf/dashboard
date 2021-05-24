@@ -31,6 +31,7 @@ import {
 import StudentExerciseList from "../../components/subject/exercise/StudentExerciseList";
 import StudentCreateExercise from "../../components/subject/exercise/StudentCreateExercise";
 import CONSTANT from "../../constant";
+import StudentExerciseReview from "../../components/subject/exercise/StudentExerciseReview";
 
 function TabPanel(props) {
     const {
@@ -361,7 +362,17 @@ class Subject extends React.Component {
                             isInstructor={course.isInstructor}
                             className="subject-exercise-student-create"
                             />
-                        }    
+                        }
+                        {this.state.exercise_page_active === 'ExerciseReview'&&
+                            <StudentExerciseReview
+                            tabIndex = {2}
+                            changeTabPage = {this.changeTabPage.bind(this)}
+                            auth={auth}
+                            courseId={router.query.id}
+                            isInstructor={course.isInstructor}
+                            className="subject-exercise-student-review"
+                            />
+                        }
                         </TabPanel>    
                     </React.Fragment>
                     }
