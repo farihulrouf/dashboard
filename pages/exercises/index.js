@@ -135,6 +135,11 @@ class Exercise extends React.Component {
                         <Typography className="question">
                             <MathJax
                                 math={question.question}
+                                sanitizeOptions={{
+                                    USE_PROFILES: { html: true, mathMl: true },
+                                    ADD_TAGS: ["iframe"],
+                                    ADD_ATTR: ["allowfullscreen"],
+                                }}
                             />
                         </Typography>
                     </Box>
