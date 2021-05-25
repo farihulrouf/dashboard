@@ -24,7 +24,7 @@ const autoPopulate = function(next){
         "answers.topAnswers",
         "creator body status votes createdAt",
     );
-    this.populate('tag', '_id name');
+    this.populate('tags', '_id name');
     this.populate("creator","_id name avatar linkedIn teachers isAnOrganization");
     next();
 }

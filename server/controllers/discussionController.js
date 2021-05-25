@@ -111,7 +111,7 @@ exports.voteDiscussion = async (req,res,next) => {
                 }
               }
         })
-        .populate('tag').populate('creator')
+        .populate('tags').populate('creator')
     if(!newDiscussion) 
         return res.status(404)
             .json({status: "error", message: "Discussion is not found"})
@@ -148,7 +148,7 @@ exports.createAnswer = (req,res,next) => {
                 }
               }
         })
-        .populate("tag")
+        .populate("tags")
         .populate("creator")
         .exec( async (err,newDiscussion) => {
           

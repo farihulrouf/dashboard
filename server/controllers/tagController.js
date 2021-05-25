@@ -7,7 +7,10 @@ exports.getTags = async (req, res) =>{
 }
 
 const extractTags = (obj) => {
-  if(obj.tags) return obj.tags;
+  if(obj.tags) {
+    if(Array.isArray(obj.tags)) return obj.tags
+    return [obj.tags]
+  }
   if(obj.materials){
     if(obj.prerequisites) return obj.materials.concat(obj.prerequisites)
     return obj.materials
