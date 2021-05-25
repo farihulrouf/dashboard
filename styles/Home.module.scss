@@ -138,24 +138,49 @@
         display: inline-block;
         background-color: white;
 
+        & > div {
+            position: relative;
+        }
+
+        
+        .course-more {
+            position: absolute;
+            top: 0;
+            right: 0;
+
+            .three-dots {
+                position: relative !important;
+            }
+        }
+
         @media (min-width: 1537px) {
             width: 332px;
+        }
+
+        .course-logo-background {
+            position: absolute;
+            width: 210px;
+            height: 210px;
+            bottom: 0;
+            right: 0;
+            object-fit: cover;
+            opacity: 0.35;
+            object-position: left;
         }
 
         .course-content {
             display: flex;
             align-items: center;
+            justify-content: space-between;
 
             .img-container {
-                width: 40%;
-                height: 60px;
                 display: flex;
                 justify-content: flex-start;
                 align-items: center;
 
                 div {
-                    height: 55px;
-                    width: 55px;
+                    width: 50px;
+                    height: 50px;
                     font-family: "Gilroy", sans-serif;
                     font-size: 14px;
                     font-weight: 300;
@@ -170,37 +195,108 @@
 
             .review-container {
                 position: relative;
-                width: 60%;
                 align-items: center;
                 display: flex;
 
                 .star {
                     margin-left: auto;
                     margin-right: 8px;
+                    font-size: 1.25rem;
+                    color: #ffb562;
                 }
 
                 p {
                     font-weight: 500;
+                    font-size: 16px !important;
                 }
             }
         }
 
         .course-name {
             h5 {
-                margin: 10px 0 5px;
+                margin: 15px 0 5px;
                 text-align: left;
                 text-transform: capitalize;
-                font-size: 19px !important;
+                font-size: 21px !important;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
             }
         }
 
         .course-desc {
-            height: 60px;
             line-height: 1.5;
             font-size: 0.8rem;
-            color: #8698a3;
+            color: #7a7a7a;
             overflow-y: hidden;
-            margin-bottom: 5px;
+            margin-bottom: 20px;
+
+            p {
+                height: 64px;
+                word-break: break-all;
+                font-size: 15px !important;
+                color: #8698a3;
+                font-weight: 300 !important;
+            }
+        }
+
+        .course-instructors {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            height: 42px;
+
+            &-title {
+                font-family: "Gilroy", sans-serif !important;
+                font-weight: 500 !important;
+                margin-bottom: 12px;
+            }
+
+            &-avatar {
+                margin-right: 12px;
+
+                & > div {
+                    position: relative;
+                    margin-left: -16px;
+                    z-index: 1;
+                    border: solid 2px white;
+                }
+
+                & > div:first-child {
+                    margin-left: 0;
+                    z-index: 2;
+                }
+
+                & > div:last-child {
+                    position: relative;
+                    z-index: 0;
+                }
+            }
+
+            &-detail {
+                h6 {
+                    font-size: 14.5px !important;
+                    line-height: 1 !important;
+                    font-weight: 500 !important;
+                    margin-bottom: 6px;
+                }
+
+                span {
+                    font-size: 12.5px !important;
+                    font-family: "Gilroy", sans-serif !important;
+                    font-weight: 400 !important;
+                }
+            }
+        }
+
+        .no-instructors-yet {
+            display: flex;
+            align-items: center;
+            font-size: 16px !important;
+            font-family: "Gilroy", sans-serif !important;
+            justify-content: center;
+            height: 42px;
+            color: rgba(0, 0, 0, 0.6);
         }
 
         .btm-container {
@@ -290,13 +386,6 @@
             font-size: 12px;
         }
     }
-}
-
-.more-instructors {
-    color: #3f51b5;
-    display: block;
-    text-decoration: underline !important;
-    min-height: 20px;
 }
 
 .testi {

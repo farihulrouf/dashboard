@@ -66,6 +66,9 @@ export default function TagsForm({ name, items, setItems, getItems }) {
         setItems(name, [...value]);
     }
 
+    console.log("OUT",tagsOption)
+    console.log(courseTags)
+
     return (
         <Autocomplete
             className="tagform"
@@ -75,6 +78,7 @@ export default function TagsForm({ name, items, setItems, getItems }) {
             defaultValue={courseTags}
             freeSolo
             renderTags={(value, getTagProps) => {
+                console.log(value);
                 return (value.map((option, index) => {
                     if (index < 5) {
                         return (

@@ -36,7 +36,7 @@ const UserAvatar = ({ name, imgUrl }) => {
     };
 
     return (
-        <Tooltip title={name ? name : "Unknown"}>
+        // <Tooltip title={name ? name : "Unknown"}>
             <Avatar
                 alt={getInitial(name)}
                 src={imgUrl}
@@ -47,7 +47,7 @@ const UserAvatar = ({ name, imgUrl }) => {
             >
                 {getInitial(name)}
             </Avatar>
-        </Tooltip>
+        // </Tooltip>
     );
 };
 
