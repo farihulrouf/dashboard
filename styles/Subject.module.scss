@@ -1000,7 +1000,7 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            
+
             .header-title {
                 font-family: Lato;
                 font-style: normal;
@@ -1018,6 +1018,54 @@
                 line-height: 24px;
                 text-align: center;
                 color: #565A5C;            
+            }
+        }
+
+        .review-summary-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 54px;
+
+            .review-summary-item {
+                flex: 1;
+                background: #FFFFFF;
+                border: 1px solid #808080;
+                box-sizing: border-box;
+                border-radius: 10px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding-top: 20px;
+                padding-left: 50px;
+                padding-right: 50px;
+
+                .review-summary-icon {
+                    
+                }
+
+                .review-summary-value {
+                    margin-top: 15px;
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: bold;
+                    font-size: 30px;
+                    line-height: 36px;
+                    color: #3F51B5;
+                }
+
+                .review-summary-label {
+                    margin-top: 2px;
+                    margin-bottom: 15px;
+                    font-family: Lato;
+                    font-style: normal;
+                    font-weight: 600;
+                    font-size: 20px;
+                    line-height: 24px;
+                    text-align: center;
+                    color: #000000;
+                }
             }
         }
     }
