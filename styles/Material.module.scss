@@ -105,6 +105,10 @@
     top: 0;
     left: 0;
 
+    .MuiDialog-paper {
+        width: 400px !important;
+    }
+
     div[class^="MuiDialogContent"] {
         padding: 15px 30px;     
         width: clamp(350px, 40vw, 400px);
