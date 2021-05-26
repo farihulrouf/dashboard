@@ -78,16 +78,24 @@
             padding: 5px 10px;
             border-radius: 4px;
             border: solid 1px #ffb562;
+            font-size: 16px;
             color: #ffb562;
             width: 135px;
             margin-right: auto;
             text-align: center;
             font-weight: 400;
+            font-family: 'Gilroy', sans-serif !important;
         }
 
         .filter {
             font-size: 1.5rem;
             color: rgba(0, 0, 0, 0.54);
+        }
+
+        .filter-course-btn {
+            button {
+                min-width: 0px !important;
+            }
         }
 
         button {

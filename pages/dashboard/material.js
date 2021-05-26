@@ -137,7 +137,7 @@ const Material = ({ auth }) => {
                         data.length !== 1 ? "" : "s"
                     } found`}
                 </Grid>
-                <Grid>
+                <Grid className="filter-course-btn">
                     <Button>
                         <FilterList
                             className="filter"

@@ -1820,3 +1820,65 @@
     font-weight: 400;
     margin-bottom: 60px;
 }
+
+.syllabus-dialog {
+    
+    .MuiDialog-paper {
+        width: clamp(340px, 80%, 800px);
+        max-height: 450px;
+    }
+    
+    .MuiDialogTitle-root {
+        h2 {
+            font-size: 1.2rem !important;
+            font-weight: 600;
+        }
+    }
+
+    .MuiDialogContent-root {
+        padding: 0 24px 20px !important;
+    }
+
+    .no-syllabus-yet {
+        margin: 48px auto 64px;
+        font-family: 'Gilroy', sans-serif !important;
+        color: rgba(0, 0, 0, .6);
+        font-size: 16px;
+        font-weight: 400;
+    }
+
+    .syllabus {
+        &-item {
+            hr {
+                margin: 16px 0;
+                background-color: #c5ccd0;
+            }
+
+            &-title {
+                font-weight: 500;
+                margin-bottom: 16px;
+            }
+
+            &-description {
+                margin-bottom: 16px;
+            }
+
+            &-date {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+
+                svg {
+                    font-size: 1.2rem;
+                    margin-right: 8px;
+                }
+
+                &-text {
+                    font-family: 'Gilroy', sans-serif !important;
+                    font-size: 12px;
+                    font-weight: 400;
+                }
+            }
+        }
+    }
+}
