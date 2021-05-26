@@ -21,7 +21,7 @@ class Home extends React.Component {
                 category: [],
                 page: 1,
             },
-            deleteDialogOpen: false,
+            deleteDialogOpen: false
         };
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
         this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -32,23 +32,16 @@ class Home extends React.Component {
     }
 
     handlePaginationChange(event, page) {
-        getCoursePosts(this.props.courseId, {
+        const { courseId } = this.props;
+
+        getCoursePosts(courseId, {
             ...this.state.query,
             page: page,
         }).then((posts) => this.setState(posts));
     }
 
     componentDidMount() {
-        const { courseId, createdAt } = this.props;
-        // console.log(createdAt);
-        // this.setState(prev => ({
-        //   query: {
-        //     ...prev.query,
-        //     dateStart: createdAt
-        //   }
-        // }), () => {
-        //   getCoursePosts(courseId,this.state.query).then(posts => this.setState(posts))
-        // })
+        const { courseId } = this.props;
 
         getCoursePosts(courseId, this.state.query)
             .then((posts) => {
@@ -58,7 +51,9 @@ class Home extends React.Component {
     }
 
     onSearchQueryChange(query) {
-        getCoursePosts(this.props.courseId, query).then((result) =>
+        const { courseId } = this.props;
+
+        getCoursePosts(courseId, query).then((result) =>
             this.setState({ posts: result.posts, query: query })
         );
     }
@@ -87,21 +82,24 @@ class Home extends React.Component {
     };
 
     render() {
+        const { posts, deleteDialogOpen } = this.state;
+        const { auth, course, enroll, courseId } = this.props;
         const {
             isInstructor,
-            auth,
             instructors,
-            createdAt,
             creator,
-            isEnrolled,
-        } = this.props;
-        const { posts, deleteDialogOpen } = this.state;
+            price,
+            createdAt,
+            isOrganization,
+            isParticipant,
+        } = course;
+        console.log(course);
 
-        const currentPost =
-            isEnrolled === 2 ? posts.docs : posts.docs.slice(0, 4);
+        const hasAccess = isOrganization || isInstructor || isParticipant;
+
+        const currentPost = hasAccess ? posts.docs : posts.docs.slice(0, 4);
 
         const length = currentPost.length;
-        console.log(length)
 
         return (
             <div className="subject-home">
@@ -113,16 +111,13 @@ class Home extends React.Component {
                 <PostFilter
                     query={this.state.query}
                     onSearchQueryChange={this.onSearchQueryChange}
-                    courseId={this.props.courseId}
+                    courseId={courseId}
                     callback={this.onNewPostCreated}
                     auth={auth}
-                    isInstructor={isInstructor}
-                    instructors={instructors}
-                    creator={creator}
-                    createdAt={createdAt}
+                    course={course}
                 />
 
-                <Grid container>
+                <Grid item>
                     {/* <Grid item>
             <Pagination
               count={posts.pages}
@@ -130,12 +125,16 @@ class Home extends React.Component {
               onChange={this.handlePaginationChange}
             />
           </Grid> */}
-                    <Grid item xs={12}>
+                    {currentPost.length > 0 ? (
                         <List>
                             {currentPost.map((value, index) => {
-                                if (index === 3 && isEnrolled !== 2 && !isInstructor) {
+                                if (index === 3 && !hasAccess) {
                                     return (
-                                        <Grid item key={value._id} className="post-item-container">
+                                        <Grid
+                                            item
+                                            key={value._id}
+                                            className="post-item-container"
+                                        >
                                             <PostItem
                                                 blur={true}
                                                 auth={auth}
@@ -158,15 +157,14 @@ class Home extends React.Component {
                                     />
                                 );
                             })}
+                            {length >= 4 && !hasAccess && (
+                                <NotEnrolled price={price} enroll={enroll} />
+                            )}
                         </List>
-
-                        {length >= 4 && isEnrolled !== 2 && !isInstructor && (
-                            <NotEnrolled
-                                price={this.props.price}
-                                enroll={this.props.enroll}
-                            />
-                        )}
-                    </Grid>
+                    ) : (
+                        <h5 className="no-item-yet">This course doesn't have any posts yet!</h5>
+                    )}
+                    
                 </Grid>
             </div>
         );

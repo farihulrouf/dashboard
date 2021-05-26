@@ -1,4 +1,5 @@
-import { TextField, Grid, IconButton, Button } from "@material-ui/core";
+import { Grid, Button } from "@material-ui/core";
+import { Update } from "@material-ui/icons";
 import { getMyProfile, updateUserProfile } from "../../lib/api";
 import Avatar from "../Avatar";
 import AvatarPicker from "../AvatarPicker";
@@ -118,7 +119,7 @@ class MyProfile extends React.Component {
                     <label>LinkedIn</label>
                     <input
                         id="linkedin"
-                        name="linkedin"
+                        name="linkedIn"
                         type="text"
                         value={linkedIn}
                         onChange={this.handleChange}
@@ -141,7 +142,7 @@ class MyProfile extends React.Component {
                         color="primary"
                         className="update-profile-btn my-btn"
                     >
-                        Update
+                        Update <Update />
                     </Button>
                 </Grid>
             </form>

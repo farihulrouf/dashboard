@@ -30,7 +30,7 @@ export default function DiscussionForm(props) {
         !!props.courseId ? { postedOn: props.courseId } : props.discussion
     );
     const [errors, setErrors] = React.useState({});
-    const [tags, setTags] = React.useState(props.discussion ? props.discussion.tag.map((val) => val.name) : []);
+    const [tags, setTags] = React.useState(props.discussion ? props.discussion.tags.map((val) => val.name) : []);
     // const {user} = props.auth;
     const {
         afterCreateDiscussion,
@@ -62,9 +62,8 @@ export default function DiscussionForm(props) {
     };
 
     const onCreateClick = () => {
-        const newDis = {...discussion, tag: tags}
-        console.log(newDis);
-        createCourseDiscussion(newDis)
+        const newDiscussion = {...discussion, tags: tags}
+        createCourseDiscussion(newDiscussion)
             .then((res) => {
                 afterCreateDiscussion(res.discussions);
             })
@@ -78,9 +77,8 @@ export default function DiscussionForm(props) {
     };
 
     const onUpdateClick = () => {
-        const newDis = {...discussion, tag: tags}
-        console.log(newDis);
-        updateCourseDiscussion(newDis)
+        const newDiscussion = {...discussion, tags: tags}
+        updateCourseDiscussion(newDiscussion)
             .then((res) => {
                 console.log(res)
                 closeDiscussionForm();

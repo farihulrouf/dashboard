@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid, Divider, IconButton, Button } from "@material-ui/core";
+import { Grid, Divider, IconButton, Tooltip, Button } from "@material-ui/core";
 import { ArrowDropUp, ArrowDropDown } from "@material-ui/icons";
 import MathJax from "react-mathjax-preview";
 import truncatise from "truncatise";
@@ -16,7 +16,7 @@ class DiscussionItem extends React.Component {
             showCreateAnAnswer: false,
             showBestAnswer: false,
             discussion: this.props.data,
-            openModal: false
+            openModal: false,
         };
     }
 
@@ -56,11 +56,11 @@ class DiscussionItem extends React.Component {
     };
 
     closeDiscussionModal = () => {
-        this.setState({ openModal: false});
+        this.setState({ openModal: false });
     };
 
     openDiscussionModal = () => {
-        this.setState({ openModal: true});
+        this.setState({ openModal: true });
     };
 
     componentDidUpdate(prev) {
@@ -78,7 +78,8 @@ class DiscussionItem extends React.Component {
     render() {
         const { discussion, showCreateAnAnswer, showBestAnswer } = this.state;
         const { canEdit, canDelete } = discussion;
-        const { deleteDiscussion } = this.props;
+        const { deleteDiscussion, canVoteAnswer, canVoteDiscussion } =
+            this.props;
 
         console.log(discussion);
         return (
@@ -101,15 +102,23 @@ class DiscussionItem extends React.Component {
                                 discussion.isVoted ? "is-voted top" : "top"
                             }
                         >
-                            <IconButton
-                                onClick={() => this.onVoteButtonClick()}
+                            <Tooltip
+                                title={
+                                    !canVoteDiscussion ?
+                                    "Unable to vote discussion" : ""
+                                }
                             >
-                                {discussion.isVoted ? (
-                                    <ArrowDropDown />
-                                ) : (
-                                    <ArrowDropUp />
-                                )}
-                            </IconButton>
+                                <IconButton
+                                    onClick={() => this.onVoteButtonClick()}
+                                    disabled={!canVoteDiscussion}
+                                >
+                                    {discussion.isVoted ? (
+                                        <ArrowDropDown />
+                                    ) : (
+                                        <ArrowDropUp />
+                                    )}
+                                </IconButton>
+                            </Tooltip>
                             <Grid>
                                 <Grid>
                                     <h3>{discussion.votes.total}</h3>
@@ -123,7 +132,7 @@ class DiscussionItem extends React.Component {
                             item
                         >
                             <h3 className={discussion.solve ? "solved" : ""}>
-                                {discussion.totalAnswers}
+                                {discussion.answers.total}
                             </h3>
                             <span>Answers</span>
                         </Grid>
@@ -132,9 +141,7 @@ class DiscussionItem extends React.Component {
                         <Grid item className="header">
                             <Grid
                                 item
-                                onClick={() =>
-                                    this.openDiscussionModal()
-                                }
+                                onClick={() => this.openDiscussionModal()}
                             >
                                 <h6>{discussion.title}</h6>
                             </Grid>
@@ -152,7 +159,7 @@ class DiscussionItem extends React.Component {
                             />
                         </Grid>
                         <Grid item className="tag-container">
-                            {discussion.tag.map((item, index) => {
+                            {discussion.tags.map((item, index) => {
                                 return (
                                     <Grid key={index} className="tag" item>
                                         {item.name}
@@ -182,14 +189,15 @@ class DiscussionItem extends React.Component {
                             />
                         )}
                         {showBestAnswer &&
-                            discussion.topAnswers.length > 0 && (
+                            discussion.answers.topAnswers.length > 0 && (
                                 <DiscussionAnswer
-                                    data={discussion.topAnswers[0]}
+                                    data={discussion.answers.topAnswers[0]}
+                                    canVote={canVoteAnswer}
                                 />
                             )}
 
                         {showBestAnswer &&
-                            discussion.topAnswers.length <= 0 && (
+                            discussion.answers.topAnswers.length <= 0 && (
                                 <h6 className="no-discussion-answers">
                                     No answers yet!
                                 </h6>

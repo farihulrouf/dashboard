@@ -191,7 +191,7 @@ const Filter = ({
                                     valueLabelDisplay="auto"
                                     aria-labelledby="Price Filter"
                                     min={0}
-                                    max={500000}
+                                    max={3000000}
                                     step={1000}
                                     value={filter.price}
                                     valueLabelFormat={(x) => <div>{x}</div>}

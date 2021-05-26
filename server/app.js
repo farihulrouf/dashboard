@@ -34,6 +34,8 @@ require("./models/Payment")
 require("./models/Review")
 require('./models/DiscussionAnswer');
 require('./models/Tag');
+require('./models/ExerciseResult');
+require('./models/QuestionPoolAnswer');
 require('./models/Room')
 
 const routes = require("./routes");

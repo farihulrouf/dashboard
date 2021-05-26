@@ -42,7 +42,7 @@ export default class MyCourses extends React.Component {
             open: false,
             params: {
                 query: "",
-                limit: 8,
+                limit: 4,
                 page: 1,
             },
             total: 0,
@@ -50,7 +50,6 @@ export default class MyCourses extends React.Component {
             dialogProps: {
                 auth: props.auth,
                 teachers: [],
-                onDialogClose: this.onDialogClose.bind(this),
                 onCourseCreated: this.onCourseCreated.bind(this),
                 onCourseUpdated: this.onCourseUpdated.bind(this),
             },
@@ -72,10 +71,11 @@ export default class MyCourses extends React.Component {
     }
 
     getCourses = async () => {
+        const { params } = this.state;
+
         this.setState({ loading: true, courses: [] });
 
-        const { params } = this.state;
-        await getMyCourses(params).then((courseRes) => {
+        await getMyCourses(params).then((res) => {
             getMyTeachers().then((teacherRes) => {
                 let { dialogProps } = this.state;
                 dialogProps.teachers = teacherRes.teachers;
@@ -85,11 +85,11 @@ export default class MyCourses extends React.Component {
             });
 
             this.setState({
-                courses: courseRes.courses,
+                courses: res.data,
                 loading: false,
-                total: courseRes.total,
+                total: res.total,
             });
-        });
+        }).catch(err => console.log(err));
     };
 
     onCreateButtonClick = () => {
@@ -104,17 +104,16 @@ export default class MyCourses extends React.Component {
         this.setState({ open: true, dialogProps: dialogProps });
     };
 
-    onDialogClose = () => {
-        this.setState({ open: false });
+    onCourseCreated = (res) => {
+        const { params } = this.state;
+        this.setState({ open: false, courses: res.data, params: { ...params, page: 1 } });
     };
 
-    onCourseCreated = (data) => {
-        this.setState({ open: false, courses: data.courses });
+    onCourseUpdated = (res) => {
+        const { params } = this.state;
+        this.setState({ open: false, courses: res.data, params: { ...params, page: 1 } });
     };
 
-    onCourseUpdated = (data) => {
-        this.setState({ open: false, courses: data.courses });
-    };
 
     onEditCourse = (course) => {
         const dialogProps = {
@@ -131,6 +130,7 @@ export default class MyCourses extends React.Component {
             return {
                 params: {
                     ...prev.params,
+                    page: 1,
                     query: e.target.value,
                 },
             };
@@ -159,73 +159,82 @@ export default class MyCourses extends React.Component {
             total,
         } = this.state;
         const { query, page, limit } = params;
-        const totalPage = Math.ceil(total/limit);
+        const totalPage = Math.ceil(total / limit);
 
         return (
             <Grid item className="settings-course">
                 {open && <CreateEditCourseDialog {...dialogProps} />}
-                <h4 className="settings-course-title">My Courses</h4>
-                <Tabs
-                    value={tabIndex}
-                    onChange={(e, value) => {
-                        this.setState({ tabIndex: value });
-                    }}
-                    aria-label="simple tabs example"
-                    indicatorColor="primary"
-                    textColor="primary"
-                    className="settings-course-tab"
-                >
-                    <Tab label="ALL" {...a11yProps(0)} />
-                    {/* <Tab label="UPDATED" {...a11yProps(1)} />
+                {!open && (
+                    <Grid item>
+                        <h4 className="settings-course-title">My Courses</h4>
+                        <Tabs
+                            value={tabIndex}
+                            onChange={(e, value) => {
+                                this.setState({ tabIndex: value });
+                            }}
+                            aria-label="simple tabs example"
+                            indicatorColor="primary"
+                            textColor="primary"
+                            className="settings-course-tab"
+                        >
+                            <Tab label="ALL" {...a11yProps(0)} />
+                            {/* <Tab label="UPDATED" {...a11yProps(1)} />
                     <Tab label="PENDING" {...a11yProps(2)} /> */}
-                </Tabs>
-                <Grid item className="settings-course-management">
-                    <Button
-                        variant="contained"
-                        color="primary"
-                        className="create-course-btn my-btn"
-                    >
-                        CREATE COURSE <Add />
-                    </Button>
-                    <input
-                        className="settings-course-search"
-                        placeholder="Search My Course"
-                        value={query}
-                        onChange={this.handleSearch}
-                    />
-                </Grid>
-                {loading && (
-                    <CircularProgress
-                        thickness={6}
-                        size="6rem"
-                        className="circular-progress-bar"
-                    />
+                        </Tabs>
+                        <Grid item className="settings-course-management">
+                            <Button
+                                variant="contained"
+                                color="primary"
+                                className="create-course-btn my-btn"
+                                onClick={this.onCreateButtonClick}
+                            >
+                                CREATE COURSE <Add />
+                            </Button>
+                            <input
+                                className="settings-course-search"
+                                placeholder="Search My Course"
+                                value={query}
+                                onChange={this.handleSearch}
+                            />
+                        </Grid>
+                        {loading && (
+                            <CircularProgress
+                                thickness={6}
+                                size="6rem"
+                                className="circular-progress-bar"
+                            />
+                        )}
+                        {courses.length > 0 && (
+                            <TabPanel
+                                value={tabIndex}
+                                index={0}
+                                className="course settings-course-body"
+                            >
+                                {courses.map((course) => {
+                                    return (
+                                        <Course
+                                            key={course._id}
+                                            courseItem={course}
+                                            onUpdate={this.onCourseUpdated}
+                                        />
+                                    );
+                                })}
+                            </TabPanel>
+                        )}
+                        {!loading && courses.length <= 0 && (
+                            <h5 className="no-course">
+                                You don't have any courses yet!
+                            </h5>
+                        )}
+                        <Pagination
+                            className="settings-course-pagination"
+                            count={totalPage}
+                            color="primary"
+                            page={page}
+                            onChange={(e, page) => this.changePage(page)}
+                        />
+                    </Grid>
                 )}
-                {courses.length && (
-                    <TabPanel
-                        value={tabIndex}
-                        index={0}
-                        className="course settings-course-body"
-                    >
-                        {courses.map((course) => {
-                            return (
-                                <Course key={course._id} courseItem={course} />
-                            );
-                        })}
-                    </TabPanel>
-                )}
-                {!loading && courses.length <= 0 && (
-                    <h5 className="no-course">
-                        You don't have any courses yet!
-                    </h5>
-                )}
-                <Pagination
-                    className="settings-course-pagination"
-                    count={totalPage}
-                    color="primary"
-                    page={page}
-                    onChange={(e, page) => this.changePage(page)}
-                />
             </Grid>
         );
     }

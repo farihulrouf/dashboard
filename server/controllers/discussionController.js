@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const User = require("../models/User");
-const Discussion = mongoose.model("Discussion");
+const Discussion = require("../models/Discussion")
 const Course = mongoose.model("Course");
 const DiscussionAnswer = mongoose.model("DiscussionAnswer");
 const {sendNotification} = require("../rabbitmq");
@@ -22,21 +22,20 @@ exports.validateDiscussion = (req,res,next) => {
 
 exports.updateDiscussion = (req,res) => {
     const discussionid = req.discussion._id;
-    const {title, body} = req.body;
-    const tag = req.newtags;
+    const {title, body, tags} = req.body;
     Discussion.findByIdAndUpdate(
         discussionid,
-        {$set: {title: title, body: body, tag: tag}},
+        {$set: {title: title, body: body, tags: tags}},
         {
           new: true, 
           populate: {
               path: "answers.topAnswers", 
               populate : {
-                path : "answers.topAnswers.creator"
+                path : "creator",
               }
             }
         })
-        .populate("tag")
+        .populate("tags")
         .populate("creator")
         .exec((err,updatedDiscussion)=> {
             console.log(updatedDiscussion)
@@ -102,14 +101,23 @@ exports.voteDiscussion = async (req,res,next) => {
         isVoted = true;
     }
     const newDiscussion = await Discussion.findByIdAndUpdate(
-        discussionid, query, {new: true, populate: "answers.topAnswers"})
-        .populate('tag').populate('creator').populate("answers.topAnswers.creator")
+        discussionid, query, 
+        {
+            new: true, 
+            populate: {
+                path: "answers.topAnswers", 
+                populate : {
+                  path : "creator",
+                }
+              }
+        })
+        .populate('tags').populate('creator')
     if(!newDiscussion) 
         return res.status(404)
             .json({status: "error", message: "Discussion is not found"})
     newDiscussion._doc.isVoted = isVoted;
-    newDiscussion._doc.canEdit = user.canEditDiscussion(newDiscussion);
-    newDiscussion._doc.canDelete = user.canDeleteDiscussion(newDiscussion)
+    newDiscussion._doc.canEdit = await user.canEditDiscussion(newDiscussion);
+    newDiscussion._doc.canDelete = await user.canDeleteDiscussion(newDiscussion)
     res.json({status: "ok", discussion: newDiscussion})
 }
 
@@ -135,18 +143,21 @@ exports.createAnswer = (req,res,next) => {
             new: true, 
             populate: {
                 path: "answers.topAnswers", 
-            }
+                populate : {
+                  path : "creator",
+                }
+              }
         })
-        .populate("tag")
+        .populate("tags")
         .populate("creator")
         .exec( async (err,newDiscussion) => {
           
-            await User.populate(newDiscussion, {path: "answers.topAnswers.creator"})
+            // await User.populate(newDiscussion, {path: "answers.topAnswers.creator"})
             
             if(err) return res.json({status: "error", message: err.message})
             newDiscussion._doc.newAnswer = savedAnswer;
-            newDiscussion._doc.canEdit = user.canEditDiscussion(newDiscussion)
-            newDiscussion._doc.canDelete = user.canDeleteDiscussion(newDiscussion)
+            newDiscussion._doc.canEdit = await user.canEditDiscussion(newDiscussion)
+            newDiscussion._doc.canDelete = await user.canDeleteDiscussion(newDiscussion)
             return  res.json({status: "ok", discussion: newDiscussion})
         }) 
     })

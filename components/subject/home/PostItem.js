@@ -18,7 +18,7 @@ import {
     ClassOutlined,
     AttachFile,
     GetApp,
-    Lock
+    Lock,
 } from "@material-ui/icons";
 import { likeAPost, postComment } from "../../../lib/api";
 import CommentItem from "./CommentItem";
@@ -81,13 +81,16 @@ const PostItem = (props) => {
     }, [props.data, readMore]);
 
     const { auth, blur } = props;
-    
-    const onDownloadAll = async (postId) =>{
-        window.open(`archive/${postId}.zip`)
-    }
+
+    const onDownloadAll = async (postId) => {
+        window.open(`archive/${postId}.zip`);
+    };
 
     return (
-        <Grid className={blur ? "post-box blurred" : "post-box"} id={props.data._id}>
+        <Grid
+            className={blur ? "post-box blurred" : "post-box"}
+            id={props.data._id}
+        >
             {!editMode && (
                 <React.Fragment>
                     <Grid item className="post-header">
@@ -157,14 +160,22 @@ const PostItem = (props) => {
                         </Grid>
                     </Grid>
                     <hr />
-                    <Grid item className="post-body">
+                    <Grid
+                        item
+                        className={blur ? "post-body limited" : "post-body"}
+                    >
                         {readMore ? (
-                            <MathJax math={data.body} 
-                                onDisplay={() => Prism.highlightAll()} 
-                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ["allowfullscreen"]}}
+                            <MathJax
+                                math={data.body}
+                                onDisplay={() => Prism.highlightAll()}
+                                sanitizeOptions={{
+                                    USE_PROFILES: { html: true, mathMl: true },
+                                    ADD_TAGS: ["iframe"],
+                                    ADD_ATTR: ["allowfullscreen"],
+                                }}
                             />
-                            // <div dangerouslySetInnerHTML={{__html: data.body}}></div>
                         ) : (
+                            // <div dangerouslySetInnerHTML={{__html: data.body}}></div>
                             <MathJax
                                 math={
                                     data.body.length > 1000
@@ -172,7 +183,11 @@ const PostItem = (props) => {
                                         : data.body
                                 }
                                 onDisplay={() => Prism.highlightAll()}
-                                sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ["allowfullscreen"]}}
+                                sanitizeOptions={{
+                                    USE_PROFILES: { html: true, mathMl: true },
+                                    ADD_TAGS: ["iframe"],
+                                    ADD_ATTR: ["allowfullscreen"],
+                                }}
                             />
                             // <div dangerouslySetInnerHTML={{__html: data.body}}></div>
                         )}
@@ -207,7 +222,13 @@ const PostItem = (props) => {
                             {data.attachments.length > 0 && (
                                 <Grid item className="download">
                                     <GetApp />
-                                    <span onClick={() => onDownloadAll(props.data._id)}>Download All Attachment</span>
+                                    <span
+                                        onClick={() =>
+                                            onDownloadAll(props.data._id)
+                                        }
+                                    >
+                                        Download All Attachment
+                                    </span>
                                 </Grid>
                             )}
                         </Grid>
@@ -309,7 +330,6 @@ const PostItem = (props) => {
                     <Send />
                 </Grid>
             </Grid>
-            
         </Grid>
     );
 };
