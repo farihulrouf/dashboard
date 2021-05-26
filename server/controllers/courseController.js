@@ -390,6 +390,7 @@ exports.updateCourse = (req, res, next) => {
     instructors,
     logo,
     rating,
+    syllabus
   } = req.body;
   course.name = name || course.name
   course.about = about || course.about
@@ -399,6 +400,7 @@ exports.updateCourse = (req, res, next) => {
   course.rating = rating || course.rating
   course.instructors = instructors || course.instructors
   course.logo = logo || course.logo
+  course.syllabus = syllabus || course.syllabus
   course.save((err, response) => {
     if (!err) {
       return next();
