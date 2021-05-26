@@ -104,6 +104,10 @@ const CustomizedMenus = (props) => {
                     <ListItemText primary="Live Streaming" />
                 </StyledMenuItem>
                 <StyledMenuItem
+                    onClick={() => {
+                        setAnchorEl(null);
+                        showModal("showSyllabus");
+                    }}
                     disabled={!canShowSyllabus}
                     aria-labelledby={
                         canShowSyllabus

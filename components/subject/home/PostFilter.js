@@ -16,6 +16,7 @@ import PostFormDialog from "./PostFormDialog";
 import LiveStreamingDialog from "./LiveStreamingDialog";
 import React from "react";
 import HomeMenu from "./HomeMenu";
+import SyllabusDialog from "./SyllabusDialog";
 
 const styles = (theme) => ({
     input: { flex: 1 },
@@ -29,6 +30,7 @@ class PostFilter extends React.Component {
             showFilter: false,
             showPostForm: false,
             showLiveStream: false,
+            showSyllabus: false,
         };
         this.onQueryChange = this.onQueryChange.bind(this);
         this.onCloseFilter = this.onCloseFilter.bind(this);
@@ -85,6 +87,9 @@ class PostFilter extends React.Component {
             case "showLiveStream":
                 obj = { showLiveStream: true };
                 break;
+            case "showSyllabus":
+                obj = { showSyllabus: true };
+                break;
         }
         this.setState(obj);
     };
@@ -97,6 +102,9 @@ class PostFilter extends React.Component {
                 break;
             case "showLiveStream":
                 obj = { showLiveStream: false };
+                break;
+            case "showSyllabus":
+                obj = { showSyllabus: false };
                 break;
         }
         this.setState(obj);
@@ -115,7 +123,9 @@ class PostFilter extends React.Component {
             creator,
             createdAt,
         } = course;
-        const { showFilter, showPostForm, showLiveStream } = this.state;
+        const { showFilter, showPostForm, showLiveStream, showSyllabus } =
+            this.state;
+
         return (
             <div>
                 <Grid item className="post-filter">
@@ -139,10 +149,17 @@ class PostFilter extends React.Component {
                             courseId={courseId}
                             onCloseLiveStream={this.closeModal}
                         />
+                        <SyllabusDialog
+                            open={showSyllabus}
+                            course={course}
+                            handleClose={this.closeModal}
+                        />
                     </Grid>
                     <Grid item className="search-post">
                         <Tooltip
-                            title={!canSearchPost ? "Unable to search post" : ""}
+                            title={
+                                !canSearchPost ? "Unable to search post" : ""
+                            }
                         >
                             <Grid item className="input-container">
                                 <InputBase
@@ -156,7 +173,11 @@ class PostFilter extends React.Component {
                         </Tooltip>
                     </Grid>
                     <Grid item className="filter">
-                        <Tooltip title={!canFilterPost ? "Unable to filter post" : ""}>
+                        <Tooltip
+                            title={
+                                !canFilterPost ? "Unable to filter post" : ""
+                            }
+                        >
                             <Grid item>
                                 <IconButton
                                     onClick={this.showFilter}

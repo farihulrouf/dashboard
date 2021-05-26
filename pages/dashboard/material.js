@@ -18,7 +18,7 @@ const Material = ({ auth }) => {
         query: "",
         instructor: [],
         organization: [],
-        price: [0, 500000],
+        price: [0, 3000000],
         rating: 0,
         page: 1,
         limit: 3,
@@ -39,6 +39,7 @@ const Material = ({ auth }) => {
 
     useEffect(() => {
         getCourses(filter).then((res) => {
+            console.log(res);
             setIsLoading(false);
             setData((prev) => [...prev, ...res.courses]);
             setLoadMoreAvail(res.avail);
@@ -136,7 +137,7 @@ const Material = ({ auth }) => {
                         data.length !== 1 ? "" : "s"
                     } found`}
                 </Grid>
-                <Grid>
+                <Grid className="filter-course-btn">
                     <Button>
                         <FilterList
                             className="filter"

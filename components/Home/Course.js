@@ -55,7 +55,6 @@ const Course = ({ courseItem, onUpdate }) => {
         : PAYMENT_STATUS_UNREGISTERED;
 
     const MAX_INSTRUCTORS_DISPLAYED = 3;
-    console.log(courseItem);
 
     return (
         <Grid className="course-container">

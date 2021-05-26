@@ -21,7 +21,7 @@ class Home extends React.Component {
                 category: [],
                 page: 1,
             },
-            deleteDialogOpen: false,
+            deleteDialogOpen: false
         };
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
         this.handlePaginationChange = this.handlePaginationChange.bind(this);
