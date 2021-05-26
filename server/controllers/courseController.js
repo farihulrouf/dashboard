@@ -439,7 +439,7 @@ exports.createCoursePost = async (req, res, next) => {
 
 exports.getPosts = async (req, res) => {
   const courseId = req.params.courseId || req.post.postedOn;
-  let { category, content, page, dateStart, dateEnd, creator, tag } = req.query;
+  let { category, content, page, dateStart, dateEnd, creator, tags } = req.query;
   let options = {
     sort: {
       createdAt: -1,
@@ -523,7 +523,7 @@ exports.getPosts = async (req, res) => {
     };
   }
 
-  if(tag){
+  if(tags){
     params.tags = {
       $elemMatch : {$in : tags.map((e) => ObjectId(e._id))}
     }

@@ -31,8 +31,7 @@ exports.updateDiscussion = (req,res) => {
           populate: {
               path: "answers.topAnswers", 
               populate : {
-                path : "answers.topAnswers.creator",
-                path : "tags"
+                path : "creator",
               }
             }
         })
@@ -102,8 +101,17 @@ exports.voteDiscussion = async (req,res,next) => {
         isVoted = true;
     }
     const newDiscussion = await Discussion.findByIdAndUpdate(
-        discussionid, query, {new: true, populate: "answers.topAnswers"})
-        .populate('tag').populate('creator').populate("answers.topAnswers.creator")
+        discussionid, query, 
+        {
+            new: true, 
+            populate: {
+                path: "answers.topAnswers", 
+                populate : {
+                  path : "creator",
+                }
+              }
+        })
+        .populate('tags').populate('creator')
     if(!newDiscussion) 
         return res.status(404)
             .json({status: "error", message: "Discussion is not found"})
@@ -135,13 +143,16 @@ exports.createAnswer = (req,res,next) => {
             new: true, 
             populate: {
                 path: "answers.topAnswers", 
-            }
+                populate : {
+                  path : "creator",
+                }
+              }
         })
-        .populate("tag")
+        .populate("tags")
         .populate("creator")
         .exec( async (err,newDiscussion) => {
           
-            await User.populate(newDiscussion, {path: "answers.topAnswers.creator"})
+            // await User.populate(newDiscussion, {path: "answers.topAnswers.creator"})
             
             if(err) return res.json({status: "error", message: err.message})
             newDiscussion._doc.newAnswer = savedAnswer;
