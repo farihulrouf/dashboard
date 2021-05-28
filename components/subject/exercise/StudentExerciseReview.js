@@ -49,6 +49,46 @@ class StudentExerciseReview extends React.Component{
                         <Typography className="review-summary-label">Final Score</Typography>
                     </Box>
                 </Box>
+                <Box className="review-question-item">
+                    <Box className="wrong-answer-border"></Box>
+                    <Box className="number-score-container">
+                        <Typography className="number-score-label">Problem number</Typography>
+                        <Typography className="problem-number">3</Typography>
+                        <Divider style={{height: 2}} />
+                        <Typography className="score-wrong">3/9</Typography>
+                        <Typography className="number-score-label">Score</Typography>
+                    </Box>
+                    <Box className="question-answer-container">
+                        <Typography className="question">
+                            Ini contoh pertanyaan yang cukup panjang sampai lebih dari tujuh kata?
+                        </Typography>
+                        <Box className="right-answer-item">
+                            <Typography className="choices">
+                                A. Ke langit ke tujuh
+                            </Typography>
+                        </Box>
+                        <Box className="no-answer-item">
+                            <Typography className="choices">
+                                B. Ke langit ke tujuh
+                            </Typography>
+                        </Box>
+                        <Box className="no-answer-item">
+                            <Typography className="choices">
+                                C. Ke langit ke tujuh
+                            </Typography>
+                        </Box>
+                        <Box className="wrong-answer-item">
+                            <Typography className="choices">
+                                D. Ke langit ke tujuh
+                            </Typography>
+                        </Box>
+                        <Box className="no-answer-item">
+                            <Typography className="choices">
+                                E. Ke langit ke tujuh
+                            </Typography>
+                        </Box>
+                    </Box>
+                </Box>
             </Container>
         )
     }
