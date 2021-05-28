@@ -3,6 +3,8 @@ import { List, ListItem, Button, Typography, Box, IconButton, Container, SvgIcon
 import React from "react";
 import CloseIcon from '@material-ui/icons/Close';
 import Image from "next/image";
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 class StudentExerciseReview extends React.Component{
     constructor(props){
@@ -66,6 +68,7 @@ class StudentExerciseReview extends React.Component{
                             <Typography className="choices">
                                 A. Ke langit ke tujuh
                             </Typography>
+                            <CheckCircleIcon className="icon-right-answer"/>
                         </Box>
                         <Box className="no-answer-item">
                             <Typography className="choices">
@@ -81,6 +84,7 @@ class StudentExerciseReview extends React.Component{
                             <Typography className="choices">
                                 D. Ke langit ke tujuh
                             </Typography>
+                            <CancelIcon className="icon-wrong-answer"/>
                         </Box>
                         <Box className="no-answer-item">
                             <Typography className="choices">

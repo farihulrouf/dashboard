@@ -1169,6 +1169,7 @@
                     font-size: 16px;
                     line-height: 32px;
                     color: #1B1642;
+                    flex: 1;
                 }
 
                 .right-answer-item {
@@ -1177,6 +1178,9 @@
                     color: #1B1642;
                     padding-left: 8px;
                     padding-right: 8px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
                 }
 
                 .wrong-answer-item {
@@ -1185,6 +1189,9 @@
                     color: #1B1642;
                     padding-left: 8px;
                     padding-right: 8px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
                 }
 
                 .no-answer-item {
@@ -1193,8 +1200,22 @@
                     color: #1B1642;
                     padding-left: 8px;
                     padding-right: 8px;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
                 }
                 
+                .icon-right-answer {
+                    width: 20px;
+                    height: 20px;
+                    color: rgba(50, 190, 166, 1);
+                }
+
+                .icon-wrong-answer {
+                    width: 20px;
+                    height: 20px;
+                    color: rgba(224, 79, 95, 1);
+                }
             }
         }
     }
