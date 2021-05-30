@@ -68,7 +68,7 @@ class ExerciseResultItem extends React.Component{
         //if(menuName === 'Publish')this.props.openPublishPopup(this.props.exam)
         this.setState({anchorEl: null})
         if (menuName === 'Review') {
-            this.props.changeTabPage(this.props.tabIndex,'ExerciseReview')
+            this.props.changeTabPage(this.props.tabIndex,'ExerciseReview', this.props.exerciseResult._id)
         }
     };
 

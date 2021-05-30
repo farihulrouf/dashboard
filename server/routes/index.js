@@ -157,7 +157,8 @@ router.get("/api/courses/:courseId/exercises", exerciseController.getExercises)
  router.post(
    "/api/courses/:courseId/exercise-result/submit",exerciseResultController.submitExerciseResult);
  router.get("/api/courses/:courseId/exercise-results",exerciseResultController.getExerciseResults);
- 
+ router.get("/api/courses/:courseId/exercise-review/:exerciseResultId",exerciseResultController.getExerciseReview);
+
 /**
  * COURSE ROUTES /api/courses
  */

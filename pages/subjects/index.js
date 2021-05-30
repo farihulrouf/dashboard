@@ -134,7 +134,8 @@ class Subject extends React.Component {
             course: {},
             joined: CONSTANT.PAYMENT_STATUS_UNREGISTERED,
             exercise_page_active: 'ExerciseList', 
-            exam_page_active: 'ExamList' 
+            exam_page_active: 'ExamList',
+            exerciseResultId: ''
         };
         this.handleEnroll = this
             .handleEnroll
@@ -179,9 +180,10 @@ class Subject extends React.Component {
         }
     };
 
-    changeTabPage = (tabIndex, pageName) => {
+    changeTabPage = (tabIndex, pageName, param) => {
         if(tabIndex === 2){
-            this.setState({exercise_page_active: pageName})
+            if (pageName === 'ExerciseReview') this.setState({exercise_page_active: pageName, exerciseResultId: param})
+            else this.setState({exercise_page_active: pageName})
         }else if(tabIndex === 3){
             this.setState({exam_page_active: pageName})
         }else{
@@ -371,6 +373,7 @@ class Subject extends React.Component {
                             courseId={router.query.id}
                             isInstructor={course.isInstructor}
                             className="subject-exercise-student-review"
+                            exerciseResultId={this.state.exerciseResultId}
                             />
                         }
                         </TabPanel>    

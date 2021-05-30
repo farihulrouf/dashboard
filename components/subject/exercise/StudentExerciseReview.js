@@ -5,16 +5,23 @@ import CloseIcon from '@material-ui/icons/Close';
 import Image from "next/image";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
+import { getExerciseReview } from "../../../lib/api";
 
 class StudentExerciseReview extends React.Component{
     constructor(props){
         super(props)
         this.state = {
-            questionAnswerItem : [{_id:'22'},{_id:'22d'},{_id:'22w'},{_id:'22ws'}]
+            questionAnswerItems : []
         }
     }
 
-    render(){
+    componentDidMount() {
+        getExerciseReview(this.props.courseId,this.props.exerciseResultId).then(data => {
+            this.setState({questionAnswerItems: data.questionAnswers})
+        })
+    }
+
+    render() {
         return(
             <Container className="subject-exercise-student-review">
                 <Box className="header-close-container">
@@ -52,8 +59,8 @@ class StudentExerciseReview extends React.Component{
                     </Box>
                 </Box>
                 <List style={{paddingBottom: 40}}>
-                    { this.state.questionAnswerItem.map(questionAnswerItem => (
-                        <QuestionAnswerItem key={questionAnswerItem._id} questionAnswerItem={questionAnswerItem}></QuestionAnswerItem>
+                    { this.state.questionAnswerItems.map(questionAnswerItem => (
+                        <QuestionAnswerItem key={this.state.questionAnswerItems.indexOf(questionAnswerItem)} questionAnswerItem={questionAnswerItem}></QuestionAnswerItem>
                     ))}
                 </List>
             </Container>
@@ -63,48 +70,63 @@ class StudentExerciseReview extends React.Component{
 
 class QuestionAnswerItem extends React.Component{
     render() {
+        const { question, answer } = this.props.questionAnswerItem
         return (
             <Box className="review-question-item">
-                <Box className="wrong-answer-border"></Box>
+                {answer.right && <Box className="right-answer-border"></Box>}
+                {!answer.right && <Box className="wrong-answer-border"></Box>}
                 <Box className="number-score-container">
                     <Typography className="number-score-label">Problem number</Typography>
-                    <Typography className="problem-number">3</Typography>
-                    <Divider style={{height: 2}} />
-                    <Typography className="score-wrong">3/9</Typography>
+                    <Typography className="problem-number">{answer.number}</Typography>
+                    <Divider style={{height: 2}}/>
+                    {answer.right && <Typography className="score-right">{answer.score}</Typography>}
+                    {!answer.right && <Typography className="score-wrong">{answer.score}</Typography>}
                     <Typography className="number-score-label">Score</Typography>
                 </Box>
                 <Box className="question-answer-container">
                     <Typography className="question">
-                        Ini contoh pertanyaan yang cukup panjang sampai lebih dari tujuh kata?
+                        {question.question}
                     </Typography>
-                    <Box className="right-answer-item">
-                        <Typography className="choices">
-                            A. Ke langit ke tujuh
-                        </Typography>
-                        <CheckCircleIcon className="icon-right-answer"/>
-                    </Box>
-                    <Box className="no-answer-item">
-                        <Typography className="choices">
-                            B. Ke langit ke tujuh
-                        </Typography>
-                    </Box>
-                    <Box className="no-answer-item">
-                        <Typography className="choices">
-                            C. Ke langit ke tujuh
-                        </Typography>
-                    </Box>
-                    <Box className="wrong-answer-item">
-                        <Typography className="choices">
-                            D. Ke langit ke tujuh
-                        </Typography>
-                        <CancelIcon className="icon-wrong-answer"/>
-                    </Box>
-                    <Box className="no-answer-item">
-                        <Typography className="choices">
-                            E. Ke langit ke tujuh
-                        </Typography>
-                    </Box>
+                    <List>
+                        { question.multipleChoices.map(choice => (
+                            <AnswerItem key={question.multipleChoices.indexOf(choice)} choice={choice} question={question} answer={answer}></AnswerItem>
+                        ))}
+                    </List>
                 </Box>
+            </Box>
+        )
+    }
+}
+
+class AnswerItem extends React.Component{
+    render() {
+        const { choice, question, answer } = this.props
+        const choiceText = String.fromCharCode(65 + question.multipleChoices.indexOf(choice)) + '. ' + choice
+        return(
+            <Box>
+                { choice === question.solution[0] &&
+                    <Box className="right-answer-item" key={choice}>
+                        <Typography className="choices">
+                            {choiceText}
+                        </Typography>
+                        { question.solution[0] === answer.answer[0] && <CheckCircleIcon className="icon-right-answer"/> }
+                    </Box>
+                }
+                { choice === answer.answer[0] && choice !== question.solution[0] &&
+                    <Box className="wrong-answer-item" key={choice}>
+                        <Typography className="choices">
+                            {choiceText}
+                        </Typography>
+                        { question.solution[0] !== answer.answer[0] && <CancelIcon className="icon-wrong-answer"/> }
+                    </Box>
+                }
+                { choice !== question.solution[0] && choice !== answer.answer[0] &&
+                    <Box className="no-answer-item">
+                        <Typography className="choices">
+                            {choiceText}
+                        </Typography>
+                    </Box>
+                }
             </Box>
         )
     }
