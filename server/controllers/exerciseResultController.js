@@ -61,23 +61,62 @@ exports.submitExerciseResult = async (req, res) => {
         res.json('Exercise submitted!')
       }
     })
-  }
+}
 
-  exports.getExerciseResults = async (req, res) => {
-    let page = parseInt(req.query.page)
-    let limit = parseInt(req.query.limit)
-    let searchKeyword = req.query.searchKeyword
-    let query = {courseId: ObjectId(req.params.courseId)}
-  
-    if(!!searchKeyword)query.name = { $regex: searchKeyword }
-    if(!!!page)page = 0
-    if(!!!limit)limit = 10
-  
-    ExerciseResult.find(query)
-    .skip((page - 1) * limit)
-    .sort({ createdAt: -1 })
-    .limit(limit).exec((err,result)=>{
-      if(err)res.status(400).json(err)
-      else res.json(result)
+exports.getExerciseResults = async (req, res) => {
+  let page = parseInt(req.query.page)
+  let limit = parseInt(req.query.limit)
+  let searchKeyword = req.query.searchKeyword
+  let query = {courseId: ObjectId(req.params.courseId)}
+
+  if(!!searchKeyword)query.name = { $regex: searchKeyword }
+  if(!!!page)page = 0
+  if(!!!limit)limit = 10
+
+  ExerciseResult.find(query)
+  .skip((page - 1) * limit)
+  .sort({ createdAt: -1 })
+  .limit(limit).exec((err,result)=>{
+    if(err)res.status(400).json(err)
+    else res.json(result)
+  })
+}
+
+exports.getExerciseReview = async (req, res) => {
+  let exerciseResultId = req.params.exerciseResultId
+  let courseId = req.params.courseId
+  console.log('getExerciseReview',exerciseResultId)
+  let questionPoolLoaded = 0
+  let questionAnswers = []
+
+  const addQuestionAnswer = (questionPoolAnswer, totalQuestionAnswer, exerciseResult) => {
+    QuestionPool.findById(questionPoolAnswer.questionPoolId).then(questionPool => {
+      questionAnswers.push({
+        answer: questionPoolAnswer,
+        question: questionPool
+      })
+      questionPoolLoaded += 1
+      if (questionPoolLoaded === totalQuestionAnswer) {
+        res.json({
+          exerciseResult: exerciseResult,
+          questionAnswers: questionAnswers
+        })
+      }
+    }).catch(err => {
+      console.log('err',err)
+      res.status(404).json(err)        
     })
   }
+
+  ExerciseResult.findById(exerciseResultId).then(exerciseResult => {
+    if (exerciseResult) {
+      QuestionPoolAnswer.find({resultId: exerciseResultId}).exec((err,questionPoolAnswers) => {
+        if (err) return res.status(400).json(err)
+        questionPoolAnswers.forEach(questionPoolAnswer => addQuestionAnswer(questionPoolAnswer,questionPoolAnswers.length,exerciseResult));
+      })
+    }  
+  }).catch(error =>{
+    console.log('error',error)
+    res.status(404).json(error)
+  })
+}

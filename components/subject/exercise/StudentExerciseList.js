@@ -39,7 +39,7 @@ class StudentExerciseList extends React.Component{
                 <List>
                     {
                         this.state.exerciseResults.map((exerciseResult)=>(
-                            <ExerciseResultItem key={exerciseResult._id} exerciseResult={exerciseResult}></ExerciseResultItem>
+                            <ExerciseResultItem key={exerciseResult._id} exerciseResult={exerciseResult} changeTabPage={changeTabPage} tabIndex={tabIndex}></ExerciseResultItem>
                         ))
                     }
                 </List>
@@ -67,6 +67,9 @@ class ExerciseResultItem extends React.Component{
     handleMenuSelected = (menuName) => {
         //if(menuName === 'Publish')this.props.openPublishPopup(this.props.exam)
         this.setState({anchorEl: null})
+        if (menuName === 'Review') {
+            this.props.changeTabPage(this.props.tabIndex,'ExerciseReview', this.props.exerciseResult._id)
+        }
     };
 
     render() {
@@ -80,8 +83,7 @@ class ExerciseResultItem extends React.Component{
         } = this.props.exerciseResult
 
         let menu = (finalScore) => {
-            if(finalScore === 0)return ['Publish']
-            else return ['Statistics', 'Review']
+            return ['Review']
         }
         return (
             <Card className="item-exam">
