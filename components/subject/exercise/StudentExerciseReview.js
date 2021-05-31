@@ -10,22 +10,29 @@ import MathJax from "react-mathjax-preview";
 import Prism from "prismjs";
 import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
+import { format } from 'date-fns'
 
 class StudentExerciseReview extends React.Component{
     constructor(props){
         super(props)
         this.state = {
+            exerciseResult : undefined,
             questionAnswerItems : []
         }
     }
 
     componentDidMount() {
         getExerciseReview(this.props.courseId,this.props.exerciseResultId).then(data => {
-            this.setState({questionAnswerItems: data.questionAnswers})
+            this.setState({
+                exerciseResult: data.exerciseResult, 
+                questionAnswerItems: data.questionAnswers
+            })
         })
     }
 
     render() {
+        const { exerciseResult, questionAnswerItems } = this.state
+        if (exerciseResult == null) return <Container></Container>
         return(
             <Container className="subject-exercise-student-review">
                 <Box className="header-close-container">
@@ -35,36 +42,36 @@ class StudentExerciseReview extends React.Component{
                 </Box>
                 <Box className="header-title-container">
                     <Typography className="header-title">Exercise Review</Typography>
-                    <Typography className="header-subtitle">20 October 2020 - 20.25</Typography>
+                    <Typography className="header-subtitle">{format(new Date(exerciseResult.createdAt), 'MM/dd/yyyy hh:mm')}</Typography>
                 </Box>
                 <Box className="review-summary-container">
                     <Box className="review-summary-item">
                         <Image className="review-summary-icon" src="/images/timer.svg" height={100} width={100} />
-                        <Typography className="review-summary-value">30 minutes</Typography>
+                        <Typography className="review-summary-value">{exerciseResult.timeLimit} minutes</Typography>
                         <Typography className="review-summary-label">Duration</Typography>
                     </Box>
                     <Divider style={{width: 20, backgroundColor: "white"}}></Divider>
                     <Box className="review-summary-item">
                         <Image className="review-summary-icon" src="/images/rank.svg" height={100} width={100} />
-                        <Typography className="review-summary-value">Medium</Typography>
+                        <Typography className="review-summary-value">{exerciseResult.difficulty}</Typography>
                         <Typography className="review-summary-label">Difficulty</Typography>
                     </Box>
                     <Divider style={{width: 20, backgroundColor: "white"}}></Divider>
                     <Box className="review-summary-item">
                         <Image className="review-summary-icon" src="/images/rightanswer.svg" height={100} width={100} />
-                        <Typography className="review-summary-value">80 / 90</Typography>
+                        <Typography className="review-summary-value">{exerciseResult.rightAnswer} / {exerciseResult.totalQuestion}</Typography>
                         <Typography className="review-summary-label">RightAnswer</Typography>
                     </Box>
                     <Divider style={{width: 20, backgroundColor: "white"}}></Divider>
                     <Box className="review-summary-item">
                         <Image className="review-summary-icon" src="/images/fscore.svg" height={100} width={100} />
-                        <Typography className="review-summary-value">88.89</Typography>
+                        <Typography className="review-summary-value">{exerciseResult.finalScore}</Typography>
                         <Typography className="review-summary-label">Final Score</Typography>
                     </Box>
                 </Box>
                 <List style={{paddingBottom: 40}}>
-                    { this.state.questionAnswerItems.map(questionAnswerItem => (
-                        <QuestionAnswerItem key={this.state.questionAnswerItems.indexOf(questionAnswerItem)} questionAnswerItem={questionAnswerItem}></QuestionAnswerItem>
+                    { questionAnswerItems.map(questionAnswerItem => (
+                        <QuestionAnswerItem key={questionAnswerItems.indexOf(questionAnswerItem)} questionAnswerItem={questionAnswerItem}></QuestionAnswerItem>
                     ))}
                 </List>
             </Container>
