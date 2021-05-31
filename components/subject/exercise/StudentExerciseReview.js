@@ -6,6 +6,10 @@ import Image from "next/image";
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import { getExerciseReview } from "../../../lib/api";
+import MathJax from "react-mathjax-preview";
+import Prism from "prismjs";
+import "prismjs/components/prism-c";
+import "prismjs/components/prism-cpp";
 
 class StudentExerciseReview extends React.Component{
     constructor(props){
@@ -85,7 +89,10 @@ class QuestionAnswerItem extends React.Component{
                 </Box>
                 <Box className="question-answer-container">
                     <Typography className="question">
-                        {question.question}
+                        <MathJax math={question.question} 
+                            onDisplay={() => Prism.highlightAll()} 
+                            sanitizeOptions={{USE_PROFILES: {html: true, mathMl: true}, ADD_TAGS: ["iframe"], ADD_ATTR: ["allowfullscreen"]}}
+                        />
                     </Typography>
                     <List>
                         { question.multipleChoices.map(choice => (
