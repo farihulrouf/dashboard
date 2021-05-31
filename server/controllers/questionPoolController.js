@@ -83,7 +83,7 @@ exports.addNewQuestionPools = async (req, res, next) => {
   const solution = req.body.solution;
   const type = req.body.type;
   const attachments = req.body.attachments;
-  const tag = req.body.tag;
+  const tags = req.body.tags;
   const playbackTimes = req.body.playbackTimes;
   const correctScore = req.body.correctScore;
   const wrongScore = req.body.wrongScore;

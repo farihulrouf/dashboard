@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Course = require("../models/Course");
 const Post = mongoose.model("Post");
 const Comment = mongoose.model("Comment");
 const BankNotification = mongoose.model("BankNotification");
@@ -37,18 +38,20 @@ exports.getPostById = async (req,res,next,id) => {
     }
     req.post = post;
 
-    const posterId = mongoose.Types.ObjectId(req.post.postedBy._id)
+    const posterId = mongoose.Types.ObjectId(post.postedBy._id)
     if (req.user) {
       post._doc.owned = posterId.equals(req.user._id);
       idx = post.likes.likedBy.indexOf(req.user._id);
       post._doc.isLike = idx>=0;
+      post._doc.canUpdate = await req.user.canUpdatePost(post);
+      post._doc.canDelete = await req.user.canDeletePost(post);
       return next();
     }
     next();
 }
 
 exports.likeAPost = async (req,res) => {
-  const post = req.post;
+  const {post, course} = req;
   likes = post.likes;
   idx = likes.likedBy.indexOf(req.user._id);
   let notification = null;
@@ -68,17 +71,19 @@ exports.likeAPost = async (req,res) => {
     isLike = true;
     notification = await BankNotification.createLikePostNotif(req.user,post)
   }
-  Post.findByIdAndUpdate(post.id, query, {new: true},(err,post)=>{
-    if(!err){
-      post._doc.isLike = isLike;
-      //Create notification if notif exist from thumbs up and never exist before
-      if(!!notification && !notification.isExist){
-        sendNotification(process.env.NOTIFICATION_OUTGOING_EXCHANGE,notification);
-      }
-      res.json({status: "ok", message: "like/unlike post success", post: post});
+  try{
+    const post = await Post.findByIdAndUpdate(post.id, query, {new: true})
+    post._doc.isLike = isLike;
+    post._doc.canUpdate = await req.user.canUpdatePost(post);
+    post._doc.canDelete = await req.user.canDeletePost(post);
+    //Create notification if notif exist from thumbs up and never exist before
+    if(!!notification && !notification.isExist){
+      sendNotification(process.env.NOTIFICATION_OUTGOING_EXCHANGE,notification);
     }
-    else res.json({status: "error", message: "unable to like/unlike post"})
-  })
+    res.json({status: "ok", message: "like/unlike post success", post: post});
+  }catch(err){
+    res.json({status: "error", message: "unable to like/unlike post"})
+  }
 }
 
 exports.validatePost = (req,res,next) => {
@@ -99,11 +104,13 @@ exports.validatePost = (req,res,next) => {
 exports.updatePost = async (req,res) => {
   if(req.post._doc.owned){
     //Only poster can edit his own post
-    const {title, category, body, attachments} = req.body;
+    const {title, category, body, attachments, tags} = req.body;
     let {post} = req;
-    post.title = title, post.category = category, post.body = body, post.attachments = attachments, post.tag = req.newtags;
+    post.title = title, post.category = category, post.body = body, post.attachments = attachments, post.tags = tags;
     let updatedPost = await post.save()
     updatedPost._doc.owned = true;
+    updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
+    updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
     return res.json({status: "ok", message: "post is updated", post: updatedPost})
   }
   res.json({status: "error", message: "unauthorized"});
@@ -129,6 +136,8 @@ exports.createComment = async (req,res) => {
   result = await post.update({$inc: {"comments.total": 1},$push: {"comments.listComments": comment}})
   if(result.ok){
     updatedPost = await Post.findOne({_id: post._id})
+    updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
+    updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
     return res.json({status: "ok", message: "comment is created successfully", post: updatedPost})
   }
   res.json({status: "error", message: "unable to create comment", post: post})

@@ -1,44 +1,5 @@
 @import "~slick-carousel/slick/slick.css";
 @import "~slick-carousel/slick/slick-theme.css";
-
-@font-face {
-    font-family: "Gilroy";
-    src: url("/fonts/gilroy/gilroy-bold-webfont.woff2") format("woff2"),
-        url("/fonts/gilroy/gilroy-bold-webfont.woff") format("woff");
-    font-weight: 600;
-    font-style: normal;
-}
-@font-face {
-    font-family: "Gilroy";
-    src: url("/fonts/gilroy/gilroy-extrabold-webfont.woff2") format("woff2"),
-        url("/fonts/gilroy/gilroy-extrabold-webfont.woff") format("woff");
-    font-weight: 700;
-}
-@font-face {
-    font-family: "Gilroy";
-    src: url("/fonts/gilroy/gilroy-light-webfont.woff2") format("woff2"),
-        url("/fonts/gilroy/gilroy-light-webfont.woff") format("woff");
-    font-weight: 200;
-}
-@font-face {
-    font-family: "Gilroy";
-    src: url("/fonts/gilroy/gilroy-medium-webfont.woff2") format("woff2"),
-        url("/fonts/gilroy/gilroy-medium-webfont.woff") format("woff");
-    font-weight: 400;
-}
-@font-face {
-    font-family: "Gilroy";
-    src: url("/fonts/gilroy/gilroy-regular-webfont.woff2") format("woff2"),
-        url("/fonts/gilroy/gilroy-regular-webfont.woff") format("woff");
-    font-weight: 300;
-}
-@font-face {
-    font-family: "Gilroy";
-    src: url("/fonts/gilroy/gilroy-semibold-webfont.woff2") format("woff2"),
-        url("/fonts/gilroy/gilroy-semibold-webfont.woff") format("woff");
-    font-weight: 500;
-}
-
 @import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap");
 
 html {
@@ -90,7 +51,7 @@ h6 {
 }
 
 input[type="text"] {
-    font-weight: 300;
+    font-weight: 400;
 }
 
 button {
@@ -98,8 +59,9 @@ button {
 
     span {
         font-size: 1rem;
-        font-weight: 500;
+        font-weight: 600;
         line-height: 1.5;
+        font-family: "Gilroy", sans-serif !important;
     }
 }
 button:hover {
@@ -113,13 +75,6 @@ button:hover {
 
     span {
         font-family: "Gilroy", sans-serif;
-
-        @media (min-width: 1600px) {
-            font-size: 1.1rem;
-        }
-    }
-    @media (min-width: 1600px) {
-        padding: 8px 16px !important;
     }
 }
 

@@ -269,43 +269,6 @@
             font-weight: 300;
         }
     }
-
-    .avatar-editor {
-        &-input {
-            text-align: center;
-        }
-
-        &-slider {
-            margin-top: 16px;
-            height: 5px;
-
-            .MuiSlider-rail,
-            .MuiSlider-track {
-                height: 5px;
-                border-radius: 2px;
-            }
-
-            .MuiSlider-thumb {
-                background-color: white !important;
-                border: solid 2px #3f51b5;
-                width: 18px;
-                height: 18px;
-                margin-top: -7.5px;
-                margin-left: -9px;
-            }
-        }
-
-        &-save {
-            background-color: #3f51b5;
-            color: white;
-            outline: none;
-            margin: 8px auto 32px;
-
-            &:hover {
-                background-color: #3f51b5;
-            }
-        }
-    }
 }
 
 .create-course {
@@ -495,12 +458,45 @@
     }
 }
 
-.MuiDialog-paperScrollPaper {
-    width: 540px;
-}
-
 .avatar-editor-preview {
     canvas {
         border-radius: 100%;
+    }
+}
+
+.avatar-editor {
+    &-input {
+        text-align: center;
+    }
+
+    &-slider {
+        margin-top: 16px;
+        height: 5px;
+
+        .MuiSlider-rail,
+        .MuiSlider-track {
+            height: 5px;
+            border-radius: 2px;
+        }
+
+        .MuiSlider-thumb {
+            background-color: white !important;
+            border: solid 2px #3f51b5;
+            width: 18px;
+            height: 18px;
+            margin-top: -7.5px;
+            margin-left: -9px;
+        }
+    }
+
+    &-save {
+        background-color: #3f51b5 !important;
+        color: white !important;
+        outline: none !important;
+        margin: 8px auto 32px !important;
+
+        &:hover {
+            background-color: #3f51b5;
+        }
     }
 }

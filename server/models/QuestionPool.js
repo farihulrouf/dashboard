@@ -18,7 +18,7 @@ const questionPoolSchema = new Schema(
     courseId: {type: ObjectId, ref: "Course"},
     multipleChoices: [{type: String, required: true}],
     solution: [{type: String, required: true}],
-    tag: [{type: String, required: false}],
+    tags: [{type: String, required: false}],
     attachments: [{type: ObjectId, ref: "Attachment"}],
     playbackTimes: {type: Number, required: false, default: 0},
     correctScore: {type: Number, required: true},

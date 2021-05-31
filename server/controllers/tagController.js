@@ -6,43 +6,37 @@ exports.getTags = async (req, res) =>{
   res.status(200).json({status : "ok", data: tags});
 }
 
-exports.addTags = async(req, res, next) =>{
-  const tag = req.body.tag || req.body.materials.concat(req.body.prerequisites);
-  let newtags = []
-  let newtag
-  if(tag){
-    for (let i = 0; i <tag.length; i++){
-      newtag = await Tag.findOneAndUpdate(
-        {name:tag[i]},
-        {$inc : {frequency : 1}},
-        {new : true, upsert:true},
-      );
-      newtags.push(newtag);
-    }
+const extractTags = (obj) => {
+  if(obj.tags) {
+    if(Array.isArray(obj.tags)) return obj.tags
+    return [obj.tags]
   }
-  req.newtags = newtags
+  if(obj.materials){
+    if(obj.prerequisites) return obj.materials.concat(obj.prerequisites)
+    return obj.materials
+  }
+  return [];
+}
+
+exports.addTags = async(req, res, next) =>{
+  let tags = extractTags(req.body)
+  if(tags.length > 0){
+      await Tag.updateMany({name: {$in: tags}}, {$inc : {frequency : 1}}, {upsert:true});
+      tags = await Tag.find({name: {$in: tags}})
+  }
+  req.body.tags = tags
   next()
 
   // return res.status(200).json({status : "ok", tag: newtags})
 }
 
 exports.deleteTags = async(req, res, next) =>{
-  if(req.post || req.discussion){
-    var {tag} = req.post || req.discussion;
-    tag = tag.map(val => val.name)
-  }else{
-    tag = req.body.materials.concat(req.body.prerequisites);
-  }
-
-  let newtag
-  if(tag){
-    for (let i = 0; i <tag.length; i++){
-      newtag = await Tag.findOneAndUpdate(
-        {name:tag[i]},
-        {$inc : {frequency : -1}},
-        {new : true},
-      );
-    }
+  const tags = extractTags(req.post || req.discussion || req.body)
+  if(tags.length > 0){
+    await Tag.updateMany(
+      {name: {$in: tags}},
+      {$inc: {frequency : -1}},
+    );
   }
 
   next()

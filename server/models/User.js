@@ -6,6 +6,7 @@ const xml2js = require('xml2js')
 const hasha = require('hasha');
 const { default: axios } = require("axios");
 const util = require('util')
+const Course = require("./Course");
 
 const emailValidator = (v) => {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -126,6 +127,7 @@ const autoPopulateFollowingAndFollowers = function (next) {
     next();
 };
 
+//COURSE AUTHORIZATION
 userSchema.methods.canCreateCourse = function () {
     //A organization or a user without any organization
     return this.isAnOrganization || this.organization.length == 0;
@@ -133,34 +135,118 @@ userSchema.methods.canCreateCourse = function () {
 
 //canAccessCourse true if a user can access all course stuffs (materials, video, room conference, etc..)
 userSchema.methods.canAccessCourse = function (c) {
-    const instructor_ids = c.instructors.map((v)=> (typeof v === "object") ? v._id : v)
-    const participant_ids = c.participants.map((v) => (typeof v === "object" ? v._id : v))
-    return instructor_ids.includes(this._id) || participant_ids.includes(this._id)
+    return this.isInstructor(c) || this.isParticipant(c)
 }
 
-userSchema.methods.canEditDiscussion = function(discussion){
-  return this._id.equals(discussion.creator._id)
+//SUBJECT/HOME AUTHORIZATION
+userSchema.methods.canShowSyllabus = function (c){
+  return true
 }
 
-userSchema.methods.canDeleteDiscussion = function(discussion){
-  let canDelete = false;
-  [discussion.creator._id, discussion.creator._id].forEach((e) => {
-    if(e.equals(this._id)) canDelete = true;
-  })
-  return canDelete;
+userSchema.methods.canJoinRoom = function (c){
+	return (this.isOrganization(c) || this.isInstructor(c) || this.isParticipant(c))
 }
 
-userSchema.methods.canCreateDiscussion = function(course) {
+userSchema.methods.canCRUDRoom = function (c){
+  return this.isInstructor(c)
+}
+
+userSchema.methods.canCreatePost = function (c){
+  return this.isInstructor(c)
+}
+
+userSchema.methods.canUpdatePost = async function (p){
+    const c = await Course.findById(p.postedOn._id)
+    const postCreator_id = typeof (p.postedBy) === "object" ? p.postedBy._id.toString() : p.postedBy
+    return (this.isInstructor(c) && (this._id.toString() == postCreator_id))
+}
+
+userSchema.methods.canDeletePost = async function (p){
+    const c = await Course.findById(p.postedOn._id)
+    const postCreator_id = typeof (p.postedBy) === "object" ? p.postedBy._id.toString() : p.postedBy
+    return (this.isInstructor(c) && (this._id.toString() == postCreator_id))
+}
+
+userSchema.methods.canGetPost = function (c){
+  return (this.isOrganization(c) || this.isInstructor(c) || this.isParticipant(c))
+}
+
+userSchema.methods.canSearchPost = function (c){
+	return (this.isOrganization(c) || this.isInstructor(c) || this.isParticipant(c))
+}
+
+userSchema.methods.canFilterPost = function (c){
+  return (this.isOrganization(c) || this.isInstructor(c) || this.isParticipant(c))
+}
+
+//SUBJECT/DISCUSSION AUTHORIZATION
+userSchema.methods.canCreateDiscussion = function(c) {
   //Check if a user can create a discussion on the given courseId
-  return true;
+  return this.isParticipant(c)
 }
 
+userSchema.methods.canEditDiscussion = async function(d){
+    const c = await Course.findById(d.postedOn._id)
+    const creator_id = typeof (d.creator) === "object" ? d.creator._id.toString() : d.creator
+    return (this.isInstructor(c) || (creator_id === this._id.toString()))
+}
+
+userSchema.methods.canDeleteDiscussion = async function(d){
+    const c = await Course.findById(d.postedOn._id)
+    const creator_id = typeof (d.creator) === "object" ? d.creator._id.toString() : d.creator
+    return (this.isInstructor(c) || (creator_id === this._id.toString()))
+}
+
+userSchema.methods.canSearchDiscussion = function(c) {
+  //Check if a user can search a discussion on the given courseId
+  return (this.isOrganization(c) || this.isInstructor(c) || this.isParticipant(c))
+}
+
+userSchema.methods.canFilterDiscussion = function(c) {
+  //Check if a user can filter a discussion on the given courseId
+  return (this.isOrganization(c) || this.isInstructor(c) || this.isParticipant(c))
+}
+
+userSchema.methods.canVoteDiscussion = function(c) {
+  //Check if a user can vote a discussion on the given courseId
+  return (this.isInstructor(c) || this.isParticipant(c))
+}
+
+userSchema.methods.canVoteAnswer = function(c) {
+  //Check if a user can vote an answer on the given courseId
+  return (this.isInstructor(c) || this.isParticipant(c))
+}
+
+//ROLE IDENTIFIER
 //Teacher untuk sebuah organisasi --> user.organiztion ! =[]
 //Private teacher ---> user.organization = [] && user.courses != []
 userSchema.methods.isInstructor = function (course) {
-    //isInstructor is true if a user is an instructor of a given course
+    //isInstructor is true if a user is an instructor of a given course || Private teacher for that given course
     const instructor_ids = course.instructors.map((val) => typeof val === "object" ? val._id.toString() : val )   
-    return instructor_ids.includes(this._id.toString());
+    const creator_id = typeof (course.creator) === "object" ? course.creator._id.toString() : course.creator
+    const isPrivateTeacher = (creator_id === this._id.toString()) && (!this.isAnOrganization)
+    return instructor_ids.includes(this._id.toString()) || isPrivateTeacher;
+}
+
+userSchema.methods.isParticipant = function (course) {
+  const participant_ids = course.participants.map((v) => (typeof v === "object" ? v._id.toString() : v))
+  return participant_ids.includes(this._id.toString())
+}
+
+userSchema.methods.isOrganization = function (course) {
+    //isOrganization is true if a user is an organization and the creator of a given course
+  const creator_id = typeof (course.creator) === "object" ? course.creator._id.toString() : course.creator
+  return ( (creator_id === this._id.toString()) && this.isAnOrganization)
+}
+
+userSchema.methods.isParticipant = function (course) {
+  const participant_ids = course.participants.map((v) => (typeof v === "object" ? v._id : v))
+  return participant_ids.includes(this._id)
+}
+
+userSchema.methods.isCreator = function (course) {
+  const creator_id = typeof (course.creator) === "object" ? course.creator._id : course.creator
+  return creator_id == this._id
 }
 
 userSchema.pre("findOne", function (next) {

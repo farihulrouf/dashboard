@@ -105,11 +105,13 @@ export default class MyCourses extends React.Component {
     };
 
     onCourseCreated = (res) => {
-        this.setState({ open: false, courses: res.data });
+        const { params } = this.state;
+        this.setState({ open: false, courses: res.data, params: { ...params, page: 1 } });
     };
 
     onCourseUpdated = (res) => {
-        this.setState({ open: false, courses: res.data });
+        const { params } = this.state;
+        this.setState({ open: false, courses: res.data, params: { ...params, page: 1 } });
     };
 
 

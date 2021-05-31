@@ -143,10 +143,14 @@ exports.getCourses = async (req, res) => {
   courses.forEach(function(course){
     try{
       if (req.user){
+        course.isParticipant = req.user.isParticipant(course);
         course.isInstructor = req.user.isInstructor(course);
+        course.isOrganization = req.user.isOrganization(course);
       }
       else{
+        course.isParticipant = false;
         course.isInstructor = false;
+        course.isOrganization = false
       }
     }catch(err){
       console.log(err);
@@ -193,6 +197,23 @@ exports.getCourseById = async (req, res, next, id) => {
     let payment = await Payment.find({course:course._id})
     req.course._doc.enrollStatus = req.course.getStatus(payment, req.user);
     req.course._doc.isInstructor = req.user.isInstructor(course);
+    req.course._doc.isOrganization = req.user.isOrganization(course);
+    req.course._doc.isParticipant = req.user.isParticipant(course);
+    //SYLLABUS
+    req.course._doc.canShowSyllabus = req.user.canShowSyllabus(course);
+    //ROOM
+    req.course._doc.canJoinRoom = req.user.canJoinRoom(course);
+    req.course._doc.canCRUDRoom = req.user.canCRUDRoom(course);
+    //POST
+    req.course._doc.canCreatePost = req.user.canCreatePost(course);
+    req.course._doc.canSearchPost = req.user.canSearchPost(course);
+    req.course._doc.canFilterPost = req.user.canFilterPost(course);
+    //DISCUSSION
+    req.course._doc.canCreateDiscussion = req.user.canCreateDiscussion(course);
+    req.course._doc.canSearchDiscussion = req.user.canSearchDiscussion(course);
+    req.course._doc.canFilterDiscussion = req.user.canFilterDiscussion(course);
+    req.course._doc.canVoteDiscussion = req.user.canVoteDiscussion(course);
+    req.course._doc.canVoteAnswer = req.user.canVoteAnswer(course);
     return next();
   }
   next();
@@ -205,6 +226,24 @@ exports.getCourse = async (req, res) => {
     let payment = await Payment.find({course:course._id})
     req.course._doc.enrollStatus = req.course.getStatus(payment, req.user);
     req.course._doc.isInstructor = req.user.isInstructor(course);
+    req.course._doc.isOrganization = req.user.isOrganization(course);
+    req.course._doc.isParticipant = req.user.isParticipant(course);
+    //SYLLABUS
+    req.course._doc.canShowSyllabus = req.user.canShowSyllabus(course);
+    //ROOM
+    req.course._doc.canJoinRoom = req.user.canJoinRoom(course);
+    req.course._doc.canCRUDRoom = req.user.canCRUDRoom(course);
+    //POST
+    req.course._doc.canCreatePost = req.user.canCreatePost(course);
+    req.course._doc.canSearchPost = req.user.canSearchPost(course);
+    req.course._doc.canFilterPost = req.user.canFilterPost(course);
+    //DISCUSSION
+    req.course._doc.canCreateDiscussion = req.user.canCreateDiscussion(course);
+    req.course._doc.canSearchDiscussion = req.user.canSearchDiscussion(course);
+    req.course._doc.canFilterDiscussion = req.user.canFilterDiscussion(course);
+    req.course._doc.canVoteDiscussion = req.user.canVoteDiscussion(course);
+    req.course._doc.canVoteAnswer = req.user.canVoteAnswer(course);
+
     return res.json({ course: req.course });
   }
 };
@@ -275,8 +314,8 @@ exports.getMyCourses = async (req, res) => {
 };
 
 exports.createCourseDiscussion = (req,res,next) => {
-  const {title, body,} = req.body;
-  const {user, course, newtags} = req;
+  const {title, body, tags} = req.body;
+  const {user, course} = req;
   if(!user.canCreateDiscussion(course)){
       return res.status(403).json({
           status: "error", 
@@ -286,7 +325,7 @@ exports.createCourseDiscussion = (req,res,next) => {
   let discussion = new Discussion({
       title: title,
       body: body,
-      tag: newtags,
+      tags: tags,
       postedOn: course,
       creator: user
   })
@@ -351,6 +390,7 @@ exports.updateCourse = (req, res, next) => {
     instructors,
     logo,
     rating,
+    syllabus
   } = req.body;
   course.name = name || course.name
   course.about = about || course.about
@@ -360,6 +400,7 @@ exports.updateCourse = (req, res, next) => {
   course.rating = rating || course.rating
   course.instructors = instructors || course.instructors
   course.logo = logo || course.logo
+  course.syllabus = syllabus || course.syllabus
   course.save((err, response) => {
     if (!err) {
       return next();
@@ -377,12 +418,12 @@ exports.updateCourse = (req, res, next) => {
 // res.json({status: "error", message: firstError});     } next(); }
 
 exports.createCoursePost = async (req, res, next) => {
-  const { title, body, category, attachments, } = req.body;
+  const { title, body, category, attachments, tags } = req.body;
   let post = new Post({
     title: title,
     body: body,
     category: category,
-    tag:req.newtags,
+    tags: tags,
     postedOn: req.course,
     postedBy: req.user,
   });
@@ -398,15 +439,28 @@ exports.createCoursePost = async (req, res, next) => {
 
 exports.getPosts = async (req, res) => {
   const courseId = req.params.courseId || req.post.postedOn;
-  console.log(req.query);
-  let { category, content, page, dateStart, dateEnd, creator, tag } = req.query;
-  const options = {
-    page: parseInt(page),
-    limit: 10,
+  let { category, content, page, dateStart, dateEnd, creator, tags } = req.query;
+  let options = {
     sort: {
       createdAt: -1,
     },
   };
+  const course = req.course || await Course.findById(courseId)
+  const canAccess = req.user ? req.user.canGetPost(course) : false
+  if(canAccess){
+    options = {
+      ...options, 
+      page: page ? parseInt(page):1,
+      limit: 10,
+    }
+  }
+  else{
+    options = {
+      ...options, 
+      page: 1,
+      limit: 4,
+    }
+  }
   const filters = [
     {
       id: 1,
@@ -423,7 +477,6 @@ exports.getPosts = async (req, res) => {
   ];
 
   let params = {};
-  let test = {};
 
   if (content) {
     //Filter title
@@ -470,26 +523,25 @@ exports.getPosts = async (req, res) => {
     };
   }
 
-  if(tag){
-    params.tag = {
-      $elemMatch : {$in : tag.map((e) => ObjectId(e._id))}
+  if(tags){
+    params.tags = {
+      $elemMatch : {$in : tags.map((e) => ObjectId(e._id))}
     }
   }
 
-  console.log(params);
-  // console.log(test);
-
   const posts = await Post.paginate(params, options);
   if(req.user){
-    posts.docs.forEach((post) => {
-      idx = post.likes.likedBy.indexOf(req.user._id);
-      post._doc.isLike = idx >= 0 ? true : false;
-      post._doc.owned = post.postedBy.id == req.user.id;
-    });
+    for(let i = 0; i < posts.docs.length; i++){
+      idx = posts.docs[i].likes.likedBy.indexOf(req.user._id);
+      posts.docs[i]._doc.isLike = idx >= 0 ? true : false;
+      posts.docs[i]._doc.owned = posts.docs[i].postedBy.id == req.user.id;
+      posts.docs[i]._doc.canUpdate = await req.user.canUpdatePost(posts.docs[i]);
+      posts.docs[i]._doc.canDelete = await req.user.canDeletePost(posts.docs[i]);
+    }
   }
 
   if (req.user) {
-    res.json({ status: "ok", posts: posts });
+    res.json({ status: "ok", canAccess, posts: posts });
   } else {
     res.json({ status: "error" });
   }
@@ -563,7 +615,7 @@ exports.getDiscussions = async (req,res) => {
         {$match: filter},
         {$sort: {createdAt: -1}},
         {$lookup: {from: 'discussionanswers', localField: 'answers.topAnswers', foreignField: '_id', as: 'answers.topAnswers'}},
-        {$lookup: {from: 'tags', localField: 'tag', foreignField: '_id', as: 'tag'}},
+        {$lookup: {from: 'tags', localField: 'tags', foreignField: '_id', as: 'tags'}},
         {$unwind: {path: "$answers.topAnswers", preserveNullAndEmptyArrays: true}},
         {$lookup: {from: 'users', localField: 'answers.topAnswers.creator', foreignField: '_id', as: 'answers.topAnswers.creator'}},
         {$unwind: {path: "$answers.topAnswers.creator", preserveNullAndEmptyArrays: true}}, //since it's guaranteed that the creator is only on convert from array to object by unwind

@@ -26,7 +26,7 @@ var postSchema = mongoose.Schema({
     likes: {type: likesSchema, default: {total: 0, likedBy: []}},
     body: {type: String, required: "Body is required"},
     category: {type: String, enum: ["Announcement","Materials","Exam"], required: "Post category is required"},
-    tag : [{type:ObjectId, ref:'Tag'}],
+    tags : [{type:ObjectId, ref:'Tag'}],
     postedBy: {type: ObjectId, ref: "User"},
     postedOn: {type: ObjectId, ref: "Course"},
     comments: {type: commentsSchema, default: {total: 0, listComments: []}},

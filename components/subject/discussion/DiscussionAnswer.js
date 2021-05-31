@@ -1,6 +1,13 @@
 import React from "react";
 import Avatar from "../../Avatar";
-import { Grid, IconButton, Button, Paper, Popper } from "@material-ui/core";
+import {
+    Grid,
+    IconButton,
+    Button,
+    Paper,
+    Popper,
+    Tooltip,
+} from "@material-ui/core";
 import { MoreVert, ArrowDropUp } from "@material-ui/icons";
 import truncatise from "truncatise";
 import MathJax from "react-mathjax-preview";
@@ -20,19 +27,22 @@ class DiscussionAnswer extends React.Component {
     };
 
     render() {
-        const { data } = this.props;
-        console.log(data)
+        const { data, canVote } = this.props;
         const open = Boolean(this.state.anchorEl);
         const id = open ? "simple-popper" : undefined;
         const date = new Date(data.updatedAt);
-        const name = data.creator.name  ? data.creator.name.split(" ")[0] : "Unknown";
+        const name = data.creator.name
+            ? data.creator.name.split(" ")[0]
+            : "Unknown";
 
         return (
             <Grid className="discussion-answer">
                 <Grid item className="discussion-answer-left">
-                    <IconButton>
-                        <ArrowDropUp />
-                    </IconButton>
+                    <Tooltip title={!canVote ? "Unable to vote answer" : ""}>
+                        <IconButton disabled={!canVote}>
+                            <ArrowDropUp />
+                        </IconButton>
+                    </Tooltip>
                     <h3>{data.votes.total ? data.votes.total : "0"}</h3>
                     <span>Votes</span>
                 </Grid>
@@ -91,7 +101,9 @@ class DiscussionAnswer extends React.Component {
                                     item
                                     className="discussion-answer-creator-role"
                                 >
-                                    {data.creator.isAnInstructor ? "Instructor" : "Member"}
+                                    {data.creator.isAnInstructor
+                                        ? "Instructor"
+                                        : "Member"}
                                 </Grid>
                             </Grid>
                         </Grid>

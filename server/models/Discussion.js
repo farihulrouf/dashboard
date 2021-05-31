@@ -7,7 +7,7 @@ var discussionSchema = mongoose.Schema({
     body: {type: String, required: "Discussion body is required"},
     postedOn: {type: ObjectId, ref: "Course", required: "Discussion posted on is required"},
     creator: {type: ObjectId, ref: "User", required: "Discussion creator is required"},
-    tag : [{type:ObjectId, ref:'Tag'}],
+    tags : [{type:ObjectId, ref:'Tag'}],
     votes: {
         total: {type: Number, default: 0},
         voters: [{type: ObjectId, ref: "User"}]
@@ -24,7 +24,7 @@ const autoPopulate = function(next){
         "answers.topAnswers",
         "creator body status votes createdAt",
     );
-    this.populate('tag', '_id name');
+    this.populate('tags', '_id name');
     this.populate("creator","_id name avatar linkedIn teachers isAnOrganization");
     next();
 }
