@@ -114,7 +114,7 @@ exports.generateNewOTP = async (req, res) => {
   const { email } = req.query;
   user = await User.findOne({email: email});
   if(!user) return res.status(500).send("Can't generate new otp")
-  if(Date.now() < user.otpValidUntil || user.active) return res.status(500).send("Can't generate new otp")
+  if(Date.now() < user.otpValidUntil) return res.status(500).send("Can't generate new otp")
   //Generate new otp
   const otp = otpGenerator.generate(process.env.OTP_DIGIT)
   const otpValidUntil = Date.now() + process.env.OTP_VALIDITY_IN_MINUTES*60*1000;
@@ -141,8 +141,35 @@ exports.validateEmail = async (req, res) => {
   if(user.otp !== otp) return res.status(500).send("Wrong OTP, validation error")
   if(user.otp === otp && Date.now()> user.otpValidUntil) return res.status(500).send("OTP Expired, please request a new one")
   user.active = true
+  user.otpValidUntil = Date.now()
   user = await user.save()
   res.json({status: "ok", message: "Email verified", redirect_at: Date.now()+10*1000}) //redirect to sign in page in 5 seconds
+}
+
+exports.forgetPassword = async (req,res) => {
+  //confirmation password is check on the front end
+  const {email, otp, newPassword} = req.body;
+  user = await User.findOne({email: email})
+  if(!user) return res.status(500).send("Can't validate user")
+  if(user.otp !== otp) return res.status(500).send("Wrong OTP, validation error")
+  if(user.otp === otp && Date.now()>user.otpValidUntil) return res.status(500).send("OTP Expired, please request a new one")
+  await user.setPassword(newPassword)
+  user.otpValidUntil = Date.now()
+  await user.save()
+  res.json({status: "ok", message: "Password is changed, please relogin with your new password", redirect_at: Date.now()+10*1000})
+}
+
+
+exports.changePassword = async(req,res) => {
+  //change password need current password
+  const {user} = req
+  const {currentPassword, newPassword} = req.body
+  const authResult = await user.authenticate(currentPassword)
+  if(!authResult.user) res.status(500).send(authResult.error.message)
+  await user.setPassword(newPassword)
+  user.otpValidUntil = Date.now()
+  await user.save()
+  res.json({status: "ok", message: "Password has been successfully changed"})
 }
 
 exports.signin = (req, res, next) => {

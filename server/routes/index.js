@@ -74,6 +74,15 @@ router.post(
   catchErrors(authController.validateEmail)
 )
 
+router.post(
+  '/api/auth/forget-password',
+  authController.forgetPassword
+)
+
+router.post(
+  '/api/auth/change-password',
+  authController.changePassword
+)
 //Generate new otp
 router.get(
   '/api/auth/otp',
