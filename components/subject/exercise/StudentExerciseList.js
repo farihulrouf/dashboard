@@ -75,6 +75,7 @@ class ExerciseResultItem extends React.Component{
     render() {
         const { 
             difficulty,
+            perfectFinalScore,
             totalQuestion,
             finalScore,
             rightAnswer,
@@ -89,14 +90,14 @@ class ExerciseResultItem extends React.Component{
             <Card className="item-exam">
                 <CardContent className="item-exam-stats">                        
                     <Typography align="center" className="text-score">
-                        {finalScore}
+                        {finalScore} / {perfectFinalScore}
                     </Typography>
                     <Typography align="center" className="light-label" color="textSecondary" gutterBottom>
                         Final Score
                     </Typography>
                     <Divider className="divider"/>
                     <Typography align="center" className="text-pass">
-                        {rightAnswer}
+                        {rightAnswer} / {totalQuestion}
                     </Typography>
                     <Typography align="center" className="light-label" color="textSecondary" gutterBottom>
                         Right Answer
@@ -113,9 +114,6 @@ class ExerciseResultItem extends React.Component{
                 </CardContent>
                 <CardContent className="item-exam-about">
                     <div style={{display:"flex",flexDirection:"row", justifyContent: "flex-end"}}>
-                        <Typography align="left" className="item-exam-about-problem" variant="body2" component="p">
-                            Total Question : {totalQuestion}
-                        </Typography>
                         <div>
                             <IconButton
                                 aria-label="more"

@@ -23,7 +23,6 @@ class StudentExerciseReview extends React.Component{
 
     componentDidMount() {
         getExerciseReview(this.props.courseId,this.props.exerciseResultId).then(data => {
-            data.exerciseResult.perfectFinalScore = data.questionAnswers.reduce((accumulator, questionAnswer) => accumulator + questionAnswer.question.correctScore, 0)
             this.setState({
                 exerciseResult: data.exerciseResult, 
                 questionAnswerItems: data.questionAnswers

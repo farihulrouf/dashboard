@@ -174,12 +174,14 @@ exports.getRandomQuestionPools = async (req, res) => {
       const finalScore = 0
       const rightAnswer = 0 
       const totalQuestion = result.length
+      const perfectFinalScore = result.reduce((accumulator, questionPool) => accumulator + questionPool.correctScore, 0)
       const courseId = query.courseId
       const difficulty = query.difficultyLabel
       const exerciseResult = new ExerciseResult({
         finalScore,
         rightAnswer,
         totalQuestion,
+        perfectFinalScore,
         timeLimit,
         difficulty,
         courseId,
