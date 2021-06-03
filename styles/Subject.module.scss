@@ -132,7 +132,7 @@
                 }
 
                 span {
-                    font-family: 'Gilroy', sans-serif !important;
+                    font-family: "Gilroy", sans-serif !important;
                     font-weight: 600;
                 }
             }
@@ -237,7 +237,7 @@
                     font-weight: 400;
                     text-decoration: none;
                     color: black;
-                    font-family: 'Gilroy', sans-serif !important;
+                    font-family: "Gilroy", sans-serif !important;
                 }
             }
         }
@@ -247,6 +247,11 @@
     .subject-discussion,
     .post-item-page {
         padding: 1%;
+
+        .loading-container {
+            display: flex;
+            justify-content: center;
+        }
 
         .tag {
             display: flex;
@@ -281,7 +286,6 @@
             justify-content: flex-start;
             width: 100%;
             margin-bottom: 30px;
-
 
             .create-post-container {
                 height: auto;
@@ -1005,7 +1009,7 @@
                 width: 36px;
             }
         }
-        
+
         .header-title-container {
             display: flex;
             flex-direction: column;
@@ -1028,7 +1032,7 @@
                 font-size: 20px;
                 line-height: 24px;
                 text-align: center;
-                color: #565A5C;            
+                color: #565a5c;
             }
         }
 
@@ -1041,7 +1045,7 @@
 
             .review-summary-item {
                 flex: 1;
-                background: #FFFFFF;
+                background: #ffffff;
                 border: 1px solid #808080;
                 box-sizing: border-box;
                 border-radius: 10px;
@@ -1053,7 +1057,6 @@
                 padding-right: 50px;
 
                 .review-summary-icon {
-                    
                 }
 
                 .review-summary-value {
@@ -1063,7 +1066,7 @@
                     font-weight: bold;
                     font-size: 30px;
                     line-height: 36px;
-                    color: #3F51B5;
+                    color: #3f51b5;
                 }
 
                 .review-summary-label {
@@ -1079,10 +1082,10 @@
                 }
             }
         }
-        
+
         .review-question-item {
-            background: #FFFFFF;
-            border: 1px solid #A2A2A2;
+            background: #ffffff;
+            border: 1px solid #a2a2a2;
             box-sizing: border-box;
             border-radius: 10px;
             display: flex;
@@ -1091,13 +1094,13 @@
 
             .wrong-answer-border {
                 width: 8px;
-                background: #DE4646;
+                background: #de4646;
                 border-radius: 10px;
             }
 
             .right-answer-border {
                 width: 8px;
-                background: #2CB98F;
+                background: #2cb98f;
                 border-radius: 10px;
             }
 
@@ -1116,7 +1119,7 @@
                     font-size: 12px;
                     line-height: 14px;
                     text-align: center;
-                    color: #1B1642;
+                    color: #1b1642;
                 }
 
                 .problem-number {
@@ -1126,7 +1129,7 @@
                     font-size: 30px;
                     line-height: 24px;
                     text-align: center;
-                    color: #1B1642;
+                    color: #1b1642;
                     margin-top: 14px;
                     margin-bottom: 14px;
                 }
@@ -1138,7 +1141,7 @@
                     font-size: 24px;
                     line-height: 24px;
                     text-align: center;
-                    color: #2CB98F;
+                    color: #2cb98f;
                     margin-top: 14px;
                     margin-bottom: 14px;
                 }
@@ -1150,7 +1153,7 @@
                     font-size: 24px;
                     line-height: 24px;
                     text-align: center;
-                    color: #E91E63;
+                    color: #e91e63;
                     margin-top: 14px;
                     margin-bottom: 14px;
                 }
@@ -1170,7 +1173,7 @@
                     font-weight: normal;
                     font-size: 16px;
                     line-height: 50px;
-                    color: #1B1642;
+                    color: #1b1642;
                 }
 
                 .choices {
@@ -1179,14 +1182,14 @@
                     font-weight: normal;
                     font-size: 16px;
                     line-height: 32px;
-                    color: #1B1642;
+                    color: #1b1642;
                     flex: 1;
                 }
 
                 .right-answer-item {
                     background: rgba(44, 185, 143, 0.4);
                     border-radius: 5px;
-                    color: #1B1642;
+                    color: #1b1642;
                     padding-left: 8px;
                     padding-right: 8px;
                     display: flex;
@@ -1197,7 +1200,7 @@
                 .wrong-answer-item {
                     background: rgba(222, 70, 70, 0.4);
                     border-radius: 5px;
-                    color: #1B1642;
+                    color: #1b1642;
                     padding-left: 8px;
                     padding-right: 8px;
                     display: flex;
@@ -1208,14 +1211,14 @@
                 .no-answer-item {
                     background: white;
                     border-radius: 5px;
-                    color: #1B1642;
+                    color: #1b1642;
                     padding-left: 8px;
                     padding-right: 8px;
                     display: flex;
                     flex-direction: row;
                     align-items: center;
                 }
-                
+
                 .icon-right-answer {
                     width: 20px;
                     height: 20px;
@@ -1993,6 +1996,16 @@
     }
 }
 
+.subject-course-pagination {
+    margin: 20px auto;
+    display: flex;
+    justify-content: center;
+
+    button {
+        font-family: "Gilroy", sans-serif !important;
+    }
+}
+
 .popper-option {
     position: relative;
     padding: 16px;
@@ -2065,12 +2078,11 @@
 }
 
 .syllabus-dialog {
-    
     .MuiDialog-paper {
         width: clamp(340px, 80%, 800px);
         max-height: 450px;
     }
-    
+
     .MuiDialogTitle-root {
         h2 {
             font-size: 1.2rem !important;
@@ -2084,8 +2096,8 @@
 
     .no-syllabus-yet {
         margin: 48px auto 64px;
-        font-family: 'Gilroy', sans-serif !important;
-        color: rgba(0, 0, 0, .6);
+        font-family: "Gilroy", sans-serif !important;
+        color: rgba(0, 0, 0, 0.6);
         font-size: 16px;
         font-weight: 400;
     }
@@ -2117,7 +2129,7 @@
                 }
 
                 &-text {
-                    font-family: 'Gilroy', sans-serif !important;
+                    font-family: "Gilroy", sans-serif !important;
                     font-size: 12px;
                     font-weight: 400;
                 }

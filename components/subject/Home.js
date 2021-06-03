@@ -1,4 +1,4 @@
-import { Grid, List, useRadioGroup } from "@material-ui/core";
+import { Grid, List, CircularProgress } from "@material-ui/core";
 import { getCoursePosts, deletePost } from "../../lib/api";
 import Router from "next/router";
 import Pagination from "@material-ui/lab/Pagination";
@@ -19,9 +19,9 @@ class Home extends React.Component {
                 dateEnd: "",
                 creator: [],
                 category: [],
-                page: 1,
             },
-            deleteDialogOpen: false
+            deleteDialogOpen: false,
+            loading: false,
         };
         this.onSearchQueryChange = this.onSearchQueryChange.bind(this);
         this.handlePaginationChange = this.handlePaginationChange.bind(this);
@@ -34,18 +34,21 @@ class Home extends React.Component {
     handlePaginationChange(event, page) {
         const { courseId } = this.props;
 
+        this.setState({ loading: true });
         getCoursePosts(courseId, {
             ...this.state.query,
             page: page,
-        }).then((posts) => this.setState(posts));
+        }).then(({ posts }) => this.setState({ posts: posts, loading: false }));
     }
 
     componentDidMount() {
         const { courseId } = this.props;
 
+        this.setState({ loading: true });
         getCoursePosts(courseId, this.state.query)
-            .then((posts) => {
-                this.setState(posts);
+            .then(({ posts }) => {
+                console.log(posts);
+                this.setState({ posts: posts, loading: false });
             })
             .catch((err) => Router.push("/signin"));
     }
@@ -82,8 +85,9 @@ class Home extends React.Component {
     };
 
     render() {
-        const { posts, deleteDialogOpen } = this.state;
+        const { posts, deleteDialogOpen, query, loading } = this.state;
         const { auth, course, enroll, courseId } = this.props;
+        const { page, pages } = posts;
         const {
             isInstructor,
             instructors,
@@ -93,7 +97,8 @@ class Home extends React.Component {
             isOrganization,
             isParticipant,
         } = course;
-        console.log(course);
+
+        console.log(page);
 
         const hasAccess = isOrganization || isInstructor || isParticipant;
 
@@ -109,7 +114,7 @@ class Home extends React.Component {
                     onDelete={this.deletePost}
                 />
                 <PostFilter
-                    query={this.state.query}
+                    query={query}
                     onSearchQueryChange={this.onSearchQueryChange}
                     courseId={courseId}
                     callback={this.onNewPostCreated}
@@ -117,55 +122,75 @@ class Home extends React.Component {
                     course={course}
                 />
 
-                <Grid item>
-                    {/* <Grid item>
-            <Pagination
-              count={posts.pages}
-              color="primary"
-              onChange={this.handlePaginationChange}
-            />
-          </Grid> */}
-                    {currentPost.length > 0 ? (
-                        <List>
-                            {currentPost.map((value, index) => {
-                                if (index === 3 && !hasAccess) {
+                {length > 0 && hasAccess && (
+                    <Pagination
+                        className="subject-course-pagination"
+                        count={pages}
+                        color="primary"
+                        page={page}
+                        onChange={this.handlePaginationChange}
+                    />
+                )}
+
+                {loading && (
+                    <Grid container  className="loading-container">
+                        <CircularProgress
+                            thickness={6}
+                            size="4rem"
+                            className="circular-progress-bar"
+                        />
+                    </Grid>
+                )}
+                {!loading && (
+                    <Grid item>
+                        {length > 0 ? (
+                            <List>
+                                {currentPost.map((value, index) => {
+                                    if (index === 3 && !hasAccess) {
+                                        return (
+                                            <Grid
+                                                item
+                                                key={value._id}
+                                                className="post-item-container"
+                                            >
+                                                <PostItem
+                                                    blur={true}
+                                                    auth={auth}
+                                                    data={value}
+                                                    openDeleteDialog={
+                                                        this.openDeleteDialog
+                                                    }
+                                                />
+                                                <Lock className="locked-post" />
+                                            </Grid>
+                                        );
+                                    }
                                     return (
-                                        <Grid
-                                            item
+                                        <PostItem
+                                            blur={false}
                                             key={value._id}
-                                            className="post-item-container"
-                                        >
-                                            <PostItem
-                                                blur={true}
-                                                auth={auth}
-                                                data={value}
-                                                openDeleteDialog={
-                                                    this.openDeleteDialog
-                                                }
-                                            />
-                                            <Lock className="locked-post" />
-                                        </Grid>
+                                            auth={auth}
+                                            data={value}
+                                            openDeleteDialog={
+                                                this.openDeleteDialog
+                                            }
+                                        />
                                     );
-                                }
-                                return (
-                                    <PostItem
-                                        blur={false}
-                                        key={value._id}
-                                        auth={auth}
-                                        data={value}
-                                        openDeleteDialog={this.openDeleteDialog}
+                                })}
+                                {length >= 4 && !hasAccess && (
+                                    <NotEnrolled
+                                        price={price}
+                                        enroll={enroll}
                                     />
-                                );
-                            })}
-                            {length >= 4 && !hasAccess && (
-                                <NotEnrolled price={price} enroll={enroll} />
-                            )}
-                        </List>
-                    ) : (
-                        <h5 className="no-item-yet">This course doesn't have any posts yet!</h5>
-                    )}
-                    
-                </Grid>
+                                )}
+                            </List>
+                        ) : (
+                            <h5 className="no-item-yet">
+                                This course doesn't have any posts yet!
+                            </h5>
+                        )}
+                    </Grid>
+                )}
             </div>
         );
     }
