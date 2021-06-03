@@ -53,7 +53,7 @@ class Exercise extends React.Component {
                     number++
                 }
             })
-            console.log('data',this.questions)
+            
             this.setState({
                 currentIndex : 0
             })
@@ -62,7 +62,7 @@ class Exercise extends React.Component {
 
     setAnswer(answer){
         this.questions[this.state.currentIndex].answer[0] = answer
-        console.log('this.questions[this.state.currentIndex]',this.questions[this.state.currentIndex])
+        //console.log('this.questions[this.state.currentIndex]',this.questions[this.state.currentIndex])
     }
 
     submitAnswer(){
@@ -71,7 +71,7 @@ class Exercise extends React.Component {
                 questionAnswers: this.questions,
                 exerciseResultId: this.exerciseResult._id
             }).then(response => {
-                Router.push(`/subjects?id=${this.props.router.query.id}`)
+                Router.push(`/subjects?id=${this.props.router.query.id}&exerciseResultId=${this.exerciseResult._id}`)
             }).catch(error => console.log('err',error))
         }
     }
@@ -82,7 +82,7 @@ class Exercise extends React.Component {
         let choices = []
 
         if (!auth) window.location.href = "/signin";
-        console.log('this.state.currentIndex',this.state.currentIndex)
+        //console.log('this.state.currentIndex',this.state.currentIndex)
         if(this.state.currentIndex >= 0){
             question = this.questions[this.state.currentIndex]
             choices = question.multipleChoices
@@ -234,14 +234,8 @@ class MultipleChoices extends React.Component{
         index : 0
     }
 
-    componentDidMount(){
-        
-    }
-
     componentDidUpdate(){
-        console.log('componentDidUpdate')
         if(this.state.index != this.props.index){
-            console.log('this.props.defaultAnswer',this.props.defaultAnswer)
             this.setState({
                 answer: this.props.defaultAnswer,
                 index : this.props.index
@@ -254,8 +248,7 @@ class MultipleChoices extends React.Component{
 
         return (
             <Box className="answers-container">
-                {choices.map((item) =>{
-                    console.log('ans',item)
+                {choices.map((item) => {
                     let answerStyle = "answer-item-container"
                     if(item === this.state.answer)answerStyle = "answer-item-selected-container"
                     return (

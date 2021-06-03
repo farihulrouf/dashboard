@@ -140,7 +140,7 @@ class Subject extends React.Component {
     }
 
     componentDidMount() {
-        const { id } = this.props.router.query;
+        const { id, exerciseResultId } = this.props.router.query;
 
         getCourseById(id).then((data) => {
             this.setState({
@@ -148,6 +148,8 @@ class Subject extends React.Component {
                 joined: data.course.enrollStatus,
             });
         });
+        
+        if (exerciseResultId) this.changeTabPage(2,'ExerciseReview',exerciseResultId)
     }
 
     handleEnroll = () => {
@@ -180,10 +182,10 @@ class Subject extends React.Component {
 
     changeTabPage = (tabIndex, pageName, param) => {
         if(tabIndex === 2){
-            if (pageName === 'ExerciseReview') this.setState({exercise_page_active: pageName, exerciseResultId: param})
-            else this.setState({exercise_page_active: pageName})
+            if (pageName === 'ExerciseReview') this.setState({tabIndex: tabIndex, exercise_page_active: pageName, exerciseResultId: param})
+            else this.setState({tabIndex: tabIndex, exercise_page_active: pageName})
         }else if(tabIndex === 3){
-            this.setState({exam_page_active: pageName})
+            this.setState({tabIndex: tabIndex, exam_page_active: pageName})
         }else{
             this.setState({tabIndex: tabIndex})
         }
