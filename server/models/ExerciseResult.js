@@ -6,6 +6,7 @@ const exerciseResultSchema = new Schema({
     finalScore: { type: Number },
     rightAnswer: { type: Number },
     totalQuestion: { type: Number },
+    perfectFinalScore: { type: Number },
     timeLimit: { type: Number },
     difficulty: { type: String },
     courseId: { type: ObjectId, ref: "Course" },

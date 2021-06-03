@@ -371,35 +371,27 @@ class Subject extends React.Component {
                             />
                         </TabPanel>
                         <TabPanel value={tabIndex} index={2}>
-                                {!isInstructor && <React.Fragment>
-                                    {this.state.exercise_page_active ===
-                                    "ExerciseList" && (
-                                    <StudentExerciseList
-                                        tabIndex={2}
-                                        changeTabPage={this.changeTabPage.bind(
-                                            this
-                                        )}
-                                        auth={auth}
-                                        courseId={router.query.id}
-                                        isInstructor={course.isInstructor}
-                                        className="subject-exercise-list"
-                                    />
-                                )}
-                                {this.state.exercise_page_active ===
-                                    "CreateExercise" && (
-                                    <StudentCreateExercise
-                                        tabIndex={2}
-                                        changeTabPage={this.changeTabPage.bind(
-                                            this
-                                        )}
-                                        auth={auth}
-                                        courseId={router.query.id}
-                                        isInstructor={course.isInstructor}
-                                        className="subject-exercise-student-create"
-                                    />
-                                )}
+                            {!isInstructor && <React.Fragment>
+                                {this.state.exercise_page_active === "ExerciseList" && 
+                                <StudentExerciseList
+                                    tabIndex={2}
+                                    changeTabPage={this.changeTabPage.bind(this)}
+                                    auth={auth}
+                                    courseId={router.query.id}
+                                    isInstructor={course.isInstructor}
+                                    className="subject-exercise-list"
+                                />}
+                                {this.state.exercise_page_active === "CreateExercise" && 
+                                <StudentCreateExercise
+                                    tabIndex={2}
+                                    changeTabPage={this.changeTabPage.bind(this)}
+                                    auth={auth}
+                                    courseId={router.query.id}
+                                    isInstructor={course.isInstructor}
+                                    className="subject-exercise-student-create"
+                                />}
                                 {this.state.exercise_page_active === 'ExerciseReview'&&
-                                    <StudentExerciseReview
+                                <StudentExerciseReview
                                     tabIndex = {2}
                                     changeTabPage = {this.changeTabPage.bind(this)}
                                     auth={auth}
@@ -407,30 +399,27 @@ class Subject extends React.Component {
                                     isInstructor={course.isInstructor}
                                     className="subject-exercise-student-review"
                                     exerciseResultId={this.state.exerciseResultId}
-                                    />
-                                }                                
+                                />}
                             </React.Fragment>}
                             {isInstructor && <React.Fragment>
-                                    {this.state.exercise_page_active === 'ExerciseList'&&
-                                    <ExerciseList
+                                {this.state.exercise_page_active === 'ExerciseList'&&
+                                <ExerciseList
                                     tabIndex = {2}
                                     changeTabPage = {this.changeTabPage.bind(this)}
                                     auth={auth}
                                     courseId={router.query.id}
                                     isInstructor={course.isInstructor}
                                     className="subject-exercise-list"
-                                    />
-                                }
+                                />}
                                 {this.state.exercise_page_active === 'CreateExercise'&&
-                                    <CreateExercise
+                                <CreateExercise
                                     tabIndex = {2}
                                     changeTabPage = {this.changeTabPage.bind(this)}
                                     auth={auth}
                                     courseId={router.query.id}
                                     isInstructor={course.isInstructor}
                                     className="subject-exercise-create"
-                                    />
-                                }
+                                />}
                             </React.Fragment>}
                         </TabPanel>
                         {isInstructor && <TabPanel value={tabIndex} index={3}>

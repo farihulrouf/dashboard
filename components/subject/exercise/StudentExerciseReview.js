@@ -65,7 +65,7 @@ class StudentExerciseReview extends React.Component{
                     <Divider style={{width: 20, backgroundColor: "white"}}></Divider>
                     <Box className="review-summary-item">
                         <Image className="review-summary-icon" src="/images/fscore.svg" height={100} width={100} />
-                        <Typography className="review-summary-value">{exerciseResult.finalScore}</Typography>
+                        <Typography className="review-summary-value">{exerciseResult.finalScore} / {exerciseResult.perfectFinalScore}</Typography>
                         <Typography className="review-summary-label">Final Score</Typography>
                     </Box>
                 </Box>
@@ -90,8 +90,8 @@ class QuestionAnswerItem extends React.Component{
                     <Typography className="number-score-label">Problem number</Typography>
                     <Typography className="problem-number">{answer.number}</Typography>
                     <Divider style={{height: 2}}/>
-                    {answer.right && <Typography className="score-right">{answer.score}</Typography>}
-                    {!answer.right && <Typography className="score-wrong">{answer.score}</Typography>}
+                    {answer.right && <Typography className="score-right">{answer.score} / {question.correctScore}</Typography>}
+                    {!answer.right && <Typography className="score-wrong">{answer.score} / {question.correctScore}</Typography>}
                     <Typography className="number-score-label">Score</Typography>
                 </Box>
                 <Box className="question-answer-container">
