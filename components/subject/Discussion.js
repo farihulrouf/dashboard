@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import DiscussionFilter from "./discussion/DiscussionFilter";
 import DiscussionForm from "./discussion/DiscussionForm";
 import DiscussionItem from "./discussion/DiscussionItem";
-import { Grid, Divider } from "@material-ui/core";
+import { Grid, CircularProgress } from "@material-ui/core";
+import Pagination from "@material-ui/lab/Pagination";
 import { getCourseDiscussions, deleteCourseDiscussion } from "../../lib/api";
 
 const Discussion = (props) => {
@@ -18,10 +19,21 @@ const Discussion = (props) => {
     const [discussions, setDiscussions] = useState([]);
     const [openModal, setOpenModal] = useState(false);
     const [openForm, setOpenForm] = useState(false);
+    const [params, setParams] = useState({
+        query: "",
+        limit: 10,
+        page: 1,
+    });
+    const [totalData, setTotalData] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        getCourseDiscussions(courseId).then((res) => {
+        setLoading(true);
+        getCourseDiscussions(courseId, params).then((res) => {
+            console.log(res);
+            setTotalData(res.pages);
             setDiscussions(res.discussions);
+            setLoading(false);
         });
     }, []);
 
@@ -47,6 +59,21 @@ const Discussion = (props) => {
         }
     };
 
+    const handlePaginationChange = (e, page) => {
+        setParams((prev) => ({
+            ...prev,
+            page: page,
+        }));
+
+        setLoading(true);
+        getCourseDiscussions(courseId, params).then((res) => {
+            console.log(res);
+            setTotalData(res.pages);
+            setDiscussions(res.discussions);
+            setLoading(false);
+        });
+    };
+
     useEffect(() => {
         let wrs = document.querySelectorAll(".wrs_stack");
         console.log(wrs);
@@ -57,6 +84,8 @@ const Discussion = (props) => {
         }
         console.log(openModal);
     }, [openModal]);
+
+    const { page } = params;
 
     return (
         <div className="subject-discussion">
@@ -73,23 +102,48 @@ const Discussion = (props) => {
                 open={openForm}
                 courseId={courseId}
             />
-            {discussions.length > 0 ? (
-                <Grid container className="discussion-item-container">
-                    {discussions.map((e) => (
-                        <Grid key={e._id} item xs={12}>
-                            <DiscussionItem
-                                data={e}
-                                canVoteDiscussion={canVoteDiscussion}
-                                canVoteAnswer={canVoteAnswer}
-                                deleteDiscussion={deleteDiscussion}
-                            />
-                        </Grid>
-                    ))}
+
+            {discussions.length > 0 && (
+                <Pagination
+                    className="subject-course-pagination"
+                    count={totalData}
+                    color="primary"
+                    page={page}
+                    onChange={handlePaginationChange}
+                />
+            )}
+
+            {loading && (
+                <Grid container className="loading-container">
+                    <CircularProgress
+                        thickness={6}
+                        size="4rem"
+                        className="circular-progress-bar"
+                    />
                 </Grid>
-            ) : (
-                <h5 className="no-item-yet">
-                    This course doesn't have any discussion yet!
-                </h5>
+            )}
+
+            {!loading && (
+                <Grid item>
+                    {discussions.length > 0 ? (
+                        <Grid container className="discussion-item-container">
+                            {discussions.map((e) => (
+                                <Grid key={e._id} item xs={12}>
+                                    <DiscussionItem
+                                        data={e}
+                                        canVoteDiscussion={canVoteDiscussion}
+                                        canVoteAnswer={canVoteAnswer}
+                                        deleteDiscussion={deleteDiscussion}
+                                    />
+                                </Grid>
+                            ))}
+                        </Grid>
+                    ) : (
+                        <h5 className="no-item-yet">
+                            This course doesn't have any discussion yet!
+                        </h5>
+                    )}
+                </Grid>
             )}
         </div>
     );

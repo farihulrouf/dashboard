@@ -239,16 +239,6 @@ userSchema.methods.isOrganization = function (course) {
   return ( (creator_id === this._id.toString()) && this.isAnOrganization)
 }
 
-userSchema.methods.isParticipant = function (course) {
-  const participant_ids = course.participants.map((v) => (typeof v === "object" ? v._id : v))
-  return participant_ids.includes(this._id)
-}
-
-userSchema.methods.isCreator = function (course) {
-  const creator_id = typeof (course.creator) === "object" ? course.creator._id : course.creator
-  return creator_id == this._id
-}
-
 userSchema.pre("findOne", function (next) {
     const populatedPaths = this.getPopulatedPaths();
     // if (populatedPaths.length === 0) {

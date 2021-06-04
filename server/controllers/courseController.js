@@ -600,7 +600,7 @@ exports.getDiscussions = async (req,res) => {
   
     const filter = getDiscussionFilter(req.query, course._id)
     const length = await Discussion.countDocuments(filter);
-    const avail = page * limit < length;
+    const pages = Math.ceil(length/limit)
   
     var field = {}
     if(user){
@@ -634,7 +634,7 @@ exports.getDiscussions = async (req,res) => {
     .skip(((page || 1)-1) * limit)
     .limit(limit);
 
-    res.json({status: "ok", discussions, avail});
+    res.json({status: "ok", discussions, page, pages});
   }catch(err){
     res.json({status:"error", message:err.message})
   }
