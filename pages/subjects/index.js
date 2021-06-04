@@ -197,7 +197,7 @@ class Subject extends React.Component {
         const {
             creator,
             instructors,
-            createdAt,
+            logo,
             name,
             isInstructor,
             about,
@@ -226,6 +226,10 @@ class Subject extends React.Component {
                             container
                             className="subject-header"
                         >
+                            <img
+                                className="course-logo-background"
+                                src={logo ? logo : "images/default-logo-course.jpg"}
+                            />
                             <Grid item className="breadcrumb">
                                 <Breadcrumb courseName={name} />
                             </Grid>
