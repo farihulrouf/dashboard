@@ -14,7 +14,7 @@ import { authInitialProps } from "../../lib/auth";
 import NavBar from "../../components/Navbar/NavBar";
 import TimerIcon from '@material-ui/icons/Timer';
 import Countdown from "react-countdown";
-import { getRandomQuestionPools, submitExerciseResult } from "../../lib/api";
+import { getExerciseOngoing, submitExerciseResult } from "../../lib/api";
 import MathJax from "react-mathjax-preview";
 
 class Exercise extends React.Component {
@@ -33,13 +33,12 @@ class Exercise extends React.Component {
     }
 
     componentDidMount() {
-        const { id, difficulty, numberOfQuestions, timeLimit } = this.props.router.query;
-        this.remainingTime = timeLimit*60*1000
-        getRandomQuestionPools(id,difficulty,numberOfQuestions,timeLimit).then(response => {
-            this.exerciseResult = response.exerciseResult
-            let questionPools = response.questionPools
+        const { id, exerciseResultId } = this.props.router.query;
+        getExerciseOngoing(id,exerciseResultId).then(data => {
+            this.exerciseResult = data.exerciseResult
+            this.remainingTime = this.exerciseResult.timeLimit*60*1000
             let number = 1
-            questionPools.forEach(questionPool => {
+            data.questionPools.forEach(questionPool => {
                 if(questionPool.question != null && questionPool.multipleChoices != null){
                     let question = {
                         questionPoolId: questionPool._id,

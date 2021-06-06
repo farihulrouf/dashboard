@@ -82,6 +82,35 @@ exports.getExerciseResults = async (req, res) => {
   })
 }
 
+exports.getOnExerciseQuestions = async (req, res) => {
+  let exerciseResultId = req.params.exerciseResultId
+  let questionPoolLoaded = 0
+  let questionPools = []
+
+  const getQuestionPool = (questionPoolId, totalQuestion, exerciseResult) => {
+    QuestionPool.findById(questionPoolId).then(questionPool => {
+      questionPools.push(questionPool)
+      questionPoolLoaded += 1
+      if (questionPoolLoaded === totalQuestion) {
+        res.json({
+          exerciseResult: exerciseResult,
+          questionPools: questionPools
+        })
+      }
+    }).catch(err => {
+      //console.log('err',err)
+      res.status(404).json(err)        
+    })
+  }
+
+  ExerciseResult.findById(exerciseResultId).then(exerciseResult => {
+    if (exerciseResult) exerciseResult.questionPools.forEach(questionPoolId => getQuestionPool(questionPoolId,exerciseResult.questionPools.length,exerciseResult)); 
+  }).catch(error =>{
+    //console.log('error',error)
+    res.status(404).json(error)
+  })
+}
+
 exports.getExerciseReview = async (req, res) => {
   let exerciseResultId = req.params.exerciseResultId
   let courseId = req.params.courseId
