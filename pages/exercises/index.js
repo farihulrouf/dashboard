@@ -36,7 +36,8 @@ class Exercise extends React.Component {
         const { id, exerciseResultId } = this.props.router.query;
         getExerciseOngoing(id,exerciseResultId).then(data => {
             this.exerciseResult = data.exerciseResult
-            this.remainingTime = this.exerciseResult.timeLimit*60*1000
+            let runningTime = new Date().getTime() - new Date(data.exerciseResult.createdAt).getTime()
+            this.remainingTime = this.exerciseResult.timeLimit*60*1000 - runningTime
             let number = 1
             data.questionPools.forEach(questionPool => {
                 if(questionPool.question != null && questionPool.multipleChoices != null){
