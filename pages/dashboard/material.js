@@ -39,7 +39,6 @@ const Material = ({ auth }) => {
 
     useEffect(() => {
         getCourses(filter).then((res) => {
-            console.log(res);
             setIsLoading(false);
             setData((prev) => [...prev, ...res.courses]);
             setLoadMoreAvail(res.avail);

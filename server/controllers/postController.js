@@ -133,12 +133,38 @@ exports.validateComment = (req,res,next) => {
 exports.createComment = async (req,res) => {
   const {body,user,post} = req
   comment = await new Comment({content: body.content, commentator: user, post: post}).save()
-  result = await post.update({$inc: {"comments.total": 1},$push: {"comments.listComments": comment}})
-  if(result.ok){
-    updatedPost = await Post.findOne({_id: post._id})
+  try{
+    await post.updateLatestComments(comment)
+    const updatedPost = await Post.findOne({_id : post._id})
     updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
     updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
-    return res.json({status: "ok", message: "comment is created successfully", post: updatedPost})
+    return res.json({status: "ok", message: "comment is created successfully", post:updatedPost, comment})
+
+  }catch(err){
+    res.json({status: "error", message: err.message, post: post})
   }
-  res.json({status: "error", message: "unable to create comment", post: post})
+}
+
+exports.getMoreComments = async (req, res) => {
+  const {post} = req
+  var {limit, createdAt} = req.query
+  limit = limit ? parseInt(limit) : 5
+
+  const options = {
+    limit,
+    sort : {createdAt : -1}
+  }
+
+  var query = {
+    post : post
+  }
+  if(createdAt){
+    query.createdAt = {$lt : new Date(createdAt) }
+  }
+  const total = await Comment.countDocuments(query)
+  const avail = limit < total; 
+  const pages = Math.ceil(total/limit)
+  var comments = await Comment.find(query, null, options)
+  comments = comments.reverse()
+  res.json({status : "ok", comments : comments, limit,total, avail, pages})
 }

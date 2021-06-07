@@ -13,7 +13,6 @@ import {
 import CourseMore from "../CourseMore";
 
 const Course = ({ courseItem, onUpdate }) => {
-    console.log(courseItem);
     const valueLabelFormat = (value) => {
         const array = String(value).split("");
         const length = array.length;

@@ -5,6 +5,7 @@ import {
     Popper,
     Paper,
     IconButton,
+    CircularProgress
 } from "@material-ui/core";
 import {
     ThumbUp,
@@ -20,7 +21,7 @@ import {
     GetApp,
     Lock,
 } from "@material-ui/icons";
-import { likeAPost, postComment } from "../../../lib/api";
+import { likeAPost, postComment, getMoreComments } from "../../../lib/api";
 import CommentItem from "./CommentItem";
 import PostForm from "./PostForm";
 // import MathJax from "mathjax3-react";
@@ -33,9 +34,15 @@ import "prismjs/components/prism-c";
 import "prismjs/components/prism-cpp";
 
 const PostItem = (props) => {
-    // const [showComment, setShowComment] = useState(false);
     const [data, setData] = useState(props.data);
     const [comment, setComment] = useState("");
+    const [myComment, setMyComment] = useState([]);
+    const [queryParams, setQuery] = useState({
+        limit: 5,
+        createdAt: data.comments.total ? data.comments.listComments[0].createdAt : null
+    });
+    const [avail, setAvail] = useState(data.comments.total != data.comments.listComments.length);
+    const [commentLoading, setCommentLoading] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [readMore, setReadMore] = useState(false);
@@ -46,15 +53,6 @@ const PostItem = (props) => {
 
     const open = Boolean(anchorEl);
     const id = open ? "simple-popper" : undefined;
-
-    const showCommentBox = (event) => {
-        setShowComment(!showComment);
-    };
-
-    const postCallback = (data) => {
-        setComment("");
-        setData(data);
-    };
 
     const onEditClick = () => {
         setEditMode(true);
@@ -75,6 +73,40 @@ const PostItem = (props) => {
         return date.slice(0, 19).replace("T", " at ");
     };
 
+    const showMoreComment = () => {
+        const { _id, comments } = data;
+        if (!commentLoading) {
+            setCommentLoading(true);
+            getMoreComments(_id, queryParams).then(res => {
+                setData(prev => ({ 
+                    ...prev, 
+                    comments: {
+                        ...prev.comments,
+                        listComments: [ ...res.comments, ...comments.listComments]
+                    }  
+                }));
+                setAvail(res.avail);
+                setCommentLoading(false);
+                setQuery(prev => ({ ...prev, createdAt: res.comments[0].createdAt }));
+            });
+        }
+    }
+
+    const createComment = () => {
+        postComment(data._id, comment).then(res => {
+            const { total } = res.post.comments;
+            setComment('');
+            setData(prev => ({ 
+                ...prev, 
+                comments: {
+                    ...prev.comments,
+                    total
+                }  
+            }));
+            setMyComment(prev => [...prev, res.comment]);
+        })
+    }
+
     useEffect(() => {
         setData(props.data);
         //Prism.highlightAll();
@@ -85,6 +117,10 @@ const PostItem = (props) => {
     const onDownloadAll = async (postId) => {
         window.open(`archive/${postId}.zip`);
     };
+
+    const { listComments, total } = data.comments;
+    console.log('avail', avail);
+    console.log('query', queryParams);
 
     return (
         <Grid
@@ -288,7 +324,6 @@ const PostItem = (props) => {
                 <Grid item>
                     <IconButton
                         color="primary"
-                        onClick={showCommentBox}
                         className="icon"
                     >
                         <Comment />
@@ -305,9 +340,29 @@ const PostItem = (props) => {
                 </Grid>
             </Grid>
             <Grid container className="comment-container">
-                {data.comments.listComments.map((value) => (
-                    <CommentItem key={value._id} data={value} />
-                ))}
+                {avail && (
+                    <Grid item className="show-more-comment-btn" onClick={showMoreComment}>
+                        Show more comments
+                        {commentLoading &&  (
+                            <CircularProgress
+                                thickness={3}
+                                size="1rem"
+                                className="circular-progress-bar"
+                            />
+                        )}
+                    </Grid>
+                )}
+                <Grid item className="current-comment-list">
+                    {listComments.map((value) => (
+                        <CommentItem key={value._id} data={value} />
+                    ))}
+                    {myComment.length > 0 && myComment.map((commentItem) => {
+                        const exist = listComments.find(item => item._id == commentItem._id);
+                        if (!exist) {
+                            return <CommentItem key={commentItem._id} data={commentItem} />
+                        }
+                    })}
+                </Grid>
             </Grid>
 
             <Grid item className="comment-input-box">
@@ -322,10 +377,7 @@ const PostItem = (props) => {
                 <Grid
                     item
                     className="send-btn"
-                    onClick={postComment(
-                        { postId: data._id, comment: comment },
-                        postCallback
-                    )}
+                    onClick={createComment}
                 >
                     <Send />
                 </Grid>

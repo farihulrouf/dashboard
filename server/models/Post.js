@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate');
 const { ObjectId } = mongoose.Schema;
+const Comment = require('./Comment')
 
 const likesSchema = new mongoose.Schema({
     total: {type: Number, required: "Number of likes is required"},
@@ -21,7 +22,7 @@ var attachmentSchema = new mongoose.Schema({
 })
 
   
-var postSchema = mongoose.Schema({
+var postSchema = new mongoose.Schema({
     title: {type: String, required: "Title is required", trim: true},
     likes: {type: likesSchema, default: {total: 0, likedBy: []}},
     body: {type: String, required: "Body is required"},
@@ -45,8 +46,20 @@ postSchema
     .pre("findOne",autoPopulate)
     .pre("find",autoPopulate)
     .pre("findOneAndUpdate",autoPopulate)
+    .pre('save', autoPopulate)
+
+postSchema.methods.updateLatestComments = async function(comment){
+    if(this.comments.total < 5){
+        return await this.update({$inc: {"comments.total": 1},$push: {"comments.listComments": comment}})
+    }
+    else{
+        var newLatestComments = await Comment.find({post : this._id},null,{sort : {createdAt : -1}, limit : 5})
+        newLatestComments = newLatestComments.reverse()
+        return await this.update({$inc: {"comments.total": 1}, $set : {"comments.listComments" : newLatestComments}})
+    }
+}
 
 postSchema.index({ postedOn: 1, category: 1});
 postSchema.index({ title: "text", body: "text", 'attachments.name': 'text'})
 
-module.exports = mongoose.model("Post", postSchema);``
+module.exports = mongoose.model("Post", postSchema);

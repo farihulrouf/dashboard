@@ -4,8 +4,6 @@ const mongodbErrorHandler = require("mongoose-mongodb-errors");
 const passportLocalMongoose = require("passport-local-mongoose");
 const xml2js = require('xml2js')
 const hasha = require('hasha');
-const { default: axios } = require("axios");
-const util = require('util')
 const Course = require("./Course");
 
 const emailValidator = (v) => {

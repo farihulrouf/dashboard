@@ -307,6 +307,12 @@ router.post(
   catchErrors(postController.createComment)
 );
 
+router.get(
+  "/api/posts/:postId/comment",
+  authController.checkAuth,
+  catchErrors(postController.getMoreComments)
+)
+
 /**
  * /api/discussions
  */
