@@ -83,6 +83,15 @@ exports.getDiscussionById = async (req,res,next, id) => {
     next()
 }
 
+exports.getAnswerById = async (req,res,next,id) => {
+  const answer = await DiscussionAnswer.findOne({_id : id})
+  if(!answer){
+    return res.status(404).json({status: "error", message: "Answer not found"});
+  }
+  req.answer = answer
+  next()
+}
+
 exports.voteDiscussion = async (req,res,next) => {
     const {user} = req;
     const {discussionid} = req.params;
@@ -121,44 +130,74 @@ exports.voteDiscussion = async (req,res,next) => {
     res.json({status: "ok", discussion: newDiscussion})
 }
 
-exports.createAnswer = (req,res,next) => {
-    const {user} = req;
-    const {discussionid} = req.params;
+exports.voteAnswer = async (req, res) =>{
+  const {discussion, answer, user} = req
+  const isNew = false
+  let isVoted = !!(answer.votes.voters.find((voter) => voter._id.toString() === user.id.toString()))
+  console.log("isVoted", isVoted)
+  try{
+    if (isVoted){
+      //unvote
+      var query = {$inc: {"votes.total": -1}, $pull: {"votes.voters": user.id}}
+    }
+    else{
+      //vote
+      var query = {$inc: {"votes.total": 1}, $push: {"votes.voters": user.id}}
+    }
+    var updatedAnswer = await DiscussionAnswer.findOneAndUpdate({_id : answer._id}, query, {new : true})
+      .populate("creator","_id name avatar linkedIn teachers isAnOrganization")
+      .populate("votes.voters","_id name avatar linkedIn teachers isAnOrganization")
+    const result = await discussion.updateTopAnswers(updatedAnswer, isNew)
+    if(result.ok){
+      var updatedDiscussion = await Discussion.findOne({_id : discussion._id})
+      updatedAnswer._doc.isVoted = !isVoted;
+      updatedDiscussion._doc.canEdit = await user.canEditDiscussion(updatedDiscussion)
+      updatedDiscussion._doc.canDelete = await user.canDeleteDiscussion(updatedDiscussion)
+      return res.json({status: "ok", message: "answer is voted successfully", discussion: updatedDiscussion, answer : updatedAnswer})
+    }
+    return res.json({status: "error", message: "unable to vote answer", discussion})
+  }catch(e){
+    return res.json({status : "error", message : e.message })
+  }
+}
+
+exports.createAnswer = async (req,res) => {
+    const {user, discussion} = req;
     const {body} = req.body;
-    const answer = new DiscussionAnswer({
-        creator: user,
-        body: body,
-        discussion: discussionid
-    })
-    answer.save(async (err,savedAnswer) => {
-        if(err) return res.json({status: "error", message: err.message});
-        const sortedAnswers = await DiscussionAnswer
-            .find({discussion: savedAnswer.discussion}).select("_id")
-            .sort({status: 1, "votes.total": 1, createdAt: -1})
-            .limit(3)
-        Discussion.findByIdAndUpdate(discussionid, {
-            $inc: {"answers.total": 1}, 
-            $set: {"answers.topAnswers": sortedAnswers}
-        }, {
-            new: true, 
-            populate: {
-                path: "answers.topAnswers", 
-                populate : {
-                  path : "creator",
-                }
-              }
-        })
-        .populate("tags")
-        .populate("creator")
-        .exec( async (err,newDiscussion) => {
-          
-            // await User.populate(newDiscussion, {path: "answers.topAnswers.creator"})
-            
-            if(err) return res.json({status: "error", message: err.message})
-            newDiscussion._doc.newAnswer = savedAnswer;
-            newDiscussion._doc.canEdit = await user.canEditDiscussion(newDiscussion)
-            newDiscussion._doc.canDelete = await user.canDeleteDiscussion(newDiscussion)
-            return  res.json({status: "ok", discussion: newDiscussion})
-        }) 
-    })
+    const isNew = true
+    try{
+      const answer = await new DiscussionAnswer({
+          creator: user,
+          body: body,
+          discussion: discussion
+      }).save()
+      const result = await discussion.updateTopAnswers(answer, isNew)
+      if(result.ok){
+        var updatedDiscussion = await Discussion.findOne({_id : discussion._id})
+        updatedDiscussion._doc.newAnswer = answer;
+        updatedDiscussion._doc.canEdit = await user.canEditDiscussion(updatedDiscussion)
+        updatedDiscussion._doc.canDelete = await user.canDeleteDiscussion(updatedDiscussion)
+        return res.json({status: "ok", message: "answer is created successfully", discussion: updatedDiscussion})
+      }
+      return res.json({status: "error", message: "unable to create answer", discussion})
+    }catch(err){
+      return res.json({status:"error", message: err.message, discussion})
+    }
+}
+
+exports.getMoreAnswers = async (req, res) => {
+  const {discussion} = req
+  var {page, limit} = req.query
+  page = page ? parseInt(page) : 1
+  limit = limit ? parseInt(limit) : 3
+
+  const options = {
+    skip : (page-1) * limit,
+    limit,
+    sort : {"votes.total" : -1, status:1, createdAt : 1}
+  }
+  const total = await DiscussionAnswer.countDocuments({discussion: discussion})
+  const pages = Math.ceil(total/limit); 
+  const answers = await DiscussionAnswer.find({discussion: discussion}, null, options)
+  res.json({status : "ok", answers, page, limit,total, pages})
 }

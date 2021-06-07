@@ -18,7 +18,7 @@ const DiscussionFilter = (props) => {
         page: 1,
     });
 
-    const [tags, setTags] = useState(["Teorema"]);
+    const [tags, setTags] = useState([]);
 
     const onQueryChange = (e) => {
         if (e) {

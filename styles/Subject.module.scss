@@ -1717,6 +1717,7 @@
     width: 70%;
     min-width: 335px;
     max-width: 1200px;
+    overflow-x: hidden;
 
     .discussion-item-con {
         padding: 30px;
@@ -1729,6 +1730,27 @@
             margin: 0 -30px -30px;
             padding: 30px 30px;
             background-color: #f3f6f9;
+
+            .get-more-answers-btn {
+                display: flex;
+                transition: all .3s;
+                justify-content: center;;
+                align-items: center;
+                margin: 30px auto 10px;
+                font-family: 'Gilroy', sans-serif;
+                font-weight: 500;
+
+                &:hover {
+                    color: #3f51b5;
+                    transform: scale(1.1);
+                    cursor: pointer;
+                }
+
+                .circular-progress-bar {
+                    margin: 0 !important;
+                    margin-left: 10px !important;
+                }
+            }
         }
     }
 
@@ -1777,6 +1799,7 @@
 
             h3,
             span {
+                font-family: 'Gilroy', sans-serif !important; 
                 display: flex;
                 justify-content: center;
             }
@@ -1952,6 +1975,14 @@
         justify-content: center;
         padding-bottom: 8px;
 
+        h3, span {
+            font-family: 'Gilroy', sans-serif !important;
+        }
+
+        .is-voted {
+            color: #3f51b5;
+        }
+
         .MuiIconButton-root {
             padding: 2px !important;
         }
@@ -1996,6 +2027,7 @@
             display: flex;
             justify-content: flex-start;
             align-items: flex-start;
+            width: 138px;
         }
 
         &-profile {
@@ -2075,60 +2107,11 @@
 }
 
 .popper-option {
-    position: relative;
-    padding: 16px;
-    padding-top: 12px;
-    width: 150px;
-    border: solid 2px #3f51b5 !important;
-    border-radius: 10px !important;
-
-    h6 {
-        margin-bottom: 8px;
-        text-transform: uppercase;
-    }
-
-    button {
-        background-color: white !important;
-        display: block !important;
-        font-weight: 500;
-        font-family: "Gilroy", sans-serif !important;
-        width: 100%;
-        box-shadow: none !important;
-        padding: 2px !important;
-
-        span {
-            font-size: 0.9rem;
-        }
-
-        &.edit {
-            border: solid 2px #3f51b5 !important;
-            color: #3f51b5;
-            margin-bottom: 6px;
-        }
-
-        &.delete {
-            border: solid 2px maroon !important;
-            color: maroon;
-        }
-    }
-
-    &::after {
-        position: absolute;
-        content: "";
-        display: block;
-        width: 8px;
-        height: 8px;
-        top: 12px;
-        right: -4.8px;
-        background-color: white;
-        transform: rotate(-45deg);
-        border-right: solid 2px #3f51b5;
-        border-bottom: solid 2px #3f51b5;
-    }
+   
 }
 
 .post-answer-btn {
-    margin-top: 10px !important;
+    margin: 10px 0 !important;
     background-color: white !important;
 }
 
@@ -2201,6 +2184,68 @@
                     font-size: 12px;
                     font-weight: 400;
                 }
+            }
+        }
+    }
+}
+
+.discussion-answer-more-popover {
+    .MuiPopover-paper {
+        box-shadow: none !important;
+        border-radius: 10px;
+        padding: 10px;
+        background-color: transparent !important; 
+
+        .popper-option {
+            position: relative;
+            padding: 16px;
+            padding-top: 12px;
+            width: 150px;
+            border: solid 2px #3f51b5 !important;
+            border-radius: 10px !important;
+        
+            h6 {
+                margin-bottom: 8px;
+                text-transform: uppercase;
+            }
+        
+            button {
+                background-color: white !important;
+                display: block !important;
+                font-weight: 500;
+                font-family: "Gilroy", sans-serif !important;
+                width: 100%;
+                box-shadow: none !important;
+                padding: 2px !important;
+        
+                span {
+                    font-size: 0.9rem;
+                }
+        
+                &.edit {
+                    border: solid 2px #3f51b5 !important;
+                    color: #3f51b5;
+                    margin-bottom: 6px;
+                }
+        
+                &.delete {
+                    border: solid 2px maroon !important;
+                    color: maroon;
+                }
+            }
+        
+            &::after {
+                position: absolute;
+                content: "";
+                display: block;
+                width: 8px;
+                height: 8px;
+                top: 12px;
+                right: -4.8px;
+                background-color: white;
+                transform: rotate(-45deg);
+                border-right: solid 2px #3f51b5;
+                border-bottom: solid 2px #3f51b5;
             }
         }
     }

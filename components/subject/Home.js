@@ -47,7 +47,6 @@ class Home extends React.Component {
         this.setState({ loading: true });
         getCoursePosts(courseId, this.state.query)
             .then(({ posts }) => {
-                console.log(posts);
                 this.setState({ posts: posts, loading: false });
             })
             .catch((err) => Router.push("/signin"));
@@ -97,8 +96,6 @@ class Home extends React.Component {
             isOrganization,
             isParticipant,
         } = course;
-
-        console.log(page);
 
         const hasAccess = isOrganization || isInstructor || isParticipant;
 

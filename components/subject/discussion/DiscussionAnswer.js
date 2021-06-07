@@ -5,10 +5,11 @@ import {
     IconButton,
     Button,
     Paper,
-    Popper,
+    Popover,
     Tooltip,
 } from "@material-ui/core";
-import { MoreVert, ArrowDropUp } from "@material-ui/icons";
+import { voteAnswer } from "../../../lib/api";
+import { MoreVert, ArrowDropUp, ArrowDropDown } from "@material-ui/icons";
 import truncatise from "truncatise";
 import MathJax from "react-mathjax-preview";
 
@@ -17,6 +18,7 @@ class DiscussionAnswer extends React.Component {
         super(props);
         this.state = {
             anchorEl: null,
+            answer: this.props.data
         };
     }
 
@@ -26,36 +28,56 @@ class DiscussionAnswer extends React.Component {
         });
     };
 
+    handleVoteAnswer = () => {
+        const { discussionId, data } = this.props;
+        const answerId = data._id;
+
+        voteAnswer(discussionId, answerId).then(res => {
+            this.setState({ answer: res.answer })
+        })
+    }
+
     render() {
-        const { data, canVote } = this.props;
+        const { canVoteAnswer } = this.props;
+        const { answer } = this.state;
         const open = Boolean(this.state.anchorEl);
         const id = open ? "simple-popper" : undefined;
-        const date = new Date(data.updatedAt);
-        const name = data.creator.name
-            ? data.creator.name.split(" ")[0]
+        const date = new Date(answer.updatedAt);
+        const name = answer.creator.name
+            ? answer.creator.name.split(" ")[0]
             : "Unknown";
 
+        const { isVoted } = answer;
         return (
             <Grid className="discussion-answer">
                 <Grid item className="discussion-answer-left">
-                    <Tooltip title={!canVote ? "Unable to vote answer" : ""}>
-                        <IconButton disabled={!canVote}>
-                            <ArrowDropUp />
+                    <Tooltip title={!canVoteAnswer ? "Unable to vote answer" : ""}>
+                        <IconButton disabled={!canVoteAnswer} onClick={this.handleVoteAnswer}>
+                            {!isVoted ? <ArrowDropUp /> : <ArrowDropDown className="is-voted"/>}
                         </IconButton>
                     </Tooltip>
-                    <h3>{data.votes.total ? data.votes.total : "0"}</h3>
-                    <span>Votes</span>
+                    <h3 className={isVoted && 'is-voted'}>{answer.votes.total ? answer.votes.total : "0"}</h3>
+                    <span className={isVoted && 'is-voted'}>Votes</span>
                 </Grid>
                 <Grid item className="discussion-answer-right">
                     <Grid className="three-dots">
                         <Button color="primary" onClick={this.openPopper}>
                             <MoreVert />
                         </Button>
-                        <Popper
+                        <Popover
                             id={id}
                             open={open}
+                            className="discussion-answer-more-popover"
                             anchorEl={this.state.anchorEl}
-                            placement="left-start"
+                            onClose={this.openPopper}
+                            anchorOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'right',
+                            }}
                         >
                             <Paper className="popper-option">
                                 <h6>Option</h6>
@@ -65,16 +87,16 @@ class DiscussionAnswer extends React.Component {
                                 <Button
                                     className="delete"
                                     variant="contained"
-                                    value={data._id}
+                                    value={answer._id}
                                 >
                                     Delete
                                 </Button>
                             </Paper>
-                        </Popper>
+                        </Popover>
                     </Grid>
                     <MathJax
                         className="discussion-answer-body"
-                        math={truncatise(data.body, { TruncateLength: 35 })}
+                        math={truncatise(answer.body, { TruncateLength: 35 })}
                     />
                     <Grid item className="discussion-answer-creator">
                         <Grid item className="discussion-answer-creator-data">
@@ -83,8 +105,8 @@ class DiscussionAnswer extends React.Component {
                                 className="discussion-answer-creator-photo"
                             >
                                 <Avatar
-                                    name={data.creator.name}
-                                    imgUrl={data.creator.avatar}
+                                    name={answer.creator.name}
+                                    imgUrl={answer.creator.avatar}
                                 />
                             </Grid>
                             <Grid
@@ -101,7 +123,7 @@ class DiscussionAnswer extends React.Component {
                                     item
                                     className="discussion-answer-creator-role"
                                 >
-                                    {data.creator.isAnInstructor
+                                    {answer.creator.isAnInstructor
                                         ? "Instructor"
                                         : "Member"}
                                 </Grid>

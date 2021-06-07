@@ -317,6 +317,7 @@ router.get(
  * /api/discussions
  */
  router.param("discussionid", discussionController.getDiscussionById);
+ router.param("answerid", discussionController.getAnswerById)
 
 router.delete(
   '/api/discussions/:discussionid',
@@ -335,6 +336,12 @@ router.put(
   discussionController.updateDiscussion
 )
 
+router.get(
+  "/api/discussions/:discussionid/answers",
+  authController.checkAuth,
+  catchErrors(discussionController.getMoreAnswers)
+)
+
 router.post(
   "/api/discussions/:discussionid/answers",
   authController.checkAuth,
@@ -345,6 +352,12 @@ router.put(
   "/api/discussions/:discussionid/vote",
   authController.checkAuth,
   catchErrors(discussionController.voteDiscussion)
+)
+
+router.put(
+  "/api/discussions/:discussionid/answers/:answerid/vote",
+  authController.checkAuth,
+  catchErrors(discussionController.voteAnswer)
 )
 
 /**

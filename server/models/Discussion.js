@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const mongoosePaginate = require('mongoose-paginate');
 const { ObjectId } = mongoose.Schema;
+const {DiscussionAnswer} = require('./DiscussionAnswer')
 
 var discussionSchema = mongoose.Schema({
     title: {type: String, required: "Discussion title is required"},
@@ -35,5 +36,20 @@ discussionSchema
     .pre("findById", autoPopulate)
 
 discussionSchema.index({ title: "text", body: "text"})
+
+discussionSchema.methods.updateTopAnswers = async function (answer, isNew) {
+    if(isNew){
+        if(this.answers.total < 3){
+            return await this.update({$inc: {"answers.total": 1},$push: {"answers.topAnswers": answer}})
+        }
+        else{
+            const newTopAnswer = await DiscussionAnswer.find({discussion : this._id},null,{sort : {"votes.total": -1, status: 1, createdAt : 1}, limit : 3})
+            return await this.update({$inc: {"answers.total": 1}, $set : {"answers.topAnswers" : newTopAnswer}})
+        }
+    }else{
+        const newTopAnswer = await DiscussionAnswer.find({discussion : this._id},null,{sort : {"votes.total": -1, status: 1, createdAt : 1}, limit : 3})
+        return await this.update({$set : {"answers.topAnswers" : newTopAnswer}})
+    }
+}
 
 module.exports = mongoose.model("Discussion", discussionSchema);

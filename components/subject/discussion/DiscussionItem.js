@@ -35,7 +35,6 @@ class DiscussionItem extends React.Component {
     };
 
     afterCreateAnswer = (newDiscussion) => {
-        console.log("running from item", newDiscussion);
         this.setState({ discussion: newDiscussion });
     };
 
@@ -81,7 +80,6 @@ class DiscussionItem extends React.Component {
         const { deleteDiscussion, canVoteAnswer, canVoteDiscussion } =
             this.props;
 
-        console.log(discussion);
         return (
             <div className="item-container">
                 <Grid item className="edit-delete">
@@ -191,8 +189,9 @@ class DiscussionItem extends React.Component {
                         {showBestAnswer &&
                             discussion.answers.topAnswers.length > 0 && (
                                 <DiscussionAnswer
+                                    discussionId={discussion._id}
                                     data={discussion.answers.topAnswers[0]}
-                                    canVote={canVoteAnswer}
+                                    canVoteAnswer={canVoteAnswer}
                                 />
                             )}
 
@@ -211,6 +210,7 @@ class DiscussionItem extends React.Component {
                             open={this.state.openModal}
                             handleClose={this.closeDiscussionModal}
                             setSelected={this.afterCreateAnswer}
+                            canVoteAnswer={canVoteAnswer}
                         />
                     ) : null}
                 </Grid>

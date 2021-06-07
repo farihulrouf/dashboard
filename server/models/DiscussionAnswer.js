@@ -18,6 +18,18 @@ const answerSchema = mongoose.Schema({
     }
 }, {timestamps: true})
 
+const autoPopulate = function(next){
+    this.populate("votes.voters","_id name avatar linkedIn teachers isAnOrganization");
+    this.populate("creator","_id name avatar linkedIn teachers isAnOrganization");
+    next();
+}
+
+answerSchema
+    .pre("findOne",autoPopulate)
+    .pre("find",autoPopulate)
+    .pre("findById", autoPopulate)
+
+
 module.exports = {
     DiscussionAnswer: mongoose.model("DiscussionAnswer", answerSchema),
     answerSchema: answerSchema
