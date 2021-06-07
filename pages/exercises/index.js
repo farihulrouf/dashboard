@@ -34,7 +34,7 @@ class Exercise extends React.Component {
 
     componentDidMount() {
         const { id, exerciseResultId } = this.props.router.query;
-        let exerciseData = localStorage.getItem("getExerciseOngoing")
+        let exerciseData = localStorage.getItem("getExerciseOngoing_"+exerciseResultId)
         if (exerciseData == null) {
             getExerciseOngoing(id,exerciseResultId).then(data => {
                 this.setExercise(data)
@@ -52,19 +52,20 @@ class Exercise extends React.Component {
         let number = 1
         data.questionPools.forEach(questionPool => {
             if(questionPool.question != null && questionPool.multipleChoices != null){
+                let index = number - 1
+                let answer = localStorage.getItem(`${this.exerciseResult._id}_${index}`)
                 let question = {
                     questionPoolId: questionPool._id,
                     number: number,
                     question: questionPool.question,
                     multipleChoices: questionPool.multipleChoices,
-                    answer: [''],
+                    answer: [answer != null ? answer : ''],
                     marked: false
                 }
                 this.questions.push(question)
                 number++
             }
         })
-        
         this.setState({
             currentIndex : 0
         })
@@ -72,6 +73,7 @@ class Exercise extends React.Component {
 
     setAnswer(answer){
         this.questions[this.state.currentIndex].answer[0] = answer
+        localStorage.setItem(`${this.exerciseResult._id}_${this.state.currentIndex}`,answer)
         //console.log('this.questions[this.state.currentIndex]',this.questions[this.state.currentIndex])
     }
 
@@ -244,6 +246,15 @@ class MultipleChoices extends React.Component{
         index : 0
     }
 
+    componentDidMount(){
+        if(this.state.answer != this.props.defaultAnswer){
+            this.setState({
+                answer: this.props.defaultAnswer,
+                index : this.props.index
+            })
+        }
+    }
+
     componentDidUpdate(){
         if(this.state.index != this.props.index){
             this.setState({
@@ -255,7 +266,6 @@ class MultipleChoices extends React.Component{
 
     render(){
         const { choices, setAnswer} = this.props
-
         return (
             <Box className="answers-container">
                 {choices.map((item) => {
