@@ -34,29 +34,39 @@ class Exercise extends React.Component {
 
     componentDidMount() {
         const { id, exerciseResultId } = this.props.router.query;
-        getExerciseOngoing(id,exerciseResultId).then(data => {
-            this.exerciseResult = data.exerciseResult
-            let runningTime = new Date().getTime() - new Date(data.exerciseResult.createdAt).getTime()
-            this.remainingTime = this.exerciseResult.timeLimit*60*1000 - runningTime
-            let number = 1
-            data.questionPools.forEach(questionPool => {
-                if(questionPool.question != null && questionPool.multipleChoices != null){
-                    let question = {
-                        questionPoolId: questionPool._id,
-                        number: number,
-                        question: questionPool.question,
-                        multipleChoices: questionPool.multipleChoices,
-                        answer: [''],
-                        marked: false
-                    }
-                    this.questions.push(question)
-                    number++
+        let exerciseData = localStorage.getItem("getExerciseOngoing")
+        if (exerciseData == null) {
+            getExerciseOngoing(id,exerciseResultId).then(data => {
+                this.setExercise(data)
+                localStorage.setItem("getExerciseOngoing",JSON.stringify(data))
+            })
+        } else {
+            this.setExercise(JSON.parse(exerciseData))
+        }
+    }
+
+    setExercise(data) {
+        this.exerciseResult = data.exerciseResult
+        let runningTime = new Date().getTime() - new Date(data.exerciseResult.createdAt).getTime()
+        this.remainingTime = this.exerciseResult.timeLimit*60*1000 - runningTime
+        let number = 1
+        data.questionPools.forEach(questionPool => {
+            if(questionPool.question != null && questionPool.multipleChoices != null){
+                let question = {
+                    questionPoolId: questionPool._id,
+                    number: number,
+                    question: questionPool.question,
+                    multipleChoices: questionPool.multipleChoices,
+                    answer: [''],
+                    marked: false
                 }
-            })
-            
-            this.setState({
-                currentIndex : 0
-            })
+                this.questions.push(question)
+                number++
+            }
+        })
+        
+        this.setState({
+            currentIndex : 0
         })
     }
 
