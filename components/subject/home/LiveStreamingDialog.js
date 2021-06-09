@@ -12,7 +12,7 @@ import { DuoSharp } from '@material-ui/icons';
 import {createRoom, getRooms} from "../../../lib/api"
 import RoomItem from "./RoomItem"
 
-export default function FormDialog({onCloseLiveStream, open, isInstructor, courseId}) {
+export default function FormDialog({onCloseLiveStream, open, canCRUDRoom, courseId}) {
   const [room, setRoom] = React.useState({})
   const [listRooms, setListRooms] = React.useState([])
   const [loading, setLoading] = React.useState(false)
@@ -55,7 +55,7 @@ export default function FormDialog({onCloseLiveStream, open, isInstructor, cours
             </Grid>
           </DialogContent>
         }
-        {!loading && !listRooms.length && isInstructor &&
+        {!loading && !listRooms.length && canCRUDRoom &&
         <React.Fragment>
           <DialogContent>
             <DialogContentText>
@@ -86,7 +86,7 @@ export default function FormDialog({onCloseLiveStream, open, isInstructor, cours
           </DialogActions>
         </React.Fragment>
         }
-        {!loading && !listRooms.length && !isInstructor &&
+        {!loading && !listRooms.length && !canCRUDRoom &&
           <DialogContent>
             <DialogContentText>
                 This class has no live stream room by now.
