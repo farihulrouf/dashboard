@@ -2,7 +2,8 @@
 import { Container, Box, IconButton, Divider, RadioGroup, FormControlLabel, TextField, Radio, InputAdornment, Typography, Button } from "@material-ui/core";
 import React from "react";
 import CloseIcon from '@material-ui/icons/Close';
-import Link from "next/link";
+import Router from "next/router";
+import { getRandomQuestionPools } from "../../../lib/api";
 
 class StudentCreateExercise extends React.Component{
 
@@ -13,14 +14,20 @@ class StudentCreateExercise extends React.Component{
         customNumberOfQuestions: "",
         customTimeLimit: ""
     }
-    
-    render(){
+
+    startExercise() {
+        let difficulty = this.state.difficulty
         let numberOfQuestions = this.state.numberOfQuestions
         let timeLimit = this.state.timeLimit
         if(numberOfQuestions === "custom-number-question")numberOfQuestions = this.state.customNumberOfQuestions
         if(timeLimit === "custom-time-limit")timeLimit = this.state.customTimeLimit
-        let startExerciseRoute = `/exercises?id=${this.props.courseId}&difficulty=${this.state.difficulty}&numberOfQuestions=${numberOfQuestions}&timeLimit=${timeLimit}`
-        
+        getRandomQuestionPools(this.props.courseId,difficulty,numberOfQuestions,timeLimit).then(response => {
+            if (response !=null ) Router.push(`/exercises?id=${this.props.courseId}&exerciseResultId=${response.exerciseResult._id}`)
+            else alert("Failed to start exercise")
+        })
+    }
+    
+    render(){
         return(
             <Container className="subject-exercise-student-create">
                 <Box className="header-container">
@@ -98,13 +105,15 @@ class StudentCreateExercise extends React.Component{
                         </Box>
                     </Box>
 
-                    <Link href={startExerciseRoute}>
-                        <Button
-                            style={{width: 160, height: 48}}
-                            color="primary" 
-                            variant="contained">START EXERCISE
-                        </Button>
-                    </Link>
+                    
+                    <Button
+                        style={{width: 160, height: 48}}
+                        color="primary" 
+                        variant="contained"
+                        onClick={() => this.startExercise()}>
+                            START EXERCISE
+                    </Button>
+                    
                 </Box>
             </Container>    
         )

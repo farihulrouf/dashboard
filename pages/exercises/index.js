@@ -14,7 +14,7 @@ import { authInitialProps } from "../../lib/auth";
 import NavBar from "../../components/Navbar/NavBar";
 import TimerIcon from '@material-ui/icons/Timer';
 import Countdown from "react-countdown";
-import { getRandomQuestionPools, submitExerciseResult } from "../../lib/api";
+import { getExerciseOngoing, submitExerciseResult } from "../../lib/api";
 import MathJax from "react-mathjax-preview";
 
 class Exercise extends React.Component {
@@ -33,35 +33,47 @@ class Exercise extends React.Component {
     }
 
     componentDidMount() {
-        const { id, difficulty, numberOfQuestions, timeLimit } = this.props.router.query;
-        this.remainingTime = timeLimit*60*1000
-        getRandomQuestionPools(id,difficulty,numberOfQuestions,timeLimit).then(response => {
-            this.exerciseResult = response.exerciseResult
-            let questionPools = response.questionPools
-            let number = 1
-            questionPools.forEach(questionPool => {
-                if(questionPool.question != null && questionPool.multipleChoices != null){
-                    let question = {
-                        questionPoolId: questionPool._id,
-                        number: number,
-                        question: questionPool.question,
-                        multipleChoices: questionPool.multipleChoices,
-                        answer: [''],
-                        marked: false
-                    }
-                    this.questions.push(question)
-                    number++
+        const { id, exerciseResultId } = this.props.router.query;
+        let exerciseData = localStorage.getItem("getExerciseOngoing_"+exerciseResultId)
+        if (exerciseData == null) {
+            getExerciseOngoing(id,exerciseResultId).then(data => {
+                this.setExercise(data)
+                localStorage.setItem("getExerciseOngoing",JSON.stringify(data))
+            })
+        } else {
+            this.setExercise(JSON.parse(exerciseData))
+        }
+    }
+
+    setExercise(data) {
+        this.exerciseResult = data.exerciseResult
+        let runningTime = new Date().getTime() - new Date(data.exerciseResult.createdAt).getTime()
+        this.remainingTime = this.exerciseResult.timeLimit*60*1000 - runningTime
+        let number = 1
+        data.questionPools.forEach(questionPool => {
+            if(questionPool.question != null && questionPool.multipleChoices != null){
+                let index = number - 1
+                let answer = localStorage.getItem(`${this.exerciseResult._id}_${index}`)
+                let question = {
+                    questionPoolId: questionPool._id,
+                    number: number,
+                    question: questionPool.question,
+                    multipleChoices: questionPool.multipleChoices,
+                    answer: [answer != null ? answer : ''],
+                    marked: false
                 }
-            })
-            
-            this.setState({
-                currentIndex : 0
-            })
+                this.questions.push(question)
+                number++
+            }
+        })
+        this.setState({
+            currentIndex : 0
         })
     }
 
     setAnswer(answer){
         this.questions[this.state.currentIndex].answer[0] = answer
+        localStorage.setItem(`${this.exerciseResult._id}_${this.state.currentIndex}`,answer)
         //console.log('this.questions[this.state.currentIndex]',this.questions[this.state.currentIndex])
     }
 
@@ -234,6 +246,15 @@ class MultipleChoices extends React.Component{
         index : 0
     }
 
+    componentDidMount(){
+        if(this.state.answer != this.props.defaultAnswer){
+            this.setState({
+                answer: this.props.defaultAnswer,
+                index : this.props.index
+            })
+        }
+    }
+
     componentDidUpdate(){
         if(this.state.index != this.props.index){
             this.setState({
@@ -245,7 +266,6 @@ class MultipleChoices extends React.Component{
 
     render(){
         const { choices, setAnswer} = this.props
-
         return (
             <Box className="answers-container">
                 {choices.map((item) => {

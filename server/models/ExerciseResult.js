@@ -10,7 +10,8 @@ const exerciseResultSchema = new Schema({
     timeLimit: { type: Number },
     difficulty: { type: String },
     courseId: { type: ObjectId, ref: "Course" },
-    userId: { type: ObjectId, ref: "User" }
+    userId: { type: ObjectId, ref: "User" },
+    questionPools: [{ type: ObjectId, ref: "QuestionPool"}]
   },
   {
     timestamps: true,
