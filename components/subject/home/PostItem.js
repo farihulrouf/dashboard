@@ -35,6 +35,7 @@ import "prismjs/components/prism-cpp";
 
 const PostItem = (props) => {
     const [data, setData] = useState(props.data);
+    const [likes, setLikes] = useState(props.data.likes)
     const [comment, setComment] = useState("");
     const [myComment, setMyComment] = useState([]);
     const [queryParams, setQuery] = useState({
@@ -306,18 +307,18 @@ const PostItem = (props) => {
             <Grid container className="post-comment">
                 <Grid item>
                     <IconButton
-                        onClick={likeAPost(data._id, setData)}
+                        onClick={likeAPost(data._id, setLikes)}
                         className="icon"
                     >
-                        {!data.isLike ? (
+                        {!likes.isLike ? (
                             <ThumbUp />
                         ) : (
                             <ThumbUp className="purple" />
                         )}
                         <span
-                            className={data.isLike === true ? "purple" : ""}
-                        >{`${data.likes.total} like${
-                            data.likes.total !== 1 ? "s" : ""
+                            className={likes.isLike === true ? "purple" : ""}
+                        >{`${likes.total} like${
+                            likes.total !== 1 ? "s" : ""
                         }`}</span>
                     </IconButton>
                 </Grid>

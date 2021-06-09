@@ -533,7 +533,7 @@ exports.getPosts = async (req, res) => {
   if(req.user){
     for(let i = 0; i < posts.docs.length; i++){
       idx = posts.docs[i].likes.likedBy.indexOf(req.user._id);
-      posts.docs[i]._doc.isLike = idx >= 0 ? true : false;
+      posts.docs[i].likes._doc.isLike = idx >= 0 ? true : false;
       posts.docs[i]._doc.owned = posts.docs[i].postedBy.id == req.user.id;
       posts.docs[i]._doc.canUpdate = await req.user.canUpdatePost(posts.docs[i]);
       posts.docs[i]._doc.canDelete = await req.user.canDeletePost(posts.docs[i]);

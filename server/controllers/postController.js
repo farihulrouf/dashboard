@@ -72,15 +72,15 @@ exports.likeAPost = async (req,res) => {
     notification = await BankNotification.createLikePostNotif(req.user,post)
   }
   try{
-    const post = await Post.findByIdAndUpdate(post.id, query, {new: true})
-    post._doc.isLike = isLike;
-    post._doc.canUpdate = await req.user.canUpdatePost(post);
-    post._doc.canDelete = await req.user.canDeletePost(post);
+    let postUpdated = await Post.findByIdAndUpdate(post.id, query, {new: true})
+    postUpdated.likes._doc.isLike = isLike;
+    postUpdated._doc.canUpdate = await req.user.canUpdatePost(postUpdated);
+    postUpdated._doc.canDelete = await req.user.canDeletePost(postUpdated);
     //Create notification if notif exist from thumbs up and never exist before
     if(!!notification && !notification.isExist){
       sendNotification(process.env.NOTIFICATION_OUTGOING_EXCHANGE,notification);
     }
-    res.json({status: "ok", message: "like/unlike post success", post: post});
+    res.json({status: "ok", message: "like/unlike post success", post: postUpdated});
   }catch(err){
     res.json({status: "error", message: "unable to like/unlike post"})
   }
