@@ -46,6 +46,7 @@ exports.getCourses = async (req, res) => {
   page = parseInt(page);
 
   let filter = {
+    accessibility: 'public',
     price: {
       $gte: parseInt(low),
       $lte: parseInt(high)

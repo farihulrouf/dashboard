@@ -49,7 +49,8 @@ const courseSchema = new mongoose.Schema(
             title : {type: String, trim: true},
             description : {type : String, trim : true},
             date : {type : Date}
-        }]
+        }],
+        accessibility: {type: String, enum: ['private','public','protected'], default: 'private'}
 
     },
     {timestamps: true}
