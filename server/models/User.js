@@ -165,6 +165,22 @@ userSchema.methods.canDeletePost = async function (p){
     return (this.isInstructor(c) && (this._id.toString() == postCreator_id))
 }
 
+userSchema.methods.canComment = async function(p){
+    const c = await Course.findById(p.postedOn._id)
+    return (
+        c.participants.map(e => e._id).includes(this._id) || 
+        c.instructors.map(e => e._id).includes(this._id)
+    )
+}
+
+userSchema.methods.canLike = async function(p){
+    const c = await Course.findById(p.postedOn._id)
+    return (
+        c.participants.map(e=>e._id).includes(this._id) || 
+        c.instructors.map(e=>e._id).includes(this._id)
+    )
+}
+
 userSchema.methods.canGetPost = function (c){
   return (this.isOrganization(c) || this.isInstructor(c) || this.isParticipant(c))
 }

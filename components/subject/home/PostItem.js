@@ -94,6 +94,10 @@ const PostItem = (props) => {
     }
 
     const createComment = () => {
+        if(!comment.length){
+            alert("Can't create comment")
+            return;
+        }
         postComment(data._id, comment).then(res => {
             const { total } = res.post.comments;
             setComment('');
@@ -309,6 +313,7 @@ const PostItem = (props) => {
                     <IconButton
                         onClick={likeAPost(data._id, setLikes)}
                         className="icon"
+                        disabled={!data.canLike}
                     >
                         {!likes.isLike ? (
                             <ThumbUp />
@@ -374,6 +379,7 @@ const PostItem = (props) => {
                     rowsMax={10}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
+                    disabled={!data.canComment}
                 />
                 <Grid
                     item

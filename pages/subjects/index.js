@@ -354,8 +354,8 @@ class Subject extends React.Component {
                     >
                         <Tab label="Home" {...a11yProps(0)} />
                         <Tab label="Discussion" {...a11yProps(1)} />
-                        <Tab label="Exercise" {...a11yProps(2)} />
-                        <Tab label="Exam" {...a11yProps(3)} />
+                        {/* <Tab label="Exercise" {...a11yProps(2)} /> */}
+                        {/* <Tab label="Exam" {...a11yProps(3)} /> */}
                     </Tabs>
 
                     <React.Fragment>

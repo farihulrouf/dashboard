@@ -538,6 +538,8 @@ exports.getPosts = async (req, res) => {
       posts.docs[i]._doc.owned = posts.docs[i].postedBy.id == req.user.id;
       posts.docs[i]._doc.canUpdate = await req.user.canUpdatePost(posts.docs[i]);
       posts.docs[i]._doc.canDelete = await req.user.canDeletePost(posts.docs[i]);
+      posts.docs[i]._doc.canComment = await req.user.canComment(posts.docs[i]);
+      posts.docs[i]._doc.canLike = await req.user.canLike(posts.docs[i]);
     }
   }
 
