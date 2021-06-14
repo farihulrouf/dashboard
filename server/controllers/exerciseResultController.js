@@ -120,10 +120,10 @@ exports.getExerciseReview = async (req, res) => {
 
   const addQuestionAnswer = (questionPoolAnswer, totalQuestionAnswer, exerciseResult) => {
     QuestionPool.findById(questionPoolAnswer.questionPoolId).then(questionPool => {
-      questionAnswers.push({
+      questionAnswers[questionPoolAnswer.number-1] = {
         answer: questionPoolAnswer,
         question: questionPool
-      })
+      }
       questionPoolLoaded += 1
       if (questionPoolLoaded === totalQuestionAnswer) {
         res.json({
