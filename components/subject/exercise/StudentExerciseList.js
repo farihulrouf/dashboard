@@ -59,8 +59,8 @@ class ExerciseResultItem extends React.Component{
         anchorEl: null
     }
     openExercise = () => {
-        const { _id, timeLimit, createdAt } = this.props.exerciseResult
-        if (this.isOngoing(timeLimit,createdAt)) Router.push(`/exercises?id=${this.props.courseId}&exerciseResultId=${_id}`)
+        const { _id, timeLimit, createdAt, submitted } = this.props.exerciseResult
+        if (!submitted && this.isOngoing(timeLimit,createdAt)) Router.push(`/exercises?id=${this.props.courseId}&exerciseResultId=${_id}`)
         else this.props.changeTabPage(this.props.tabIndex,'ExerciseReview', this.props.exerciseResult._id)
     };
     handleClick = (event) => {
@@ -89,9 +89,10 @@ class ExerciseResultItem extends React.Component{
             finalScore,
             rightAnswer,
             timeLimit,
-            createdAt
+            createdAt,
+            submitted
         } = this.props.exerciseResult
-        let ongoing = this.isOngoing(timeLimit,createdAt)
+        let ongoing = !submitted && this.isOngoing(timeLimit,createdAt)
         let menu = () => {
             return ['Review']
         }
@@ -99,16 +100,26 @@ class ExerciseResultItem extends React.Component{
             <Card className="item-exam-container">
                 <ButtonBase className="item-exam" onClick={this.openExercise}>
                     <CardContent className="item-exam-stats">                        
-                        <Typography align="center" className="text-score">
+                        { ongoing && <Typography align="center" className="text-score">
+                            N/A
+                        </Typography>
+                        }
+                        { !ongoing && <Typography align="center" className="text-score">
                             {finalScore} / {perfectFinalScore}
                         </Typography>
+                        }
                         <Typography align="center" className="light-label" color="textSecondary" gutterBottom>
                             Final Score
                         </Typography>
                         <Divider className="divider"/>
-                        <Typography align="center" className="text-pass">
+                        { ongoing && <Typography align="center" className="text-pass">
+                            N/A
+                        </Typography>
+                        }
+                        { !ongoing && <Typography align="center" className="text-pass">
                             {rightAnswer} / {totalQuestion}
                         </Typography>
+                        }
                         <Typography align="center" className="light-label" color="textSecondary" gutterBottom>
                             Right Answer
                         </Typography>

@@ -11,7 +11,8 @@ const exerciseResultSchema = new Schema({
     difficulty: { type: String },
     courseId: { type: ObjectId, ref: "Course" },
     userId: { type: ObjectId, ref: "User" },
-    questionPools: [{ type: ObjectId, ref: "QuestionPool"}]
+    questionPools: [{ type: ObjectId, ref: "QuestionPool"}],
+    submitted: { type: Boolean }
   },
   {
     timestamps: true,

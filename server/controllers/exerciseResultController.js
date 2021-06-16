@@ -45,6 +45,7 @@ exports.submitExerciseResult = async (req, res) => {
       let exerciseResult = await ExerciseResult.findById(exerciseResultId)
       exerciseResult.finalScore = finalScore
       exerciseResult.rightAnswer = rightAnswer
+      exerciseResult.submitted = true
       await exerciseResult.save()
     } catch (error) {
       console.log("ExerciseResult Update Error - " , error.toString())

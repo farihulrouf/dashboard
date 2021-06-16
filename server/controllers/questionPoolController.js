@@ -179,6 +179,7 @@ exports.getRandomQuestionPools = async (req, res) => {
       const difficulty = query.difficultyLabel
       let questionPools = [] 
       result.forEach(questionPool => questionPools.push(questionPool._id))
+      const submitted = false
       const exerciseResult = new ExerciseResult({
         finalScore,
         rightAnswer,
@@ -188,7 +189,8 @@ exports.getRandomQuestionPools = async (req, res) => {
         difficulty,
         courseId,
         userId,
-        questionPools
+        questionPools,
+        submitted
       })
       exerciseResult
       .save()
