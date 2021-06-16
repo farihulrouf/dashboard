@@ -809,6 +809,114 @@
         }
     }
 
+    .subject-exercise-review-list {
+        .item-exam-container {
+            display: flex;
+            flex: 1;
+            flex-direction: row;
+            margin-top: 35px;
+               
+            .item-exam {
+                display: flex;
+                flex: 1;
+                flex-direction: row;
+                padding: 8px;
+                
+                .item-exam-stats {
+                    display: flex;
+                    align-items: center;
+                    flex-direction: column;
+                    flex: 1;
+
+                    .divider {
+                        margin-top: 16px;
+                        margin-bottom: 8px;
+                        width: 100%;
+                    }
+                    .text-score {
+                        font-family: Lato;
+                        font-style: normal;
+                        font-weight: bold;
+                        font-size: 24px;
+                        line-height: 24px;
+                        text-align: center;
+                        color: #1b1642;
+                    }
+                    .text-pass {
+                        color: #8dc883;
+                        font-family: Lato;
+                        font-style: normal;
+                        font-weight: bold;
+                        font-size: 24px;
+                        line-height: 24px;
+                    }
+                }
+
+                .item-exam-name {
+                    flex: 4;
+                    margin-left: 40px;
+
+                    .item-exam-name-title {
+                        font-family: Lato;
+                        font-style: normal;
+                        font-weight: 700;
+                        font-size: 18px;
+                        line-height: 22px;
+                        color: #1b1642;
+                    }
+                    .item-exam-name-desc {
+                        font-family: Lato;
+                        font-style: normal;
+                        font-weight: 400;
+                        font-size: 14px;
+                        line-height: 22px;
+                        color: #1b1642;
+                    }
+                }
+
+                .item-exam-about {
+                    display: flex;
+                    flex: 2;
+                    flex-direction: column;
+                    justify-content: space-between;
+
+                    .item-exam-status-ongoing {
+                        padding: 8px;
+                        align-self: center;
+                        align-content: center;
+                        justify-content: center;
+                        width: fit-content;
+                        height: fit-content;
+                        background: #ffb562;
+                        border-radius: 16px;
+                    }
+
+                    .item-exam-status-finish {
+                        padding: 8px;
+                        align-self: center;
+                        align-content: center;
+                        justify-content: center;
+                        width: fit-content;
+                        height: fit-content;
+                        background: #b9b9b8;
+                        border-radius: 16px;
+                    }
+                }
+
+                .light-label {
+                    margin-top: 8px;
+                    font-family: Lato;
+                    font-style: italic;
+                    font-weight: 300;
+                    font-size: 12px;
+                    line-height: 14px;
+                    color: #1b1642;
+                }
+            }
+        }
+         
+    }
+
     .subject-exercise-create {
         .file-container {
             min-height: 400px;
