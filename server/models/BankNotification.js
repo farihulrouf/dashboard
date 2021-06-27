@@ -1,5 +1,6 @@
 
 const mongoose = require("mongoose");
+const Course = require("./Course")
 const mongoosePaginate = require('mongoose-paginate');
 const { ObjectId } = mongoose.Schema;
 const { NOTIFICATION : { EVENT, TARGET } } = require("../../constant")
@@ -69,30 +70,25 @@ bankNotifSchema.statics.createLikePostNotif = async function (user, post) {
     return bankNotif;
 };
 
-bankNotifSchema.statics.createStudentCommentPostNotif = async function (user, post) {
-    const bankNotif = await this.findOneOrCreate({notifOn: post, creator: user, eventType: EVENT.STUDENT_COMMENT_POST},{
+bankNotifSchema.statics.createCommentPostNotif = async function (user, post) {
+    const course = await Course.findById(post.postedOn)
+    let eventType = EVENT.STUDENT_COMMENT_POST
+    let target = [TARGET.INSTRUCTORS]
+    let message = `Student ${user.name} comments a Post`
+    if(user.isInstructor(course)){
+        eventType = EVENT.INSTRUCTOR_COMMENT_POST
+        target = [TARGET.STUDENTS]
+        message = `Instructor ${user.name} comments a Post`
+    }
+    const bankNotif = await this.findOneOrCreate({notifOn: post, creator: user, eventType},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
         url: `/posts?id=${post.id}`,
-        message: `Student ${user.name} comments a Post`,
+        message,
         notifOn: post,
         creator: user,
         onModel: 'Post',
-        eventType: EVENT.STUDENT_COMMENT_POST,
-        target: [TARGET.INSTRUCTORS]
-    })
-    return bankNotif;
-}
-
-bankNotifSchema.statics.createInstructorCommentPostNotif = async function (user, post) {
-    const bankNotif = await this.findOneOrCreate({notifOn: post, creator: user, eventType: EVENT.INSTRUCTOR_COMMENT_POST},{
-        photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/posts?id=${post.id}`,
-        message: `Instructor ${user.name} comments a Post`,
-        notifOn: post,
-        creator: user,
-        onModel: 'Post',
-        eventType: EVENT.INSTRUCTOR_COMMENT_POST,
-        target: [TARGET.STUDENTS]
+        eventType,
+        target
     })
     return bankNotif;
 }
