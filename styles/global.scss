@@ -99,17 +99,17 @@ span {
     color: #3f51b5 !important;
 }
 
-div::-webkit-scrollbar {
+div::-webkit-scrollbar, ul::-webkit-scrollbar {
     width: 8px;
     /* width of the entire scrollbar */
 }
 
-div::-webkit-scrollbar-track {
+div::-webkit-scrollbar-track, ul::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 20px;
 }
 
-div::-webkit-scrollbar-thumb {
+div::-webkit-scrollbar-thumb, ul::-webkit-scrollbar-thumb {
     background-color: #c7c7c7;
     /* color of the scroll thumb */
     border-radius: 20px;

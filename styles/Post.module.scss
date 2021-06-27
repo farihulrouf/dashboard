@@ -363,8 +363,8 @@
 .uploaded-attachment {
     margin-bottom: 20px !important;
     margin-top: 10px !important;
-    // max-height: 150px;
-    // overflow-y: auto;
+    max-height: 150px;
+    overflow-y: auto;
 
     &-item {
         border: 1px solid #c5ccd0;
