@@ -3,7 +3,7 @@ const Course = require("../models/Course");
 const Post = mongoose.model("Post");
 const Comment = mongoose.model("Comment");
 const BankNotification = mongoose.model("BankNotification");
-const {sendNotification} = require("../rabbitmq");
+const {sendAppNotification} = require("../../lib/notification");
 
 
 exports.addPost = async (req, res) => {
@@ -77,8 +77,8 @@ exports.likeAPost = async (req,res) => {
     postUpdated._doc.canUpdate = await req.user.canUpdatePost(postUpdated);
     postUpdated._doc.canDelete = await req.user.canDeletePost(postUpdated);
     //Create notification if notif exist from thumbs up and never exist before
-    if(!!notification && !notification.isExist){
-      sendNotification(process.env.NOTIFICATION_OUTGOING_EXCHANGE,notification);
+    if(!!notification){
+      sendAppNotification(notification)
     }
     res.json({status: "ok", message: "like/unlike post success", post: postUpdated});
   }catch(err){
@@ -133,11 +133,14 @@ exports.validateComment = (req,res,next) => {
 exports.createComment = async (req,res) => {
   const {body,user,post} = req
   comment = await new Comment({content: body.content, commentator: user, post: post}).save()
+  const notification = await BankNotification.createStudentCommentPostNotif(user, post)
   try{
     await post.updateLatestComments(comment)
     const updatedPost = await Post.findOne({_id : post._id})
     updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
     updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
+
+    sendAppNotification(notification)
     return res.json({status: "ok", message: "comment is created successfully", post:updatedPost, comment})
 
   }catch(err){
