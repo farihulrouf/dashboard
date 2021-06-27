@@ -697,3 +697,15 @@ const getDiscussionFilter = (params, courseId) =>{
   }
   return filter
 }
+
+exports.deleteCourse = async (req, res, next) => {
+  const {course} = req
+  try{
+    if (course._doc.isInstructor || course._doc.isIsOrganization){
+      await course.remove()
+    }
+    next()
+  }catch(err){
+    res.status(500).json({status: "error", message: err.message})
+  }
+}
