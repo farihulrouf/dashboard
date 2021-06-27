@@ -66,6 +66,7 @@ const autoPopulate = function(next){
 courseSchema
     .pre("findOne",autoPopulate)
     .pre("find",autoPopulate)
+    .pre("findById", autoPopulate)
 
 courseSchema.index({ name: 1 });
 courseSchema.index({ about: 1 })

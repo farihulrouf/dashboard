@@ -267,6 +267,13 @@ router.post(
   catchErrors(courseController.getPosts)
 );
 
+router.delete(
+  "/api/courses/:courseId",
+  authController.checkAuth,
+  catchErrors(courseController.deleteCourse),
+  catchErrors(courseController.getMyCourses)
+)
+
 /**
  * POST ROUTES /api/posts
  */
