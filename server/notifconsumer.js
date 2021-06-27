@@ -48,8 +48,11 @@ const connectRabbitCallback = (conn) => {
                     if(Object.keys(res).length>0){
                         const {notification, users} = res;
                         users.forEach(user => {
-                            ch.assertExchange(user._id.toString(),'fanout')
-                            ch.publish(user._id.toString(), '', Buffer.from(JSON.stringify(notification)))
+                            ch.assertExchange(user._id.toString(),'fanout', {}, (err, ok) => {
+                                if(ok){
+                                    ch.publish(user._id.toString(), '', Buffer.from(JSON.stringify(notification)))
+                                }
+                            })
                         })
                     }
                     ch.ack(msg);
@@ -62,12 +65,9 @@ const connectRabbitCallback = (conn) => {
 
 const processNotification = async (notification) => {
     const {id} = notification;
-    // console.log(notification)
     const bankNotif = await BankNotification.findById(id);
-    // console.log(bankNotif)
     if(!!bankNotif && !bankNotif.processed){
         const {course, additionalObject} = await getNotificationObject(bankNotif)
-        // console.log(course, additionalObject)
         const notifTarget = getNotificationTargets(bankNotif.target, course, additionalObject)
         console.log(notifTarget)
         await User.updateMany(
