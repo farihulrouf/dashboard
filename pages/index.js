@@ -25,14 +25,14 @@ const Index = ({auth, userId}) => {
 
     if(!!auth.user && Object.keys(auth.user).length !== 0 && auth.constructor === Object)
       return(
-        <NavBar mode={0} auth={auth} onlyLogo>
+        <NavBar mode={0} auth={auth}>
           <Body auth={auth} />
         </NavBar>
       )
     else
       return(
         <span>
-          <NavBar mode={1} onlyLogo>
+          <NavBar mode={1}>
             <Home />
           </NavBar>
         </span>

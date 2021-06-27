@@ -34,6 +34,7 @@ const Course = ({ courseItem, onUpdate }) => {
 
     const {
         canEdit,
+        canDelete,
         isInstructor,
         isOrganization,
         isParticipant,
@@ -54,10 +55,11 @@ const Course = ({ courseItem, onUpdate }) => {
         : PAYMENT_STATUS_UNREGISTERED;
 
     const MAX_INSTRUCTORS_DISPLAYED = 3;
-
     return (
         <Grid className="course-container">
-            {canEdit && <CourseMore course={courseItem} onUpdate={onUpdate} />}
+            {(canEdit || canDelete) && (
+                <CourseMore course={courseItem} onUpdate={onUpdate} canEdit={canEdit} canDelete={canDelete} />
+            )}
             <img
                 className="course-logo-background"
                 src={logo ? logo : "images/default-logo-course.jpg"}
@@ -132,7 +134,7 @@ const Course = ({ courseItem, onUpdate }) => {
             )}
 
             <Grid item className="btm-container">
-                {status === PAYMENT_STATUS_PAID && (
+                {(status === PAYMENT_STATUS_PAID || isParticipant) && (
                     <Grid item className="price-tag-container enrolled-tag">
                         ENROLLED
                     </Grid>
@@ -142,7 +144,7 @@ const Course = ({ courseItem, onUpdate }) => {
                         PENDING
                     </Grid>
                 )}
-                {(status === PAYMENT_STATUS_UNREGISTERED ||
+                {!isParticipant && (status === PAYMENT_STATUS_UNREGISTERED ||
                     status === PAYMENT_STATUS_EXPIRED) && (
                     <Grid item className="price-tag-container">
                         <Grid item className="price-tag">

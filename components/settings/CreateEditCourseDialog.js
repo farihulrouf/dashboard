@@ -359,7 +359,7 @@ export default function CreateEditCourseDialog(props) {
                         <CircularProgress
                             thickness={6}
                             size="1.5rem"
-                            className="circular-progress-bar"
+                            className="circular-progress-bar white"
                         />
                     ) : (
                         <Update />

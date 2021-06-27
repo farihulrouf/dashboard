@@ -150,6 +150,12 @@ input {
     color: #dd5951;
 }
 
+.MuiCircularProgress-root {
+    &.white {
+        color: white !important;
+    }
+}
+
 @import "Exercise.module.scss";
 @import "Navbar.module.scss";
 @import "Home.module.scss";

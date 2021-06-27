@@ -727,7 +727,7 @@
         }
 
         .current-comment-list {
-            height: 350px !important;
+            max-height: 350px !important;
             overflow: auto;
             margin-bottom: 20px;
 
@@ -2193,7 +2193,7 @@
     .MuiPopover-paper {
         box-shadow: none !important;
         border-radius: 10px;
-        padding: 10px;
+        padding: 0 10px 10px;
         background-color: transparent !important; 
 
         .popper-option {
