@@ -5,11 +5,11 @@ require("dotenv").config();
 var User = require('./models/User');
 var Course = require('./models/Course');
 var Post = require('./models/Post');
-var Comment = require('./models/Comment');
-var TeacherApplication = require('./models/TeacherApplication');
+var Discussion = require('./models/Discussion');
 var BankNotification = require('./models/BankNotification');
 const mongoose = require("mongoose");
 const {connectRabbit} = require("./rabbitmq")
+const {getNotificationObject, getNotificationTargets} = require("../lib/notification")
 
 const mongooseOptions = {
     useNewUrlParser: true,
@@ -62,38 +62,23 @@ const connectRabbitCallback = (conn) => {
 
 const processNotification = async (notification) => {
     const {id} = notification;
+    // console.log(notification)
     const bankNotif = await BankNotification.findById(id);
-
-    if(!bankNotif.processed){
-        const Model = mongoose.model(bankNotif.onModel);
-        const object = await Model.findById(bankNotif.notifOn);
-
-        switch(bankNotif.onModel){
-            case 'Course': 
-                await User.updateMany(
-                    {_id: object.participants}, 
-                    {
-                        $inc: {"notifications.total": 1, "notifications.unread": 1}, 
-                        $addToSet: {"notifications.list": {bankNotification: bankNotif._id, status: 'unread'}} 
-                    }
-                )
-                await bankNotif.update({processed: true})
-                broadcast = {notification: bankNotif, users: object.participants}
-                return broadcast;
-            case 'Post':
-                await User.updateOne(
-                    {_id: object.postedBy}, 
-                    {
-                        $inc: {"notifications.total": 1, "notifications.unread": 1}, 
-                        $addToSet: {"notifications.list": {bankNotification: bankNotif._id, status: 'unread'}} 
-                    }    
-                )
-                await bankNotif.update({processed: true})
-                broadcast = {notification: bankNotif, users: [object.postedBy]}
-                return broadcast
-            case 'default':
-                return {}
-        }
+    // console.log(bankNotif)
+    if(!!bankNotif && !bankNotif.processed){
+        const {course, additionalObject} = await getNotificationObject(bankNotif)
+        // console.log(course, additionalObject)
+        const notifTarget = getNotificationTargets(bankNotif.target, course, additionalObject)
+        console.log(notifTarget)
+        await User.updateMany(
+            {_id: {$in : notifTarget}}, 
+            {
+                $inc: {"notifications.total": 1, "notifications.unread": 1}, 
+                $addToSet: {"notifications.list": {bankNotification: bankNotif._id, status: 'unread'}} 
+            }    
+        )
+        await bankNotif.update({processed: true})
+        return {notification: bankNotif, users: notifTarget}
     }
     return {}
 }
