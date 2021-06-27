@@ -73,7 +73,7 @@ bankNotifSchema.statics.createStudentCommentPostNotif = async function (user, po
     const bankNotif = await this.findOneOrCreate({notifOn: post, creator: user, eventType: EVENT.STUDENT_COMMENT_POST},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
         url: `/posts?id=${post.id}`,
-        message: `${user.name} comments your Post`,
+        message: `Student ${user.name} comments a Post`,
         notifOn: post,
         creator: user,
         onModel: 'Post',
@@ -87,7 +87,7 @@ bankNotifSchema.statics.createInstructorCommentPostNotif = async function (user,
     const bankNotif = await this.findOneOrCreate({notifOn: post, creator: user, eventType: EVENT.INSTRUCTOR_COMMENT_POST},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
         url: `/posts?id=${post.id}`,
-        message: `${user.name} comments your Post`,
+        message: `Instructor ${user.name} comments a Post`,
         notifOn: post,
         creator: user,
         onModel: 'Post',
