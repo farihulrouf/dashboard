@@ -96,7 +96,18 @@ span {
 
 .MuiCircularProgress-root {
     margin: 10vh 0 12vh !important;
-    color: #3f51b5 !important;
+    color: #3f51b5;
+}
+
+.no-margin-loading {
+    margin: 0 !important;
+    padding: 2.5px;
+}
+
+.MuiButton-label {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 *::-webkit-scrollbar {
@@ -150,10 +161,8 @@ input {
     color: #dd5951;
 }
 
-.MuiCircularProgress-root {
-    &.white {
-        color: white !important;
-    }
+.white {
+    color: white !important;
 }
 
 @import "Exercise.module.scss";

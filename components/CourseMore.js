@@ -1,12 +1,24 @@
 import React, { useState } from "react";
-import { Grid, Button, Dialog, Popover, Paper } from "@material-ui/core";
+import { Grid, Button, Dialog, Popover, Paper, CircularProgress } from "@material-ui/core";
 import { MoreVert } from "@material-ui/icons";
 import CreateEditCourseDialog from "./settings/CreateEditCourseDialog";
+import MuiAlert from '@material-ui/lab/Alert';
+import { deleteCourse } from '../lib/api';
+import { useRouter } from 'next/router'
+
+function Alert(props) {
+    return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const CourseMore = ({ course, onUpdate }) => {
     const [open, setOpen] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [successMessage, setSuccessMessage] = useState('');
+    const [deleteLoading, setDeleteLoading] = useState(false);
     const id = 'course-card-popover';
+
+    const router = useRouter();
 
     const handleDialog = () => {
         setOpen((prev) => !prev);
@@ -16,10 +28,39 @@ const CourseMore = ({ course, onUpdate }) => {
         setAnchorEl((prev) => prev ? null : e.currentTarget);
     }
 
-    const { canEdit } = course;
+    const handleDeleteCourse = () => {
+        setDeleteLoading(true);
+        deleteCourse(course._id)
+            .then((res) => {
+                console.log(res);
+                setSuccessMessage('Success delete course');
+                setDeleteLoading(false);
+                router.reload();
+            })
+            .catch((err) => {
+                console.log(err);
+                setErrorMessage('Failed to delete course');
+                setDeleteLoading(false);
+            })
+    }
+
+    console.log(course);
+
+    const { canEdit, canDelete } = course;
 
     return (
         <Grid item className="course-more">
+            {(Boolean(successMessage) || Boolean(errorMessage)) && (
+                <Alert 
+                    onClose={successMessage
+                        ? setSuccessMessage('')
+                        : setErrorMessage('')
+                    } 
+                    severity={successMessage ? 'success' : 'error'}
+                >
+                    {successMessage ? successMessage : errorMessage}
+                </Alert>
+            )}
             <Grid className="three-dots">
                 <Button onClick={handleOption}>
                     <MoreVert />
@@ -40,19 +81,26 @@ const CourseMore = ({ course, onUpdate }) => {
                     }}
                 >
                     <Paper className="popper-option">
-                        <Button 
+                        {canEdit && (
+                            <Button 
                             className="edit" 
                             variant="contained"
                             onClick={handleDialog}
-                        >
-                            Edit
-                        </Button>
-                        <Button
+                            >
+                                Edit
+                            </Button>
+                        )}
+                        {canDelete && (
+                            <Button
                             className="delete"
                             variant="contained"
-                        >
-                            Delete
-                        </Button>
+                            onClick={handleDeleteCourse}
+                            >
+                                {deleteLoading ? (
+                                    <CircularProgress thickness={5} size={20} className="no-margin-loading" />
+                                ) : "DELETE"}
+                            </Button>
+                        )}
                     </Paper>
                 </Popover>
             </Grid>
