@@ -82,7 +82,8 @@ exports.likeAPost = async (req,res) => {
     }
     res.json({status: "ok", message: "like/unlike post success", post: postUpdated});
   }catch(err){
-    res.json({status: "error", message: "unable to like/unlike post"})
+    console.log(err.message)
+    res.status(500).json({status: "error", message: "unable to like/unlike post"})
   }
 }
 
@@ -133,7 +134,7 @@ exports.validateComment = (req,res,next) => {
 exports.createComment = async (req,res) => {
   const {body,user,post} = req
   comment = await new Comment({content: body.content, commentator: user, post: post}).save()
-  const notification = await BankNotification.createStudentCommentPostNotif(user, post)
+  const notification = await BankNotification.createCommentPostNotif(user, post)
   try{
     await post.updateLatestComments(comment)
     const updatedPost = await Post.findOne({_id : post._id})
