@@ -51,7 +51,7 @@ exports.getPostById = async (req,res,next,id) => {
 }
 
 exports.likeAPost = async (req,res) => {
-  const {post, course} = req;
+  const {post} = req;
   likes = post.likes;
   idx = likes.likedBy.indexOf(req.user._id);
   let notification = null;
@@ -112,9 +112,12 @@ exports.updatePost = async (req,res) => {
     updatedPost._doc.owned = true;
     updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
     updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
+
+    const notification = await BankNotification.createEditPostNotif(req.user, post)
+    sendAppNotification(notification)
     return res.json({status: "ok", message: "post is updated", post: updatedPost})
   }
-  res.json({status: "error", message: "unauthorized"});
+  res.status(500).json({status: "error", message: "unauthorized"});
 }
 
 
@@ -134,18 +137,18 @@ exports.validateComment = (req,res,next) => {
 exports.createComment = async (req,res) => {
   const {body,user,post} = req
   comment = await new Comment({content: body.content, commentator: user, post: post}).save()
-  const notification = await BankNotification.createCommentPostNotif(user, post)
   try{
     await post.updateLatestComments(comment)
     const updatedPost = await Post.findOne({_id : post._id})
     updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
     updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
-
+    
+    const notification = await BankNotification.createCommentPostNotif(user, post)
     sendAppNotification(notification)
     return res.json({status: "ok", message: "comment is created successfully", post:updatedPost, comment})
 
   }catch(err){
-    res.json({status: "error", message: err.message, post: post})
+    res.status(500).json({status: "error", message: err.message, post: post})
   }
 }
 

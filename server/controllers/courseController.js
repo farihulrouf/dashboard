@@ -7,6 +7,8 @@ const Review = mongoose.model("Review");
 const CourseRequest = mongoose.model("CourseRequest");
 const Payment = mongoose.model("Payment");
 const User = mongoose.model('User');
+const BankNotification = mongoose.model("BankNotification")
+const {sendAppNotification} = require("../../lib/notification")
 
 exports.getCourses = async (req, res) => {
   var {
@@ -430,10 +432,12 @@ exports.createCoursePost = async (req, res, next) => {
   });
 
   post.attachments = attachments;
-  post.save((err, savedPost) => {
+  post.save(async (err, savedPost) => {
     if (err) {
       return res.json({ status: "error", message: err.message });
     }
+    const notification = await BankNotification.createNewPostNotif(req.user, savedPost)
+    sendAppNotification(notification)
     next();
   });
 };
