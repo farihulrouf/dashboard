@@ -3,7 +3,8 @@ const mongoose = require("mongoose");
 const Room = mongoose.model("Room");
 const User = mongoose.model("User");
 const Course = mongoose.model("Course")
-
+const BankNotification = mongoose.model("BankNotification");
+const {sendAppNotification} = require("../../lib/notification");
 
 exports.getRoomById = async (req, res, next, roomId) => {
     const room = await Room.findById(roomId)
@@ -35,5 +36,9 @@ exports.getRooms = async (req,res) => {
 exports.joinRoom = async (req,res) => {
     const {room, user} = req;
     if(!user.canAccessCourse(room.course)) return res.status(401).json({status: "error", message: "Unauthorized"})
+    if(user.isInstructor(room.course)){
+        const notification = await BankNotification.createStartLiveStreamNotif(user, room.course, room)
+        sendAppNotification(notification)
+    }
     res.redirect(await user.join(room));
 }

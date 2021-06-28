@@ -51,6 +51,7 @@ const autoPopulate = function(next){
 
 paymentSchema
   .pre("findOne",autoPopulate)
+  .pre("findById",autoPopulate)
   .pre("find",autoPopulate)
 
 paymentSchema.index({payment_number : 1, status : 1, user : 1, course : 1});

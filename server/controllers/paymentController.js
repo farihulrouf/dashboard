@@ -7,6 +7,8 @@ const Course = mongoose.model('Course');
 const dev = process.env.NODE_ENV !== "production";
 const port = process.env.PORT || 3000;
 const ROOT_URL = dev ? `http://localhost:${port}` : process.env.PRODUCTION_URL;
+const BankNotification = mongoose.model("BankNotification")
+const {sendAppNotification} = require("../../lib/notification")
 
 exports.getMyPayment = async (req, res) => {
   const {user} = req;
@@ -89,21 +91,21 @@ exports.paymentCallback = async (req, res) => {
     var payment = await Payment.findOneAndUpdate(
       {xendit_id : req.body.id,
       external_id: req.body.external_id},
-      {status : req.body.status},
-      function (err){
-        if (err){
-          return res.json({error : err});
-        }
-      }
-    )
+      {status : req.body.status}
+    ).populate('user')
     if(req.body.status === 'PAID'){
       Course.findByIdAndUpdate(
         payment.course, 
         {$push : {participants : payment.user}},
-        (err, res) =>{
+        async (err, c) =>{
           if(err){
-            return res.json({error : err});
+            return res.status(500).json({error : err});
           }
+          const paymentNotif = await BankNotification.createPaymentSuccessNotif(payment)
+          const enrollNotif = await BankNotification.createEnrollCourseNotif(payment)
+          
+          sendAppNotification(paymentNotif)
+          sendAppNotification(enrollNotif)
         }
       )
     }

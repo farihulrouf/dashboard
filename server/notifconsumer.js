@@ -8,6 +8,7 @@ var Post = require('./models/Post');
 var Discussion = require('./models/Discussion');
 var DiscussionAnswer = require('./models/DiscussionAnswer');
 var Tag = require('./models/Tag')
+var Payment = require('./models/Payment')
 var BankNotification = require('./models/BankNotification');
 const mongoose = require("mongoose");
 const {connectRabbit} = require("./rabbitmq")
