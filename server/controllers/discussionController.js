@@ -3,7 +3,8 @@ const User = require("../models/User");
 const Discussion = require("../models/Discussion")
 const Course = mongoose.model("Course");
 const DiscussionAnswer = mongoose.model("DiscussionAnswer");
-const {sendNotification} = require("../rabbitmq");
+const BankNotification = mongoose.model("BankNotification")
+const {sendAppNotification} = require("../../lib/notification")
 
 exports.validateDiscussion = (req,res,next) => {
     req.sanitize("title");
@@ -127,6 +128,11 @@ exports.voteDiscussion = async (req,res,next) => {
     newDiscussion._doc.isVoted = isVoted;
     newDiscussion._doc.canEdit = await user.canEditDiscussion(newDiscussion);
     newDiscussion._doc.canDelete = await user.canDeleteDiscussion(newDiscussion)
+
+    if(isVoted){
+      const notification = await BankNotification.createVoteDiscussionNotif(user, newDiscussion)
+      sendAppNotification(notification)
+    }
     res.json({status: "ok", discussion: newDiscussion})
 }
 
@@ -153,6 +159,11 @@ exports.voteAnswer = async (req, res) =>{
       updatedAnswer._doc.isVoted = !isVoted;
       updatedDiscussion._doc.canEdit = await user.canEditDiscussion(updatedDiscussion)
       updatedDiscussion._doc.canDelete = await user.canDeleteDiscussion(updatedDiscussion)
+
+      if(!isVoted){
+        const notification = await BankNotification.createVoteDiscussionAnswerNotif(user, updatedDiscussion, updatedAnswer)
+        sendAppNotification(notification)
+      }
       return res.json({status: "ok", message: "answer is voted successfully", discussion: updatedDiscussion, answer : updatedAnswer})
     }
     return res.json({status: "error", message: "unable to vote answer", discussion})
@@ -177,6 +188,9 @@ exports.createAnswer = async (req,res) => {
         updatedDiscussion._doc.newAnswer = answer;
         updatedDiscussion._doc.canEdit = await user.canEditDiscussion(updatedDiscussion)
         updatedDiscussion._doc.canDelete = await user.canDeleteDiscussion(updatedDiscussion)
+
+        const notification = await BankNotification.createAnswerDiscussionNotif(user, updatedDiscussion)
+        sendAppNotification(notification)
         return res.json({status: "ok", message: "answer is created successfully", discussion: updatedDiscussion})
       }
       return res.json({status: "error", message: "unable to create answer", discussion})

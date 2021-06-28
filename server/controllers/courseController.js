@@ -334,8 +334,15 @@ exports.createCourseDiscussion = (req,res,next) => {
   })
   discussion.save((err,savedDiscussion)=>{
       if(err){
-          return res.json({status: "error", message: err.message})
+          return res.status(500).json({status: "error", message: err.message})
       }
+      BankNotification.createNewDiscussionNotif(req.user, savedDiscussion)
+        .then(notification => {
+          sendAppNotification(notification)
+        })
+        .catch(err => {
+          return res.status(500).json({status: "error", message: err.message})        
+        })
       console.log("finish adding discussion")
       next();
   })

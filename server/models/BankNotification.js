@@ -15,7 +15,7 @@ const bankNotifSchema = mongoose.Schema({
     onModel: {
         type: String,
         required: true,
-        enum: ['Course', 'Post', 'Comment', 'Discussion']
+        enum: ['Course', 'Post', 'Comment', 'Discussion', 'DiscussionAnswer']
     },
     eventType: {
         type: String, 
@@ -208,7 +208,7 @@ bankNotifSchema.statics.createStartLiveStreamNotif = async function (user, cours
     const bankNotif = await this.findOneOrCreate({notifOn: course, creator: user, eventType: event},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
         url: `/subjects?id=${course.id}`,
-        message: `${course.name} live stream is going to start`,
+        message: `Course ${course.name} is starting, click here to join immediately!`,
         notifOn: course,
         creator: user,
         onModel: 'Course',
@@ -236,12 +236,13 @@ bankNotifSchema.statics.createUpdateSyllabusNotif = async function (user, course
 
 // DISCUSSION
 bankNotifSchema.statics.createNewDiscussionNotif = async function (user, discussion) {
+    const course = await Course.findById(discussion.postedOn)
     const event = EVENT.CREATE_DISCUSSION
     const target = [TARGET.INSTRUCTORS]
     const bankNotif = await this.findOneOrCreate({notifOn: discussion, creator: user, eventType: event},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/subjects?id=${discussion.postedOn}`,
-        message: `${user.name} create a new Discussion`,
+        url: `/subjects?id=${discussion.postedOn._id}`,
+        message: `${user.name} create a discussion on ${course.name}`,
         notifOn: discussion,
         creator: user,
         onModel: 'Discussion',
@@ -251,29 +252,20 @@ bankNotifSchema.statics.createNewDiscussionNotif = async function (user, discuss
     return bankNotif;
 }
 
-bankNotifSchema.statics.createInstructorAnswerDiscussionNotif = async function (user, discussion) {
-    const event = EVENT.INSTRUCTOR_CREATE_ANSWER
-    const target = [TARGET.STUDENTS]
+bankNotifSchema.statics.createAnswerDiscussionNotif = async function (user, discussion) {
+    const course = await Course.findById(discussion.postedOn)
+    let event = EVENT.STUDENT_CREATE_ANSWER
+    let target = [TARGET.INSTRUCTORS, TARGET.DISCUSSION_CREATOR]
+    let message = `${user.name} answer a discussion on ${course.name}`
+    if(user.isInstructor(course)){
+        event = EVENT.INSTRUCTOR_CREATE_ANSWER
+        target = [TARGET.DISCUSSION_CREATOR, TARGET.DISCUSSION_ANSWER_CREATOR_ALL]
+        message = `Instructor ${user.name} answer a discussion on ${course.name}`
+    }
     const bankNotif = await this.findOneOrCreate({notifOn: discussion, creator: user, eventType: event},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/subjects?id=${discussion.postedOn}`,
-        message: `${user.name} answer a Discussion about ${discussion.title}`,
-        notifOn: discussion,
-        creator: user,
-        onModel: 'Discussion',
-        eventType: event,
-        target: target
-    })
-    return bankNotif;
-}
-
-bankNotifSchema.statics.createStudentAnswerDiscussionNotif = async function (user, discussion) {
-    const event = EVENT.STUDENT_CREATE_ANSWER
-    const target = [TARGET.STUDENTS, TARGET.INSTRUCTORS]
-    const bankNotif = await this.findOneOrCreate({notifOn: discussion, creator: user, eventType: event},{
-        photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/subjects?id=${discussion.postedOn}`,
-        message: `${user.name} answer a Discussion about ${discussion.title}`,
+        url: `/subjects?id=${discussion.postedOn._id}`,
+        message,
         notifOn: discussion,
         creator: user,
         onModel: 'Discussion',
@@ -288,7 +280,7 @@ bankNotifSchema.statics.createPinDiscussionNotif = async function (user, discuss
     const target = [TARGET.INSTRUCTORS]
     const bankNotif = await this.findOneOrCreate({notifOn: discussion, creator: user, eventType: event},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/subjects?id=${discussion.postedOn}`,
+        url: `/subjects?id=${discussion.postedOn._id}`,
         message: `${user.name} pin a Discussion about ${discussion.title}`,
         notifOn: discussion,
         creator: user,
@@ -304,7 +296,7 @@ bankNotifSchema.statics.createDiscussionSolvedNotif = async function (user, disc
     const target = [TARGET.INSTRUCTORS]
     const bankNotif = await this.findOneOrCreate({notifOn: discussion, creator: user, eventType: event},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/subjects?id=${discussion.postedOn}`,
+        url: `/subjects?id=${discussion.postedOn._id}`,
         message: `${user.name} mark discussion about ${discussion.title} solved`,
         notifOn: discussion,
         creator: user,
@@ -317,10 +309,10 @@ bankNotifSchema.statics.createDiscussionSolvedNotif = async function (user, disc
 
 bankNotifSchema.statics.createVoteDiscussionNotif = async function (user, discussion) {
     const event = EVENT.VOTE_DISCUSSION
-    const target = [TARGET.STUDENTS]
+    const target = [TARGET.DISCUSSION_CREATOR]
     const bankNotif = await this.findOneOrCreate({notifOn: discussion, creator: user, eventType: event},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/subjects?id=${discussion.postedOn}`,
+        url: `/subjects?id=${discussion.postedOn._id}`,
         message: `${user.name} vote discussion about ${discussion.title}`,
         notifOn: discussion,
         creator: user,
@@ -331,16 +323,16 @@ bankNotifSchema.statics.createVoteDiscussionNotif = async function (user, discus
     return bankNotif;
 }
 
-bankNotifSchema.statics.createVoteDiscussionAnswerNotif = async function (user, discussion) {
+bankNotifSchema.statics.createVoteDiscussionAnswerNotif = async function (user, discussion, discussionanswer) {
     const event = EVENT.VOTE_ANSWER
-    const target = [TARGET.STUDENTS]
-    const bankNotif = await this.findOneOrCreate({notifOn: discussion, creator: user, eventType: event},{
+    const target = [TARGET.DISCUSSION_ANSWER_CREATOR]
+    const bankNotif = await this.findOneOrCreate({notifOn: discussionanswer, creator: user, eventType: event},{
         photo: user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
-        url: `/subjects?id=${discussion.postedOn}`,
+        url: `/subjects?id=${discussion.postedOn._id}`,
         message: `${user.name} vote answer in discussion about ${discussion.title}`,
-        notifOn: discussion,
+        notifOn: discussionanswer,
         creator: user,
-        onModel: 'Discussion',
+        onModel: 'DiscussionAnswer',
         eventType: event,
         target: target
     })
