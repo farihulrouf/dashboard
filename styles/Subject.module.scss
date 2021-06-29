@@ -2251,3 +2251,15 @@
         }
     }
 }
+
+.reset-button {
+    color: red !important;
+}
+
+.discussion-filter-modal {
+    .MuiFormControl-root {
+        width: clamp(340px, 30vw, 560px) !important;
+        margin-top: 5px;
+        margin-bottom: 15px
+    }
+}

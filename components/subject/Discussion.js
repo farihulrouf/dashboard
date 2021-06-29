@@ -26,7 +26,7 @@ const Discussion = (props) => {
     const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState({
         search: '',
-        status: '',
+        status: 'ALL',
         tags: []
     });
 

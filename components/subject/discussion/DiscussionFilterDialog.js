@@ -86,6 +86,7 @@ export default function DiscussionFilterDialog(props) {
             onChange={setStatus}
             label="Answer Status"
           >
+            <MenuItem value="ALL">All</MenuItem>
             <MenuItem value="UNANSWERED">Unanswered</MenuItem>
             <MenuItem value="ANSWERED">Answered</MenuItem>
           </Select>
