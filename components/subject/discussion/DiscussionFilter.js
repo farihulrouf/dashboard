@@ -7,6 +7,7 @@ import {
     Button,
 } from "@material-ui/core";
 import { FilterList, Add, Search, Close } from "@material-ui/icons";
+import DiscussionFilterDialog from "./DiscussionFilterDialog";
 
 const DiscussionFilter = (props) => {
     const [query, setQuery] = useState({
@@ -19,18 +20,17 @@ const DiscussionFilter = (props) => {
     });
 
     const [tags, setTags] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+
+    const handleDiscussionModal = () => {
+        setOpenModal((prev) => !prev);
+    }
 
     const onQueryChange = (e) => {
-        if (e) {
-            if (e.target.name == "content") {
-                setQuery((prev) => {
-                    return {
-                        ...prev,
-                        content: e.target.value,
-                    };
-                });
-            }
-        }
+        setFilter((prev) => ({
+            ...prev,
+            search: e.target.value,
+        }))
     };
 
     const deleteTag = (index) => {
@@ -39,7 +39,14 @@ const DiscussionFilter = (props) => {
         });
     };
 
-    const { canCreate, canSearch, canFilter, openDiscussionForm } = props;
+    const { 
+        filter,
+        setFilter,
+        canCreate,
+        canSearch,
+        canFilter,
+        openDiscussionForm 
+    } = props;
 
     return (
         <Grid item>
@@ -62,7 +69,7 @@ const DiscussionFilter = (props) => {
                             <InputBase
                                 placeholder="Search for discussions?"
                                 name="content"
-                                value={query.content}
+                                value={filter.search}
                                 onChange={onQueryChange}
                                 disabled={!canSearch}
                             />
@@ -90,9 +97,16 @@ const DiscussionFilter = (props) => {
                             <IconButton
                                 aria-label="show-filter"
                                 disabled={!canFilter}
+                                onClick={handleDiscussionModal}
                             >
                                 <FilterList />
                             </IconButton>
+                            <DiscussionFilterDialog
+                                handleClose={handleDiscussionModal}
+                                open={openModal}
+                                filter={filter}
+                                setFilter={setFilter}
+                            />
                         </Grid>
                     </Tooltip>
                 </Grid>

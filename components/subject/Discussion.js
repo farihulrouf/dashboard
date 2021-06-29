@@ -15,9 +15,7 @@ const Discussion = (props) => {
         canSearchDiscussion,
         canFilterDiscussion,
     } = course;
-    console.log(course);
     const [discussions, setDiscussions] = useState([]);
-    const [openModal, setOpenModal] = useState(false);
     const [openForm, setOpenForm] = useState(false);
     const [params, setParams] = useState({
         query: "",
@@ -26,6 +24,11 @@ const Discussion = (props) => {
     });
     const [totalData, setTotalData] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [filter, setFilter] = useState({
+        search: '',
+        status: '',
+        tags: []
+    });
 
     useEffect(() => {
         setLoading(true);
@@ -44,6 +47,14 @@ const Discussion = (props) => {
     const closeDiscussionForm = () => {
         setOpenForm(false);
     };
+
+    const resetFilter = () => {
+        setFilter({
+            search: '',
+            status: '',
+            tags: [],
+        })
+    }
 
     const afterCreateDiscussion = (discussions) => {
         setOpenForm(false);
@@ -74,22 +85,13 @@ const Discussion = (props) => {
         });
     };
 
-    useEffect(() => {
-        let wrs = document.querySelectorAll(".wrs_stack");
-        console.log(wrs);
-        if (wrs) {
-            for (let item of wrs) {
-                item.parentNode.removeChild(item);
-            }
-        }
-        console.log(openModal);
-    }, [openModal]);
-
     const { page } = params;
-
+    console.log('FILTER', filter);
     return (
         <div className="subject-discussion">
             <DiscussionFilter
+                filter={filter}
+                setFilter={setFilter}
                 openDiscussionForm={openDiscussionForm}
                 canCreate={canCreateDiscussion}
                 canSearch={canSearchDiscussion}
