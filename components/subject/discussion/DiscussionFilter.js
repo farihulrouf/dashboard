@@ -10,16 +10,16 @@ import { FilterList, Add, Search, Close } from "@material-ui/icons";
 import DiscussionFilterDialog from "./DiscussionFilterDialog";
 
 const DiscussionFilter = (props) => {
-    const [query, setQuery] = useState({
-        content: "",
-        dateStart: "",
-        dateEnd: "",
-        creator: [],
-        category: [],
-        page: 1,
-    });
+    const { 
+        params,
+        setParams,
+        canCreate,
+        canSearch,
+        canFilter,
+        openDiscussionForm,
+        handleFilter
+    } = props;
 
-    const [tags, setTags] = useState([]);
     const [openModal, setOpenModal] = useState(false);
 
     const handleDiscussionModal = () => {
@@ -27,26 +27,18 @@ const DiscussionFilter = (props) => {
     }
 
     const onQueryChange = (e) => {
-        setFilter((prev) => ({
+        setParams((prev) => ({
             ...prev,
             search: e.target.value,
         }))
     };
 
     const deleteTag = (index) => {
-        setTags((prev) => {
-            return prev.filter((item) => !item.indexOf(index));
-        });
+        setParams((prev) => ({
+            ...prev,
+            tags: prev.tags.filter((item) => item.indexOf(index)),
+        }));
     };
-
-    const { 
-        filter,
-        setFilter,
-        canCreate,
-        canSearch,
-        canFilter,
-        openDiscussionForm 
-    } = props;
 
     return (
         <Grid item>
@@ -69,18 +61,18 @@ const DiscussionFilter = (props) => {
                             <InputBase
                                 placeholder="Search for discussions?"
                                 name="content"
-                                value={filter.search}
+                                value={params.search}
                                 onChange={onQueryChange}
                                 disabled={!canSearch}
                             />
-                            <Search color="disabled" />
+                            <Search color="disabled" onClick={handleFilter} />
                         </Grid>
                     </Tooltip>
                 </Grid>
             </Grid>
             <Grid item className="second-row">
                 <Grid item>
-                    {tags.map((item, index) => {
+                    {params.tags.map((item, index) => {
                         return (
                             <Grid key={index} item className="tag">
                                 {item}{" "}
@@ -104,8 +96,9 @@ const DiscussionFilter = (props) => {
                             <DiscussionFilterDialog
                                 handleClose={handleDiscussionModal}
                                 open={openModal}
-                                filter={filter}
-                                setFilter={setFilter}
+                                params={params}
+                                setParams={setParams}
+                                handleFilter={handleFilter}
                             />
                         </Grid>
                     </Tooltip>

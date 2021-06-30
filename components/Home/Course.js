@@ -134,7 +134,7 @@ const Course = ({ courseItem, onUpdate }) => {
             )}
 
             <Grid item className="btm-container">
-                {(status === PAYMENT_STATUS_PAID || isParticipant) && (
+                {(status === PAYMENT_STATUS_PAID || isParticipant || isInstructor || isOrganization) && (
                     <Grid item className="price-tag-container enrolled-tag">
                         ENROLLED
                     </Grid>
@@ -144,7 +144,7 @@ const Course = ({ courseItem, onUpdate }) => {
                         PENDING
                     </Grid>
                 )}
-                {!isParticipant && (status === PAYMENT_STATUS_UNREGISTERED ||
+                {!isOrganization && !isInstructor && !isParticipant && (status === PAYMENT_STATUS_UNREGISTERED ||
                     status === PAYMENT_STATUS_EXPIRED) && (
                     <Grid item className="price-tag-container">
                         <Grid item className="price-tag">

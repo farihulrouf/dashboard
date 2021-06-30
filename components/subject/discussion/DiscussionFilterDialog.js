@@ -14,33 +14,34 @@ import TagsForm from "../../TagsForm";
 import { getTags } from "../../../lib/api";
 
 export default function DiscussionFilterDialog(props) {
-  const { open, handleClose, filter, setFilter } = props;
-  const { tags, status } = filter;
+  const { open, handleClose, params, setParams, handleFilter } = props;
+  const { tags, status } = params;
 
   const setTags = (tags) => {
-    setFilter((prev) => ({
+    setParams((prev) => ({
       ...prev,
       tags,
     }));
   };
 
   const setStatus = (e) => {
-    setFilter((prev) => ({
+    setParams((prev) => ({
       ...prev,
       status: e.target.value,
     }));
   };
 
   const resetFilter = () => {
-    setFilter((prev) => ({
+    setParams((prev) => ({
       ...prev,
       tags: [],
       status: ''
     }))
   }
 
-  const applyFilter = () => {
-    console.log(filter);
+  const onClickFilter = () => {
+    handleFilter();
+    handleClose();
   }
 
   return (
@@ -96,7 +97,7 @@ export default function DiscussionFilterDialog(props) {
         <Button onClick={resetFilter} className="reset-button">
           RESET
         </Button>
-        <Button onClick={applyFilter} color="primary" autoFocus>
+        <Button onClick={onClickFilter} color="primary" autoFocus>
           APPLY
         </Button>
       </DialogActions>

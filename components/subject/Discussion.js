@@ -18,17 +18,14 @@ const Discussion = (props) => {
     const [discussions, setDiscussions] = useState([]);
     const [openForm, setOpenForm] = useState(false);
     const [params, setParams] = useState({
-        query: "",
         limit: 10,
         page: 1,
-    });
-    const [totalData, setTotalData] = useState(0);
-    const [loading, setLoading] = useState(false);
-    const [filter, setFilter] = useState({
         search: '',
         status: 'ALL',
         tags: []
     });
+    const [totalData, setTotalData] = useState(0);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         setLoading(true);
@@ -49,11 +46,11 @@ const Discussion = (props) => {
     };
 
     const resetFilter = () => {
-        setFilter({
+        setParams((prev) => ({
             search: '',
             status: '',
             tags: [],
-        })
+        }));
     }
 
     const afterCreateDiscussion = (discussions) => {
@@ -85,17 +82,33 @@ const Discussion = (props) => {
         });
     };
 
+    const handleFilter = () => {
+        setParams((prev) => ({
+            ...prev,
+            page: 1,
+        }));
+
+        setLoading(true);
+        getCourseDiscussions(courseId, params).then((res) => {
+            console.log(res);
+            setTotalData(res.pages);
+            setDiscussions(res.discussions);
+            setLoading(false);
+        });
+    }
+
+    console.log(params);
     const { page } = params;
-    console.log('FILTER', filter);
     return (
         <div className="subject-discussion">
             <DiscussionFilter
-                filter={filter}
-                setFilter={setFilter}
+                params={params}
+                setParams={setParams}
                 openDiscussionForm={openDiscussionForm}
                 canCreate={canCreateDiscussion}
                 canSearch={canSearchDiscussion}
                 canFilter={canFilterDiscussion}
+                handleFilter={handleFilter}
             />
             <DiscussionForm
                 auth={auth}
