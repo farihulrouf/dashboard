@@ -645,8 +645,10 @@ exports.getDiscussions = async (req,res) => {
 
 const getDiscussionFilter = (params, courseId) =>{
   var {
-    query,
+    search,
     instructor,
+    status,
+    tags,
     dateStart,
     dateEnd,
   } = params;
@@ -655,17 +657,17 @@ const getDiscussionFilter = (params, courseId) =>{
     postedOn: courseId,  
   };
 
-  if(query){
-    query = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
+  if(search){
+    search = new RegExp(search.replace(/[^a-zA-Z ]/g, ""), "i");
     filter["$or"] = [
       {
         title: {
-          $regex: query,
+          $regex: search,
         },
       },
       {
         body: {
-          $regex: query,
+          $regex: search,
         },
       },
     ];
@@ -679,6 +681,21 @@ const getDiscussionFilter = (params, courseId) =>{
     }
     filter["creator"] = {
       $in: instructor
+    }
+  }
+
+  if(status){
+    if(status === "ANSWERED"){
+      filter["solved"] = true
+    }
+    else if (status === "UNANSWERED"){
+      filter["solved"] = false
+    }
+  }
+
+  if(tags){
+    filter["tags"] = {
+      $elemMatch : {$in : tags.map((e) => ObjectId(e._id))}
     }
   }
 
