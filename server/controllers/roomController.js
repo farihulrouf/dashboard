@@ -4,7 +4,7 @@ const Room = mongoose.model("Room");
 const User = mongoose.model("User");
 const Course = mongoose.model("Course")
 const BankNotification = mongoose.model("BankNotification");
-const {sendAppNotification} = require("../lib/notification");
+const {sendAppNotification, sendEmailNotification} = require("../lib/notification");
 
 exports.getRoomById = async (req, res, next, roomId) => {
     const room = await Room.findById(roomId)
@@ -39,6 +39,7 @@ exports.joinRoom = async (req,res) => {
     if(user.isInstructor(room.course)){
         const notification = await BankNotification.createStartLiveStreamNotif(user, room.course, room)
         sendAppNotification(notification)
+        sendEmailNotification(notification)
     }
     res.redirect(await user.join(room));
 }

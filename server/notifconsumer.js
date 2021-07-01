@@ -72,7 +72,6 @@ const processNotification = async (notification) => {
     if(!!bankNotif && !bankNotif.processed){
         const {course, additionalObject} = await getNotificationObject(bankNotif)
         const notifTarget = getNotificationTargets(bankNotif.target, course, additionalObject)
-        console.log(notifTarget)
         await User.updateMany(
             {_id: {$in : notifTarget}}, 
             {

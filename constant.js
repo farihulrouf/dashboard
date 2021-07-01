@@ -37,3 +37,18 @@ exports.NOTIFICATION = {
     DISCUSSION_ANSWER_CREATOR_ALL: "DISCUSSION_ANSWER_CREATOR_ALL"
   }
 }
+exports.EMAIL_TEMPLATE = {
+  OTP : [
+    'Hello ${name}, welcome to KLASSIQ. We glad you join us today, first of all please confirm your email.',
+    'Here is your OTP to confirm your email <b>${otp}</b>'
+  ].join('\n'),
+  NOTIFICATION : [
+    '<body>',
+    '<h2>Hello ${name}, you have a Notification!</h2>',
+    '<p>${message}</p>',
+    '<h2 style="margin: 20px 0 15px">',
+    '<a href="${link}" style="background: #2389D7; border-radius: 3px; color: #fff; border: none; outline: none; min-width: 170px; padding: 15px 25px; font-size: 14px; font-family: inherit; cursor: pointer; -webkit-appearance: none;text-decoration: none;">Go to Klassiq</a>',
+    '</h2>',
+    '</body>'
+  ].join('\n')
+}

@@ -8,7 +8,7 @@ const CourseRequest = mongoose.model("CourseRequest");
 const Payment = mongoose.model("Payment");
 const User = mongoose.model('User');
 const BankNotification = mongoose.model("BankNotification")
-const {sendAppNotification} = require("../lib/notification");
+const {sendAppNotification, sendEmailNotification} = require("../lib/notification");
 const { sendNotification } = require("../rabbitmq");
 
 exports.getCourses = async (req, res) => {
@@ -450,6 +450,7 @@ exports.createCoursePost = async (req, res, next) => {
     }
     const notification = await BankNotification.createNewPostNotif(req.user, savedPost)
     sendAppNotification(notification)
+    sendEmailNotification(notification)
     next();
   });
 };

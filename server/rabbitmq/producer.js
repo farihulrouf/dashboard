@@ -40,9 +40,9 @@ const sendNotification = (exchange,notification) => {
     );
 }
 
-const sendEmail = (exchange, otp_info) => {
+const sendEmail = (exchange, emailContent) => {
     const routingKey = 'emailservice'
-    const content = Buffer.from(JSON.stringify(otp_info))
+    const content = Buffer.from(JSON.stringify(emailContent))
     channel.publish(
         exchange,
         routingKey,

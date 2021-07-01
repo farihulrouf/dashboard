@@ -7,6 +7,7 @@ const { updateUser } = require("./userController");
 const {sendEmail} = require("../rabbitmq");
 const request = require("request")
 const util = require('util');
+const {EMAIL_TEMPLATE} = require('../../constant')
 
 exports.validateSignup = (req, res, next) => {
   req.sanitizeBody("name");
@@ -73,7 +74,7 @@ exports.signup = async (req, res) => {
         if (err) {
           return res.status(500).send(err.message);
         }
-        sendEmail(process.env.EMAIL_EXCHANGE, {name: user.name, email: user.email, otp: user.otp})
+        sendEmail(process.env.EMAIL_EXCHANGE, {name: user.name, email: user.email, otp: user.otp, template: EMAIL_TEMPLATE.OTP, subject: "Welcome to Klassiq" })
         const response = {
           _id: user._id, 
           email: user.email, 
@@ -90,7 +91,7 @@ exports.signup = async (req, res) => {
         //Update opt if expired
         result.otp = user.otp;
         result.otpValidUntil = user.otpValidUntil;
-        sendEmail(process.env.EMAIL_EXCHANGE, {name: result.name, email: result.email, otp: result.otp})
+        sendEmail(process.env.EMAIL_EXCHANGE, {name: result.name, email: result.email, otp: result.otp, template: EMAIL_TEMPLATE.OTP, subject: "Welcome to Klassiq"})
       }
       result.setPassword(password)
       result.save((err, user)=>{
@@ -122,7 +123,7 @@ exports.generateNewOTP = async (req, res) => {
   user.otpValidUntil = otpValidUntil;
   user.save((err,updatedUser)=>{
     if(err) return res.status(500).send(err.message)
-    sendEmail(process.env.EMAIL_EXCHANGE, {name: user.name, email: user.email, otp: user.otp})
+    sendEmail(process.env.EMAIL_EXCHANGE, {name: user.name, email: user.email, otp: user.otp, template: EMAIL_TEMPLATE.OTP, subject: "Welcome to Klassiq"})
     const response = {
       _id: updatedUser._id, 
       email: updatedUser.email, 

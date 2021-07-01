@@ -6,10 +6,12 @@ var Course = require('./models/Course');
 var Post = require('./models/Post');
 var Comment = require('./models/Comment');
 var TeacherApplication = require('./models/TeacherApplication');
+var DiscussionAnswer = require('./models/DiscussionAnswer')
 var BankNotification = require('./models/BankNotification');
 const nodemailer = require("nodemailer");
 const mongoose = require("mongoose");
 const {connectRabbit} = require("./rabbitmq")
+const {populateEmailTemplate} = require('./lib/notification')
 
 const mongooseOptions = {
     useNewUrlParser: true,
@@ -61,15 +63,12 @@ const connectRabbitCallback = (conn) => {
 }
 
 const processEmailService = async (content) => {
-    console.log(content)
-    //content={emaiL: ex, otp: something}
-    const {email, name, otp} = content;
-    const body=`Hello ${name}, welcome to KLASSIQ. We glad you join us today, first of all please confirm your email.
-    Here is your OTP to confirm your email <b>${otp}</b>`
+    const {email, subject, template} = content;
+    const body = populateEmailTemplate(template, content)
     let info = await transporter.sendMail({
         from: `Admin Klassiq <${process.env.EMAIL_SERVICE_USER}>`, // sender address
         to: `${email}`, // list of receivers
-        subject: "Welcome to Klassiq", // Subject line
+        subject: `${subject}`, // Subject line
         // text: "Hello world?", // plain text body
         html: body, // html body
     });

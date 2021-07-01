@@ -1,12 +1,49 @@
-const {sendNotification} = require("../rabbitmq")
+const {sendNotification, sendEmail} = require("../rabbitmq")
 const mongoose = require("mongoose")
+const User = mongoose.model("User")
 const Course = mongoose.model("Course")
 const DiscussionAnswer = mongoose.model("DiscussionAnswer")
-const {NOTIFICATION: {TARGET}} = require("../../constant")
+const {NOTIFICATION: {TARGET}, EMAIL_TEMPLATE} = require("../../constant")
 
 const sendAppNotification = (notification) => {
-  if (!notification.isExist){
+  if (!notification._doc.isExist){
     sendNotification(process.env.NOTIFICATION_OUTGOING_EXCHANGE,notification);
+  }
+}
+
+const sendEmailNotification = (notification) => {
+  if (!notification._doc.isExist){
+    sendEmailAsync(notification)
+    .then(val => {
+      return
+    })
+    .catch(err => {
+      console.log(err.message)
+      return
+    })
+  }
+  return
+}
+
+const sendEmailAsync = async (notification) => {
+  const {course, additionalObject} = await getNotificationObject(notification)
+  const targets = await getNotificationTargetEmails(notification.target, course, additionalObject)
+
+  const dev = process.env.NODE_ENV !== "production";
+  const port = process.env.PORT || 3000;
+  const ROOT_URL = dev ? `http://localhost:${port}` : process.env.PRODUCTION_URL;
+  
+  for (let i = 0; i < targets.length; i++) {
+    sendEmail(
+      process.env.EMAIL_EXCHANGE,
+      {
+        ...targets[i]._doc,
+        template: EMAIL_TEMPLATE.NOTIFICATION,
+        link: ROOT_URL + notification.url,
+        subject: "You have a Notification",
+        message: notification.message
+      }
+    )
   }
 }
 
@@ -73,4 +110,25 @@ const getNotificationTargets = (target, course, additionalObject) => {
   return targetId
 }
 
-module.exports = {sendAppNotification, getNotificationObject, getNotificationTargets}
+const getNotificationTargetEmails = async (target, course, additionalObject) => {
+  let targetUsers = getNotificationTargets(target, course, additionalObject)
+  return await User.find(
+    {_id : {$in : targetUsers.map(user => user._id)}},
+    'name email'
+  )
+}
+
+const populateEmailTemplate = (template, object) => {
+  const names = Object.keys(object);
+  const vals = Object.values(object);
+  return new Function(...names, `return \`${template}\`;`)(...vals);
+}
+
+module.exports = {
+  sendAppNotification,
+  sendEmailNotification,
+  getNotificationObject, 
+  getNotificationTargets, 
+  getNotificationTargetEmails, 
+  populateEmailTemplate
+}

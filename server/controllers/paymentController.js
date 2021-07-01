@@ -8,7 +8,7 @@ const dev = process.env.NODE_ENV !== "production";
 const port = process.env.PORT || 3000;
 const ROOT_URL = dev ? `http://localhost:${port}` : process.env.PRODUCTION_URL;
 const BankNotification = mongoose.model("BankNotification")
-const {sendAppNotification} = require("../lib/notification")
+const {sendAppNotification, sendEmailNotification} = require("../lib/notification")
 
 exports.getMyPayment = async (req, res) => {
   const {user} = req;
@@ -105,7 +105,9 @@ exports.paymentCallback = async (req, res) => {
           const enrollNotif = await BankNotification.createEnrollCourseNotif(payment)
           
           sendAppNotification(paymentNotif)
+          sendEmailNotification(paymentNotif)
           sendAppNotification(enrollNotif)
+          sendEmailNotification(enrollNotif)
         }
       )
     }

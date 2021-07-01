@@ -132,7 +132,7 @@ bankNotifSchema.statics.createPaymentSuccessNotif = async function (payment) {
     const bankNotif = await this.findOneOrCreate({notifOn: payment, creator: payment.user, eventType: event},{
         photo: payment.user.avatar || 'https://w7.pngwing.com/pngs/192/306/png-transparent-computer-icons-encapsulated-postscript-notification-miscellaneous-hat-bell.png',
         url: `/subjects?id=${course._id}`,
-        message: `Your payment successed!`,
+        message: `Your payment succeed!`,
         notifOn: payment,
         creator: payment.user,
         onModel: 'Payment',
