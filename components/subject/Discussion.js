@@ -3,6 +3,7 @@ import DiscussionFilter from "./discussion/DiscussionFilter";
 import DiscussionForm from "./discussion/DiscussionForm";
 import DiscussionItem from "./discussion/DiscussionItem";
 import { Grid, CircularProgress } from "@material-ui/core";
+import { Close } from "@material-ui/icons";
 import Pagination from "@material-ui/lab/Pagination";
 import { getCourseDiscussions, deleteCourseDiscussion } from "../../lib/api";
 
@@ -15,15 +16,16 @@ const Discussion = (props) => {
         canSearchDiscussion,
         canFilterDiscussion,
     } = course;
-    console.log(course);
     const [discussions, setDiscussions] = useState([]);
-    const [openModal, setOpenModal] = useState(false);
     const [openForm, setOpenForm] = useState(false);
     const [params, setParams] = useState({
-        query: "",
         limit: 10,
         page: 1,
+        search: '',
+        status: 'ALL',
+        tags: []
     });
+    const [chip, setChip] = useState(null);
     const [totalData, setTotalData] = useState(0);
     const [loading, setLoading] = useState(false);
 
@@ -44,6 +46,14 @@ const Discussion = (props) => {
     const closeDiscussionForm = () => {
         setOpenForm(false);
     };
+
+    const resetFilter = () => {
+        setParams((prev) => ({
+            search: '',
+            status: '',
+            tags: [],
+        }));
+    }
 
     const afterCreateDiscussion = (discussions) => {
         setOpenForm(false);
@@ -74,26 +84,54 @@ const Discussion = (props) => {
         });
     };
 
-    useEffect(() => {
-        let wrs = document.querySelectorAll(".wrs_stack");
-        console.log(wrs);
-        if (wrs) {
-            for (let item of wrs) {
-                item.parentNode.removeChild(item);
+    const handleFilter = () => {
+        setParams((prev) => ({
+            ...prev,
+            page: 1,
+        }));
+
+        setLoading(true);
+        getCourseDiscussions(courseId, params).then((res) => {
+            console.log(res);
+            setTotalData(res.pages);
+            setDiscussions(res.discussions);
+            setLoading(false);
+        });
+
+        setChip(params);
+    }
+
+    const deleteTag = (key) => {
+        setParams((prev) => {
+            if (key === 'tags') {
+                return ({
+                    ...prev,
+                    [key]: [],
+                });
             }
-        }
-        console.log(openModal);
-    }, [openModal]);
+            
+            return ({
+                ...prev,
+                [key]: ''
+            });
+        });
 
+        handleFilter();
+    };
+
+
+    console.log(params);
     const { page } = params;
-
     return (
         <div className="subject-discussion">
             <DiscussionFilter
+                params={params}
+                setParams={setParams}
                 openDiscussionForm={openDiscussionForm}
                 canCreate={canCreateDiscussion}
                 canSearch={canSearchDiscussion}
                 canFilter={canFilterDiscussion}
+                handleFilter={handleFilter}
             />
             <DiscussionForm
                 auth={auth}
@@ -102,6 +140,31 @@ const Discussion = (props) => {
                 open={openForm}
                 courseId={courseId}
             />
+
+            <Grid container className="filter-tag">
+                {chip && Object.keys(chip).map((key) => {
+                    if (params[key] && (key !== 'page' && key !== 'limit')) {
+                        if (key === 'tags') {
+                            return (
+                                params[key].length > 0 && (
+                                    <Grid key={key} item className="filter-tag-item">
+                                        {`${key}: ${params.tags.map((tag) => tag.name).join(", ")}`}
+                                        <Close onClick={() => deleteTag(key)} />
+                                    </Grid>
+                                )
+                            )
+                        }
+
+                        return (
+                            <Grid key={key} item className="filter-tag-item">
+                                {`${key}: `}
+                                <span>{params[key]}</span>
+                                <Close onClick={() => deleteTag(key)} />
+                            </Grid>
+                        )
+                    }
+                })}
+            </Grid>
 
             {discussions.length > 0 && (
                 <Pagination

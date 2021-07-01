@@ -39,9 +39,9 @@ class Attachments extends React.Component {
     render() {
         const { data, removeFile } = this.props;
         return (
-            <List dense={true}>
+            <List dense={true} className="uploaded-attachment">
                 {data.map((e, idx) => (
-                    <ListItem key={idx}>
+                    <ListItem key={idx} className="uploaded-attachment-item">
                         <ListItemAvatar>
                             <Avatar>
                                 <Description />

@@ -55,7 +55,7 @@ function NavBar(props) {
                             </a>
                         </Link>
                     </Grid>
-                    <Grid item className="nav-menu">
+                    {/* <Grid item className="nav-menu">
                         {!onlyLogo && (
                             <Grid container justify="flex-start" spacing={2}>
                                 <React.Fragment>
@@ -71,10 +71,10 @@ function NavBar(props) {
                                 </React.Fragment>
                             </Grid>
                         )}
-                    </Grid>
-                    <Grid item>
+                    </Grid> */}
+                    <Grid item className="align-end">
                         <Hidden xsDown>
-                            {!user && !onlyLogo && (
+                            {!user && (
                                 <Grid item className="navbar-end">
                                     <Link href="/signin">
                                         <a>
@@ -88,17 +88,17 @@ function NavBar(props) {
 
                             {user && !onlyLogo ? (
                                 <Grid item className="right-nav">
-                                    <Grid item>
+                                    {/* <Grid item>
                                         <IconButton>
                                             <Search />
                                         </IconButton>
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item>
                                         <MyMenu name="Notifications" />
                                     </Grid>
-                                    <Grid item>
+                                    {/* <Grid item>
                                         <MyMenu name="Settings" />
-                                    </Grid>
+                                    </Grid> */}
                                     <Grid item className="profile-picture">
                                         <MyMenu
                                             name="Profile"

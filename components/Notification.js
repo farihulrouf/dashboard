@@ -19,7 +19,7 @@ export default function Notification(props) {
             </Grid>
             <Grid item>
                 <p>
-                    {`${data.bankNotification.message}`}<br/>
+                    {data.bankNotification.message}
                 </p>
                 <span>
                     {timeAgo.format(new Date(data.bankNotification.createdAt))}

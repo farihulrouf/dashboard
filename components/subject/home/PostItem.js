@@ -255,7 +255,7 @@ const PostItem = (props) => {
                                         ? `${
                                               data.attachments.length
                                           } attachment${
-                                              data.attachments.length > 1
+                                              data.attachments.length > 1 && 's'
                                           }`
                                         : "No attachments available"}
                                 </span>

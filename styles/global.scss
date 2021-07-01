@@ -96,20 +96,31 @@ span {
 
 .MuiCircularProgress-root {
     margin: 10vh 0 12vh !important;
-    color: #3f51b5 !important;
+    color: #3f51b5;
 }
 
-div::-webkit-scrollbar {
+.no-margin-loading {
+    margin: 0 !important;
+    padding: 2.5px;
+}
+
+.MuiButton-label {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+*::-webkit-scrollbar {
     width: 8px;
     /* width of the entire scrollbar */
 }
 
-div::-webkit-scrollbar-track {
+*::-webkit-scrollbar-track {
     background: transparent;
     border-radius: 20px;
 }
 
-div::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
     background-color: #c7c7c7;
     /* color of the scroll thumb */
     border-radius: 20px;
@@ -148,6 +159,10 @@ input {
 
 .required-symbol {
     color: #dd5951;
+}
+
+.white {
+    color: white !important;
 }
 
 @import "Exercise.module.scss";

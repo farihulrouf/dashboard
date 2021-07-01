@@ -45,7 +45,7 @@ const Tag = styled(({ label, onDelete, ...props }) => (
 
 
 export default function TagsForm({ name, items, setItems, getItems }) {
-
+    console.log(items, 'ITEMS');
     const [tagsOption, setTagsOption] = useState([])
     const [courseTags] = useState(items);
 
@@ -54,7 +54,7 @@ export default function TagsForm({ name, items, setItems, getItems }) {
         .then((res) =>{
             console.log(res)
             if(res.status == "ok"){
-                setTagsOption(res.data.map((val) => val.name))
+                setTagsOption(res.data)
             }
         })
         .catch((err) =>{
@@ -63,7 +63,11 @@ export default function TagsForm({ name, items, setItems, getItems }) {
     },[])
 
     const handleChange = (event, value) => {
-        setItems(name, [...value]);
+        if (name) {
+            setItems(name, [...value]);
+        } else {
+            setItems(value);
+        }
     }
 
     console.log("OUT",tagsOption)
@@ -83,7 +87,7 @@ export default function TagsForm({ name, items, setItems, getItems }) {
                     if (index < 5) {
                         return (
                             <Tag
-                                label={option}
+                                label={option.name}
                                 {...getTagProps({ index })}
                             />
                         );

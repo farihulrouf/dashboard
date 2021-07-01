@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Grid,
     IconButton,
@@ -6,40 +6,37 @@ import {
     InputBase,
     Button,
 } from "@material-ui/core";
-import { FilterList, Add, Search, Close } from "@material-ui/icons";
+import { FilterList, Add, Search } from "@material-ui/icons";
+import DiscussionFilterDialog from "./DiscussionFilterDialog";
 
 const DiscussionFilter = (props) => {
-    const [query, setQuery] = useState({
-        content: "",
-        dateStart: "",
-        dateEnd: "",
-        creator: [],
-        category: [],
-        page: 1,
-    });
+    const { 
+        params,
+        setParams,
+        canCreate,
+        canSearch,
+        canFilter,
+        openDiscussionForm,
+        handleFilter
+    } = props;
 
-    const [tags, setTags] = useState([]);
+    const [openModal, setOpenModal] = useState(false);
+
+    const handleDiscussionModal = () => {
+        setOpenModal((prev) => !prev);
+    }
 
     const onQueryChange = (e) => {
-        if (e) {
-            if (e.target.name == "content") {
-                setQuery((prev) => {
-                    return {
-                        ...prev,
-                        content: e.target.value,
-                    };
-                });
-            }
-        }
+        setParams((prev) => ({
+            ...prev,
+            search: e.target.value,
+        }));
     };
 
-    const deleteTag = (index) => {
-        setTags((prev) => {
-            return prev.filter((item) => !item.indexOf(index));
-        });
-    };
-
-    const { canCreate, canSearch, canFilter, openDiscussionForm } = props;
+    useEffect(() => {
+        const timeoutId = setTimeout(() => handleFilter(), 1000);
+        return () => clearTimeout(timeoutId);
+    }, [params.search]);
 
     return (
         <Grid item>
@@ -62,26 +59,16 @@ const DiscussionFilter = (props) => {
                             <InputBase
                                 placeholder="Search for discussions?"
                                 name="content"
-                                value={query.content}
+                                value={params.search}
                                 onChange={onQueryChange}
                                 disabled={!canSearch}
                             />
-                            <Search color="disabled" />
+                            <Search color="disabled" onClick={handleFilter} />
                         </Grid>
                     </Tooltip>
                 </Grid>
             </Grid>
             <Grid item className="second-row">
-                <Grid item>
-                    {tags.map((item, index) => {
-                        return (
-                            <Grid key={index} item className="tag">
-                                {item}{" "}
-                                <Close onClick={() => deleteTag(index)} />
-                            </Grid>
-                        );
-                    })}
-                </Grid>
                 <Grid item>
                     <Tooltip
                         title={!canFilter ? "Unable to filter discussion" : ""}
@@ -90,9 +77,17 @@ const DiscussionFilter = (props) => {
                             <IconButton
                                 aria-label="show-filter"
                                 disabled={!canFilter}
+                                onClick={handleDiscussionModal}
                             >
                                 <FilterList />
                             </IconButton>
+                            <DiscussionFilterDialog
+                                handleClose={handleDiscussionModal}
+                                open={openModal}
+                                params={params}
+                                setParams={setParams}
+                                handleFilter={handleFilter}
+                            />
                         </Grid>
                     </Tooltip>
                 </Grid>

@@ -7,6 +7,7 @@ import {
     ListItemText,
     Container,
 } from "@material-ui/core";
+import { withRouter } from 'next/router'
 import { authInitialProps } from "../lib/auth";
 import { AccountCircle, Book, Star } from "@material-ui/icons";
 import NavBar from "../components/Navbar/NavBar";
@@ -29,7 +30,7 @@ const Content = (props) => {
 class Settings extends React.Component {
     constructor(props) {
         super(props);
-        this.state = { selectedIndex: 1 };
+        this.state = { selectedIndex: 1};
         this.filterOptions = this.filterOptions.bind(this);
         this.handleListItemClick = this.handleListItemClick.bind(this);
     }
@@ -47,6 +48,8 @@ class Settings extends React.Component {
 
     render() {
         const { auth } = this.props;
+
+        console.log(this.props)
 
         const settingOptions = this.filterOptions([
             { id: 1, title: "Profile", icon: <AccountCircle /> },
@@ -103,4 +106,4 @@ class Settings extends React.Component {
 
 Settings.getInitialProps = authInitialProps(true);
 
-export default Settings;
+export default withRouter(Settings);

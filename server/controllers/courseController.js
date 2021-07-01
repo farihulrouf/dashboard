@@ -645,8 +645,10 @@ exports.getDiscussions = async (req,res) => {
 
 const getDiscussionFilter = (params, courseId) =>{
   var {
-    query,
+    search,
     instructor,
+    status,
+    tags,
     dateStart,
     dateEnd,
   } = params;
@@ -655,17 +657,17 @@ const getDiscussionFilter = (params, courseId) =>{
     postedOn: courseId,  
   };
 
-  if(query){
-    query = new RegExp(query.replace(/[^a-zA-Z ]/g, ""), "i");
+  if(search){
+    search = new RegExp(search.replace(/[^a-zA-Z ]/g, ""), "i");
     filter["$or"] = [
       {
         title: {
-          $regex: query,
+          $regex: search,
         },
       },
       {
         body: {
-          $regex: query,
+          $regex: search,
         },
       },
     ];
@@ -679,6 +681,21 @@ const getDiscussionFilter = (params, courseId) =>{
     }
     filter["creator"] = {
       $in: instructor
+    }
+  }
+
+  if(status){
+    if(status === "ANSWERED"){
+      filter["answers.total"] = { $gt : 0 }
+    }
+    else if (status === "UNANSWERED"){
+      filter["answers.total"] = { $eq : 0 }
+    }
+  }
+
+  if(tags){
+    filter["tags"] = {
+      $elemMatch : {$in : tags.map((e) => ObjectId(e._id))}
     }
   }
 
@@ -696,4 +713,16 @@ const getDiscussionFilter = (params, courseId) =>{
     };
   }
   return filter
+}
+
+exports.deleteCourse = async (req, res, next) => {
+  const {course} = req
+  try{
+    if (course._doc.isInstructor || course._doc.isIsOrganization){
+      await course.remove()
+    }
+    next()
+  }catch(err){
+    res.status(500).json({status: "error", message: err.message})
+  }
 }
