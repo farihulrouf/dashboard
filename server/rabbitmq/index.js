@@ -7,7 +7,7 @@ const {producer, sendNotification, sendEmail} = require('./producer');
 const amqplib = require("amqplib/callback_api");
 
 const connectRabbit = (callback=null) => {
-    amqplib.connect({ host: process.env.RABBIT_SERVER },(err,conn)=>{
+    amqplib.connect(process.env.RABBIT_SERVER,(err,conn)=>{
         if(!err && !!callback) callback(conn);
     })
 }
