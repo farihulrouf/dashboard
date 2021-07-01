@@ -45,6 +45,7 @@ exports.submitExerciseResult = async (req, res) => {
       let exerciseResult = await ExerciseResult.findById(exerciseResultId)
       exerciseResult.finalScore = finalScore
       exerciseResult.rightAnswer = rightAnswer
+      exerciseResult.submitted = true
       await exerciseResult.save()
     } catch (error) {
       console.log("ExerciseResult Update Error - " , error.toString())
@@ -87,9 +88,9 @@ exports.getOnExerciseQuestions = async (req, res) => {
   let questionPoolLoaded = 0
   let questionPools = []
 
-  const getQuestionPool = (questionPoolId, totalQuestion, exerciseResult) => {
+  const getQuestionPool = (questionPoolId,index, totalQuestion, exerciseResult) => {
     QuestionPool.findById(questionPoolId).then(questionPool => {
-      questionPools.push(questionPool)
+      questionPools[index] = questionPool
       questionPoolLoaded += 1
       if (questionPoolLoaded === totalQuestion) {
         res.json({
@@ -104,7 +105,7 @@ exports.getOnExerciseQuestions = async (req, res) => {
   }
 
   ExerciseResult.findById(exerciseResultId).then(exerciseResult => {
-    if (exerciseResult) exerciseResult.questionPools.forEach(questionPoolId => getQuestionPool(questionPoolId,exerciseResult.questionPools.length,exerciseResult)); 
+    if (exerciseResult) exerciseResult.questionPools.forEach(questionPoolId => getQuestionPool(questionPoolId,exerciseResult.questionPools.indexOf(questionPoolId), exerciseResult.questionPools.length,exerciseResult));
   }).catch(error =>{
     //console.log('error',error)
     res.status(404).json(error)
@@ -114,16 +115,16 @@ exports.getOnExerciseQuestions = async (req, res) => {
 exports.getExerciseReview = async (req, res) => {
   let exerciseResultId = req.params.exerciseResultId
   let courseId = req.params.courseId
-  console.log('getExerciseReview',exerciseResultId)
+  
   let questionPoolLoaded = 0
   let questionAnswers = []
 
   const addQuestionAnswer = (questionPoolAnswer, totalQuestionAnswer, exerciseResult) => {
     QuestionPool.findById(questionPoolAnswer.questionPoolId).then(questionPool => {
-      questionAnswers.push({
+      questionAnswers[questionPoolAnswer.number-1] = {
         answer: questionPoolAnswer,
         question: questionPool
-      })
+      }
       questionPoolLoaded += 1
       if (questionPoolLoaded === totalQuestionAnswer) {
         res.json({
