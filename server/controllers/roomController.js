@@ -4,7 +4,7 @@ const Room = mongoose.model("Room");
 const User = mongoose.model("User");
 const Course = mongoose.model("Course")
 const BankNotification = mongoose.model("BankNotification");
-const {sendAppNotification} = require("../../lib/notification");
+const {sendAppNotification} = require("../lib/notification");
 
 exports.getRoomById = async (req, res, next, roomId) => {
     const room = await Room.findById(roomId)

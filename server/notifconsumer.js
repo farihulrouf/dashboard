@@ -12,7 +12,7 @@ var Payment = require('./models/Payment')
 var BankNotification = require('./models/BankNotification');
 const mongoose = require("mongoose");
 const {connectRabbit} = require("./rabbitmq")
-const {getNotificationObject, getNotificationTargets} = require("../lib/notification")
+const {getNotificationObject, getNotificationTargets} = require("./lib/notification")
 
 const mongooseOptions = {
     useNewUrlParser: true,

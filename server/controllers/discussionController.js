@@ -4,7 +4,7 @@ const Discussion = require("../models/Discussion")
 const Course = mongoose.model("Course");
 const DiscussionAnswer = mongoose.model("DiscussionAnswer");
 const BankNotification = mongoose.model("BankNotification")
-const {sendAppNotification} = require("../../lib/notification")
+const {sendAppNotification} = require("../lib/notification")
 
 exports.validateDiscussion = (req,res,next) => {
     req.sanitize("title");

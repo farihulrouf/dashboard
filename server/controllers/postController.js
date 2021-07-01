@@ -3,7 +3,7 @@ const Course = require("../models/Course");
 const Post = mongoose.model("Post");
 const Comment = mongoose.model("Comment");
 const BankNotification = mongoose.model("BankNotification");
-const {sendAppNotification} = require("../../lib/notification");
+const {sendAppNotification} = require("../lib/notification");
 
 
 exports.addPost = async (req, res) => {

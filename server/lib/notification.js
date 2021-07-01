@@ -1,8 +1,8 @@
-const {sendNotification} = require("../server/rabbitmq")
+const {sendNotification} = require("../rabbitmq")
 const mongoose = require("mongoose")
 const Course = mongoose.model("Course")
 const DiscussionAnswer = mongoose.model("DiscussionAnswer")
-const {NOTIFICATION: {TARGET}} = require("../constant")
+const {NOTIFICATION: {TARGET}} = require("../../constant")
 
 const sendAppNotification = (notification) => {
   if (!notification.isExist){
