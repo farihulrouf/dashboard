@@ -686,10 +686,10 @@ const getDiscussionFilter = (params, courseId) =>{
 
   if(status){
     if(status === "ANSWERED"){
-      filter["solved"] = true
+      filter["answers.total"] = { $gt : 0 }
     }
     else if (status === "UNANSWERED"){
-      filter["solved"] = false
+      filter["answers.total"] = { $eq : 0 }
     }
   }
 
