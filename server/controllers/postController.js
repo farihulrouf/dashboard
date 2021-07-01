@@ -3,7 +3,7 @@ const Course = require("../models/Course");
 const Post = mongoose.model("Post");
 const Comment = mongoose.model("Comment");
 const BankNotification = mongoose.model("BankNotification");
-const {sendNotification} = require("../rabbitmq");
+const {sendAppNotification} = require("../lib/notification");
 
 
 exports.addPost = async (req, res) => {
@@ -51,7 +51,7 @@ exports.getPostById = async (req,res,next,id) => {
 }
 
 exports.likeAPost = async (req,res) => {
-  const {post, course} = req;
+  const {post} = req;
   likes = post.likes;
   idx = likes.likedBy.indexOf(req.user._id);
   let notification = null;
@@ -77,12 +77,13 @@ exports.likeAPost = async (req,res) => {
     postUpdated._doc.canUpdate = await req.user.canUpdatePost(postUpdated);
     postUpdated._doc.canDelete = await req.user.canDeletePost(postUpdated);
     //Create notification if notif exist from thumbs up and never exist before
-    if(!!notification && !notification.isExist){
-      sendNotification(process.env.NOTIFICATION_OUTGOING_EXCHANGE,notification);
+    if(!!notification){
+      sendAppNotification(notification)
     }
     res.json({status: "ok", message: "like/unlike post success", post: postUpdated});
   }catch(err){
-    res.json({status: "error", message: "unable to like/unlike post"})
+    console.log(err.message)
+    res.status(500).json({status: "error", message: "unable to like/unlike post"})
   }
 }
 
@@ -111,9 +112,12 @@ exports.updatePost = async (req,res) => {
     updatedPost._doc.owned = true;
     updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
     updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
+
+    const notification = await BankNotification.createEditPostNotif(req.user, post)
+    sendAppNotification(notification)
     return res.json({status: "ok", message: "post is updated", post: updatedPost})
   }
-  res.json({status: "error", message: "unauthorized"});
+  res.status(500).json({status: "error", message: "unauthorized"});
 }
 
 
@@ -138,10 +142,13 @@ exports.createComment = async (req,res) => {
     const updatedPost = await Post.findOne({_id : post._id})
     updatedPost._doc.canUpdate = await req.user.canUpdatePost(updatedPost);
     updatedPost._doc.canDelete = await req.user.canDeletePost(updatedPost);
+    
+    const notification = await BankNotification.createCommentPostNotif(user, post)
+    sendAppNotification(notification)
     return res.json({status: "ok", message: "comment is created successfully", post:updatedPost, comment})
 
   }catch(err){
-    res.json({status: "error", message: err.message, post: post})
+    res.status(500).json({status: "error", message: err.message, post: post})
   }
 }
 

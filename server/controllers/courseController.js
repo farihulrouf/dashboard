@@ -7,6 +7,9 @@ const Review = mongoose.model("Review");
 const CourseRequest = mongoose.model("CourseRequest");
 const Payment = mongoose.model("Payment");
 const User = mongoose.model('User');
+const BankNotification = mongoose.model("BankNotification")
+const {sendAppNotification, sendEmailNotification} = require("../lib/notification");
+const { sendNotification } = require("../rabbitmq");
 
 exports.getCourses = async (req, res) => {
   var {
@@ -332,8 +335,15 @@ exports.createCourseDiscussion = (req,res,next) => {
   })
   discussion.save((err,savedDiscussion)=>{
       if(err){
-          return res.json({status: "error", message: err.message})
+          return res.status(500).json({status: "error", message: err.message})
       }
+      BankNotification.createNewDiscussionNotif(req.user, savedDiscussion)
+        .then(notification => {
+          sendAppNotification(notification)
+        })
+        .catch(err => {
+          return res.status(500).json({status: "error", message: err.message})        
+        })
       console.log("finish adding discussion")
       next();
   })
@@ -381,7 +391,7 @@ exports.getJoinedCourse = async (req, res) => {
 };
 
 exports.updateCourse = (req, res, next) => {
-  const { course } = req;
+  const { user, course } = req;
   const {
     name,
     about,
@@ -402,11 +412,15 @@ exports.updateCourse = (req, res, next) => {
   course.instructors = instructors || course.instructors
   course.logo = logo || course.logo
   course.syllabus = syllabus || course.syllabus
-  course.save((err, response) => {
+  course.save(async (err, response) => {
     if (!err) {
+      if(!!syllabus){
+        const notification = await BankNotification.createUpdateSyllabusNotif(user, course)
+        sendAppNotification(notification)
+      }
       return next();
     }
-    return res.json({ status: "error", error: err.message });
+    return res.status(500).json({ status: "error", error: err.message });
   });
 };
 
@@ -430,10 +444,13 @@ exports.createCoursePost = async (req, res, next) => {
   });
 
   post.attachments = attachments;
-  post.save((err, savedPost) => {
+  post.save(async (err, savedPost) => {
     if (err) {
       return res.json({ status: "error", message: err.message });
     }
+    const notification = await BankNotification.createNewPostNotif(req.user, savedPost)
+    sendAppNotification(notification)
+    sendEmailNotification(notification)
     next();
   });
 };

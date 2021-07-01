@@ -5,11 +5,14 @@ require("dotenv").config();
 var User = require('./models/User');
 var Course = require('./models/Course');
 var Post = require('./models/Post');
-var Comment = require('./models/Comment');
-var TeacherApplication = require('./models/TeacherApplication');
+var Discussion = require('./models/Discussion');
+var DiscussionAnswer = require('./models/DiscussionAnswer');
+var Tag = require('./models/Tag')
+var Payment = require('./models/Payment')
 var BankNotification = require('./models/BankNotification');
 const mongoose = require("mongoose");
 const {connectRabbit} = require("./rabbitmq")
+const {getNotificationObject, getNotificationTargets} = require("./lib/notification")
 
 const mongooseOptions = {
     useNewUrlParser: true,
@@ -48,8 +51,11 @@ const connectRabbitCallback = (conn) => {
                     if(Object.keys(res).length>0){
                         const {notification, users} = res;
                         users.forEach(user => {
-                            ch.assertExchange(user._id.toString(),'fanout')
-                            ch.publish(user._id.toString(), '', Buffer.from(JSON.stringify(notification)))
+                            ch.assertExchange(user._id.toString(),'fanout', {}, (err, ok) => {
+                                if(ok){
+                                    ch.publish(user._id.toString(), '', Buffer.from(JSON.stringify(notification)))
+                                }
+                            })
                         })
                     }
                     ch.ack(msg);
@@ -63,37 +69,18 @@ const connectRabbitCallback = (conn) => {
 const processNotification = async (notification) => {
     const {id} = notification;
     const bankNotif = await BankNotification.findById(id);
-
-    if(!bankNotif.processed){
-        const Model = mongoose.model(bankNotif.onModel);
-        const object = await Model.findById(bankNotif.notifOn);
-
-        switch(bankNotif.onModel){
-            case 'Course': 
-                await User.updateMany(
-                    {_id: object.participants}, 
-                    {
-                        $inc: {"notifications.total": 1, "notifications.unread": 1}, 
-                        $addToSet: {"notifications.list": {bankNotification: bankNotif._id, status: 'unread'}} 
-                    }
-                )
-                await bankNotif.update({processed: true})
-                broadcast = {notification: bankNotif, users: object.participants}
-                return broadcast;
-            case 'Post':
-                await User.updateOne(
-                    {_id: object.postedBy}, 
-                    {
-                        $inc: {"notifications.total": 1, "notifications.unread": 1}, 
-                        $addToSet: {"notifications.list": {bankNotification: bankNotif._id, status: 'unread'}} 
-                    }    
-                )
-                await bankNotif.update({processed: true})
-                broadcast = {notification: bankNotif, users: [object.postedBy]}
-                return broadcast
-            case 'default':
-                return {}
-        }
+    if(!!bankNotif && !bankNotif.processed){
+        const {course, additionalObject} = await getNotificationObject(bankNotif)
+        const notifTarget = getNotificationTargets(bankNotif.target, course, additionalObject)
+        await User.updateMany(
+            {_id: {$in : notifTarget}}, 
+            {
+                $inc: {"notifications.total": 1, "notifications.unread": 1}, 
+                $addToSet: {"notifications.list": {bankNotification: bankNotif._id, status: 'unread'}} 
+            }    
+        )
+        await bankNotif.update({processed: true})
+        return {notification: bankNotif, users: notifTarget}
     }
     return {}
 }

@@ -72,4 +72,9 @@ roomSchema.pre("findOne", function (next){
   next()
 })
 
+roomSchema.pre("findById", function (next){
+  this.populate("course")
+  next()
+})
+
 module.exports = mongoose.model("Room", roomSchema);
