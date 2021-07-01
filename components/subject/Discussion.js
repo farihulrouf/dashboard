@@ -3,6 +3,7 @@ import DiscussionFilter from "./discussion/DiscussionFilter";
 import DiscussionForm from "./discussion/DiscussionForm";
 import DiscussionItem from "./discussion/DiscussionItem";
 import { Grid, CircularProgress } from "@material-ui/core";
+import { Close } from "@material-ui/icons";
 import Pagination from "@material-ui/lab/Pagination";
 import { getCourseDiscussions, deleteCourseDiscussion } from "../../lib/api";
 
@@ -24,6 +25,7 @@ const Discussion = (props) => {
         status: 'ALL',
         tags: []
     });
+    const [chip, setChip] = useState(null);
     const [totalData, setTotalData] = useState(0);
     const [loading, setLoading] = useState(false);
 
@@ -95,7 +97,28 @@ const Discussion = (props) => {
             setDiscussions(res.discussions);
             setLoading(false);
         });
+
+        setChip(params);
     }
+
+    const deleteTag = (key) => {
+        setParams((prev) => {
+            if (key === 'tags') {
+                return ({
+                    ...prev,
+                    [key]: [],
+                });
+            }
+            
+            return ({
+                ...prev,
+                [key]: ''
+            });
+        });
+
+        handleFilter();
+    };
+
 
     console.log(params);
     const { page } = params;
@@ -117,6 +140,31 @@ const Discussion = (props) => {
                 open={openForm}
                 courseId={courseId}
             />
+
+            <Grid container className="filter-tag">
+                {chip && Object.keys(chip).map((key) => {
+                    if (params[key] && (key !== 'page' && key !== 'limit')) {
+                        if (key === 'tags') {
+                            return (
+                                params[key].length > 0 && (
+                                    <Grid key={key} item className="filter-tag-item">
+                                        {`${key}: ${params.tags.map((tag) => tag.name).join(", ")}`}
+                                        <Close onClick={() => deleteTag(key)} />
+                                    </Grid>
+                                )
+                            )
+                        }
+
+                        return (
+                            <Grid key={key} item className="filter-tag-item">
+                                {`${key}: `}
+                                <span>{params[key]}</span>
+                                <Close onClick={() => deleteTag(key)} />
+                            </Grid>
+                        )
+                    }
+                })}
+            </Grid>
 
             {discussions.length > 0 && (
                 <Pagination

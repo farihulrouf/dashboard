@@ -57,7 +57,6 @@ export default function DiscussionFilterDialog(props) {
       <DialogContent dividers>
         <InputLabel>Tags</InputLabel>
         <TagsForm
-          name="tags"
           tags={tags}
           setItems={setTags}
           getItems={getTags}

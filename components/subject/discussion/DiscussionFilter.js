@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Grid,
     IconButton,
@@ -6,7 +6,7 @@ import {
     InputBase,
     Button,
 } from "@material-ui/core";
-import { FilterList, Add, Search, Close } from "@material-ui/icons";
+import { FilterList, Add, Search } from "@material-ui/icons";
 import DiscussionFilterDialog from "./DiscussionFilterDialog";
 
 const DiscussionFilter = (props) => {
@@ -30,15 +30,13 @@ const DiscussionFilter = (props) => {
         setParams((prev) => ({
             ...prev,
             search: e.target.value,
-        }))
-    };
-
-    const deleteTag = (index) => {
-        setParams((prev) => ({
-            ...prev,
-            tags: prev.tags.filter((item) => item.indexOf(index)),
         }));
     };
+
+    useEffect(() => {
+        const timeoutId = setTimeout(() => handleFilter(), 1000);
+        return () => clearTimeout(timeoutId);
+    }, [params.search]);
 
     return (
         <Grid item>
@@ -71,16 +69,6 @@ const DiscussionFilter = (props) => {
                 </Grid>
             </Grid>
             <Grid item className="second-row">
-                <Grid item>
-                    {params.tags.map((item, index) => {
-                        return (
-                            <Grid key={index} item className="tag">
-                                {item}{" "}
-                                <Close onClick={() => deleteTag(index)} />
-                            </Grid>
-                        );
-                    })}
-                </Grid>
                 <Grid item>
                     <Tooltip
                         title={!canFilter ? "Unable to filter discussion" : ""}

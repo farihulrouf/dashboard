@@ -134,7 +134,8 @@ const Course = ({ courseItem, onUpdate }) => {
             )}
 
             <Grid item className="btm-container">
-                {(status === PAYMENT_STATUS_PAID || isParticipant || isInstructor || isOrganization) && (
+                {(status === PAYMENT_STATUS_PAID || ((isParticipant || isInstructor || isOrganization) 
+                    && (status !== PAYMENT_STATUS_PENDING || status !== PAYMENT_STATUS_UNREGISTERED))) && (
                     <Grid item className="price-tag-container enrolled-tag">
                         ENROLLED
                     </Grid>
