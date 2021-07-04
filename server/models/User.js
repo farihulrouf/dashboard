@@ -293,8 +293,8 @@ userSchema.methods.join = async function(room){
         redirect: true
     }
     const params = Object.entries({...userParams, ...roomParams}).map(([k,v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&")
-    const checksum = hasha(`join${params}${process.env.BBB_SECRET_KEY}`,{algorithm: 'sha1'})
-    const queryString = `${process.env.BBB_END_POINT}api/join?${params}&checksum=${checksum}`
+    const checksum = hasha(`join${params}${process.env.LIVE_SECRET_KEY}`,{algorithm: 'sha1'})
+    const queryString = `${process.env.LIVE_END_POINT}api/join?${params}&checksum=${checksum}`
     //const {data} = await axios.get(queryString)
     return queryString;
 }

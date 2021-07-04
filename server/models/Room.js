@@ -46,8 +46,8 @@ roomSchema.methods.getLink = async function(){
   let entries = Object.entries(this._doc)
   entries = entries.filter(([k,v]) => attributes.includes(k))
   const params = entries.map(([k,v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`).join("&")
-  const checksum = hasha(`create${params}${process.env.BBB_SECRET_KEY}`,{algorithm: 'sha1'})
-  const queryString = `${process.env.BBB_END_POINT}api/create?${params}&checksum=${checksum}`
+  const checksum = hasha(`create${params}${process.env.LIVE_SECRET_KEY}`,{algorithm: 'sha1'})
+  const queryString = `${process.env.LIVE_END_POINT}api/create?${params}&checksum=${checksum}`
   const {data} = await axios.get(queryString)
   return parseStringSync(data);
 }
@@ -55,8 +55,8 @@ roomSchema.methods.getLink = async function(){
 roomSchema.methods.getMeetingInfo = async function(){
   //Find info by meetingID
   const params = `meetingID=${encodeURIComponent(this.meetingID)}`
-  const checksum = hasha(`getMeetingInfo${params}${process.env.BBB_SECRET_KEY}`,{algorithm: 'sha1'})
-  const queryString = `${process.env.BBB_END_POINT}api/getMeetingInfo?${params}&checksum=${checksum}`
+  const checksum = hasha(`getMeetingInfo${params}${process.env.LIVE_SECRET_KEY}`,{algorithm: 'sha1'})
+  const queryString = `${process.env.LIVE_END_POINT}api/getMeetingInfo?${params}&checksum=${checksum}`
   const {data} = await axios.get(queryString)
   return parseStringSync(data);
 }
