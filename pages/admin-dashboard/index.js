@@ -20,7 +20,7 @@ const Index = () => {
 			<Fragment>
 				{/* <Navbar /> */}
 				<UserInfo />
-				{/* <UserPayment /> */}
+				<UserPayment />
 			</Fragment>
 		</Provider>
 	);

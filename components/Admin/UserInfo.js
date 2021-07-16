@@ -15,7 +15,7 @@ import {
 	Select,
 	MenuItem,
 	Modal,
-	Button
+	Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -96,20 +96,20 @@ const useStyles = makeStyles((theme) => ({
 	},
 	cancelButton: {
 		color: '#E50000',
-		fontFamily: 'Arial'
+		fontFamily: 'Arial',
 	},
 	applyButton: {
 		color: '#38439F',
-		fontFamily: 'Arial'
-	}
+		fontFamily: 'Arial',
+	},
 }));
 
 const modalStyle = {
 	// width: '30%',
 	// height: '10%',
 	position: 'absolute',
-  	top: '40%',
-  	left: '40%',
+	top: '40%',
+	left: '40%',
 };
 
 const useSortableData = (items, config = null) => {
@@ -231,12 +231,26 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 	);
 
 	const org = (
-		<svg width="26" height="26" viewBox="0 0 26 26" fill="none" xmlns="http://www.w3.org/2000/svg">
-		<path d="M13 13.8667C12.7701 13.8667 12.5497 13.958 12.3871 14.1205C12.2246 14.2831 12.1333 14.5035 12.1333 14.7334C12.1333 14.9632 12.2246 15.1837 12.3871 15.3462C12.5497 15.5087 12.7701 15.6 13 15.6C13.2298 15.6 13.4503 15.5087 13.6128 15.3462C13.7753 15.1837 13.8666 14.9632 13.8666 14.7334C13.8666 14.5035 13.7753 14.2831 13.6128 14.1205C13.4503 13.958 13.2298 13.8667 13 13.8667Z" fill="black"/>
-		<path fill-rule="evenodd" clip-rule="evenodd" d="M20.8 10.7311L13.8667 7.2644V5.2H19.0667V0H12.1333V7.2644L5.2 10.7311V13.8667H1.73333V24.2667H0V26H10.4V19.0667H15.6V26H26V24.2667H24.2667V13.8667H20.8V10.7311ZM22.5333 24.2667V15.6H20.8V24.2667H22.5333ZM5.2 24.2667H3.46667V15.6H5.2V24.2667ZM10.4 14.7333C10.4 14.0438 10.6739 13.3825 11.1615 12.8949C11.6491 12.4073 12.3104 12.1333 13 12.1333C13.6896 12.1333 14.3509 12.4073 14.8385 12.8949C15.3261 13.3825 15.6 14.0438 15.6 14.7333C15.6 15.4229 15.3261 16.0842 14.8385 16.5718C14.3509 17.0594 13.6896 17.3333 13 17.3333C12.3104 17.3333 11.6491 17.0594 11.1615 16.5718C10.6739 16.0842 10.4 15.4229 10.4 14.7333Z" fill="black"/>
-		<path d="M13.8666 26V20.8H12.1333V26H13.8666Z" fill="black"/>
+		<svg
+			width="26"
+			height="26"
+			viewBox="0 0 26 26"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<path
+				d="M13 13.8667C12.7701 13.8667 12.5497 13.958 12.3871 14.1205C12.2246 14.2831 12.1333 14.5035 12.1333 14.7334C12.1333 14.9632 12.2246 15.1837 12.3871 15.3462C12.5497 15.5087 12.7701 15.6 13 15.6C13.2298 15.6 13.4503 15.5087 13.6128 15.3462C13.7753 15.1837 13.8666 14.9632 13.8666 14.7334C13.8666 14.5035 13.7753 14.2831 13.6128 14.1205C13.4503 13.958 13.2298 13.8667 13 13.8667Z"
+				fill="black"
+			/>
+			<path
+				fillRule="evenodd"
+				clipRule="evenodd"
+				d="M20.8 10.7311L13.8667 7.2644V5.2H19.0667V0H12.1333V7.2644L5.2 10.7311V13.8667H1.73333V24.2667H0V26H10.4V19.0667H15.6V26H26V24.2667H24.2667V13.8667H20.8V10.7311ZM22.5333 24.2667V15.6H20.8V24.2667H22.5333ZM5.2 24.2667H3.46667V15.6H5.2V24.2667ZM10.4 14.7333C10.4 14.0438 10.6739 13.3825 11.1615 12.8949C11.6491 12.4073 12.3104 12.1333 13 12.1333C13.6896 12.1333 14.3509 12.4073 14.8385 12.8949C15.3261 13.3825 15.6 14.0438 15.6 14.7333C15.6 15.4229 15.3261 16.0842 14.8385 16.5718C14.3509 17.0594 13.6896 17.3333 13 17.3333C12.3104 17.3333 11.6491 17.0594 11.1615 16.5718C10.6739 16.0842 10.4 15.4229 10.4 14.7333Z"
+				fill="black"
+			/>
+			<path d="M13.8666 26V20.8H12.1333V26H13.8666Z" fill="black" />
 		</svg>
-	)
+	);
 
 	// Toggle Edit
 	const [displayEdit, toggleEdit] = useState({
@@ -255,8 +269,6 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 		return sortConfig.key === name ? sortConfig.direction : undefined;
 	};
 
-	
-
 	// User Rows
 	const userRows = items.map((user) => {
 		// Save Modal
@@ -266,8 +278,8 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 			toggleEdit({
 				displayEditForm: !displayEditForm,
 				displayEditUser: user.username,
-			})
-		}
+			});
+		};
 
 		const [formData, setFormData] = useState({
 			_id: user._id,
@@ -281,7 +293,7 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 
 		// useEffect(() => {
 		// 	setFormData({
-				
+
 		// 		username: user.username,
 		// 		email: user.email,
 		// 		signupdate: user.signupdate,
@@ -291,7 +303,6 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 		// 	});
 		// 	// eslint-disable-next-line
 		// }, []);
-
 
 		const { userstatus } = formData;
 
@@ -307,110 +318,132 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 			toggleEdit({
 				displayEditForm: !displayEditForm,
 				displayEditUser: user.username,
-			})
+			});
 		};
 
 		return (
-			<Fragment>
-			<TableRow key={user._id}>
-				<TableCell align="center">{user.username}</TableCell>
-				<TableCell align="center">{user.email}</TableCell>
-				<TableCell align="center">
-					<Moment format="DD/MM/YYYY">{user.signupdate}</Moment>
-				</TableCell>
-				<TableCell align="center">
-					<Moment format="DD/MM/YYYY">{user.lastlogin}</Moment>
-				</TableCell>
-				<TableCell align="center">
-					{user.courses.length == 0 ? (
-						'-'
-					) : user.userstatus === 'Student' ? (
-						<Grid container className={classes.coursesBorder}>
-							<Grid item className={classes.studentCourses}>
-								{user.courses.length}
+			<Fragment key={user._id}>
+				<TableRow>
+					<TableCell align="center">{user.username}</TableCell>
+					<TableCell align="center">{user.email}</TableCell>
+					<TableCell align="center">
+						<Moment format="DD/MM/YYYY">{user.signupdate}</Moment>
+					</TableCell>
+					<TableCell align="center">
+						<Moment format="DD/MM/YYYY">{user.lastlogin}</Moment>
+					</TableCell>
+					<TableCell align="center">
+						{user.courses.length == 0 ? (
+							'-'
+						) : user.userstatus === 'Student' ? (
+							<Grid container className={classes.coursesBorder}>
+								<Grid item className={classes.studentCourses}>
+									{user.courses.length}
+								</Grid>
 							</Grid>
-						</Grid>
-					) : (
-						<Grid container className={classes.coursesBorder}>
-							<Grid item className={classes.otherCourses}>
-								{user.courses.length}
-							</Grid>
-						</Grid>
-					)}
-				</TableCell>
-				<TableCell align="center">
-					{displayEditForm & (displayEditUser === user.username) ? (
-						user.userstatus === 'Student' ? (
-							<FormControl>
-								<Select
-									name="userstatus"
-									value={userstatus}
-									onChange={(e) => onChange(e)}
-								>
-									<MenuItem value="Student" className="classes.statusOption">
-										{student} Student
-									</MenuItem>
-									<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
-									<MenuItem value="Organization">{org}Organization</MenuItem>
-								</Select>
-							</FormControl>
-						) : user.userstatus === 'Teacher' ? (
-							<FormControl>
-								<Select
-									name="userstatus"
-									value={userstatus}
-									onChange={(e) => onChange(e)}
-								>
-									<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
-									<MenuItem value="Student">{student} Student</MenuItem>
-									<MenuItem value="Organization">{org} Organization</MenuItem>
-								</Select>
-							</FormControl>
 						) : (
-							<select name="user-status" id="user-status">
-								<option value="organization">Teacher</option>
-								<option value="student">Student</option>
-								<option value="teacher">Organization</option>
-							</select>
-						)
-					) : user.userstatus === 'Teacher' ? (
-						<Grid>
-							{teacher}{' '}
-							<span className={classes.userStatus}>{user.userstatus}</span>
-						</Grid>
-					) : (
-						<Grid>
-							{student}{' '}
-							<span className={classes.userStatus}>{user.userstatus}</span>
-						</Grid>
-					)}
-				</TableCell>
-				<TableCell align="center">
-					<IconButton
-						onClick={() =>
-							toggleEdit({
-								displayEditForm: !displayEditForm,
-								displayEditUser: user.username,
-							})
-						}
-					>
-						{edit}
-					</IconButton>
-				</TableCell>
-			</TableRow>
-			<Modal
-				open={open}
-				aria-labelledby="simple-modal-title"
-				aria-describedby="simple-modal-description"
-			>
-				<div style={modalStyle} className={classes.paper}>
-						<div className={classes.applyQ}><p className={classes.applyText} align="center" fontFamily>Apply The Change?</p></div>
-						<div className={classes.applyA} align="center">
-							<Button onClick={handleClose}><div className={classes.cancelButton}>Cancel</div> </Button>
-							<Button className={classes.applyButton} onClick={(e) => applyChange(e)}>Apply</Button>
+							<Grid container className={classes.coursesBorder}>
+								<Grid item className={classes.otherCourses}>
+									{user.courses.length}
+								</Grid>
+							</Grid>
+						)}
+					</TableCell>
+					<TableCell align="center">
+						{displayEditForm & (displayEditUser === user.username) ? (
+							user.userstatus === 'Student' ? (
+								<FormControl>
+									<Select
+										name="userstatus"
+										value={userstatus}
+										onChange={(e) => onChange(e)}
+									>
+										<MenuItem value="Student" className="classes.statusOption">
+											{student} Student
+										</MenuItem>
+										<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
+										<MenuItem value="Organization">{org}Organization</MenuItem>
+									</Select>
+								</FormControl>
+							) : user.userstatus === 'Teacher' ? (
+								<FormControl>
+									<Select
+										name="userstatus"
+										value={userstatus}
+										onChange={(e) => onChange(e)}
+									>
+										<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
+										<MenuItem value="Student">{student} Student</MenuItem>
+										<MenuItem value="Organization">{org} Organization</MenuItem>
+									</Select>
+								</FormControl>
+							) : (
+								<FormControl>
+									<Select
+										name="userstatus"
+										value={userstatus}
+										onChange={(e) => onChange(e)}
+									>
+										<MenuItem value="Organization">{org} Organization</MenuItem>
+										<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
+										<MenuItem value="Student">{student} Student</MenuItem>
+									</Select>
+								</FormControl>
+							)
+						) : user.userstatus === 'Teacher' ? (
+							<Grid>
+								{teacher}{' '}
+								<span className={classes.userStatus}>{user.userstatus}</span>
+							</Grid>
+						) : user.userstatus === 'Student' ? (
+							<Grid>
+								{student}{' '}
+								<span className={classes.userStatus}>{user.userstatus}</span>
+							</Grid>
+						) : (
+							<Grid>
+								{org}{' '}
+								<span className={classes.userStatus}>{user.userstatus}</span>
+							</Grid>
+						)}
+					</TableCell>
+					<TableCell align="center">
+						<IconButton
+							onClick={() =>
+								toggleEdit({
+									displayEditForm: !displayEditForm,
+									displayEditUser: user.username,
+								})
+							}
+						>
+							{edit}
+						</IconButton>
+					</TableCell>
+				</TableRow>
+				<Modal
+					open={open}
+					aria-labelledby="simple-modal-title"
+					aria-describedby="simple-modal-description"
+				>
+					<div style={modalStyle} className={classes.paper}>
+						<div className={classes.applyQ}>
+							<p className={classes.applyText} align="center" fontFamily>
+								Apply The Change?
+							</p>
 						</div>
-				</div>
-			</Modal>
+						<div className={classes.applyA} align="center">
+							<Button onClick={handleClose}>
+								<div className={classes.cancelButton}>Cancel</div>{' '}
+							</Button>
+							<Button
+								className={classes.applyButton}
+								onClick={(e) => applyChange(e)}
+							>
+								Apply
+							</Button>
+						</div>
+					</div>
+				</Modal>
 			</Fragment>
 		);
 	});

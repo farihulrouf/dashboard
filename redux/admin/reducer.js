@@ -1,4 +1,10 @@
-import { GET_USERS, GET_PAYMENTS, UPDATE_USER, UPDATE_PAYMENT, SORT_COLLECTION } from './types';
+import {
+	GET_USERS,
+	GET_PAYMENTS,
+	UPDATE_USER,
+	UPDATE_PAYMENT,
+	SORT_COLLECTION,
+} from './types';
 
 const initialState = {
 	users: [
@@ -82,7 +88,7 @@ const initialState = {
 			signupdate: '2021/1/20',
 			lastlogin: '2021/7/8',
 			courses: [],
-			userstatus: 'Student',
+			userstatus: 'Organization',
 		},
 		{
 			_id: 4,
@@ -176,7 +182,7 @@ const initialState = {
 				status: 'Active',
 				instructors: 'Ramandika, Jais Anas',
 			},
-			status: 'Paid',
+			status: 'Process',
 		},
 		{
 			payment_number: 'p3',
@@ -191,7 +197,7 @@ const initialState = {
 				status: 'Active',
 				instructors: 'TrasHI Admin',
 			},
-			status: 'Paid',
+			status: 'Success',
 		},
 		{
 			payment_number: 'p4',
@@ -206,7 +212,7 @@ const initialState = {
 				status: 'Active',
 				instructors: 'Masiga Buana',
 			},
-			status: 'Pending',
+			status: 'Process',
 		},
 		{
 			payment_number: 'p5',
@@ -229,10 +235,10 @@ const initialState = {
 			},
 			course: {
 				name: 'Kelas TrashHI',
-				status: 'Active',
+				status: 'Inactive',
 				instructors: 'TrasHI Admin',
 			},
-			status: 'Paid',
+			status: 'Success',
 		},
 		{
 			payment_number: 'p7',
@@ -247,7 +253,7 @@ const initialState = {
 				status: 'Active',
 				instructors: 'Masiga Buana',
 			},
-			status: 'Pending',
+			status: 'Process',
 		},
 		{
 			payment_number: 'p8',
@@ -286,25 +292,28 @@ export default function (state = initialState, action) {
 		case UPDATE_USER:
 			return {
 				...state,
-				users: state.users.map(user => user._id === payload._id ? payload : user),
+				users: state.users.map((user) =>
+					user._id === payload._id ? payload : user
+				),
 			};
 		case UPDATE_PAYMENT:
 			return {
 				...state,
-				payments: state.payments.map(payment => payment.payment_number === payload.payment_number ? payload : payment),
+				payments: state.payments.map((payment) =>
+					payment.payment_number === payload.payment_number ? payload : payment
+				),
 			};
 		case SORT_COLLECTION:
 			return {
 				...state,
-				sorted: state.users.slice().sort(function(a, b) {
-				var nameA = a.username.toLowerCase(),
-				nameB = b.username.toLowerCase()
-				if (nameA < nameB)
-				return payload ? -1 : 1
-				if (nameA > nameB)
-				return payload ? 1 : -1
-				return 0
-			})}
+				sorted: state.users.slice().sort(function (a, b) {
+					var nameA = a.username.toLowerCase(),
+						nameB = b.username.toLowerCase();
+					if (nameA < nameB) return payload ? -1 : 1;
+					if (nameA > nameB) return payload ? 1 : -1;
+					return 0;
+				}),
+			};
 		default:
 			return state;
 	}

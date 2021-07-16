@@ -15,7 +15,7 @@ import {
 	Select,
 	MenuItem,
 	Modal,
-	Button
+	Button,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -96,20 +96,48 @@ const useStyles = makeStyles((theme) => ({
 	},
 	cancelButton: {
 		color: '#E50000',
-		fontFamily: 'Arial'
+		fontFamily: 'Arial',
 	},
 	applyButton: {
 		color: '#38439F',
-		fontFamily: 'Arial'
-	}
+		fontFamily: 'Arial',
+	},
+	courseActive: {
+		color: '#001AFF',
+	},
+	courseInactive: {
+		color: '#FF0000',
+	},
+	courseName: {
+		fontWeight: 'bold',
+	},
+	courseInstructors: {
+		color: '#5E6366',
+	},
+	dot: {
+		position: 'relative',
+		bottom: '4px',
+	},
+	paymentSuccess: {
+		position: 'relative',
+		bottom: '5.5px',
+	},
+	paymentProcess: {
+		position: 'relative',
+		bottom: '7.5px',
+	},
+	paymentExpired: {
+		position: 'relative',
+		bottom: '4.5px',
+	},
 }));
 
 const modalStyle = {
 	// width: '30%',
 	// height: '10%',
 	position: 'absolute',
-  	top: '40%',
-  	left: '40%',
+	top: '40%',
+	left: '40%',
 };
 
 const useSortableData = (items, config = null) => {
@@ -146,7 +174,7 @@ const useSortableData = (items, config = null) => {
 	return { items: sortedItems, requestSort, sortConfig };
 };
 
-const UserPayment = ({ getPayments, payments }) => {
+const UserPayment = ({ getPayments, payments, updatePayment }) => {
 	useEffect(() => {
 		getPayments();
 	}, [getPayments]);
@@ -171,7 +199,7 @@ const UserPayment = ({ getPayments, payments }) => {
 			/>
 		</svg>
 	);
-	
+
 	const edit = (
 		<svg
 			width="19"
@@ -191,120 +219,326 @@ const UserPayment = ({ getPayments, payments }) => {
 		</svg>
 	);
 
+	const success = (
+		<svg
+			width="22"
+			height="22"
+			viewBox="0 0 22 22"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<path
+				d="M11 1.22217C9.06615 1.22217 7.17572 1.79562 5.56777 2.87002C3.95982 3.94442 2.70658 5.4715 1.96652 7.25815C1.22647 9.04481 1.03283 11.0108 1.41011 12.9075C1.78739 14.8042 2.71863 16.5464 4.08608 17.9139C5.45353 19.2813 7.19576 20.2126 9.09246 20.5898C10.9892 20.9671 12.9551 20.7735 14.7418 20.0334C16.5285 19.2934 18.0555 18.0401 19.1299 16.4322C20.2043 14.8242 20.7778 12.9338 20.7778 10.9999C20.7778 8.40672 19.7476 5.9197 17.9139 4.08601C16.0803 2.25232 13.5932 1.22217 11 1.22217ZM17.3861 7.71828L9.35612 15.7422L4.6139 10.9999C4.45182 10.8379 4.36077 10.618 4.36077 10.3888C4.36077 10.1596 4.45182 9.9398 4.6139 9.77772C4.77598 9.61565 4.9958 9.52459 5.22501 9.52459C5.45422 9.52459 5.67405 9.61565 5.83612 9.77772L9.36834 13.3099L16.1761 6.50828C16.2564 6.42803 16.3516 6.36437 16.4565 6.32094C16.5614 6.2775 16.6737 6.25515 16.7872 6.25515C16.9007 6.25515 17.0131 6.2775 17.118 6.32094C17.2228 6.36437 17.3181 6.42803 17.3983 6.50828C17.4786 6.58853 17.5423 6.6838 17.5857 6.78866C17.6291 6.89351 17.6515 7.0059 17.6515 7.11939C17.6515 7.23288 17.6291 7.34527 17.5857 7.45012C17.5423 7.55498 17.4786 7.65025 17.3983 7.7305L17.3861 7.71828Z"
+				fill="#10C900"
+			/>
+		</svg>
+	);
+
+	const process = (
+		<svg
+			width="26"
+			height="26"
+			viewBox="0 0 26 26"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<path
+				d="M23.9942 10.4609H17.4942C17.3824 10.4609 17.291 10.5523 17.291 10.6641V11.8828C17.291 11.9945 17.3824 12.0859 17.4942 12.0859H23.9942C24.1059 12.0859 24.1973 11.9945 24.1973 11.8828V10.6641C24.1973 10.5523 24.1059 10.4609 23.9942 10.4609ZM20.5918 13.9141H17.4942C17.3824 13.9141 17.291 14.0055 17.291 14.1172V15.3359C17.291 15.4477 17.3824 15.5391 17.4942 15.5391H20.5918C20.7035 15.5391 20.7949 15.4477 20.7949 15.3359V14.1172C20.7949 14.0055 20.7035 13.9141 20.5918 13.9141ZM12.119 8.18848H11.0195C10.8621 8.18848 10.7352 8.31543 10.7352 8.47285V14.7697C10.7352 14.8611 10.7783 14.9449 10.852 14.9982L14.6326 17.7557C14.7596 17.8471 14.9373 17.8217 15.0287 17.6947L15.6813 16.8035V16.801C15.7727 16.674 15.7447 16.4963 15.6178 16.4049L12.4008 14.0791V8.47285C12.4033 8.31543 12.2738 8.18848 12.119 8.18848Z"
+				fill="black"
+			/>
+			<path
+				d="M20.4344 17.1107H18.9668C18.8246 17.1107 18.6901 17.1843 18.6139 17.3062C18.2914 17.8165 17.9156 18.2888 17.484 18.7205C16.7401 19.4644 15.8742 20.0484 14.9119 20.4546C13.9141 20.8761 12.8553 21.0894 11.7635 21.0894C10.6692 21.0894 9.61037 20.8761 8.61505 20.4546C7.65275 20.0484 6.78693 19.4644 6.04298 18.7205C5.29904 17.9765 4.71506 17.1107 4.30881 16.1484C3.88732 15.1531 3.67404 14.0943 3.67404 12.9999C3.67404 11.9056 3.88732 10.8494 4.30881 9.85151C4.71506 8.8892 5.29904 8.02338 6.04298 7.27944C6.78693 6.53549 7.65275 5.95151 8.61505 5.54526C9.61037 5.12377 10.6717 4.91049 11.7635 4.91049C12.8578 4.91049 13.9166 5.12377 14.9119 5.54526C15.8742 5.95151 16.7401 6.53549 17.484 7.27944C17.9156 7.71108 18.2914 8.18334 18.6139 8.6937C18.6901 8.81557 18.8246 8.8892 18.9668 8.8892H20.4344C20.6096 8.8892 20.7213 8.70639 20.6426 8.55151C18.9871 5.25834 15.6305 3.11791 11.8828 3.07475C6.39591 3.00619 1.8383 7.4978 1.82814 12.9796C1.81799 18.4716 6.26896 22.9277 11.761 22.9277C15.5568 22.9277 18.9693 20.7796 20.6426 17.4484C20.7213 17.2935 20.607 17.1107 20.4344 17.1107Z"
+				fill="black"
+			/>
+		</svg>
+	);
+
+	const expired = (
+		<svg
+			width="20"
+			height="20"
+			viewBox="0 0 20 20"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<rect width="20" height="20" fill="white" />
+			<path
+				d="M10 0C7.23958 0 4.88281 0.976562 2.92969 2.92969C0.976562 4.88281 0 7.23958 0 10C0 12.7604 0.976562 15.1172 2.92969 17.0703C4.88281 19.0234 7.23958 20 10 20C12.7604 20 15.1172 19.0234 17.0703 17.0703C19.0234 15.1172 20 12.7604 20 10C20 7.23958 19.0234 4.88281 17.0703 2.92969C15.1172 0.976562 12.7604 0 10 0ZM1.67969 10C1.67969 7.70833 2.49349 5.7487 4.12109 4.12109C5.7487 2.49349 7.70833 1.67969 10 1.67969C12.0573 1.67969 13.8021 2.31771 15.2344 3.59375L3.59375 15.2344C2.31771 13.8021 1.67969 12.0573 1.67969 10ZM10 18.3203C7.94271 18.3203 6.19792 17.6823 4.76562 16.4062L16.4062 4.76562C17.6823 6.19792 18.3203 7.94271 18.3203 10C18.3203 12.2917 17.5065 14.2513 15.8789 15.8789C14.2513 17.5065 12.2917 18.3203 10 18.3203Z"
+				fill="#C50000"
+			/>
+		</svg>
+	);
+
 	// Toggle Edit
 	const [displayEdit, toggleEdit] = useState({
 		displayEditForm: false,
-		displayEditUser: '',
+		displayEditPayment: '',
 	});
 
-	const { displayEditForm, displayEditUser } = displayEdit;
-	
+	const { displayEditForm, displayEditPayment } = displayEdit;
+
 	const { items, requestSort, sortConfig } = useSortableData(payments);
 	const getClassNamesFor = (name) => {
-	  if (!sortConfig) {
-		return;
-	  }
-	  return sortConfig.key === name ? sortConfig.direction : undefined;
+		if (!sortConfig) {
+			return;
+		}
+		return sortConfig.key === name ? sortConfig.direction : undefined;
 	};
 
-	const userPayments = items.map((payment) => (
-		<TableRow key={payment.payment_number}>
-			<TableCell align="center">{payment.user.name}</TableCell>
-			<TableCell align="center">{payment.user.email}</TableCell>
-			<TableCell align="center"><Moment format="DD/MM/YYYY">{payment.user.signupdate}</Moment></TableCell>
-			<TableCell align="center"><Moment format="DD/MM/YYYY">{payment.user.lastlogin}</Moment></TableCell>
-			<TableCell align="center">
-				<div>{payment.course.name}</div>
-				<div>{payment.course.status} {payment.course.insTableRowuctors}</div>
-			</TableCell>
-			<TableCell align="center">
-				{displayEditForm & (displayEditUser === payment.payment_number) ? (
-					edit
-				) : (
-					<div>{payment.status}</div>
-				)}
-			</TableCell>
-			<TableCell align="center">
-			<IconButton
-						onClick={() =>
-							toggleEdit({
-								displayEditForm: !displayEditForm,
-								displayEditUser: payment.payment_number,
-							})
-						}
-					>
-						{edit}
-					</IconButton>
-			</TableCell>
-		</TableRow>
-	));
+	const userPayments = items.map((payment) => {
+		// Save Modal
+		const [open, setOpen] = useState(false);
+		const handleClose = () => {
+			setOpen(false);
+			toggleEdit({
+				displayEditForm: !displayEditForm,
+				displayEditPayment: payment.payment_number,
+			});
+		};
+
+		const [formData, setFormData] = useState({
+			payment_number: payment.payment_number,
+			user: payment.user,
+			course: payment.course,
+			status: payment.status,
+		});
+
+		// useEffect(() => {
+		// 	setFormData({
+
+		// 		username: user.username,
+		// 		email: user.email,
+		// 		signupdate: user.signupdate,
+		// 		lastlogin: user.lastlogin,
+		// 		courses: user.courses,
+		// 		userstatus: user.userstatus,
+		// 	});
+		// 	// eslint-disable-next-line
+		// }, []);
+
+		const { status } = formData;
+
+		const onChange = (e) => {
+			setFormData({ ...formData, [e.target.name]: e.target.value });
+			setOpen(true);
+		};
+
+		const applyChange = (e) => {
+			e.preventDefault();
+			updatePayment(formData);
+			setOpen(false);
+			toggleEdit({
+				displayEditForm: !displayEditForm,
+				displayEditPayment: payment.payment_number,
+			});
+		};
+		return (
+			<Fragment key={payment.payment_number}>
+				<TableRow>
+					<TableCell align="center">{payment.user.name}</TableCell>
+					<TableCell align="center">{payment.user.email}</TableCell>
+					<TableCell align="center">
+						<Moment format="DD/MM/YYYY">{payment.user.signupdate}</Moment>
+					</TableCell>
+					<TableCell align="center">
+						<Moment format="DD/MM/YYYY">{payment.user.lastlogin}</Moment>
+					</TableCell>
+					<TableCell>
+						<div className={classes.courseName}>{payment.course.name}</div>
+						<div>
+							{payment.course.status === 'Active' ? (
+								<span className={classes.courseActive}>
+									{payment.course.status}
+								</span>
+							) : (
+								<span className={classes.courseInactive}>
+									{payment.course.status}
+								</span>
+							)}{' '}
+							<span className={classes.dot}> . </span>{' '}
+							<span className={classes.courseInstructors}>
+								{payment.course.instructors}
+							</span>
+						</div>
+					</TableCell>
+					<TableCell align="center">
+						{displayEditForm &
+						(displayEditPayment == payment.payment_number) ? (
+							payment.status === 'Success' ? (
+								<FormControl>
+									<Select
+										name="status"
+										value={status}
+										onChange={(e) => onChange(e)}
+									>
+										<MenuItem value="Success" className="classes.statusOption">
+											{success} Success
+										</MenuItem>
+										<MenuItem value="Process">{process} Process</MenuItem>
+										<MenuItem value="Expired">{expired}Expired</MenuItem>
+									</Select>
+								</FormControl>
+							) : payment.status === 'Process' ? (
+								<FormControl>
+									<Select
+										name="status"
+										value={status}
+										onChange={(e) => onChange(e)}
+									>
+										<MenuItem value="Process" className="classes.statusOption">
+											{process} Process
+										</MenuItem>
+										<MenuItem value="Success">{success} Success</MenuItem>
+										<MenuItem value="Expired">{expired}Expired</MenuItem>
+									</Select>
+								</FormControl>
+							) : (
+								<FormControl>
+									<Select
+										name="status"
+										value={status}
+										onChange={(e) => onChange(e)}
+									>
+										<MenuItem value="Expired" className="classes.statusOption">
+											{expired} Expired
+										</MenuItem>
+										<MenuItem value="Success">{success} Success</MenuItem>
+										<MenuItem value="Process">{process}Process</MenuItem>
+									</Select>
+								</FormControl>
+							)
+						) : payment.status === 'Success' ? (
+							<div>
+								{success}{' '}
+								<span className={classes.paymentSuccess}>{payment.status}</span>
+							</div>
+						) : payment.status === 'Process' ? (
+							<div>
+								{process}{' '}
+								<span className={classes.paymentProcess}>{payment.status}</span>
+							</div>
+						) : (
+							<div>
+								{expired}{' '}
+								<span className={classes.paymentExpired}>{payment.status}</span>
+							</div>
+						)}
+					</TableCell>
+					<TableCell align="center">
+						<IconButton
+							onClick={() =>
+								toggleEdit({
+									displayEditForm: !displayEditForm,
+									displayEditPayment: payment.payment_number,
+								})
+							}
+						>
+							{edit}
+						</IconButton>
+					</TableCell>
+				</TableRow>
+				<Modal
+					open={open}
+					aria-labelledby="simple-modal-title"
+					aria-describedby="simple-modal-description"
+				>
+					<div style={modalStyle} className={classes.paper}>
+						<div className={classes.applyQ}>
+							<p className={classes.applyText} align="center" fontFamily>
+								Apply The Change?
+							</p>
+						</div>
+						<div className={classes.applyA} align="center">
+							<Button onClick={handleClose}>
+								<div className={classes.cancelButton}>Cancel</div>{' '}
+							</Button>
+							<Button
+								className={classes.applyButton}
+								onClick={(e) => applyChange(e)}
+							>
+								Apply
+							</Button>
+						</div>
+					</div>
+				</Modal>
+			</Fragment>
+		);
+	});
 
 	return (
 		<Fragment>
 			<TableContainer component={Paper} className={classes.tableContainer}>
-			<Table className={classes.table}>
-				<TableHead>
-					<TableRow>
-						<TableCell className={classes.tableHeaderCell} align="center">
-						<span className={classes.headerText}>USER NAME </span>
-						<IconButton
-									onClick={() => requestSort('user')}
+				<Table className={classes.table}>
+					<TableHead>
+						<TableRow>
+							<TableCell className={classes.tableHeaderCell} align="center">
+								<span className={classes.headerText}>USER NAME </span>
+								<IconButton
+									onClick={() => requestSort('payment_number')}
 									// className={getClassNamesFor('username')}
 									className={classes.sort}
 								>
 									{sort}
 								</IconButton>{' '}
-						</TableCell>
-						<TableCell className={classes.tableHeaderCell} align="center">
-							EMAIL {' '}
-							<IconButton
-									onClick={() => requestSort('username')}
+							</TableCell>
+							<TableCell className={classes.tableHeaderCell} align="center">
+								<span className={classes.headerText}>EMAIL </span>
+								<IconButton
+									onClick={() => requestSort('payment_number')}
 									// className={getClassNamesFor('username')}
 									className={classes.sort}
 								>
 									{sort}
-								</IconButton>{' '} </TableCell>
-						<TableCell className={classes.tableHeaderCell} align="center">
-							SIGNUP DATE{' '}
-							<IconButton
-									onClick={() => requestSort('username')}
+								</IconButton>{' '}
+							</TableCell>
+							<TableCell className={classes.tableHeaderCell} align="center">
+								<span className={classes.headerText}>SIGNUP DATE </span>
+								<IconButton
+									onClick={() => requestSort('payment_number')}
 									// className={getClassNamesFor('username')}
 									className={classes.sort}
 								>
 									{sort}
-								</IconButton>{' '}</TableCell>
-						<TableCell className={classes.tableHeaderCell} align="center">
-							LAST LOGIN{' '}
-							<IconButton
-									onClick={() => requestSort('username')}
+								</IconButton>{' '}
+							</TableCell>
+							<TableCell className={classes.tableHeaderCell} align="center">
+								<span className={classes.headerText}>LAST LOGIN </span>
+								<IconButton
+									onClick={() => requestSort('payment_number')}
 									// className={getClassNamesFor('username')}
 									className={classes.sort}
 								>
 									{sort}
-								</IconButton>{' '} </TableCell>
-						<TableCell className={classes.tableHeaderCell} align="center">
-							COURSES DETAIL{' '}
-							<IconButton
-									onClick={() => requestSort('username')}
+								</IconButton>{' '}
+							</TableCell>
+							<TableCell className={classes.tableHeaderCell} align="center">
+								<span className={classes.headerText}>COURSES DETAIL </span>
+								<IconButton
+									onClick={() => requestSort('payment_number')}
 									// className={getClassNamesFor('username')}
 									className={classes.sort}
 								>
 									{sort}
-								</IconButton>{' '}</TableCell>
-						<TableCell className={classes.tableHeaderCell} align="center">
-							PAYMENT STATUS{' '}
-							<IconButton
+								</IconButton>{' '}
+							</TableCell>
+							<TableCell className={classes.tableHeaderCell} align="center">
+								<span className={classes.headerText}>PAYMENT STATUS </span>
+								<IconButton
 									onClick={() => requestSort('status')}
 									// className={getClassNamesFor('username')}
 									className={classes.sort}
 								>
 									{sort}
-								</IconButton>{' '}</TableCell>
-						<TableCell className={classes.tableHeaderCell} align="center"></TableCell>
-					</TableRow>
-				</TableHead>
-				<TableBody>{userPayments}</TableBody>
-			</Table>
+								</IconButton>{' '}
+							</TableCell>
+							<TableCell
+								className={classes.tableHeaderCell}
+								align="center"
+							></TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>{userPayments}</TableBody>
+				</Table>
 			</TableContainer>
 		</Fragment>
 	);
@@ -313,10 +547,13 @@ const UserPayment = ({ getPayments, payments }) => {
 UserPayment.propTypes = {
 	getPayments: PropTypes.func.isRequired,
 	payments: PropTypes.array.isRequired,
+	updatePayment: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
 	payments: state.reducer.payments,
 });
 
-export default connect(mapStateToProps, { getPayments })(UserPayment);
+export default connect(mapStateToProps, { getPayments, updatePayment })(
+	UserPayment
+);
