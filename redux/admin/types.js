@@ -1,0 +1,6 @@
+export const GET_USERS = 'GET_USERS';
+export const GET_PAYMENTS = 'GET_PAYMENTS';
+export const UPDATE_USER = 'UPDATE_USER';
+export const UPDATE_PAYMENT = 'UPDATE_PAYMENT';
+export const SORT_COLLECTION = 'SORT_COLLECTION';
+
