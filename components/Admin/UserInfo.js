@@ -22,9 +22,7 @@ import { connect } from 'react-redux';
 import { getUsers, updateUserInfo } from '../../redux/admin/actions';
 
 const useStyles = makeStyles((theme) => ({
-	tableContainer: {
-		padding: 100,
-	},
+	
 	tableHeaderCell: {
 		fontWeight: 'bold',
 		color: '#1C00BC',
