@@ -1,14 +1,18 @@
 
+//import Link from 'next/link'
 import Navbar from './Navbar'
 import SideLeft from './SideLeft'
 
 
-export default function Layout({ children }) {
-    return(
+
+
+const Layout = ({ children }) => (
+  
         <div>
        		<Navbar />
               {children}
        		<SideLeft />
         </div>
-    )
-}
+    
+)
+export default  Layout
