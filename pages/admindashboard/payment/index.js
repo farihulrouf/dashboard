@@ -9,11 +9,13 @@ import store from '../../../redux/admin/store';
 
 import UserPayment from '../../../components/Admin/UserPayment';
 import Layout from '../../../components/admin/Layout'
+import TableHeader from '../../../components/admin/TableHeader'
 export default function payment() {
 	return(
 		<Layout>
 			<Provider store={store}>
 				<div className="content">
+					<TableHeader />
 					<UserPayment />
 				</div>
 			</Provider>
