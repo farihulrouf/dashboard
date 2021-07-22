@@ -16,13 +16,21 @@ import {
 	MenuItem,
 	Modal,
 	Button,
+	TextField,
 } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import MuiAccordion from '@material-ui/core/Accordion';
+import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
+import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
+import Typography from '@material-ui/core/Typography';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { getUsers, updateUserInfo } from '../../redux/admin/actions';
 
 const useStyles = makeStyles((theme) => ({
-	
+	tableContainer: {
+		maxHeight: '84vh',
+	},
 	tableHeaderCell: {
 		fontWeight: 'bold',
 		color: '#1C00BC',
@@ -68,47 +76,76 @@ const useStyles = makeStyles((theme) => ({
 	sort: {
 		padding: '2px',
 	},
-	statusOption: {
-		fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-	},
 	paper: {
-		width: 400,
 		backgroundColor: theme.palette.background.paper,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
 		padding: theme.spacing(2, 4, 3),
 	},
-	applyQ: {
-		width: '100%',
-	},
-	applyA: {
-		width: '100%',
-		'& > *': {
-			margin: theme.spacing(1),
-		},
-	},
-	applyText: {
-		fontSize: '22px',
-		fontFamily: 'Arial',
-		fontWeight: '400',
-	},
-	cancelButton: {
-		color: '#E50000',
-		fontFamily: 'Arial',
-	},
-	applyButton: {
-		color: '#38439F',
-		fontFamily: 'Arial',
-	},
 }));
 
 const modalStyle = {
-	// width: '30%',
-	// height: '10%',
 	position: 'absolute',
+	padding: '0',
 	top: '40%',
 	left: '40%',
+	border: 'none',
+	borderRadius: '5px',
+	width: '400px',
+	height: '127px',
 };
+
+const downloadModalStyle = {
+	position: 'absolute',
+	padding: '0',
+	top: '20%',
+	left: '40%',
+	border: 'none',
+	borderRadius: '5px',
+	width: '400px',
+	minHeight: '463px',
+};
+
+const Accordion = withStyles({
+	root: {
+		border: '1px solid rgba(0, 0, 0, .125)',
+		boxShadow: 'none',
+		'&:not(:last-child)': {
+			borderBottom: 0,
+		},
+		'&:before': {
+			display: 'none',
+		},
+		'&$expanded': {
+			margin: '15px 25px',
+		},
+	},
+	expanded: {},
+})(MuiAccordion);
+
+const AccordionSummary = withStyles({
+	root: {
+		backgroundColor: 'rgba(0, 0, 0, .03)',
+		borderBottom: '1px solid rgba(0, 0, 0, .125)',
+		marginBottom: -1,
+		minHeight: 56,
+		'&$expanded': {
+			minHeight: 56,
+		},
+	},
+	content: {
+		'&$expanded': {
+			margin: '12px 0',
+		},
+	},
+	expanded: {},
+})(MuiAccordionSummary);
+
+const AccordionDetails = withStyles((theme) => ({
+	root: {
+		padding: theme.spacing(2),
+	},
+}))(MuiAccordionDetails);
 
 const useSortableData = (items, config = null) => {
 	const [sortConfig, setSortConfig] = React.useState(config);
@@ -209,20 +246,16 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 		</svg>
 	);
 
-	const edit = (
+	const dropdown = (
 		<svg
-			width="19"
-			height="19"
-			viewBox="0 0 19 19"
+			width="22"
+			height="21"
+			viewBox="0 0 22 21"
 			fill="none"
 			xmlns="http://www.w3.org/2000/svg"
 		>
 			<path
-				d="M4 15.013L8.413 14.998L18.045 5.45802C18.423 5.08003 18.631 4.57802 18.631 4.04402C18.631 3.51002 18.423 3.00802 18.045 2.63002L16.459 1.04402C15.703 0.288024 14.384 0.292024 13.634 1.04102L4 10.583V15.013ZM15.045 2.45802L16.634 4.04102L15.037 5.62302L13.451 4.03802L15.045 2.45802ZM6 11.417L12.03 5.44402L13.616 7.03002L7.587 13.001L6 13.006V11.417Z"
-				fill="black"
-			/>
-			<path
-				d="M2 19H16C17.103 19 18 18.103 18 17V8.332L16 10.332V17H5.158C5.132 17 5.105 17.01 5.079 17.01C5.046 17.01 5.013 17.001 4.979 17H2V3H8.847L10.847 1H2C0.897 1 0 1.897 0 3V17C0 18.103 0.897 19 2 19Z"
+				d="M10.8432 2.16659C15.4369 2.16659 19.1765 5.90617 19.1765 10.4999C19.1765 15.0937 15.4369 18.8333 10.8432 18.8333C6.24943 18.8333 2.50985 15.0937 2.50985 10.4999C2.50985 5.90617 6.24943 2.16659 10.8432 2.16659ZM10.8432 0.083252C5.09318 0.083252 0.426514 4.74992 0.426514 10.4999C0.426514 16.2499 5.09318 20.9166 10.8432 20.9166C16.5932 20.9166 21.2598 16.2499 21.2598 10.4999C21.2598 4.74992 16.5932 0.083252 10.8432 0.083252ZM10.8432 13.6249L6.67651 9.45825H15.0098L10.8432 13.6249Z"
 				fill="black"
 			/>
 		</svg>
@@ -250,6 +283,21 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 		</svg>
 	);
 
+	const download = (
+		<svg
+			width="31"
+			height="31"
+			viewBox="0 0 31 31"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<path
+				d="M15.3093 20.0107C15.3319 20.0397 15.3609 20.0631 15.3939 20.0792C15.427 20.0953 15.4632 20.1037 15.5 20.1037C15.5368 20.1037 15.573 20.0953 15.6061 20.0792C15.6391 20.0631 15.6681 20.0397 15.6907 20.0107L19.0813 15.721C19.2055 15.5636 19.0935 15.3305 18.8906 15.3305H16.6474V5.08594C16.6474 4.95273 16.5384 4.84375 16.4052 4.84375H14.5888C14.4556 4.84375 14.3466 4.95273 14.3466 5.08594V15.3274H12.1094C11.9065 15.3274 11.7945 15.5605 11.9187 15.718L15.3093 20.0107ZM26.5801 18.9512H24.7637C24.6305 18.9512 24.5215 19.0602 24.5215 19.1934V23.8555H6.47852V19.1934C6.47852 19.0602 6.36953 18.9512 6.23633 18.9512H4.41992C4.28672 18.9512 4.17773 19.0602 4.17773 19.1934V25.1875C4.17773 25.7233 4.61064 26.1562 5.14648 26.1562H25.8535C26.3894 26.1562 26.8223 25.7233 26.8223 25.1875V19.1934C26.8223 19.0602 26.7133 18.9512 26.5801 18.9512Z"
+				fill="black"
+			/>
+		</svg>
+	);
+
 	// Toggle Edit
 	const [displayEdit, toggleEdit] = useState({
 		displayEditForm: false,
@@ -273,10 +321,17 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 		const [open, setOpen] = useState(false);
 		const handleClose = () => {
 			setOpen(false);
+			setOpenDownload(false);
 			toggleEdit({
 				displayEditForm: !displayEditForm,
 				displayEditUser: user.username,
 			});
+		};
+
+		// Download Modal
+		const [openDownload, setOpenDownload] = useState(false);
+		const onClickDownload = () => {
+			setOpenDownload(true);
 		};
 
 		const [formData, setFormData] = useState({
@@ -288,6 +343,12 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 			courses: user.courses,
 			userstatus: user.userstatus,
 		});
+
+		const [expanded, setExpanded] = React.useState('');
+
+		const handleChange = (panel) => (event, newExpanded) => {
+			setExpanded(newExpanded ? panel : false);
+		};
 
 		// useEffect(() => {
 		// 	setFormData({
@@ -313,6 +374,7 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 			e.preventDefault();
 			updateUserInfo(formData);
 			setOpen(false);
+			setOpenDownload(false);
 			toggleEdit({
 				displayEditForm: !displayEditForm,
 				displayEditUser: user.username,
@@ -347,98 +409,173 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 							</Grid>
 						)}
 					</TableCell>
-					<TableCell align="center">
-						{displayEditForm & (displayEditUser === user.username) ? (
-							user.userstatus === 'Student' ? (
-								<FormControl>
-									<Select
-										name="userstatus"
-										value={userstatus}
-										onChange={(e) => onChange(e)}
-									>
-										<MenuItem value="Student" className="classes.statusOption">
-											{student} Student
-										</MenuItem>
-										<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
-										<MenuItem value="Organization">{org}Organization</MenuItem>
-									</Select>
-								</FormControl>
-							) : user.userstatus === 'Teacher' ? (
-								<FormControl>
-									<Select
-										name="userstatus"
-										value={userstatus}
-										onChange={(e) => onChange(e)}
-									>
-										<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
-										<MenuItem value="Student">{student} Student</MenuItem>
-										<MenuItem value="Organization">{org} Organization</MenuItem>
-									</Select>
-								</FormControl>
-							) : (
-								<FormControl>
-									<Select
-										name="userstatus"
-										value={userstatus}
-										onChange={(e) => onChange(e)}
-									>
-										<MenuItem value="Organization">{org} Organization</MenuItem>
-										<MenuItem value="Teacher">{teacher} Teacher</MenuItem>
-										<MenuItem value="Student">{student} Student</MenuItem>
-									</Select>
-								</FormControl>
-							)
+					<TableCell>
+						{user.userstatus === 'Student' ? (
+							<FormControl>
+								<Select
+									name="userstatus"
+									value={userstatus}
+									onChange={(e) => onChange(e)}
+								>
+									<MenuItem value="Student">
+										{student} <span className="menu-item"> Student</span>
+									</MenuItem>
+									<MenuItem value="Teacher">
+										{teacher} <span className="menu-item"> Teacher</span>{' '}
+									</MenuItem>
+									<MenuItem value="Organization">
+										{org} <span className="menu-item"> Organization</span>
+									</MenuItem>
+								</Select>
+							</FormControl>
 						) : user.userstatus === 'Teacher' ? (
-							<Grid>
-								{teacher}{' '}
-								<span className={classes.userStatus}>{user.userstatus}</span>
-							</Grid>
-						) : user.userstatus === 'Student' ? (
-							<Grid>
-								{student}{' '}
-								<span className={classes.userStatus}>{user.userstatus}</span>
-							</Grid>
+							<FormControl>
+								<Select
+									name="userstatus"
+									value={userstatus}
+									onChange={(e) => onChange(e)}
+								>
+									<MenuItem value="Teacher">
+										{teacher} <span className="menu-item"> Teacher</span>
+									</MenuItem>
+									<MenuItem value="Student">
+										{student} <span className="menu-item"> Student</span>
+									</MenuItem>
+									<MenuItem value="Organization">
+										{org} <span className="menu-item"> Organization</span>
+									</MenuItem>
+								</Select>
+							</FormControl>
 						) : (
-							<Grid>
-								{org}{' '}
-								<span className={classes.userStatus}>{user.userstatus}</span>
-							</Grid>
+							<FormControl>
+								<Select
+									name="userstatus"
+									value={userstatus}
+									onChange={(e) => onChange(e)}
+								>
+									<MenuItem value="Organization">
+										{org} <span className="menu-item"> Organization</span>
+									</MenuItem>
+									<MenuItem value="Student">
+										{student} <span className="menu-item"> Student</span>
+									</MenuItem>
+									<MenuItem value="Teacher">
+										{teacher} <span className="menu-item"> Teacher</span>
+									</MenuItem>
+								</Select>
+							</FormControl>
 						)}
 					</TableCell>
 					<TableCell align="center">
-						<IconButton
-							onClick={() =>
-								toggleEdit({
-									displayEditForm: !displayEditForm,
-									displayEditUser: user.username,
-								})
-							}
-						>
-							{edit}
-						</IconButton>
+						{user.userstatus === 'Teacher' && (
+							<IconButton onClick={(e) => onClickDownload(e)}>
+								{download}
+							</IconButton>
+						)}
 					</TableCell>
 				</TableRow>
-				<Modal
-					open={open}
-					aria-labelledby="simple-modal-title"
-					aria-describedby="simple-modal-description"
-				>
+				<Modal open={open}>
 					<div style={modalStyle} className={classes.paper}>
-						<div className={classes.applyQ}>
-							<p className={classes.applyText} align="center" fontFamily>
+						<div className="modal-header">
+							<p className="modal-header-text" align="center">
 								Apply The Change?
 							</p>
 						</div>
-						<div className={classes.applyA} align="center">
-							<Button onClick={handleClose}>
-								<div className={classes.cancelButton}>Cancel</div>{' '}
+						<div>
+							<hr className="modal-line-break" />
+						</div>
+						<div className="apply-answer" align="center">
+							<Button onClick={handleClose} className="cancel-button">
+								<div className="cancel-button-text">Cancel</div>{' '}
 							</Button>
-							<Button
-								className={classes.applyButton}
-								onClick={(e) => applyChange(e)}
-							>
-								Apply
+							<Button onClick={(e) => applyChange(e)} className="apply-button">
+								<div className="apply-button-text">Apply</div>
 							</Button>
+						</div>
+					</div>
+				</Modal>
+				<Modal open={openDownload}>
+					<div style={downloadModalStyle} className={classes.paper}>
+						<div className="modal-header">
+							<p className="modal-header-text" align="center">
+								Download Detail
+							</p>
+						</div>
+						<div>
+							<hr className="modal-line-break" />
+						</div>
+						<div className="modal-content">
+							<div className="modal-form">
+								<Autocomplete
+									className="select-course"
+									multiple
+									id="tags-outlined"
+									options={user.courses}
+									getOptionLabel={(option) => option.name}
+									freeSolo
+									filterSelectedOptions
+									renderInput={(params) => (
+										<TextField
+											{...params}
+											variant="outlined"
+											placeholder="Course Name"
+										/>
+									)}
+								/>
+								<div>
+									<Accordion
+										className="payment-date-accordion"
+										square
+										expanded={expanded === 'panel1'}
+										onChange={handleChange('panel1')}
+									>
+										<AccordionSummary
+											aria-controls="panel1d-content"
+											id="panel1d-header"
+										>
+											<div className="payment-date-text">
+												Payment Date{' '}
+												<IconButton className="accordion-dropdown">
+													{dropdown}
+												</IconButton>{' '}
+											</div>
+										</AccordionSummary>
+										<AccordionDetails>
+											<form className={classes.container} noValidate>
+												<TextField
+													id="date"
+													label="Start Date"
+													type="date"
+													className="accordion-date"
+													InputLabelProps={{
+														shrink: true,
+													}}
+												/>
+												<TextField
+													id="date"
+													label="End Date"
+													type="date"
+													className="accordion-date"
+													InputLabelProps={{
+														shrink: true,
+													}}
+												/>
+											</form>
+										</AccordionDetails>
+									</Accordion>
+								</div>
+							</div>
+							<div className="download-answer">
+								<Button onClick={handleClose} className="cancel-button">
+									<div className="cancel-button-text">Cancel</div>{' '}
+								</Button>
+								<Button
+									onClick={(e) => applyChange(e)}
+									className="apply-button"
+								>
+									<div className="apply-button-text">Download</div>
+								</Button>
+							</div>
 						</div>
 					</div>
 				</Modal>
@@ -449,7 +586,7 @@ const UserInfo = ({ getUsers, users, updateUserInfo }) => {
 	return (
 		<Fragment>
 			<TableContainer component={Paper} className={classes.tableContainer}>
-				<Table className={classes.table}>
+				<Table stickyHeader className={classes.table}>
 					<TableHead>
 						<TableRow>
 							<TableCell className={classes.tableHeaderCell} align="center">

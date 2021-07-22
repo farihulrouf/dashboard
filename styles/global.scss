@@ -205,15 +205,13 @@ input {
     }
 }
 .content {
-    width: 1014px;
+    // width: 1014px;
     padding: 20px;
     margin-left: 250px;
     margin-top: 70px;
     transition: 0.5s;
     position: absolute;
 }
-
-
 
 @import "Exercise.module.scss";
 @import "Navbar.module.scss";
@@ -223,3 +221,4 @@ input {
 @import "Sign.module.scss";
 @import "Post.module.scss";
 @import "Settings.module.scss";
+@import "Admin.module.scss";

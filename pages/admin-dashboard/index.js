@@ -1,12 +1,12 @@
+import { authInitialProps } from '../../lib/auth';
+import Link from 'next/link';
 
+import Layout from '../../components/admin/Layout';
 
-import Layout from '../../components/admin/Layout'
-
-function admindashbboard(){
-    return(
-    	<Layout />    
-    )
-
+function admindashbboard() {
+	return <Layout />;
 }
 
-export default admindashbboard
+admindashbboard.getInitialProps = authInitialProps(true);
+
+export default admindashbboard;
