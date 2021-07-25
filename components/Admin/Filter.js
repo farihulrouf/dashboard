@@ -25,7 +25,9 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import FilterListIcon from '@material-ui/icons/FilterList';
 
 
+import CustomFilter from './CustomFilter'
 import Icon from '@material-ui/core/Icon';
+
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
@@ -80,54 +82,11 @@ const useStyles = makeStyles((theme) => ({
 
   paper: {
     width: 250,
+    backgroundColor: 'white'
   },
 
-  label: {
-    width: 150,
-  },
 
-  Divider: {
-    margin: 10
-  },
-
-  MenuItem: {
-    height: 30,
-  },
-
-  Button: {
-    width: 230,
-    marginTop: 5,
-    backgroundColor: '#EAEAEA',
-    height: 30,
-    display: 'flex',
-    borderRadius: 3,
-    justifyContent: 'space-between'
-  },
-
-  date: {
-    marginTop: 5,
-    marginLeft: theme.spacing(1),
-    marginRight: theme.spacing(1),
-    width: 230,
-  },
-
-  elementDate: {
-    height: 110,
-  },
-
-  btnFilter: {
-    color: '#38439F',
-    '&:hover': {
-      backgroundColor: '#fff',
-      color: 'red',
-    },
-  },
-
-  filter: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    alignItems: 'center'
-  }
+ 
 
 
 }));
@@ -174,17 +133,7 @@ export default function Filter() {
   }, [open]);
 
   
-  //const [count, setCount] = useState(0);
-
- // const [show, setShow] = React.useState(true);
-
-
-
-  const [state, setState] = React.useState({
-    
-      show: false
-  })
-
+  
   
 
   const openclose = () => {
@@ -193,12 +142,6 @@ export default function Filter() {
     })
   }
 
-  const changeColor = () => {
-    setState({
-      black: !state.black
-    })
-  }
-  
   
 
 
@@ -226,122 +169,7 @@ export default function Filter() {
               <Paper className={classes.paper}>
                 <ClickAwayListener onClickAway={handleClose}>
 
-                  <MenuList autoFocusItem={open} id="menu-list-grow" onKeyDown={handleListKeyDown}>
-                    <div className={classes.userStatusText}>
-                      FILTER BY
-                    </div>
-                    <div className={classes.dev_up}>
-
-                         <TextField className={classes.TextField}
-                            variant="outlined"
-                            placeholder="User name"
-                            InputProps={{
-                              className: classes.input,
-
-                              classes:{notchedOutline:classes.noBorder}
-                            }}
-                            InputLabelProps={{
-                              shrink: true
-                            }}
-          
-                           />
-
-
-                         <TextField className={classes.TextField}
-                            variant="outlined"
-                            placeholder="Email"
-                            InputProps={{
-                              className: classes.input,
-                              classes:{notchedOutline:classes.noBorder}
-
-                            }}
-                            InputLabelProps={{
-                              shrink: true
-                            }}
-          
-                           />
-                       
-
-
-
-
-                       
-                      <Button 
-                          
-                          className={classes.Button}
-                          endIcon={<Icon><ExpandMoreIcon /></Icon>}
-                       >
-                        SIGN UP DATE
-                          
-
-                      </Button>
-
-
-
-                      <Button 
-                          
-                          className={classes.Button}
-                          endIcon={<Icon><ExpandMoreIcon /></Icon>}
-                       >
-                        LAST LOGIN DATE
-                          
-
-                      </Button>
-
-                    
-                          
-                    
-                  
-                    </div>
-
-                    <Divider className={classes.Divider} />
-                      <div className={classes.userStatusText}>
-                        USER STATUS
-                      </div>
-                      <MenuItem className={classes.MenuItem}>
-                        <div className={classes.textCheck}>
-                          Student
-                        </div>
-                           <FormControlLabel
-                              value="student"
-                              control={<Checkbox color="primary" />}
-                              labelPlacement="start"
-                            />
-                     </MenuItem>
-
-
-                      <MenuItem className={classes.MenuItem}>
-                         <div className={classes.textCheck}>
-                            Teacher
-                         </div>
-                          <FormControlLabel
-                              value="student"
-                              
-                              control={<Checkbox color="primary" />}
-                              labelPlacement="start"
-                            />
-                     </MenuItem>
-
-                      <MenuItem className={classes.MenuItem}>
-                        <div className={classes.textCheck}>
-                          Organization
-                        </div>
-                          <FormControlLabel
-                              value="student"
-                           
-                              control={<Checkbox color="primary" />}
-                              labelPlacement="start"
-                            />
-                     </MenuItem>
-
-                     <Divider  className={classes.Divider}/>
-
-                     <div className={classes.clearFilter}>
-                      <Button className={classes.btnFilter}>Clear Filter</Button>
-                      <Button className={classes.btnFilter}>Apply Filter</Button>
-                     </div>
-                    
-                  </MenuList>
+                  <CustomFilter />
                 </ClickAwayListener>
               </Paper>
             </Grow>

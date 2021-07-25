@@ -8,12 +8,14 @@ import { authInitialProps } from '../../../lib/auth';
 
 import UserInfo from '../../../components/Admin/UserInfo';
 import Layout from '../../../components/admin/Layout';
+
+import TableHeader from '../../../components/admin/TableHeader';
 export default function user() {
 	return (
 		<Layout>
 			<Provider store={store}>
 				<div className="content">
-					<UserInfo />
+					<TableHeader />
 				</div>
 			</Provider>
 		</Layout>

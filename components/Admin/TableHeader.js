@@ -35,6 +35,13 @@ export default function TableHeader() {
 
 	  },
 
+	  searchText: {
+	  	width: 320, 
+	  	alignItems: 'center',
+	  	height: '100%',
+	  	display: 'flex'
+	  },
+
 
 	 Box: {
 	  	width: 80,
@@ -89,8 +96,9 @@ export default function TableHeader() {
 
 			</div>
 
-			<TextSearch />
-
+			<div className={classes.searchText}>
+				<TextSearch />
+			</div>
 			<Box className={classes.Box}>
 				<Filter />
 			</Box>

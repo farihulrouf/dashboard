@@ -204,13 +204,16 @@ input {
         }
     }
 }
-.content {
-    // width: 1014px;
+.content { 
+
     padding: 20px;
     margin-left: 250px;
     margin-top: 70px;
     transition: 0.5s;
     position: absolute;
+    display: flex;
+    align-items: center;
+    width: calc(100% - 250px); 
 }
 
 @import "Exercise.module.scss";

@@ -11,7 +11,7 @@ export default function TextSearch() {
 	const useStyles = makeStyles({
 	 
 	 TextField: {
-	 	width: 320,
+	 	maxWidth: '100%',
 	 	backgroundColor: 'white',
 	 	borderRadius: 8,
 	 	marginLeft: 10,
