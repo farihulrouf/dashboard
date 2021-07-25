@@ -16,6 +16,7 @@ export default function user() {
 			<Provider store={store}>
 				<div className="content">
 					<TableHeader />
+					<UserInfo />
 				</div>
 			</Provider>
 		</Layout>

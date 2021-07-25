@@ -15,6 +15,7 @@ export default function payment() {
 			<Provider store={store}>
 				<div className="content">
 					<TableHeader /> 
+					<UserPayment />
 				</div>
 			</Provider>
 		</Layout>
