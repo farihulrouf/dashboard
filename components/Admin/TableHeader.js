@@ -51,7 +51,8 @@ export default function TableHeader() {
 	  	display: 'flex',
 	  	alignItems: 'center',
 	  	justifyContent: 'space-around',
-	  	borderRadius: 8
+	  	borderRadius: 8,
+	  	zIndex: 3,
 	  },
 
 
