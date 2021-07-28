@@ -9,7 +9,9 @@ import store from '../../../redux/admin/store';
 
 import UserInfo from '../../../components/Admin/UserInfo';
 import Layout from '../../../components/admin/Layout'
+import HeaderTable from '../../../components/admin/HeaderTable'
 import TableHeader from '../../../components/admin/TableHeader'
+import TableCustomize from '../../../components/admin/TableCustomize'
 
 export default function user() {
 
@@ -22,7 +24,7 @@ export default function user() {
 			<Provider store={store}>
 				<div className="content">
 					<TableHeader />
-					<UserInfo />
+					 <TableCustomize />
 				</div>
 			</Provider>
 		</Layout>

@@ -22,11 +22,14 @@ import { connect } from 'react-redux';
 import { getPayments, updatePayment } from '../../redux/admin/actions';
 
 const useStyles = makeStyles((theme) => ({
-	
+	tableContainer: {
+		maxHeight: '84vh',
+	},
 	tableHeaderCell: {
 		fontWeight: 'bold',
 		color: '#1C00BC',
 		borderBottom: '#1C00BC solid 3px',
+		 
 	},
 	coursesBorder: {
 		width: '100px',
@@ -72,7 +75,7 @@ const useStyles = makeStyles((theme) => ({
 		fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
 	},
 	paper: {
-		width: 400,
+		// width: 400,
 		backgroundColor: theme.palette.background.paper,
 		border: '2px solid #000',
 		boxShadow: theme.shadows[5],
@@ -131,11 +134,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const modalStyle = {
-	// width: '30%',
-	// height: '10%',
 	position: 'absolute',
+	padding: '0',
 	top: '40%',
 	left: '40%',
+	border: 'none',
+	borderRadius: '5px',
+	width: '400px',
+	height: '127px',
 };
 
 const useSortableData = (items, config = null) => {
@@ -267,6 +273,42 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 		</svg>
 	);
 
+	const unpaid = (
+		<svg
+			width="21"
+			height="21"
+			viewBox="0 0 21 21"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<circle cx="10.5" cy="10.5" r="10.5" fill="#C4C4C4" />
+			<circle cx="10.5" cy="10.5001" r="8.4" fill="white" />
+			<line
+				x1="4.19995"
+				y1="10.55"
+				x2="16.8"
+				y2="10.55"
+				stroke="#C4C4C4"
+				stroke-width="2"
+			/>
+		</svg>
+	);
+
+	const download = (
+		<svg
+			width="31"
+			height="31"
+			viewBox="0 0 31 31"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<path
+				d="M15.3093 20.0107C15.3319 20.0397 15.3609 20.0631 15.3939 20.0792C15.427 20.0953 15.4632 20.1037 15.5 20.1037C15.5368 20.1037 15.573 20.0953 15.6061 20.0792C15.6391 20.0631 15.6681 20.0397 15.6907 20.0107L19.0813 15.721C19.2055 15.5636 19.0935 15.3305 18.8906 15.3305H16.6474V5.08594C16.6474 4.95273 16.5384 4.84375 16.4052 4.84375H14.5888C14.4556 4.84375 14.3466 4.95273 14.3466 5.08594V15.3274H12.1094C11.9065 15.3274 11.7945 15.5605 11.9187 15.718L15.3093 20.0107ZM26.5801 18.9512H24.7637C24.6305 18.9512 24.5215 19.0602 24.5215 19.1934V23.8555H6.47852V19.1934C6.47852 19.0602 6.36953 18.9512 6.23633 18.9512H4.41992C4.28672 18.9512 4.17773 19.0602 4.17773 19.1934V25.1875C4.17773 25.7233 4.61064 26.1562 5.14648 26.1562H25.8535C26.3894 26.1562 26.8223 25.7233 26.8223 25.1875V19.1934C26.8223 19.0602 26.7133 18.9512 26.5801 18.9512Z"
+				fill="black"
+			/>
+		</svg>
+	);
+
 	// Toggle Edit
 	const [displayEdit, toggleEdit] = useState({
 		displayEditForm: false,
@@ -288,10 +330,6 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 		const [open, setOpen] = useState(false);
 		const handleClose = () => {
 			setOpen(false);
-			toggleEdit({
-				displayEditForm: !displayEditForm,
-				displayEditPayment: payment.payment_number,
-			});
 		};
 
 		const [formData, setFormData] = useState({
@@ -316,8 +354,8 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 
 		const { status } = formData;
 
-		const onChange = (e) => {
-			setFormData({ ...formData, [e.target.name]: e.target.value });
+		const genNew = (e) => {
+			setFormData({ ...formData, status: 'Unpaid' });
 			setOpen(true);
 		};
 
@@ -325,10 +363,6 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 			e.preventDefault();
 			updatePayment(formData);
 			setOpen(false);
-			toggleEdit({
-				displayEditForm: !displayEditForm,
-				displayEditPayment: payment.payment_number,
-			});
 		};
 		return (
 			<Fragment key={payment.payment_number}>
@@ -340,6 +374,20 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 					</TableCell>
 					<TableCell align="center">
 						<Moment format="DD/MM/YYYY">{payment.user.lastlogin}</Moment>
+					</TableCell>
+					<TableCell align="center">
+						{payment.status === 'Success' && (
+							<IconButton
+							// onClick={() =>
+							// 	toggleEdit({
+							// 		displayEditForm: !displayEditForm,
+							// 		displayEditUser: user.username,
+							// 	})
+							// }
+							>
+								{download}
+							</IconButton>
+						)}
 					</TableCell>
 					<TableCell>
 						<div className={classes.courseName}>{payment.course.name}</div>
@@ -373,7 +421,7 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 											{success} Success
 										</MenuItem>
 										<MenuItem value="Process">{process} Process</MenuItem>
-										<MenuItem value="Expired">{expired}Expired</MenuItem>
+										<MenuItem value="Expired">{expired} Expired</MenuItem>
 									</Select>
 								</FormControl>
 							) : payment.status === 'Process' ? (
@@ -387,7 +435,7 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 											{process} Process
 										</MenuItem>
 										<MenuItem value="Success">{success} Success</MenuItem>
-										<MenuItem value="Expired">{expired}Expired</MenuItem>
+										<MenuItem value="Expired">{expired} Expired</MenuItem>
 									</Select>
 								</FormControl>
 							) : (
@@ -401,7 +449,7 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 											{expired} Expired
 										</MenuItem>
 										<MenuItem value="Success">{success} Success</MenuItem>
-										<MenuItem value="Process">{process}Process</MenuItem>
+										<MenuItem value="Process">{process} Process</MenuItem>
 									</Select>
 								</FormControl>
 							)
@@ -415,46 +463,48 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 								{process}{' '}
 								<span className={classes.paymentProcess}>{payment.status}</span>
 							</div>
-						) : (
+						) : payment.status === 'Expired' ? (
 							<div>
 								{expired}{' '}
 								<span className={classes.paymentExpired}>{payment.status}</span>
 							</div>
+						) : (
+							<div>
+								{unpaid}{' '}
+								<span className={classes.paymentExpired}>{payment.status}</span>
+							</div>
 						)}
 					</TableCell>
+
 					<TableCell align="center">
-						<IconButton
-							onClick={() =>
-								toggleEdit({
-									displayEditForm: !displayEditForm,
-									displayEditPayment: payment.payment_number,
-								})
-							}
-						>
-							{edit}
-						</IconButton>
+						{payment.status === 'Expired' && (
+							<Button
+								variant="contained"
+								size="small"
+								className="gen-new-button"
+								onClick={(e) => genNew(e)}
+							>
+								<div className="gen-new-text">Generate New Invoice</div>
+							</Button>
+						)}
 					</TableCell>
 				</TableRow>
-				<Modal
-					open={open}
-					aria-labelledby="simple-modal-title"
-					aria-describedby="simple-modal-description"
-				>
+				<Modal open={open}>
 					<div style={modalStyle} className={classes.paper}>
-						<div className={classes.applyQ}>
-							<p className={classes.applyText} align="center" fontFamily>
+						<div className="modal-header">
+							<p className="modal-header-text" align="center">
 								Apply The Change?
 							</p>
 						</div>
-						<div className={classes.applyA} align="center">
-							<Button onClick={handleClose}>
-								<div className={classes.cancelButton}>Cancel</div>{' '}
+						<div>
+							<hr className="line-break-apply" />
+						</div>
+						<div className="apply-answer" align="center">
+							<Button onClick={handleClose} className="cancel-button">
+								<div className="cancel-button-text">Cancel</div>{' '}
 							</Button>
-							<Button
-								className={classes.applyButton}
-								onClick={(e) => applyChange(e)}
-							>
-								Apply
+							<Button onClick={(e) => applyChange(e)} className="apply-button">
+								<div className="apply-button-text">Apply</div>
 							</Button>
 						</div>
 					</div>
@@ -466,7 +516,7 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 	return (
 		<Fragment>
 			<TableContainer component={Paper} className={classes.tableContainer}>
-				<Table className={classes.table}>
+				<Table stickyHeader className={classes.table}>
 					<TableHead>
 						<TableRow>
 							<TableCell className={classes.tableHeaderCell} align="center">
@@ -503,6 +553,16 @@ const UserPayment = ({ getPayments, payments, updatePayment }) => {
 								<span className={classes.headerText}>LAST LOGIN </span>
 								<IconButton
 									onClick={() => requestSort('payment_number')}
+									// className={getClassNamesFor('username')}
+									className={classes.sort}
+								>
+									{sort}
+								</IconButton>{' '}
+							</TableCell>
+							<TableCell className={classes.tableHeaderCell} align="center">
+								<span className={classes.headerText}>INVOICE </span>
+								<IconButton
+									onClick={() => requestSort('status')}
 									// className={getClassNamesFor('username')}
 									className={classes.sort}
 								>
